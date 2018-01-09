@@ -1,0 +1,292 @@
+<extend name="Public:base" />
+
+<block name="title">课程管理</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            <i class="fa fa-home"></i>首页
+            &gt;
+            Elpa
+            &gt;
+            课程管理
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+                <li class="active">
+                    <a href="#home" data-toggle="tab">课程列表</a>
+                </li>
+                <li>
+                    <a href="javascript:;" onclick="add()">添加课堂</a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <form class="" action="{:U('Admin/Elpa/order')}" method="post">
+                    <table class="table table-striped table-bordered table-hover table-condensed">
+                        <tr>
+                            <th width="5%">排序</th>
+                            <th>课堂名</th>
+                            <th>描述</th>
+                            <th>图片</th>
+                            <th>操作</th>
+                        </tr>
+                        <foreach name="data" item="v">
+                            <tr>
+                                <td>
+                                    <input class="input-medium" style="width:40px;height:25px;" type="text" name="{$v['id']}" value="{$v['order_number']}">
+                                </td>
+                                <td><?php if($v['_level']==1){echo $v['_name'];}else{echo '<a href="chapter?id='.$v['id'].'">'.$v['_name'].'</a>';}?></td>
+                                <td>{$v['description']}</td>
+                                <td><img src="{$v['picture']}" width="40" height="40"></td>
+                                <td>
+                                    <a href="javascript:;" lessonId="{$v['id']}" lessonName="{$v['name']}"  onclick="add_child(this)">添加课程</a> |
+                                    <a href="javascript:;" lessonId="{$v['id']}" lessonName="{$v['name']}" lessonDesc="{$v['description']}" lessonPrice="{$v['price']}" lessonPoint="{$v['point']}" lessonReward="{$v['reward']}" onclick="edit(this)">修改</a> |
+                                    <a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Elpa/delete_lesson',array('id'=>$v['id']))}'">删除</a>
+                                </td>
+                            </tr>
+                        </foreach>
+                        <tr>
+                            <th>
+                                <input class="btn btn-success" type="submit" value="排序">
+                            </th>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加菜单模态框开始 -->
+    <div class="modal fade" id="bjy-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+             <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        添加课堂
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form id="bjy-form" class="form-inline" action="{:U('Admin/Elpa/add_lesson')}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="pid" value="0">
+                        <table class="table table-striped table-bordered table-hover table-condensed">
+                            <tr>
+                                <th width="12%">课堂名：</th>
+                                <td>
+                                    <input class="input-medium" type="text" name="name">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="12%">描述：</th>
+                                <td>
+                                    <input class="input-medium" type="text" name="description">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>图片：</th>
+                                <td>
+                                    <input class="input-medium" type="file" name="photo">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <td>
+                                    <input class="btn btn-success" type="submit" value="添加">
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 添加菜单模态框结束 -->
+
+    <!-- 添加子菜单模态框开始 -->
+    <div class="modal fade" id="bjy-add_lesson" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+             <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        添加课程
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form id="bjy-form" class="form-inline" action="{:U('Admin/Elpa/add_lesson')}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="pid" value="0">
+                        <table class="table table-striped table-bordered table-hover table-condensed">
+                            <tr>
+                                <th width="12%">课程名：</th>
+                                <td>
+                                    <input class="input-medium" type="text" name="name">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="12%">描述：</th>
+                                <td>
+                                    <input class="input-medium" type="text" name="description">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="12%">Price：</th>
+                                <td>
+                                    <input class="input-medium" type="text" name="price">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="12%">Point：</th>
+                                <td>
+                                    <input class="input-medium" type="text" name="point">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="12%">课程完成时间：</th>
+                                <td>
+                                    <input class="input-medium" type="text" name="limittime">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="12%">课程完成奖励：</th>
+                                <td>
+                                    <input class="input-medium" type="text" name="reward">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>图片：</th>
+                                <td>
+                                    <input class="input-medium" type="file" name="photo">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <td>
+                                    <input class="btn btn-success" type="submit" value="添加">
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 添加子菜单模态框结束 -->
+
+    <!-- 修改菜单模态框开始 -->
+    <div class="modal fade" id="bjy-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+             <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        修改课程
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form id="bjy-form" class="form-inline" action="{:U('Admin/Elpa/edit_lesson')}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="id">
+                        <table class="table table-striped table-bordered table-hover table-condensed">
+                            <tr>
+                                <th width="12%">课程名：</th>
+                                <td>
+                                    <input class="input-medium" type="text" name="name">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="12%">描述：</th>
+                                <td>
+                                    <input class="input-medium" type="text" name="description">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="12%">Price：</th>
+                                <td>
+                                    <input class="input-medium" type="text" name="price">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="12%">Point：</th>
+                                <td>
+                                    <input class="input-medium" type="text" name="point">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="12%">课程完成时间：</th>
+                                <td>
+                                    <input class="input-medium" type="text" name="limittime">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="12%">课程完成奖励：</th>
+                                <td>
+                                    <input class="input-medium" type="text" name="reward">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>图片：</th>
+                                <td>
+                                    <input class="input-medium" type="file" name="photo">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <td>
+                                    <input class="btn btn-success" type="submit" value="修改">
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 修改菜单模态框结束 -->
+</block>
+<block name="js">
+    <script>
+    // 添加菜单
+    function add(){
+        $("input[name='name'],input[name='mca']").val('');
+        $("input[name='pid']").val(0);
+        $('#bjy-add').modal('show');
+    }
+
+    // 添加子菜单
+    function add_child(obj){
+        var lessonId=$(obj).attr('lessonId');
+        $("input[name='pid']").val(lessonId);
+        $("input[name='price']").val('');
+        $("input[name='point']").val('');
+        $("input[name='reward']").val('');
+        $('#bjy-add_lesson').modal('show');
+    }
+
+    // 修改菜单
+    function edit(obj){
+        var lessonId=$(obj).attr('lessonId');
+        var lessonName=$(obj).attr('lessonName');
+        var lessonDesc=$(obj).attr('lessonDesc');
+        var lessonPrice=$(obj).attr('lessonPrice');
+        var lessonPoint=$(obj).attr('lessonPoint');
+        var lessonReward=$(obj).attr('lessonReward');
+        $("input[name='id']").val(lessonId);
+        $("input[name='name']").val(lessonName);
+        $("input[name='description']").val(lessonDesc);
+        $("input[name='price']").val(lessonPrice);
+        $("input[name='point']").val(lessonPoint);
+        $("input[name='reward']").val(lessonReward);
+        $('#bjy-edit').modal('show');
+    }
+    </script>
+</block>

@@ -1,0 +1,282 @@
+<extend name="Public:base" />
+
+<block name="title">用户管理</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            首页
+            &gt;
+            Ibos
+            &gt;
+			用户管理
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+			  	<li class="active">
+					<a href="#home" data-toggle="tab">用户列表</a>
+			    </li>
+			    <li>
+					<a href="javascript:;" onclick="add()">添加用户</a>
+				</li>
+            </ul>
+            <div class="tab-content">
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<tr>
+						<th>编号</th>
+                        <th>头像</th>
+						<th>会员昵称</th>
+                        <th>会员真实姓名</th>
+                        <th>Hrac职员身份</th>
+                        <th>是否为金卡合伙人</th>
+                        <!-- <th>身份证id</th>
+                        <th>身份证正面</th>
+                        <th>身份证反面</th> -->
+                        <th>性别</th>
+                        <th>年龄</th>
+                        <th>电话</th>
+                        <th>地址</th>
+                        <th>电邮</th>                              
+                        <th>积分</th>
+                        <th>冻结积分</th>
+                        <th>等级</th>
+                        <th>最近登录</th>
+                        <th>登记时间</th>
+                        <th>上级id</th>
+						<th>操作</th>
+					</tr>
+					<foreach name="data" item="v">
+						<tr>
+							<td>{$v.iuid}</td>
+							<td><?php if(!empty($v['hu_photo'])){echo '<img width="20" height="20" src="'.$v['hu_photo'].'">'.'<a>';}else{echo '';} ?></td>
+							<td>{$v.hu_nickname}</td>
+							<td>{$v.hu_username}</td>
+							<td><if 	condition="$v['hu_type'] eq 0" >用户
+								<elseif condition="$v['hu_type'] eq 1"/>CSD
+								<elseif condition="$v['hu_type'] eq 2"/>顾问
+								<elseif condition="$v['hu_type'] eq 3"/>主管
+								</if>
+							</td>
+							<td>{$v['is_vip']?是:否}</td>
+							<!-- <td>{$v.iu_cardid}</td>
+							<td><?php if(!empty($v['iu_cardrphoto'])){echo '<img width="20" height="20" src="'.$v['iu_cardrphoto'].'">'.'<a>';}else{echo '';} ?></td>
+							<td><?php if(!empty($v['iu_cardlphoto'])){echo '<img width="20" height="20" src="'.$v['iu_cardlphoto'].'">'.'<a>';}else{echo '';} ?></td> -->
+							<td>{$v.hu_sex}</td>
+							<td>{$v.hu_age}</td>
+							<td>{$v.hu_phone}</td>
+							<td>{$v.hu_address}</td>
+							<td>{$v.hu_email}</td>
+							<td>{$v.iu_point}</td>
+							<td>{$v.iu_point}</td>
+							<td>
+								<if 	condition="$v['iu_grade'] eq 0" >V0
+								<elseif condition="$v['iu_grade'] eq 1"/>V1
+								<elseif condition="$v['iu_grade'] eq 2"/>V2
+								<elseif condition="$v['iu_grade'] eq 3"/>V3
+								</if>
+							</td>
+							<td>{$v.iu_logintime}</td>
+							<td>{$v.iu_registertime}</td>
+							<td>{$v.iu_upid}</td>
+							<td>
+								<a href="javascript:;" usersId="{$v['iuid']}" usersDisplayname="{$v['hu_nickname']}" usersUsername="{$v['hu_username']}" usersPoint="{$v['iu_point']}" usersPhone="{$v['hu_phone']}" usersEmail="{$v[hu_email]}" usersGrade="{$v[iu_grade]}" onclick="edit(this)">修改</a> |
+								<a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/User/delete_users',array('id'=>$v['iuid']))}'">删除</a> |
+								<a href="{:U('Admin/User/lock_users',array('id'=>$v['iuid'],'is_lock'=>$v['is_lock']?0:1))}">{$v['is_lock']?已锁定:未锁定}</a>
+							</td>
+						</tr>
+					</foreach>
+				</table>
+				<div class="page">
+					{$page}
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- 添加菜单模态框开始 -->
+	<div class="modal fade" id="bjy-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						添加用户
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/User/add_users')}" method="post">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="30%">用户ID：</th>
+								<td>
+									<input class="input-medium" type="text" name="hu_nickname">
+								</td>
+							</tr>
+							<tr>
+								<th width="30%">真实姓名：</th>
+								<td>
+									<input class="input-medium" type="text" name="hu_username">
+								</td>
+							</tr>
+							<tr>
+								<th width="30%">手机号码：</th>
+								<td>
+									<input class="input-medium" type="text" name="hu_phone">
+								</td>
+							</tr>
+							<tr>
+								<th width="30%">HRAC员工身份：</th>
+								<td>
+									<select name="hu_type" id="">
+										<option value="">请选择</option>
+										<option value="0">用户</option>
+										<option value="1">CSD</option>
+										<option value="2">顾问</option>
+										<option value="3">主管</option>
+									</select> Hrac员工需设置
+								</td>
+							</tr>
+							<tr>
+								<th width="30%">HRAC员工所属门店：</th>
+								<td>
+									<select name="sid" id="">
+										<option value="">请选择</option>
+										<volist name='shop' id='v'>
+										<option value="{$v.sid}">{$v.s_name}</option>
+										</volist>
+									</select> Hrac员工需设置
+								</td>
+							</tr>
+							<tr>
+								<th width="30%">营养师等级：</th>
+								<td>
+									<select name="hgid" id="">
+										<option value="">请选择</option>
+										<volist name='grade' id='c'>
+										<option value="{$c.hgid}">{$c.hgid}</option>
+										</volist>
+									</select> 营养师需设置
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="添加">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加菜单模态框结束 -->
+
+	<!-- 修改菜单模态框开始 -->
+	<div class="modal fade" id="bjy-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						修改会员
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/User/edit_users')}" method="post" enctype="multipart/form-data">
+						<input type="hidden" name="id">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="12%">会员昵称：</th>
+								<td>
+									<input class="input-medium" type="text" name="hu_nickname">
+								</td>
+							</tr>
+							<tr>
+								<th width="12%">会员姓名：</th>
+								<td>
+									<input class="input-medium" type="text" name="hu_username">
+								</td>
+							</tr>
+							<tr>
+								<th width="12%">会员积分：</th>
+								<td>
+									<input class="input-medium" type="text" name="iu_point">
+								</td>
+							</tr>
+							<tr>
+								<th width="12%">电话：</th>
+								<td>
+									<input class="input-medium" type="text" name="hu_phone">
+								</td>
+							</tr>
+							<tr>
+								<th width="12%">电邮：</th>
+								<td>
+									<input class="input-medium" type="text" name="hu_email">
+								</td>
+							</tr>
+							<tr>
+								<th width="12%">会员等级：</th>
+								<td>
+									<select name="iu_grade" id="">
+										<option value="0">普通会员</option>
+										<option value="1">铜卡会员</option>
+										<option value="2">银卡会员</option>
+										<option value="3">金卡会员</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<th width="12%">头像：</th>
+								<td>
+									<input class="input-medium" type="file" name="hu_photo">
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="修改">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 修改菜单模态框结束 -->
+</block>
+<block name="js">
+	<script>
+	// 添加菜单
+	function add(){
+		$("input[name='hu_nickname']").val('');
+		$('#bjy-add').modal('show');
+	}
+
+	// 修改菜单
+	function edit(obj){
+		var usersId=$(obj).attr('usersId');
+		var usersDisplayname=$(obj).attr('usersDisplayname');
+		var usersUsername=$(obj).attr('usersUsername');
+		var usersPoint=$(obj).attr('usersPoint');
+		var usersPhone=$(obj).attr('usersPhone');
+		var usersEmail=$(obj).attr('usersEmail');
+		var usersGrade=$(obj).attr('usersGrade');
+		$("input[name='id']").val(usersId);
+		$("input[name='hu_nickname']").val(usersDisplayname);
+		$("input[name='hu_username']").val(usersUsername);
+		$("input[name='iu_point']").val(usersPoint);
+		$("input[name='hu_phone']").val(usersPhone);
+		$("input[name='hu_email']").val(usersEmail);
+		$("select[name='iu_grade']").val(usersGrade);
+		$('#bjy-edit').modal('show');
+	}
+	</script>
+</block>

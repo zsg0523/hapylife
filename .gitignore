@@ -1,0 +1,7 @@
+Runtime/
+install.lock
+Application/Common/Conf/db.php
+node_modules/
+Upload/
+install/
+Public/codepic/
