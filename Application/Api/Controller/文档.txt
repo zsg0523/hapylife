@@ -1,0 +1,8 @@
+注册		http://10.16.0.153/hapylife/index.php/Api/HapylifeApi/register                
+登录		http://10.16.0.153/hapylife/index.php/Api/HapylifeApi/login
+置顶新闻	http://10.16.0.153/hapylife/index.php/Api/HapylifeApi/newstop
+新闻列表	http://10.16.0.153/hapylife/index.php/Api/HapylifeApi/newslist
+新闻详情	http://10.16.0.153/hapylife/index.php/Api/HapylifeApi/newscontent       nid
+商品列表	http://10.16.0.153/hapylife/index.php/Api/HapylifeApi/productlist
+商品详情	http://10.16.0.153/hapylife/index.php/Api/HapylifeApi/product 			ipid
+订单		http://10.16.0.153/hapylife/index.php/Api/HapylifeApi/order
