@@ -6,11 +6,21 @@ use Common\Controller\HomeBaseController;
 **/
 class HapylifeApiController extends HomeBaseController{
 	
-	public function index(){}
+	public function index(){
+		$data = M('Users')->select();
+		// foreach ($data as $key => $value) {
+		// 	$add = M('user')->add($value);
+		// }
+		if($add){
+			$this->ajaxreturn($data);
+		}
+	}
 	/**
 	* 注册
 	**/
-	public function register(){}
+	public function register(){
+
+	}
 
 	/**
 	* 登录
