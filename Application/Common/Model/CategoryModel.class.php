@@ -2,8 +2,8 @@
 namespace Common\Model;
 use Common\Model\BaseModel;
 /**
- * Êñ∞Èóªmodel
- */
-class IbosNewsModel extends BaseModel{
+* ∑÷¿‡model
+**/
+class CategoryModel extends BaseModel{
 	
 }

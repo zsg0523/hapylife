@@ -10,7 +10,7 @@ class UserController extends AdminBaseController{
 	* 用户列表
 	**/
 	public function index(){
-		//账户昵称搜索
+		// //账户昵称搜索
 		$word = I('post.word');
 		if(empty($word)){
 			$map=array();
@@ -20,7 +20,7 @@ class UserController extends AdminBaseController{
 			);
 		}
 		$assign=D('IbosUsers')->getAllData(D('IbosUsers'),$map,$order="hu_nickname");
-		//hrac门店信息
+		// //hrac门店信息
 		$HracShop   =D('HracShop')->select();
 		$HracGrage 	=D('HracGrade')->select();
 		$this->assign($assign);

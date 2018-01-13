@@ -4,7 +4,7 @@ use Common\Model\BaseModel;
 /**
 * 商品model
 **/
-class IbosProductModel extends BaseModel{
+class ProductModel extends BaseModel{
 	/**
 	* 获取所有商品列表
 	**/
@@ -19,7 +19,7 @@ class IbosProductModel extends BaseModel{
 				->where($map)
 				->order($order)
 				->alias('ip')
-				->join('__IBOS_CATEGORY__ ic ON ip.icid=ic.id')
+				->join('hapylife_category ic ON ip.icid=ic.id')
 				->limit($page->firstRow.','.$page->listRows)
 				->select();
 		}else{
@@ -27,7 +27,7 @@ class IbosProductModel extends BaseModel{
 				->field($field)
 				->order($order)
 				->alias('ip')
-				->join('__IBOS_CATEGORY__ ic ON ip.icid=ic.id')
+				->join('hapylife_category ic ON ip.icid=ic.id')
 				->limit($page->firstRow.','.$page->listRows)
 				->select();
 		}
