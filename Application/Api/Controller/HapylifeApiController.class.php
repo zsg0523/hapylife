@@ -7,25 +7,30 @@ use Common\Controller\HomeBaseController;
 class HapylifeApiController extends HomeBaseController{
 	
 	public function index(){
-		$data = D('Users')->select();
+		$data = D('Users')->limit('0,400000')->getfield('lastname',true);
+		$this->ajaxreturn($data);
+		unset($data);
 		// foreach ($data as $key => $value) {
-		// 	$tmpe             = $value;
-		// 	$tmpe['LastName'] = trim($value['LastName']);
-		// 	$tmpe['FirstName'] = trim($value['FirstName']);
-		// 	$tmpe['CustomerID'] = trim($value['CustomerID']);
+		// 	$tmpe['LastName']  = trim($value['lastname']);
+		// 	$tmpe['FirstName'] = trim($value['firstname']);
+		// 	$tmpe['CustomerID']= trim($value['customerid']);
+		// 	$tmpe['Placement']= trim($value['placement']);
+		// 	$tmpe['CustomerStatus ']= trim($value['customerstatus']);
+		// 	$tmpe['CustomerType']= trim($value['customertype']);
+		// 	$tmpe['EnrollerID']= trim($value['enrollerid']);
+		// 	$tmpe['SponsorID']= trim($value['sponsorid']);
+		// 	$tmpe['City']= trim($value['city']);
+		// 	$tmpe['State']= trim($value['state']);
+		// 	$tmpe['Country']= trim($value['country']);
+		// 	$tmpe['JoinedOn']= trim($value['joinedon']);
+		// 	$tmpe['HighestAchievedRank']= trim($value['highestachievedrank']);
+		// 	$tmpe['WeeklyVolume']= trim($value['weeklyvolume']);
+		// 	$tmpe['OrderDate']= trim($value['orderdate']);
 		// 	$add = D('User')->add($tmpe);
 		// }
 		// if($add){
 		// 	echo '添加完毕';
 		// }
-		p($data);
-		$data = M('Users')->select();
-		// foreach ($data as $key => $value) {
-		// 	$add = M('user')->add($value);
-		// }
-		if($add){
-			$this->ajaxreturn($data);
-		}
 	}
 	/**
 	* 旧用户注册
@@ -38,7 +43,7 @@ class HapylifeApiController extends HomeBaseController{
 			'CustomerID'   =>$data['CustomerID'],
 			'WeeklyVolume' =>1
 		);
-		$find = D('Users')->where($where)->find();
+		$find = D('User')->where($where)->find();
 		if($find){
 			// $tmpe = array(
 			// 	'Phone'     =>$data['Phone'],
@@ -58,7 +63,12 @@ class HapylifeApiController extends HomeBaseController{
 			$data['status'] = 0;
 			$this->ajaxreturn($data);
 		}
-	public function register(){
+	}
+
+	/**
+	* 新用户注册
+	**/
+	public function newregister(){
 	}
 
 	/**
@@ -410,6 +420,28 @@ class HapylifeApiController extends HomeBaseController{
         }
     }
 
-
+    public function test(){
+    	$data = import_csv('./Upload/csv/test.csv');
+    	foreach ($data as $key => $value) {
+    		$value = explode(',', $value);
+    		$tmpe['LastName']  = trim($value['4']);
+			$tmpe['FirstName'] = trim($value['5']);
+			$tmpe['CustomerID']= intval(trim($value['0']));
+			$tmpe['Placement']= trim($value['1']);
+			$tmpe['CustomerStatus ']= trim($value['2']);
+			$tmpe['CustomerType']= trim($value['3']);
+			$tmpe['EnrollerID']= trim($value['6']);
+			$tmpe['SponsorID']= trim($value['7']);
+			$tmpe['City']= trim($value['8']);
+			$tmpe['State']= trim($value['9']);
+			$tmpe['Country']= trim($value['10']);
+			$tmpe['JoinedOn']= trim($value['11']);
+			$tmpe['HighestAchievedRank']= trim($value['12']);
+			$tmpe['WeeklyVolume']= trim($value['14']);
+			$tmpe['OrderDate']= trim($value['15']);
+			$add = D('User')->add($tmpe);
+    		p($tmpe);
+    	}
+    }
 
 }
