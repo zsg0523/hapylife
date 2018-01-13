@@ -4,122 +4,24 @@ use Common\Controller\AdminBaseController;
 /**
 *后台权限管理
 **/
-class IbosController extends AdminBaseController{
-//***********************广告*******************
-	/**
-	* 轮播图，推广位列表
-	**/
-	public function ad(){
-		$category=D('IbosCategory')->where(array('is_show'=>1))->select();
-		$product=D('IbosProduct')->where(array('is_pull'=>1))->select();
-		$data=D('IbosShow')->order('order_number')->select();
-		$assign=array(
-			'data'=>$data,
-			'category'=>$category,
-			'product'=>$product
-			);
-		//推广位类型
-		$this->assign($assign);
-		$this->display();
-	}
-
-	/**
-	* 添加
-	**/
-	public function add_ad(){
-		$data=I('post.');
-		$upload=post_upload();
-		$data['show_picture']= C('WEB_URL').$upload['name'];
-		$result=D('IbosShow')->addData($data);
-		if($result){
-			$this->redirect('Admin/Ibos/ad');
-		}else{
-			$this->error('添加失败');
-		}
-	}
-
-	/**
-	* 显示
-	**/
-	public function show_ad(){
-		$data=I('get.');
-		$map =array(
-			'sid'=>$data['id']
-		);
-		$result=D('IbosShow')->editData($map,$data);
-		if($result){
-			$this->redirect('Admin/Ibos/ad');
-		}else{
-			$this->error('编辑失败');
-		}
-	}
-
-
-
-	/**
-	* 编辑
-	**/
-	public function edit_ad(){
-		$data=I('post.');
-		$map=array(
-				'sid'=>$data['id']
-			);
-		$upload=post_upload();
-		if(isset($upload['name'])){
-			$data['show_picture']=C('WEB_URL').$upload['name'];
-		}
-		$result=D('IbosShow')->editData($map,$data);
-		if($result){
-			$this->redirect('Admin/Ibos/ad');
-		}else{
-			$this->error('编辑失败');
-		}
-	}
-
-	/**
-	* 删除 
-	**/
-	public function delete_ad(){
-		$id=I('get.id');
-		$map=array(
-			'sid'=>$id
-			);
-		$result=D('IbosShow')->deleteData($map);
-		if($result){
-			$this->redirect('Admin/Ibos/ad');
-		}else{
-			$this->error('删除失败');
-		}
-	}
-
-	/**
-	* 排序
-	**/
-	public function order_ad(){
-		$data=I('post.');
-		$result=D('IbosShow')->orderData($data,$id='sid');
-		if ($result) {
-			$this->redirect('Admin/Ibos/ad');
-		}else{
-			$this->error('排序失败');
-		}
-	}
-
+class HapylifeController extends AdminBaseController{
 
 //***********************新闻*******************
 	/**
 	* 新闻列表
 	**/
 	public function news(){
-		$assign=D('IbosNews')->getPage(D('IbosNews'),$map=array());
+		$assign=D('News')->getPage(D('News'),$map=array());
 		$this->assign($assign);
 		$this->display();
 	}
+
 	/**
 	* 添加新闻(默认不置顶news_top 0，默认显示is_show 1)
 	**/
 	public function add_news(){
 		$upload=post_upload();
+		// p($upload);die;
 		$data=array(
 				'news_title'	=>I('news_title'),
 				'news_content'	=>I('news_content'),
@@ -127,9 +29,9 @@ class IbosController extends AdminBaseController{
 				'news_des'		=>I('post.news_des')?I('post.news_des'):mb_substr(I('post.news_content'),0,20).'.....',
 				'news_picture'	=>C('WEB_URL').$upload['name']
 			);
-		$result=D('IbosNews')->addData($data);
+		$result=D('News')->addData($data);
 		if($result){
-			$this->redirect('Admin/Ibos/news');
+			$this->redirect('Admin/Hapylife/news');
 		}else{
 			$this->error('添加失败');
 		}
@@ -140,6 +42,9 @@ class IbosController extends AdminBaseController{
 	**/
 	public function edit_news(){
 		$data=I('post.');
+		if(empty($data['news_des'])){
+			$data['news_des'] = mb_substr(I('post.news_content'),0,20).'.....';
+		}
 		$map=array(
 			'nid'=>$data['id']
 			);
@@ -147,9 +52,9 @@ class IbosController extends AdminBaseController{
 		if(isset($upload['name'])){
 			$data['news_picture']=C('WEB_URL').$upload['name'];
 		}
-		$result=D('IbosNews')->editData($map,$data);
+		$result=D('News')->editData($map,$data);
 		if($result){
-			$this->redirect('Admin/Ibos/news');
+			$this->redirect('Admin/Hapylife/news');
 		}else{
 			$this->error('编辑失败');
 		}
@@ -163,9 +68,9 @@ class IbosController extends AdminBaseController{
 		$map=array(
 			'nid'=>$id
 			);
-		$result=D('IbosNews')->deleteData($map);
+		$result=D('News')->deleteData($map);
 		if($result){
-			$this->redirect('Admin/Ibos/news');
+			$this->redirect('Admin/Hapylife/news');
 		}else{
 			$this->error('删除失败');
 		}
@@ -179,9 +84,9 @@ class IbosController extends AdminBaseController{
 		$map =array(
 			'nid'=>$data['id']
 			);
-		$result=D('IbosNews')->editData($map,$data);
+		$result=D('News')->editData($map,$data);
 		if($result){
-			$this->redirect('Admin/Ibos/news');
+			$this->redirect('Admin/Hapylife/news');
 		}else{
 			$this->error('编辑失败');
 		}
@@ -195,9 +100,112 @@ class IbosController extends AdminBaseController{
 		$map =array(
 			'nid'=>$data['id']
 			);
-		$result=D('IbosNews')->editData($map,$data);
+		$result=D('News')->editData($map,$data);
 		if($result){
-			$this->redirect('Admin/Ibos/news');
+			$this->redirect('Admin/Hapylife/news');
+		}else{
+			$this->error('编辑失败');
+		}
+	}
+
+//***********************旅游*******************
+	/**
+	* 旅游列表
+	**/
+	public function travel(){
+		$assign=D('Travel')->getPage(D('Travel'),$map=array());
+		$this->assign($assign);
+		$this->display();
+	}
+
+	/**
+	* 添加旅游(默认不置顶travel_top 0，默认显示is_show 1)
+	**/
+	public function add_travel(){
+		$upload=post_upload();
+		// p($upload);die;
+		$data=array(
+				'travel_title'	=>I('travel_title'),
+				'travel_content'=>I('travel_content'),
+				'addtime'		=>I('addtime'),
+				'whattime'		=>I('whattime'),
+				'travel_des'	=>I('post.travel_des')?I('post.travel_des'):mb_substr(I('post.travel_content'),0,20).'.....',
+				'travel_picture'=>C('WEB_URL').$upload['name']
+			);
+		$result=D('Travel')->addData($data);
+		if($result){
+			$this->redirect('Admin/Hapylife/travel');
+		}else{
+			$this->error('添加失败');
+		}
+	}
+
+	/**
+	* 编辑旅游
+	**/
+	public function edit_travel(){
+		$data=I('post.');
+		if(empty($data['travel_des'])){
+			$data['travel_des'] = mb_substr(I('post.travel_content'),0,20).'.....';
+		}
+		$map=array(
+			'tid'=>$data['id']
+			);
+		$upload=post_upload();
+		if(isset($upload['name'])){
+			$data['travel_picture']=C('WEB_URL').$upload['name'];
+		}
+		$result=D('Travel')->editData($map,$data);
+		if($result){
+			$this->redirect('Admin/Hapylife/travel');
+		}else{
+			$this->error('编辑失败');
+		}
+	}
+
+	/**
+	* 删除旅游
+	**/
+	public function delete_travel(){
+		$id=I('get.id');
+		$map=array(
+			'tid'=>$id
+			);
+		$result=D('Travel')->deleteData($map);
+		if($result){
+			$this->redirect('Admin/Hapylife/travel');
+		}else{
+			$this->error('删除失败');
+		}
+	}
+
+	/**
+	* 置顶旅游
+	**/
+	public function travel_top(){
+		$data=I('get.');
+		$map =array(
+			'tid'=>$data['id']
+			);
+		$result=D('Travel')->editData($map,$data);
+		if($result){
+			$this->redirect('Admin/Hapylife/travel');
+		}else{
+			$this->error('编辑失败');
+		}
+	}
+
+	/**
+	* 显示旅游
+	**/
+	public function travel_show(){
+		$data=I('get.');
+		$map =array(
+			'tid'=>$data['id']
+			);
+		$result=D('News')->editData($map,$data);
+		if($result){
+			$this->redirect('Admin/Hapylife/travel');
 		}else{
 			$this->error('编辑失败');
 		}
@@ -208,7 +216,7 @@ class IbosController extends AdminBaseController{
 	* 商品分类列表
 	**/
 	public function category(){
-		$data=D('IbosCategory')->getTreeData('tree','id','icat_name_zh');
+		$data=D('Category')->getTreeData('tree','id','icat_name_zh');
 		$assign=array(
 			'data'=>$data
 			);
@@ -224,9 +232,9 @@ class IbosController extends AdminBaseController{
 		unset($data['id']);
 		$upload=post_upload();
 		$data['icat_picture']=C('WEB_URL').$upload['name'];
-		$result=D('IbosCategory')->addData($data);
+		$result=D('Category')->addData($data);
 		if($result){
-			$this->redirect('Admin/Ibos/category');
+			$this->redirect('Admin/Hapylife/category');
 		}else{
 			$this->error('添加失败');
 		}
@@ -244,9 +252,9 @@ class IbosController extends AdminBaseController{
 		if(isset($upload['name'])){
 			$data['icat_picture']=C('WEB_URL').$upload['name'];
 		}
-		$result=D('IbosCategory')->editData($map,$data);
+		$result=D('Category')->editData($map,$data);
 		if($result){
-			$this->redirect('Admin/Ibos/category');
+			$this->redirect('Admin/Hapylife/category');
 		}else{
 			$this->error('编辑失败');
 		}
@@ -261,9 +269,9 @@ class IbosController extends AdminBaseController{
 		$map=array(
 			'id'=>$id
 			);
-		$result=D('IbosCategory')->deleteData($map);
+		$result=D('Category')->deleteData($map);
 		if($result){
-			$this->redirect('Admin/Ibos/category');
+			$this->redirect('Admin/Hapylife/category');
 		}else{
 			$this->error('删除失败');
 		}
@@ -276,7 +284,7 @@ class IbosController extends AdminBaseController{
 	**/
 	public function product(){
 		//获取分类信息
-		$catList=D('IbosCategory')->select();
+		$catList=D('Category')->select();
 
 		//获取商品分类列表
 		$word=I('get.word','');
@@ -287,7 +295,7 @@ class IbosController extends AdminBaseController{
 				'ip_name_zh'=>$word
 				);
 		}
-		$assign=D('IbosProduct')->getAllData(D('IbosProduct'),$map);
+		$assign=D('Product')->getAllData(D('Product'),$map);
 		$this->assign('catList',$catList);
 		$this->assign($assign);
 		$this->display();
@@ -300,9 +308,9 @@ class IbosController extends AdminBaseController{
 		$data=I('post.');
 		$upload=post_upload();
 		$data['ip_picture_zh']=C('WEB_URL').$upload['name'];
-		$result=D('IbosProduct')->addData($data);
+		$result=D('Product')->addData($data);
 		if($result){
-			$this->redirect('Admin/Ibos/product');
+			$this->redirect('Admin/Hapylife/product');
 		}else{
 			$this->error('添加失败');
 		}
@@ -320,7 +328,7 @@ class IbosController extends AdminBaseController{
 		if(isset($upload['name'])){
 			$data['ip_picture_zh']=C('WEB_URL').$upload['name'];
 		}
-		$result=D('IbosProduct')->editData($map,$data);
+		$result=D('Product')->editData($map,$data);
 		if($result){
 			redirect($_SERVER['HTTP_REFERER']);
 		}else{
@@ -336,7 +344,7 @@ class IbosController extends AdminBaseController{
 		$map=array(
 			'ipid'=>$id
 			);
-		$result=D('IbosProduct')->deleteData($map);
+		$result=D('Product')->deleteData($map);
 		if($result){
 			redirect($_SERVER['HTTP_REFERER']);
 		}else{
@@ -352,7 +360,7 @@ class IbosController extends AdminBaseController{
 		$map =array(
 			'ipid'=>$data['id']
 			);
-		$result=D('IbosProduct')->editData($map,$data);
+		$result=D('Product')->editData($map,$data);
 		if($result){
 			redirect($_SERVER['HTTP_REFERER']);
 		}else{
@@ -490,17 +498,17 @@ class IbosController extends AdminBaseController{
 	/**
 	* 用户列表
 	**/
-	public function users(){
+	public function user(){
 		//账户昵称搜索
 		$word = I('post.word');
 		if(empty($word)){
 			$map=array();
 		}else{
 			$map=array(
-				'hu_nickname'=>$word
+				'CustomerID'=>$word
 			);
 		}
-		$assign=D('IbosUsers')->getAllData(D('IbosUsers'),$map,$order="iu_logintime desc");
+		$assign=D('User')->getAllData(D('User'),$map,$word,$order="iuid desc");
 		$this->assign($assign);
 		$this->display();
 	}
@@ -508,7 +516,7 @@ class IbosController extends AdminBaseController{
 	/**
 	* 用户编辑
 	**/
-	public function edit_users(){
+	public function edit_user(){
 		$data=I('post.');
 		$map=array(
 			'iuid'=>$data['id']
@@ -518,9 +526,9 @@ class IbosController extends AdminBaseController{
 		if(isset($upload['name'])){
 			$data['hu_photo']=C('WEB_URL').$upload['name'];
 		}
-		$result = D('IbosUsers')->editData($map,$data);
+		$result = D('User')->editData($map,$data);
 		if($result){
-			$this->redirect('Admin/Ibos/users');
+			$this->redirect('Admin/Hapylife/user');
 		}else{
 			$this->error('修改失败');
 		}
@@ -529,14 +537,14 @@ class IbosController extends AdminBaseController{
 	/**
 	* 用户锁定
 	**/
-	public function lock_users(){
+	public function lock_user(){
 		$data=I('get.');
 		$map =array(
 			'iuid'=>$data['id']
 			);
-		$result=D('IbosUsers')->editData($map,$data);
+		$result=D('User')->editData($map,$data);
 		if($result){
-			$this->redirect('Admin/Ibos/users');
+			$this->redirect('Admin/Hapylife/user');
 		}else{
 			$this->error('编辑失败');
 		}
@@ -545,14 +553,14 @@ class IbosController extends AdminBaseController{
 	/**
 	* 用户删除
 	**/
-	public function delete_users(){
+	public function delete_user(){
 		$id=I('get.id');
 		$map=array(
 			'iuid'=>$id
 			);
-		$result=D('IbosUsers')->deleteData($map);
+		$result=D('User')->deleteData($map);
 		if($result){
-			$this->redirect('Admin/Ibos/users');
+			$this->redirect('Admin/Hapylife/user');
 		}else{
 			$this->error('删除失败');
 		}

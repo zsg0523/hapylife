@@ -170,7 +170,7 @@ class RuleController extends AdminBaseController{
         if(empty($username)){
             $user_data='';
         }else{
-            $user_data=M('Users')->where(array('username'=>$username))->select();
+            $user_data=M('Admin')->where(array('username'=>$username))->select();
         }
         $assign=array(
             'group_name'=>$group_name,
@@ -228,7 +228,7 @@ class RuleController extends AdminBaseController{
     public function add_admin(){
         if(IS_POST){
             $data=I('post.');
-            $result=D('Users')->addData($data);
+            $result=D('Admin')->addData($data);
             if($result){
                 if (!empty($data['group_ids'])) {
                     foreach ($data['group_ids'] as $k => $v) {
@@ -242,7 +242,7 @@ class RuleController extends AdminBaseController{
                 // 操作成功
                 $this->success('添加成功',U('Admin/Rule/admin_user_list'));
             }else{
-                $error_word=D('Users')->getError();
+                $error_word=D('Admin')->getError();
                 // 操作失败
                 $this->error($error_word);
             }
@@ -282,12 +282,12 @@ class RuleController extends AdminBaseController{
                 $data['password']=md5($data['password']);
             }
             // p($data);die;
-            $result=D('Users')->editData($map,$data);
+            $result=D('Admin')->editData($map,$data);
             if($result){
                 // 操作成功
                 $this->success('编辑成功',U('Admin/Rule/edit_admin',array('id'=>$uid)));
             }else{
-                $error_word=D('Users')->getError();
+                $error_word=D('Admin')->getError();
                 if (empty($error_word)) {
                     $this->success('编辑成功',U('Admin/Rule/edit_admin',array('id'=>$uid)));
                 }else{
@@ -299,7 +299,7 @@ class RuleController extends AdminBaseController{
         }else{
             $id=I('get.id',0,'intval');
             // 获取用户数据
-            $user_data=M('Users')->find($id);
+            $user_data=M('Admin')->find($id);
             // 获取已加入用户组
             $group_data=M('AuthGroupAccess')
                 ->where(array('uid'=>$id))

@@ -25,7 +25,7 @@ class AuthGroupAccessModel extends BaseModel{
 		$data=$this
 			->field('u.id,u.username,u.email,aga.group_id,ag.title')
 			->alias('aga')
-			->join('__USERS__ u ON aga.uid=u.id','RIGHT')
+			->join('__ADMIN__ u ON aga.uid=u.id','RIGHT')
 			->join('__AUTH_GROUP__ ag ON aga.group_id=ag.id','LEFT')
 			->select();
 		// 获取第一条数据

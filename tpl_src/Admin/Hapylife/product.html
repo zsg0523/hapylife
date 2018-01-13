@@ -7,7 +7,7 @@
         <h1>
             首页
             &gt;
-            Ibos
+            Hapylife
             &gt;
 			商品管理
         </h1>
@@ -49,13 +49,13 @@
 							<td>{$v['ip_bp']}</td>
 							<td>{$v['ip_gbv']}</td>
 							<td><img width='40' height="40" src="{$v['ip_picture_zh']}"></td>
-							<td><a href="{:U('Admin/Ibos/status_product',array('id'=>$v['ipid'],'ip_hksale'=>$v['ip_hksale']?0:1))}">{$v['ip_hksale']?是:否}</a></td>
-							<td><a href="{:U('Admin/Ibos/status_product',array('id'=>$v['ipid'],'ip_cnsale'=>$v['ip_cnsale']?0:1))}">{$v['ip_cnsale']?是:否}</a></td>
-							<td><a href="{:U('Admin/Ibos/status_product',array('id'=>$v['ipid'],'is_push'=>$v['is_push']?0:1))}">{$v['is_push']?推荐:否}</a></td>
-							<td><a href="{:U('Admin/Ibos/status_product',array('id'=>$v['ipid'],'is_pull'=>$v['is_pull']?0:1))}">{$v['is_pull']?上架:否}</a></td>
+							<td><a href="{:U('Admin/Hapylife/status_product',array('id'=>$v['ipid'],'ip_hksale'=>$v['ip_hksale']?0:1))}">{$v['ip_hksale']?是:否}</a></td>
+							<td><a href="{:U('Admin/Hapylife/status_product',array('id'=>$v['ipid'],'ip_cnsale'=>$v['ip_cnsale']?0:1))}">{$v['ip_cnsale']?是:否}</a></td>
+							<td><a href="{:U('Admin/Hapylife/status_product',array('id'=>$v['ipid'],'is_push'=>$v['is_push']?0:1))}">{$v['is_push']?推荐:否}</a></td>
+							<td><a href="{:U('Admin/Hapylife/status_product',array('id'=>$v['ipid'],'is_pull'=>$v['is_pull']?0:1))}">{$v['is_pull']?上架:否}</a></td>
 							<td>
 								<a href="javascript:;" productId="{$v['ipid']}" productName="{$v['ip_name_zh']}" productBh="{$v['ip_bh']}" productPrice="{$v['ip_price_rmb']}" productBp="{$v['ip_bp']}" productGbv="{$v['ip_gbv']}" productDesc="{$v['ip_desc_zh']}" productPoint="{$v['ip_point']}" categoryId="{$v['id']}" onclick="edit(this)">修改</a> |
-								<a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Ibos/delete_product',array('id'=>$v['ipid']))}'">删除</a>
+								<a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Hapylife/delete_product',array('id'=>$v['ipid']))}'">删除</a>
 							</td>
 						</tr>
 					</foreach>
@@ -79,7 +79,7 @@
 					</h4>
 				</div>
 				<div class="modal-body">
-					<form id="bjy-form" class="form-inline" action="{:U('Admin/Ibos/add_product')}" method="post" enctype="multipart/form-data">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Hapylife/add_product')}" method="post" enctype="multipart/form-data">
 						<table class="table table-striped table-bordered table-hover table-condensed">
 							<tr>
 								<th width="15%">商品名：</th>
@@ -170,7 +170,7 @@
 					</h4>
 				</div>
 				<div class="modal-body">
-					<form id="bjy-form" class="form-inline" action="{:U('Admin/Ibos/edit_product')}" method="post" enctype="multipart/form-data">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Hapylife/edit_product')}" method="post" enctype="multipart/form-data">
 						<input type="hidden" name="id">
 						<table class="table table-striped table-bordered table-hover table-condensed">
 							<tr>

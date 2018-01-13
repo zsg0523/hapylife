@@ -1,47 +1,50 @@
 <extend name="Public:base" />
 
-<block name="title">新闻管理</block>
+<block name="title">旅游管理</block>
 <block name="content">
     <!-- 导航栏开始 -->
     <div class="page-header">
         <h1>
             首页
             &gt;
-            Ibos
+            Hapylife
             &gt;
-			新闻管理
+			旅游管理
         </h1>
     </div>
     <div class="col-xs-12">
         <div class="tabbable">
             <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
 			  	<li class="active">
-					<a href="#home" data-toggle="tab">新闻列表</a>
+					<a href="#home" data-toggle="tab">旅游列表</a>
 			    </li>
 			    <li>
-					<a href="javascript:;" onclick="add()">添加新闻</a>
+					<a href="javascript:;" onclick="add()">添加旅游</a>
 				</li>
             </ul>
             <div class="tab-content">
 				<table class="table table-striped table-bordered table-hover table-condensed">
 					<tr>
 						<th>标题</th>
-						<th>新闻图片</th>
+						<th>旅游图片</th>
+						<th>内容</th>
 						<th>内容简要</th>
-						<th>发布时间</th>
+						<th>日期</th>
+						<th>相隔天数</th>
 						<th>操作</th>
 					</tr>
 					<foreach name="data" item="v">
 						<tr>
-							<td>{$v['news_title']}</td>
-							<td><img src="{$v['news_picture']}" width='40' height='40'></td>
-							<td>{$v['news_des']}</td>
+							<td>{$v['travel_title']}</td>
+							<td><img src="{$v['travel_picture']}" width='40' height='40'></td>
+							<td>{$v['travel_content']}</td>
+							<td>{$v['travel_des']}</td>
 							<td>{$v['addtime']}</td>
+							<td>{$v['whattime']}day</td>
 							<td>
-								<a href="javascript:;" newsId="{$v['nid']}" newsTitle="{$v['news_title']}" newsContent="{$v['news_content']}" newsDes="{$v['news_des']}" onclick="edit(this)">修改</a> |
-								<a href="{:U('Admin/Ibos/news_top',array('news_top'=>$v['news_top']?0:1,'id'=>$v['nid']))}">{$v['news_top']?置顶:否}</a> |
-								<a href="{:U('Admin/Ibos/news_show',array('is_show'=>$v['is_show']?0:1,'id'=>$v['nid']))}">{$v['is_show']?显示:否}</a> |
-								<a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Ibos/delete_news',array('id'=>$v['nid']))}'">删除</a> 
+								<a href="javascript:;" travelId="{$v['tid']}" travelTitle="{$v['travel_title']}" travelContent="{$v['travel_content']}" travelDes="{$v['travel_des']}" whatTime="{$v['whattime']}" addTime="{$v['addtime']}" onclick="edit(this)">修改</a> |
+								<a href="{:U('Admin/Hapylife/travel_show',array('is_show'=>$v['is_show']?0:1,'id'=>$v['tid']))}">{$v['is_show']?显示:否}</a> |
+								<a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Hapylife/delete_travel',array('id'=>$v['tid']))}'">删除</a> 
 							</td>
 						</tr>
 					</foreach>
@@ -61,32 +64,44 @@
 						&times;
 					</button>
 					<h4 class="modal-title" id="myModalLabel">
-						添加新闻
+						添加旅游
 					</h4>
 				</div>
 				<div class="modal-body">
-					<form id="bjy-form" class="form-inline" action="{:U('Admin/Ibos/add_news')}" method="post" enctype="multipart/form-data">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Hapylife/add_travel')}" method="post" enctype="multipart/form-data">
 						<table class="table table-striped table-bordered table-hover table-condensed">
 							<tr>
 								<th width="15%">标题：</th>
 								<td>
-									<input class="input-medium" type="text" name="news_title">
+									<input class="input-medium" type="text" name="travel_title">
 								</td>
 							</tr>
 							<tr>
 								<th width="15%">内容：</th>
 								<td>
-									<textarea  name="news_content" style="width:300px;height:100px;" class="textArea"></textarea>
+									<textarea  name="travel_content" style="width:300px;height:100px;" class="textArea"></textarea>
 								</td>
 							</tr>
 							<tr>
 								<th width="15%">内容提要：</th>
 								<td>
-									<input class="input-medium" type="text" name="news_des">默认截取内容前20字
+									<input class="input-medium" type="text" name="travel_des">默认截取内容前20字
 								</td>
 							</tr>
 							<tr>
-								<th width="15%">新闻图片：</th>
+								<th width="15%">日期：</th>
+								<td>
+									<input class="input-medium" type="text" name="addtime">格式: Feb 10-16/2017 
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">天数：</th>
+								<td>
+									<input class="input-medium" type="text" name="whattime">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">旅游图片：</th>
 								<td>
 									<input class="input-medium" type="file" name='photo'>
 								</td>
@@ -114,33 +129,45 @@
 						&times;
 					</button>
 					<h4 class="modal-title" id="myModalLabel">
-						编辑新闻
+						编辑旅游
 					</h4>
 				</div>
 				<div class="modal-body">
-					<form id="bjy-form" class="form-inline" action="{:U('Admin/Ibos/edit_news')}" method="post" enctype="multipart/form-data">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Hapylife/edit_travel')}" method="post" enctype="multipart/form-data">
 						<input type="hidden" name="id">
 						<table class="table table-striped table-bordered table-hover table-condensed">
 							<tr>
 								<th width="15%">标题：</th>
 								<td>
-									<input class="input-medium" type="text" name="news_title">
+									<input class="input-medium" type="text" name="travel_title">
 								</td>
 							</tr>
 							<tr>
 								<th width="15%">内容：</th>
 								<td>
-									<textarea  name="news_content" style="width:300px;height:100px;" class="textArea"></textarea>
+									<textarea  name="travel_content" style="width:300px;height:100px;" class="textArea"></textarea>
 								</td>
 							</tr>
 							<tr>
 								<th width="15%">内容提要：</th>
 								<td>
-									<input class="input-medium" type="text" name="news_des">默认截取内容前20字
+									<input class="input-medium" type="text" name="travel_des">默认截取内容前20字
 								</td>
 							</tr>
 							<tr>
-								<th width="15%">新闻图片：</th>
+								<th width="15%">日期：</th>
+								<td>
+									<input class="input-medium" type="text" name="addtime">格式: Feb 10-16/2017 
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">天数：</th>
+								<td>
+									<input class="input-medium" type="text" name="whattime">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">旅游图片：</th>
 								<td>
 									<input class="input-medium" type="file" name='photo'>
 								</td>
@@ -169,14 +196,18 @@
 
 	// 修改菜单
 	function edit(obj){
-		var newsId=$(obj).attr('newsId');
-		var newsTitle=$(obj).attr('newsTitle');
-		var newsContent=$(obj).attr('newsContent');
-		var newsDes=$(obj).attr('newsDes');
-		$("input[name='id']").val(newsId);
-		$("input[name='news_title']").val(newsTitle);
-		$("textarea[name='news_content']").val(newsContent);
-		$("input[name='news_des']").val(newsDes);
+		var travelId=$(obj).attr('travelId');
+		var travelTitle=$(obj).attr('travelTitle');
+		var travelContent=$(obj).attr('travelContent');
+		var whatTime=$(obj).attr('whatTime');
+		var addTime=$(obj).attr('addTime');
+		var travelDes=$(obj).attr('travelDes');
+		$("input[name='id']").val(travelId);
+		$("input[name='travel_title']").val(travelTitle);
+		$("textarea[name='travel_content']").val(travelContent);
+		$("input[name='whattime']").val(whatTime);
+		$("input[name='addtime']").val(addTime);
+		$("input[name='travel_des']").val(travelDes);
 		$('#bjy-edit').modal('show');
 	}
 	</script>

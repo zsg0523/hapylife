@@ -5,12 +5,17 @@ use Common\Controller\HomeBaseController;
 * hapylife控制器
 **/
 class HapylifeApiController extends HomeBaseController{
-	
+
 	public function index(){
 		$data = D('Users')->limit('0,400000')->getfield('lastname',true);
 		$this->ajaxreturn($data);
 		unset($data);
 		// foreach ($data as $key => $value) {
+		// // die;
+		// set_time_limit(10000);
+		// $data1 = D('Users')->limit('900000,1000000')->select();
+		// // print_r($data);
+		// foreach ($data1 as $key => $value) {
 		// 	$tmpe['LastName']  = trim($value['lastname']);
 		// 	$tmpe['FirstName'] = trim($value['firstname']);
 		// 	$tmpe['CustomerID']= trim($value['customerid']);
@@ -31,34 +36,50 @@ class HapylifeApiController extends HomeBaseController{
 		// if($add){
 		// 	echo '添加完毕';
 		// }
+		// 	$add = D('User1')->add($tmpe);
+		// }
+		// if($add){
+		// 	echo '80-90添加完毕';
+		// }
+		// unset($data1);
 	}
 	/**
 	* 旧用户注册
 	**/
 	public function oldregister(){
-		$data = I('post.');
+		$data  = I('post.');
 		$where= array(
 			'LastName'     =>$data['LastName'],
 			'FirstName'    =>$data['FirstName'],
-			'CustomerID'   =>$data['CustomerID'],
-			'WeeklyVolume' =>1
+			'CustomerID'   =>$data['CustomerID']
 		);
 		$find = D('User')->where($where)->find();
 		if($find){
-			// $tmpe = array(
-			// 	'Phone'     =>$data['Phone'],
-			// 	'PassWord'  =>md5($data['PassWord']),
-			// 	'JustIdcard'=>$data['JustIdcard'],
-			// 	'BackIdcard'=>$data['BackIdcard']
-			// );
-			// $save = D('Users')->where($where)->save($tmpe);
-			// if($save){
+			if(!empty($data['JustIdcard'])){
+                $img_body1 = substr(strstr($data['JustIdcard'],','),1);
+                $JustIdcard = time().'_'.mt_rand().'.jpg';
+                $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
+            }
+            if(!empty($data['BackIdcard'])){
+                $img_body2 = substr(strstr($data['BackIdcard'],','),1);
+                $BackIdcard = time().'_'.mt_rand().'.jpg';
+                $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
+            }
+			$tmpe = array(
+				'Phone'     =>$data['Phone'],
+				'PassWord'  =>md5($data['PassWord']),
+				'JustIdcard'=>C('WEB_URL').'/Upload/file/'.$JustIdcard,
+				'BackIdcard'=>C('WEB_URL').'/Upload/file/'.$BackIdcard
+			);
+			$data['iuid'] = $find['iuid'];
+			$save = D('User')->where($where)->save($tmpe);
+			if($save){
 				$data['status'] = 1;
 				$this->ajaxreturn($data);				
-			// }else{
-			// 	$data['status'] = 0;
-			// 	$this->ajaxreturn($data);
-			// }
+			}else{
+				$data['status'] = 0;
+				$this->ajaxreturn($data);
+			}
 		}else{
 			$data['status'] = 0;
 			$this->ajaxreturn($data);
@@ -69,36 +90,111 @@ class HapylifeApiController extends HomeBaseController{
 	* 新用户注册
 	**/
 	public function newregister(){
+
 	}
 
+	/**
+	* 新用户注册LastName FirstName EnrollerID Email PassWord Phone JustIdcard BackIdcard Sex
+	**/
+	public function newregister(){
+		$data  = I('post.');
+		$find  = D('User')->where(array('CustomerID'=>$data['EnrollerID']))->find();
+		if(!$find){
+			$tmpe['status'] = 2;
+			$this->ajaxreturn($tmpe);			
+		}else{
+			if(!empty($data['JustIdcard'])){
+                $img_body1 = substr(strstr($data['JustIdcard'],','),1);
+                $JustIdcard = time().'_'.mt_rand().'.jpg';
+                $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
+            }
+            if(!empty($data['BackIdcard'])){
+                $img_body2 = substr(strstr($data['BackIdcard'],','),1);
+                $BackIdcard = time().'_'.mt_rand().'.jpg';
+                $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
+            }
+			$custid= D('User')->order('iuid desc')->getfield('CustomerID');
+			$where = array(
+				'CustomerID'         => $custid+1,
+				'IsNew'              => 1,
+				'Placement'          => 'Right',
+				'CustomerStatus'     => 'Active',
+				'CustomerType'       => 'Distributor',
+				'LastName'           => $data['LastName'],
+				'FirstName'          => $data['FirstName'],
+				'EnrollerID'         => $data['EnrollerID'],
+				'SponsorID'          => $data['EnrollerID'],
+				'JoinedOn'           => date("m/d/Y h:i:s A"),
+				'HighestAchievedRank'=> 'Director',
+				'Email'              => $data['Email'],
+				'WeeklyVolume'       => 0,
+				'PassWord'           => md5($data['PassWord']),
+				'Phone'              => $data['Phone'],
+				'JustIdcard'         => C('WEB_URL').'/Upload/file/'.$JustIdcard,
+				'BackIdcard'         => C('WEB_URL').'/Upload/file/'.$BackIdcard,
+				'Sex'                => $data['Sex'],
+				'IsCheck'            => 0
+			);
+			$add   = D('User')->add($where);
+			if($add){
+				$tmpe  = D('User')->where(array('CustomerID'=>$custid+1))->find();
+				$tmpe['CustomerID'] = $custid+1;
+				$tmpe['status']     = 1;
+				$this->ajaxreturn($tmpe);				
+			}else{
+				$tmpe['status'] = 0;
+				$this->ajaxreturn($tmpe);
+			}
+		}
+	}
 	/**
 	* 登录
 	**/
 	public function login(){
-
-	}	
-
-	/**
-	* 
-	* 置顶新闻
-	**/
-	public function newstop(){
-		$map  = array(
-				'news_top'=>1,
-				'is_show' =>1
-			);
-		$data = M('News')
-				->where($map)
-				->order('addtime desc')
-				->select();
+		$tmpe = I('post.');
+		$where= array(
+			'CustomerID'=>$tmpe['CustomerID'],
+			'PassWord'  =>md5($tmpe['PassWord'])
+		);
+		$data = D('User')->where($where)->find();
 		if($data){
-			$this->ajaxreturn($data);
+			// $time=strtotime($data['orderdate']);
+			// if($time>time()){
+				$data['status'] = 1;
+				$this->ajaxreturn($data);	
+			// }else{
+				// $data['status'] = 2;
+				// $this->ajaxreturn($data);					
+			// }
 		}else{
-			$data = array(
-					'status'=>0,
-					'msg'	=>'无法获取置顶新闻列表'
-				);
-			$this->ajaxreturn($data);
+			$data['status'] = 0;
+			$this->ajaxreturn($data);			
+		}
+	}
+	/**
+	* 获取用户信息
+	**/
+	public function userinfo(){
+		$iuid = I('post.iuid');
+		$data = D('User')->where(array('iuid'=>$iuid))->find();
+		$right= D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Right'))->select();
+		$left = D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Left'))->select();
+		if($right){
+			$data['right'] = count($right);
+		}else{
+			$data['right'] = 0;
+		}
+		if($left){
+			$data['left'] = count($left);
+		}else{
+			$data['left'] = 0;
+		}
+		if($data){
+			$data['status'] = 1;
+			$this->ajaxreturn($data);	
+		}else{
+			$data['status'] = 0;
+			$this->ajaxreturn($data);			
 		}
 	}
 
@@ -178,7 +274,6 @@ class HapylifeApiController extends HomeBaseController{
 	            $this->ajaxreturn($data);
         }
 	}
-
 	/**
 	* 订单
 	**/
@@ -188,7 +283,7 @@ class HapylifeApiController extends HomeBaseController{
         //商品信息
         $product = M('Product')->where(array('ipid'=>$ipid))->find();
         //用户信息
-        $userinfo= M('Users')->where(array('iuid'=>$iuid))->find();
+        $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
         //生成唯一订单号
         $order_num = date('YmdHis').rand(10000, 99999);
         $order = array(
@@ -201,13 +296,13 @@ class HapylifeApiController extends HomeBaseController{
                 //下单用户id
                 'iuid'=>$iuid,
                 //下单用户
-                'hu_nickname'=>$userinfo['FirstName'],
+                'CustomerID'=>$userinfo['customerid'],
                 //收货人
-                'ia_name'=>$userinfo['FirstName'],
+                'ia_name'=>$userinfo['firstname'],
                 //收货人电话
-                'ia_phone'=>$userinfo['Phone'],
+                'ia_phone'=>$userinfo['phone'],
                 //收货地址
-                'ia_address'=>$userinfo['City'],
+                'ia_address'=>$userinfo['city'],
                 //订单总商品数量
                 'ir_productnum'=>1,
                 //订单总金额
@@ -266,17 +361,17 @@ class HapylifeApiController extends HomeBaseController{
         $kq_merchantAcctId  = "1020997278101";      //*  商家用户编号     (30)
         $kq_inputCharset    = "1";  //   1 ->  UTF-8        2 -> GBK        3 -> GB2312   default: 1    (2)
         $kq_pageUrl         = ""; //   直接跳转页面 (256)
-        $kq_bgUrl           = "http://10.16.0.153/hapylife/index.php/Api/HapylifeApi/getKqReturn"; //   后台通知页面 (256)
+        $kq_bgUrl           = "http://apps.hapy-life.com/hapylife/index.php/Api/HapylifeApi/getKqReturn"; //   后台通知页面 (256)
         $kq_version         = "mobile1.0";  //*  版本  固定值 v2.0   (10)
         $kq_language        = "1";  //*  默认 1 ， 显示 汉语   (2)
         $kq_signType        = "4";   //*  固定值 1 表示 MD5 加密方式 , 4 表示 PKI 证书签名方式   (2)
-        $kq_payerName       = $order['hu_nickname']; //   英文或者中文字符   (32)
+        $kq_payerName       = $order['customerid']; //   英文或者中文字符   (32)
         $kq_payerContactType= "1";    //  支付人联系类型  固定值： 1  代表电子邮件方式 (2)
         $kq_payerContact    = "";     //   支付人联系方式    (50)
         $kq_orderId         = $order_num; //*  字母数字或者, _ , - ,  并且字母数字开头 并且在自身交易中式唯一  (50)
         $kq_orderAmount     = $order['ir_price']*100; //*   字符金额 以 分为单位 比如 10 元， 应写成 1000 (10)
         $kq_orderTime       = date(YmdHis);  //*  交易时间  格式: 20110805110533
-        $kq_productName     = "Nulife";//    商品名称英文或者中文字符串(256)
+        $kq_productName     = "nulife";//    商品名称英文或者中文字符串(256)
         $kq_productNum      = $order['ir_productnum'];   //    商品数量  (8)
         $kq_productId       = "";   //    商品代码，可以是 字母,数字,-,_   (20) 
         $kq_productDesc     = ""; //    商品描述， 英文或者中文字符串  (400)
@@ -379,6 +474,10 @@ class HapylifeApiController extends HomeBaseController{
                     'status' =>1
                 ); 
             $add = M('Log')->add($map);
+            //修改用户最近订单日期
+            $tmpe['OrderDate']= date("m/d/Y h:i:s A");
+            $tmpe['iuid']     =D('Receipt')->where(array('ir_receiptnum'=>$_GET['orderId']))->getfield('iuid');
+            $update           =D('User')->save($tmpe);
             //做订单的处理
             $receipt = M('Receipt')->where(array('ir_receiptnum'=>$_GET['orderId']))->setField('ir_status',2);
             if($receipt){
@@ -407,9 +506,10 @@ class HapylifeApiController extends HomeBaseController{
     public function checkreceipt(){
         $ir_receiptnum = I('post.ir_receiptnum');
         //订单状态查询
-        $receipt_status = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->getfield('ir_status');
-        if($receipt_status == 2){
+        $receipt       = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
+        if($receipt['ir_status'] == 2){
             //支付成功
+            $data['ir_price'] = $receipt['ir_price'];
             $data['status'] = 1;
             $data['msg'] = '支付成功，请跳转...';
             $this->ajaxreturn($data);
@@ -420,28 +520,44 @@ class HapylifeApiController extends HomeBaseController{
         }
     }
 
-    public function test(){
-    	$data = import_csv('./Upload/csv/test.csv');
-    	foreach ($data as $key => $value) {
-    		$value = explode(',', $value);
-    		$tmpe['LastName']  = trim($value['4']);
-			$tmpe['FirstName'] = trim($value['5']);
-			$tmpe['CustomerID']= intval(trim($value['0']));
-			$tmpe['Placement']= trim($value['1']);
-			$tmpe['CustomerStatus ']= trim($value['2']);
-			$tmpe['CustomerType']= trim($value['3']);
-			$tmpe['EnrollerID']= trim($value['6']);
-			$tmpe['SponsorID']= trim($value['7']);
-			$tmpe['City']= trim($value['8']);
-			$tmpe['State']= trim($value['9']);
-			$tmpe['Country']= trim($value['10']);
-			$tmpe['JoinedOn']= trim($value['11']);
-			$tmpe['HighestAchievedRank']= trim($value['12']);
-			$tmpe['WeeklyVolume']= trim($value['14']);
-			$tmpe['OrderDate']= trim($value['15']);
-			$add = D('User')->add($tmpe);
-    		p($tmpe);
-    	}
-    }
+    /**
+	* 旅游列表
+	**/	
+	public function travellist(){
+		$map  = array(
+				'is_show' =>1
+			);
+		$data = M('Travel')
+				->where($map)
+				->order('addtime desc')
+				->select();
+		if($data){
+			$this->ajaxreturn($data);
+		}else{
+			$data = array(
+				'status'=>0,
+				'msg'	=>'无法获取旅游列表'
+			);
+			$this->ajaxreturn($data);
+		}
+	}
+
+	/**
+	* 旅游详情
+	**/
+	public function travelcontent(){
+		$tid  = I('post.tid');
+        $data = M('Travel')->where(array('tid'=>$tid))->find();
+        if($data){
+            $this->ajaxreturn($data);
+        }else{
+            $data = array(
+				'status'=>0,
+				'msg'	=>'获取旅游详情失败'
+			);
+            $this->ajaxreturn($data);
+        }
+	}
+
 
 }

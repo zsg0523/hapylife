@@ -855,8 +855,7 @@ class HracController extends AdminBaseController{
 	**/
 	public function user(){
  		$keyword =I('get.keyword');
- 		$user = D('HracUsers')->alias('hu')->join('__IBOS_USERS__ iu ON hu.iuid=iu.iuid')->select();
-		$assign  =D('HracUsers')->getAllData(D('HracUsers'),$map,$keyword,'huid desc');
+		$assign  =D('Users')->getAllData(D('Users'),$map,$keyword,'iuid desc');
 		$this->assign('keyword',$keyword);
 		$this->assign($assign);
 		$this->display();
@@ -900,119 +899,8 @@ class HracController extends AdminBaseController{
 		$upload=post_upload();
 		$file  = '.'.$upload['name'];
 		$data  = import_excel($file);
-		$unlink= C('WEB_URL').$upload['name'];
-		// 去除空值
-		foreach ($data as $key => $value) {
-			if(!empty($value[0])){
-				$status[$key] = $value;
-			}
-		}
-		foreach ($status as $key => $value){
-			$stamp[$key]['hu_nickname'] = $value[0];
-			$stamp[$key]['hu_username'] = $value[1];
-			$stamp[$key]['hu_phone'] 	= $value[2];
-			$stamp[$key]['hu_email'] 	= $value[3];
-			$stamp_date1                = \PHPExcel_Shared_Date::ExcelToPHP($value[4]);//将获取的奇怪数字转成时间戳，该时间戳会自动带上当前日期
-      		$stamp[$key]['vipstart']    = gmdate("Y-m-d",$stamp_date1);	
-      		$stamp_date2                = \PHPExcel_Shared_Date::ExcelToPHP($value[5]);//将获取的奇怪数字转成时间戳，该时间戳会自动带上当前日期
-      		$stamp[$key]['vipend']      = gmdate("Y-m-d",$stamp_date2);
-			$stamp[$key]['hu_hpname']	= $value[6];
-			$stamp[$key]['hu_num']		= $value[7];
-		}
-		// P($data);die;
-		foreach ($stamp as $key => $value) {
-			$nickname[$key] = $value['hu_nickname'];
-			$tmp = array(
-				'hu_nickname'=>$value['hu_nickname'],
-				'hu_username'=>$value['hu_username'],
-				'hu_phone'   =>$value['hu_phone'],
-				'hu_email'   =>$value['hu_email'],
-				'iu_password'=>md5('123456')
-			);
-			$arr = D('IbosUsers')->add($tmp);
-		}
-		foreach($nickname as $key => $value) {
-			foreach ($stamp as $k => $v) {
-				if($key==$k){
-					$iuid = D('IbosUsers')->where(array('hu_nickname'=>$value))->getfield('iuid');
-					$array= array(
-						'iuid'     =>$iuid,
-						'vipstart' =>$v['vipstart'],
-						'vipend'   =>$v['vipend'],
-						'hu_hpname'=>$v['hu_hpname'],
-						'hu_num'   =>$v['hu_num'],
-						'is_vip'   =>1
-					);
-					$arrtmp = D('HracUsers')->add($array);
-				}
-			}
-		}
-		foreach($nickname as $key => $value) {
-			$user = D('HracUsers')->join('nulife_ibos_users on nulife_hrac_users.iuid  = nulife_ibos_users.iuid')
-				  ->where(array('hu_nickname'=>$value))->find();
-            $data = D('HracUsers')
-                  ->join('nulife_ibos_users on nulife_hrac_users.iuid = nulife_ibos_users.iuid')
-                  ->where(array('hu_nickname'=>$user['hu_hpname']))
-                  ->find();
-			if($user&&$data){			
-				$save = D('HracUsers')->save(array('huid'=>$user['huid'],'hu_hpid'=>$data['huid'],'stack'=>$data['huid']));
-				$tmp = array(
-	                'huid'     =>$user['huid'],
-	                'pid'      =>$data['huid'],
-	                'hpr_date' =>$user['vipstart'],
-	                'hpr_time' =>$user['vipstart'].' 00:00:00',
-	                'is_vaild' =>1,
-	            );
-	            $add  = D('HracPartner')->add($tmp);
-	            if($add){
-	                $page = D('HracPartner')->where(array('pid'=>$data['huid']))->select();
-	                $count= count($page);
-	                if($count%2==0){
-	                    $bill    = array(
-	                        'name'       =>$data['hu_nickname'],
-	                        'hbi_type'   =>1,
-	                        'hbi_content'=>'成功邀请'.$value.'成为合伙人',
-	                        'hbi_num'    =>$data['hu_num'],
-	                        'symbol'     =>'+',
-	                        'hbi_sum'    =>50000,
-	                        'hbi_time'   =>$user['vipstart'].' 00:00:00'
-	                    );
-
-	                }else{
-	                    $bill    = array(
-	                        'name'       =>$data['hu_nickname'],
-	                        'hbi_type'   =>1,
-	                        'hbi_content'=>'成功邀请'.$value.'成为合伙人',
-	                        'hbi_num'    =>$data['hu_num'],
-	                        'symbol'     =>'+',
-	                        'hbi_sum'    =>10000,
-	                        'hbi_time'   =>$user['vipstart'].' 00:00:00'
-	                    );
-	                    if($count==15){
-	                        $billss    = array(
-	                            'name'       =>$data['hu_nickname'],
-	                            'hbi_type'   =>1,
-	                            'hbi_content'=>'成功邀请'.$value.'成为合伙人',
-	                            'hbi_num'    =>$data['hu_num'],
-	                            'symbol'     =>'+',
-	                            'hbi_sum'    =>10000,
-	                            'hbi_time'   =>$user['vipstart'].' 00:00:00'
-	                        );
-	                    } 
-	                }
-	                D('HracBills')->add($bill);
-	                if($billss){
-	                    D('HracBills')->add($billss);
-	                }                       
-	            }			
-			}
-		}
-		if($arrtmp){
-			unlink($unlink);	
-			$this->redirect('Admin/Hrac/user');
-		}else{
-			$this->error('上传失败');
-		}
+		p($data);
+		
 	}
 
 
