@@ -13,11 +13,7 @@ class IndexController extends HomeBaseController{
             // 做一个简单的登录 组合where数组条件 
             $map=I('post.');
             $map['password']=md5($map['password']);
-<<<<<<< HEAD
-            $data=M('admin')->where($map)->find();
-=======
             $data=M('Admin')->where($map)->find();
->>>>>>> 19a4bff481ecb59b9cd6371a3fd5282bedec7c0e
             if (empty($data)) {
                 $this->error('账号或密码错误');
             }else{

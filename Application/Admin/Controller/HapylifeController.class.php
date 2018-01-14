@@ -368,6 +368,24 @@ class HapylifeController extends AdminBaseController{
 		}
 	}
 
+
+	/**
+	* 删除所有商品
+	**/
+	public function delete_all(){
+		$data = I('post.');
+		$map  = array(
+			'ipid'=>array('in',$data['ck'])
+		);
+
+		$delete_all = M('Product')->where($map)->delete();
+		if($delete_all){
+			redirect($_SERVER['HTTP_REFERER']);
+		}else{
+			$this->error("删除失败");
+		}
+	}
+
 	//**********************订单*********************
 	/**
 	* 订单列表

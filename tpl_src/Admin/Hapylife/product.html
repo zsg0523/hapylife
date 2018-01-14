@@ -23,8 +23,10 @@
 				</li>
             </ul>
             <div class="tab-content">
+            	<form method="post" action="{:U('delete_all')}">
 				<table class="table table-striped table-bordered table-hover table-condensed">
 					<tr>
+						<th><input type="checkbox" id="seelctAll" onclick="select_all()">全选</th>
 						<th>商品名</th>
 						<th>商品分类</th>
 						<th>商品编号</th>
@@ -41,11 +43,14 @@
 					</tr>
 					<foreach name="data" item="v">
 						<tr>
+							<td>
+								<input type="checkbox" value="{$v['ipid']}" name="ck[]" class="ck"/>
+							</td>
 							<td>{$v['ip_name_zh']}</td>
 							<td>{$v['icat_name_zh']}</td>
 							<td>{$v['ip_bh']}</td>
 							<td>{$v['ip_price_rmb']}</td>
-							<td>{$v.ip_point}</td>
+							<td>{$v['ip_point']}</td>
 							<td>{$v['ip_bp']}</td>
 							<td>{$v['ip_gbv']}</td>
 							<td><img width='40' height="40" src="{$v['ip_picture_zh']}"></td>
@@ -60,6 +65,8 @@
 						</tr>
 					</foreach>
 				</table>
+				    <input type="submit" value="批量删除" onclick="return tishi()">
+				</form>
 					<div class='page'>
 						{$page}
 					</div>
@@ -98,7 +105,7 @@
 							<tr>
 								<th width="15%">商品分类：</th>
 								<td>
-                                <select name="cid">
+                                <select name="icid">
                                     <volist name='catList' id='c'>
                                     <option value="{$c.id}">{$c.icat_name_zh}</option>
                                     </volist>
@@ -190,7 +197,7 @@
 							<tr>
 								<th width="15%">商品分类：</th>
 								<td>
-                                <select name="cid">
+                                <select name="icid">
                                     <volist name='catList' id='c'>
                                     <option value="{$c.id}">{$c.icat_name_zh}</option>
                                     </volist>
@@ -276,8 +283,38 @@
 		$("input[name='ip_gbv']").val(productGbv);
 		$("textarea[name='ip_desc_zh']").val(productDesc);
 		$("input[name='ip_point']").val(productPoint);
-		$("select[name='cid']").val(categoryId);
+		$("select[name='icid']").val(categoryId);
 		$('#bjy-edit').modal('show');
+	}
+
+	function select_all(){
+		//取全选按钮的选中状态
+		var zt=document.getElementById('seelctAll').checked;
+		//让下面所有的checkbox选中状态改变
+		var ck=document.getElementsByClassName('ck');
+		for(var i=0;i<ck.length;i++){
+			if(zt)
+			{
+				ck[i].setAttribute("checked","checked");
+			}
+			else
+			{
+				ck[i].removeAttribute("checked");
+			}
+		}
+	}
+
+	function tishi(){
+		//找所有选中项
+		var ck=document.getElementsByClassName("ck");
+		var str="";
+		for(var i=0;i<ck.length;i++){
+			if(ck[i].checked){
+				str += ck[i].value+",";
+			}
+		}
+		return confirm("确定要删除以下数据吗:"+str+"");
+
 	}
 	</script>
 </block>
