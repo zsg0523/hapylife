@@ -2349,7 +2349,8 @@ function arrPage($arr, $page, $indexinpage){
     $indexinpage = is_int($indexinpage) != 0 ? $indexinpage : 5; //每页显示几条  
     $newarr = array_slice($arr, ($page - 1) * $indexinpage, $indexinpage);  
     return $newarr;  
-} 
+}
+
 /** 
  * 添加用户优惠券 
  * @param  integer $huid  [用户id] 
@@ -2465,4 +2466,13 @@ function addcou($huid, $hcid, $lp){
         }   
     }
     return $code;
-} 
+}
+/**
+* 导入csv
+* @param $file csv文件路径
+**/
+function import_csv($file){
+    $data = file_get_contents($file);
+    $data = explode("\r\n", $data);
+    return $data;
+}

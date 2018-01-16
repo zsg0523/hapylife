@@ -7,6 +7,10 @@ use Common\Controller\HomeBaseController;
 class HapylifeApiController extends HomeBaseController{
 
 	public function index(){
+		$data = D('Users')->limit('0,400000')->getfield('lastname',true);
+		$this->ajaxreturn($data);
+		unset($data);
+		// foreach ($data as $key => $value) {
 		// // die;
 		// set_time_limit(10000);
 		// $data1 = D('Users')->limit('900000,1000000')->select();
@@ -27,6 +31,11 @@ class HapylifeApiController extends HomeBaseController{
 		// 	$tmpe['HighestAchievedRank']= trim($value['highestachievedrank']);
 		// 	$tmpe['WeeklyVolume']= trim($value['weeklyvolume']);
 		// 	$tmpe['OrderDate']= trim($value['orderdate']);
+		// 	$add = D('User')->add($tmpe);
+		// }
+		// if($add){
+		// 	echo '添加完毕';
+		// }
 		// 	$add = D('User1')->add($tmpe);
 		// }
 		// if($add){
@@ -75,6 +84,13 @@ class HapylifeApiController extends HomeBaseController{
 			$data['status'] = 0;
 			$this->ajaxreturn($data);
 		}
+	}
+
+	/**
+	* 新用户注册
+	**/
+	public function newregister(){
+
 	}
 
 	/**
