@@ -242,9 +242,10 @@ class HapylifeApiController extends HomeBaseController{
 	**/
 	public function productlist(){
 		$map = array(
-            'ip_type'=>1
+            'ip_type'    =>2,
+            'ip_name_zh '=>array('NEQ','Rbs'),
         );
-        $data= M('Product')->where($map)->select();
+        $data= M('Product')->where($map)->order('is_sort desc')->select();
         if($data){
             $this->ajaxreturn($data);
         }else{
@@ -286,6 +287,11 @@ class HapylifeApiController extends HomeBaseController{
         $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
         //生成唯一订单号
         $order_num = date('YmdHis').rand(10000, 99999);
+        if($product['ip_name_zh']!='Rbs'){
+            $ordertype = 1;
+        }else{
+            $ordertype = 0;
+        }
         $order = array(
                 //订单编号
                 'ir_receiptnum' =>$order_num,
@@ -306,13 +312,13 @@ class HapylifeApiController extends HomeBaseController{
                 //订单总商品数量
                 'ir_productnum'=>1,
                 //订单总金额
-                'ir_price'=>$product['ip_price_rmb'],
+                'ir_price'=>$product['ip_price_rmb']+$product['ip_oneprice'],
                 //订单总积分
                 'ir_point'=>$product['ip_point'],
                 //订单备注
-                'ir_desc'=>'首购单',
-                //订单类型（10首购 20升级 30重消 40零售）
-                'ir_ordertype' => 10
+                'ir_desc'=>'首月+月费',
+                //订单类型
+                'ir_ordertype' => $ordertype
             );
 
         $receipt = M('Receipt')->add($order);
@@ -543,21 +549,100 @@ class HapylifeApiController extends HomeBaseController{
 	}
 
 	/**
-	* 旅游详情
-	**/
-	public function travelcontent(){
-		$tid  = I('post.tid');
+    * 旅游详情
+    **/
+    public function travelcontent(){
+        $tid  = I('post.tid');
         $data = M('Travel')->where(array('tid'=>$tid))->find();
         if($data){
             $this->ajaxreturn($data);
         }else{
             $data = array(
-				'status'=>0,
-				'msg'	=>'获取旅游详情失败'
-			);
+                'status'=>0,
+                'msg'   =>'获取旅游详情失败'
+            );
             $this->ajaxreturn($data);
         }
+    }
+
+    /**
+	* 升级产品
+	**/
+	public function upgrade(){
+		$iuid  = I('post.iuid');
+        $find  = M('User')->where(array('iuid'=>$iuid))->find();
+        if($find['customertype']!='Distributor'){
+            $tmpe    = array(
+                'ip_type'    =>1,
+                'ip_name_zh' =>array('NEQ','Rbs')
+            );
+            $product = D('Product')->where($tmpe)->order('is_sort desc')->select();
+            foreach ($product as $key => $value) {
+                $data['grade'][$key]         = $value; 
+                $data['grade'][$key]['show'] = 0; 
+            }
+            $data['rbs'] = D('Product')->where(array('ip_type'=>1,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
+            $data['rbs'][0]['show'] =1;
+        }else{
+            $type = trim($find['distributortype']); 
+            switch ($type) {
+                case 'Pc':
+                    $product = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
+                    break;
+                case 'Gob':
+                    $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
+                    $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Gob'))->order('is_sort desc')->find();
+                    foreach ($arr as $key => $value) {
+                        if($value['ip_name_zh']!='Gob'){
+                            $product[$key] = $value; 
+                        }else{
+                            $product[$key] = $gob;
+                        }
+                    }
+                    break;
+                case 'Platinum':
+                    $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
+                    $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Platinum'))->order('is_sort desc')->find();
+                    foreach ($arr as $key => $value) {
+                        if($value['ip_name_zh']!='Platinum'){
+                            $product[$key] = $value; 
+                        }else{
+                            $product[$key] = $gob;
+                        }
+                    }
+                    break;
+                case 'Titanium':
+                    $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
+                    $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Titanium'))->order('is_sort desc')->find();
+                    foreach ($arr as $key => $value) {
+                        if($value['ip_name_zh']!='Titanium'){
+                            $product[$key] = $value; 
+                        }else{
+                            $product[$key] = $gob;
+                        }
+                    }
+                    break;
+            }
+            foreach ($product as $key => $value) {
+                if($value['ip_name_zh']!='Rbs'){
+                    $data['grade'][$key]         = $value;
+                    $data['grade'][$key]['show'] = 1; 
+                }
+            }
+            $data['rbs'] = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
+            $data['rbs'][0]['show'] =1;
+        }
+        if($data){
+            $this->ajaxreturn($data);
+        }else{
+            $data = array(
+				'status'=>0,
+				'msg'	=>'获取失败'
+			);
+            $this->ajaxreturn($data);
+        }  
 	}
+
 
 
 }
