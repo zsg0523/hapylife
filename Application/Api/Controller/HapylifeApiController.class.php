@@ -7,10 +7,6 @@ use Common\Controller\HomeBaseController;
 class HapylifeApiController extends HomeBaseController{
 
 	public function index(){
-		$data = D('Users')->limit('0,400000')->getfield('lastname',true);
-		$this->ajaxreturn($data);
-		unset($data);
-		// foreach ($data as $key => $value) {
 		// // die;
 		// set_time_limit(10000);
 		// $data1 = D('Users')->limit('900000,1000000')->select();
@@ -31,11 +27,6 @@ class HapylifeApiController extends HomeBaseController{
 		// 	$tmpe['HighestAchievedRank']= trim($value['highestachievedrank']);
 		// 	$tmpe['WeeklyVolume']= trim($value['weeklyvolume']);
 		// 	$tmpe['OrderDate']= trim($value['orderdate']);
-		// 	$add = D('User')->add($tmpe);
-		// }
-		// if($add){
-		// 	echo '添加完毕';
-		// }
 		// 	$add = D('User1')->add($tmpe);
 		// }
 		// if($add){
@@ -84,13 +75,6 @@ class HapylifeApiController extends HomeBaseController{
 			$data['status'] = 0;
 			$this->ajaxreturn($data);
 		}
-	}
-
-	/**
-	* 新用户注册
-	**/
-	public function newregister(){
-
 	}
 
 	/**
@@ -483,6 +467,15 @@ class HapylifeApiController extends HomeBaseController{
             //修改用户最近订单日期
             $tmpe['OrderDate']= date("m/d/Y h:i:s A");
             $tmpe['iuid']     =D('Receipt')->where(array('ir_receiptnum'=>$_GET['orderId']))->getfield('iuid');
+            $find             =D('User')->where(array('iuid'=>$tmpe['iuid']))->find();
+            if($find['isnew']==0){
+                if($find['number']==0){
+                    $tmpe['IsCheck'] = 1;   
+                }
+            }else{
+                $tmpe['IsCheck'] = 2;
+            }
+            $tmpe['Number']   =$find['number']+1;
             $update           =D('User')->save($tmpe);
             //做订单的处理
             $receipt = M('Receipt')->where(array('ir_receiptnum'=>$_GET['orderId']))->setField('ir_status',2);
@@ -553,7 +546,39 @@ class HapylifeApiController extends HomeBaseController{
     **/
     public function travelcontent(){
         $tid  = I('post.tid');
+        $iuid = I('post.iuid');
         $data = M('Travel')->where(array('tid'=>$tid))->find();
+        $bann = array($data['travel_picture'],$data['travel_picture1'],$data['travel_picture2'],$data['travel_picture3'],$data['travel_picture4'],$data['travel_picture5']);
+        foreach ($bann as $key => $value) {
+            if(!empty($value)){
+                $data['banner'][]['pic'] = $value;
+            }
+        }
+        $like = D('Like')->where(array('pid'=>$tid,'type'=>1))->select();
+        if($like){
+            $data['likenum'] = count($like); 
+            foreach ($like as $key => $value){
+                if($value['uid']==$iuid){
+                    $tmpe = 1;
+                }
+            }
+            if($tmpe==1){
+                $data['like'] = 1;
+            }else{
+                $data['like'] = 0;
+            }
+        }else{
+            $data['likenum']  = 0;
+            $data['like']     = 0;
+        }
+        $comm = D('Comment')->join('hapylife_user on hapylife_comment.uid = hapylife_user.iuid')->where(array('pid'=>$tid,'type'=>1))->select();
+        if($comm){
+            $data['comm']     = subtree($comm,0,$lev=1);  
+            $data['commnum']  = count($comm);
+        }else{
+            $data['comm']     = array();
+            $data['commnum']  =0;
+        }
         if($data){
             $this->ajaxreturn($data);
         }else{
@@ -571,66 +596,93 @@ class HapylifeApiController extends HomeBaseController{
 	public function upgrade(){
 		$iuid  = I('post.iuid');
         $find  = M('User')->where(array('iuid'=>$iuid))->find();
-        if($find['customertype']!='Distributor'){
-            $tmpe    = array(
+        $type  = trim($find['distributortype']); 
+        switch ($type) {
+            case 'Pc':
+                $tmpe    = array(
                 'ip_type'    =>1,
                 'ip_name_zh' =>array('NEQ','Rbs')
-            );
-            $product = D('Product')->where($tmpe)->order('is_sort desc')->select();
-            foreach ($product as $key => $value) {
-                $data['grade'][$key]         = $value; 
-                $data['grade'][$key]['show'] = 0; 
-            }
-            $data['rbs'] = D('Product')->where(array('ip_type'=>1,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
-            $data['rbs'][0]['show'] =1;
-        }else{
-            $type = trim($find['distributortype']); 
-            switch ($type) {
-                case 'Pc':
-                    $product = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
-                    break;
-                case 'Gob':
-                    $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
-                    $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Gob'))->order('is_sort desc')->find();
-                    foreach ($arr as $key => $value) {
-                        if($value['ip_name_zh']!='Gob'){
-                            $product[$key] = $value; 
-                        }else{
-                            $product[$key] = $gob;
-                        }
-                    }
-                    break;
-                case 'Platinum':
-                    $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
-                    $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Platinum'))->order('is_sort desc')->find();
-                    foreach ($arr as $key => $value) {
-                        if($value['ip_name_zh']!='Platinum'){
-                            $product[$key] = $value; 
-                        }else{
-                            $product[$key] = $gob;
-                        }
-                    }
-                    break;
-                case 'Titanium':
-                    $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
-                    $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Titanium'))->order('is_sort desc')->find();
-                    foreach ($arr as $key => $value) {
-                        if($value['ip_name_zh']!='Titanium'){
-                            $product[$key] = $value; 
-                        }else{
-                            $product[$key] = $gob;
-                        }
-                    }
-                    break;
-            }
-            foreach ($product as $key => $value) {
-                if($value['ip_name_zh']!='Rbs'){
-                    $data['grade'][$key]         = $value;
+                );
+                $product = D('Product')->where($tmpe)->order('is_sort desc')->select();
+                foreach ($product as $key => $value) {
+                    $data['grade'][$key]         = $value; 
                     $data['grade'][$key]['show'] = 1; 
                 }
-            }
-            $data['rbs'] = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
-            $data['rbs'][0]['show'] =1;
+                $data['rbs'] = D('Product')->where(array('ip_type'=>1,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
+                $data['rbs'][0]['show'] =0;
+                break;
+            case 'Gob':
+                $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
+                $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Gob'))->order('is_sort desc')->find();
+                foreach ($arr as $key => $value) {
+                    if($value['ip_name_zh']!='Gob'){
+                        $product[$key] = $value; 
+                    }else{
+                        $product[$key] = $gob;
+                    }
+                }
+                foreach ($product as $key => $value) {
+                    if($value['ip_name_zh']!='Rbs'){
+                        $data['grade'][$key]         = $value;
+                        $data['grade'][$key]['show'] = 1; 
+                    }
+                }
+                if($find['CustomerType']!='Distributor'){
+                    $data['rbs'] = D('Product')->where(array('ip_type'=>1,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
+                    $data['rbs'][0]['show'] =1; 
+                }else{
+                    $data['rbs'] = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
+                    $data['rbs'][0]['show'] =1;       
+                }
+                break;
+            case 'Platinum':
+                $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
+                $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Platinum'))->order('is_sort desc')->find();
+                foreach ($arr as $key => $value) {
+                    if($value['ip_name_zh']!='Platinum'){
+                        $product[$key] = $value; 
+                    }else{
+                        $product[$key] = $gob;
+                    }
+                }
+                foreach ($product as $key => $value) {
+                    if($value['ip_name_zh']!='Rbs'){
+                        $data['grade'][$key]         = $value;
+                        $data['grade'][$key]['show'] = 1; 
+                    }
+                }
+                if($find['CustomerType']!='Distributor'){
+                    $data['rbs'] = D('Product')->where(array('ip_type'=>1,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
+                    $data['rbs'][0]['show'] =1; 
+                }else{
+                    $data['rbs'] = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
+                    $data['rbs'][0]['show'] =1;       
+                }
+                break;
+            case 'Titanium':
+                $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
+                $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Titanium'))->order('is_sort desc')->find();
+                foreach ($arr as $key => $value) {
+                    if($value['ip_name_zh']!='Titanium'){
+                        $product[$key] = $value; 
+                    }else{
+                        $product[$key] = $gob;
+                    }
+                }
+                foreach ($product as $key => $value) {
+                    if($value['ip_name_zh']!='Rbs'){
+                        $data['grade'][$key]         = $value;
+                        $data['grade'][$key]['show'] = 1; 
+                    }
+                }
+                if($find['CustomerType']!='Distributor'){
+                    $data['rbs'] = D('Product')->where(array('ip_type'=>1,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
+                    $data['rbs'][0]['show'] =1; 
+                }else{
+                    $data['rbs'] = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
+                    $data['rbs'][0]['show'] =1;       
+                }
+                break;
         }
         if($data){
             $this->ajaxreturn($data);
