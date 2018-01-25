@@ -573,7 +573,12 @@ class HapylifeApiController extends HomeBaseController{
         }
         $comm = D('Comment')->join('hapylife_user on hapylife_comment.uid = hapylife_user.iuid')->where(array('pid'=>$tid,'type'=>1))->select();
         if($comm){
-            $data['comm']     = subtree($comm,0,$lev=1);  
+            $comment          = subtree($comm,0,$lev=1);
+            foreach ($comment as $key => $value) {
+                $comm[$key]   = $value;
+                $comm[$key]['time'] = formattime(strtotime($value['time']));
+            }
+            $data['comm']     = $comm;  
             $data['commnum']  = count($comm);
         }else{
             $data['comm']     = array();
@@ -695,6 +700,166 @@ class HapylifeApiController extends HomeBaseController{
         }  
 	}
 
+    /**
+    * 获取房间类型
+    **/
+    public function roomtype(){
+        $tid = I('post.tid');
+        $rid = I('post.rid');
+        $room= D('Room')->where(array('tid'=>$tid))->select();
+        if($room){ 
+            if($rid==0){
+                $data['type']    = $room[0]['type'];
+                $room[0]['show'] = 1;
+            }else{
+                $data['type'] = D('Room')->where(array('rid'=>$rid))->getfield('type');
+                foreach ($room as $key => $value) {
+                    if($value['rid']==$rid){
+                        $room[$key]['show'] = 1;
+                    }
+                }
+            }
+            $data['status']= 1;
+            $data['room']  = $room;
+            $data['start'] = D('Travel')->where(array('tid'=>$tid))->getfield('starttime');
+            $this->ajaxreturn($data);
+        }else{
+            $data['status'] = 0;
+            $data['msg']    = '没有获取到内容';
+            $this->ajaxreturn($data);
+        }
+    }
 
+    /**
+    * 获取people数量
+    **/
+    public function people(){
+        $tid = I('post.tid');
+        $rid = I('post.rid');
+        $num = I('post.num');
+        if($rid==0){ 
+            $room= D('Room')->where(array('tid'=>$tid))->find();        
+        }else{
+            $room= D('Room')->where(array('rid'=>$rid))->find();           
+        }
+        $isadult = D('Travel')->where(array('tid'=>$tid))->getfield('isadult');
+        $where   = array('lptype'=>1,'lpnum'=>array('ELT',$room['adultnum']));
+        $adultnum= D('People')->where($where)->order('lpnum asc')->select();
+        $temp    = array('lptype'=>2,'lpnum'=>array('ELT',$room['childnum']));
+        $childnum= D('People')->where($temp)->order('lpnum asc')->select();
+        $number  = $isadult-1;
+        if($room['childnum']>0){
+            for($i=0;$i<$num;$i++){
+                $data['adult'][$i] = $adultnum;
+                $data['aged']      = $isadult;
+                $data['child'][$i] = $childnum;
+                $data['stage']     = '0'.'-'.$number;
+                $data['show']      = 1;
+            }
+        }else{
+            for($i=0;$i<$num;$i++){
+                $data['adult'][$i] = $adultnum;
+                $data['aged']      = $isadult;
+                $data['show']      = 0;
+            }
+        }
+        if($data){
+            $data['status'] = 1;
+            $this->ajaxreturn($data);
+        }else{
+            $data['status'] = 0;
+            $data['msg']    = '没有获取到内容';
+            $this->ajaxreturn($data);
+        }
+    }
 
+    /**
+    * 获取child年龄段
+    **/
+    public function age(){
+        $tid    = I('post.tid');
+        $lpnum  = I('post.lpnum');
+        $isadult= D('Travel')->where(array('tid'=>$tid))->getfield('isadult');
+        $temp   = array('lptype'=>3,'lpnum'=>array('ELT',$isadult));
+        $child  = D('People')->where($temp)->order('lpnum asc')->select();
+        for($i=0;$i<$lpnum;$i++){
+            $data[$i] = $child;
+        }
+        if($data){
+            $this->ajaxreturn($data);
+        }else{
+            $data['status'] = 0;
+            $data['msg']    = '没有获取到内容';
+            $this->ajaxreturn($data);
+        }
+    }
+
+    /**
+    * 计算金额
+    **/
+    public function total(){
+        $tid   = I('post.tid');  
+        $rid   = I('post.rid');  
+        $adult = I('post.adult');  
+        $child = I('post.child');  
+        $age   = I('post.age');
+        $aduarr= explode('-',$adult); 
+        $chiarr= explode('-',$child); 
+        $agearr= explode('-',$age);
+        if($rid==0){ 
+            $room= D('Room')->where(array('tid'=>$tid))->find();        
+        }else{
+            $room= D('Room')->where(array('rid'=>$rid))->find();           
+        }
+        foreach ($aduarr as $key => $value) {
+            $adultnum += $value;
+        }
+        switch ($adultnum) {
+            case '1':
+                $data['adultmony'] = $room['adult1'];
+                break;
+            case '2':
+                $data['adultmony'] = $room['adult2'];
+                break;
+            case '3':
+                $data['adultmony'] = $room['adult3'];
+                break;
+            case '4':
+                $data['adultmony'] = $room['adult4'];
+                break;
+            case '5':
+                $data['adultmony'] = $room['adult5'];
+                break;
+            case '6':
+                $data['adultmony'] = $room['adult6'];
+                break;
+            case '7':
+                $data['adultmony'] = $room['adult7'];
+                break;
+            case '8':
+                $data['adultmony'] = $room['adult8'];
+                break;
+            case '9':
+                $data['adultmony'] = $room['adult9'];
+                break;
+            case '10':
+                $data['adultmony'] = $room['adult10'];
+                break;
+            case '11':
+                $data['adultmony'] = $room['adult11'];
+                break;
+            case '12':
+                $data['adultmony'] = $room['adult12'];
+                break;
+        }
+        foreach ($chiarr as $key => $value) {
+            $childnum += $value;
+        }
+        foreach ($agearr as $key => $value) {
+            if($value>3){
+                $data['childmony'] += $room['child'];
+            }
+        }
+        p($data); 
+    }
 }

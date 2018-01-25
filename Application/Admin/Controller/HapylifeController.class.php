@@ -149,7 +149,7 @@ class HapylifeController extends AdminBaseController{
 		}else{
 			$j = $i;
 		}
-		$data['addtime'] = $moth.' '.$tmpe[0].' - '.$j.', '.$tmpe[2];
+		$data['addtime'] = $moth.' '.$tmpe[1].' - '.$j.', '.$tmpe[2];
 		if($upload['name'][1]){
 			$data['travel_picture'] = C('WEB_URL').$upload['name'][1];
 		}
@@ -211,7 +211,7 @@ class HapylifeController extends AdminBaseController{
 		}else{
 			$j = $i;
 		}
-		$data['addtime'] = $moth.' '.$tmpe[0].' - '.$j.', '.$tmpe[2];
+		$data['addtime'] = $moth.' '.$tmpe[1].' - '.$j.', '.$tmpe[2];
 		if($upload['name'][1]){
 			$data['travel_picture'] = C('WEB_URL').$upload['name'][1];
 		}
