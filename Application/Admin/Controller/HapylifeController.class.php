@@ -278,7 +278,7 @@ class HapylifeController extends AdminBaseController{
 		$map =array(
 			'tid'=>$data['id']
 			);
-		$result=D('News')->editData($map,$data);
+		$result=D('Travel')->editData($map,$data);
 		if($result){
 			$this->redirect('Admin/Hapylife/travel');
 		}else{

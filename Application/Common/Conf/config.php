@@ -32,7 +32,7 @@ return array(
     'URL_MODEL'              => 1,  //启用rewrite
 //***********************************SESSION设置**********************************
     'SESSION_OPTIONS'        => array(
-        'name'               => 'Nulife',//设置session名
+        'name'               => 'Hapylife',//设置session名
         'expire'             => 24*3600*15, //SESSION保存15天
         'use_trans_sid'      => 1,//跨页传递
         'use_only_cookies'   => 0,//是否只开启基于cookies的session的会话方式
@@ -43,7 +43,7 @@ return array(
     'TMPL_ACTION_SUCCESS'    => TMPL_PATH.'/Public/dispatch_jump.tpl', // 默认成功跳转对应的模板文件
 //***********************************auth设置**********************************
     'AUTH_CONFIG'            => array(
-            'AUTH_USER'      => 'users'                         //用户信息表
+            'AUTH_USER'      => 'user'                         //用户信息表
         ),
 //***********************************邮件服务器**********************************
     'EMAIL_FROM_NAME'        => '',   // 发件人

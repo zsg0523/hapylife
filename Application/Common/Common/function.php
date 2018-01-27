@@ -2267,7 +2267,7 @@ function several_upload_arr($path='file',$format='empty',$maxSize='3145728000'){
     ini_set('max_execution_time', '0');
     // 去除两边的/
     $path=trim($path,'/');
-    // 添加Upload根目录
+    // // 添加Upload根目录
     $path=strtolower(substr($path, 0,6))==='upload' ? ucfirst($path) : 'Upload/'.$path;
     // 上传文件类型控制
     $ext_arr= array(

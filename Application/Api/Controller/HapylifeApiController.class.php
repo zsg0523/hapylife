@@ -34,6 +34,7 @@ class HapylifeApiController extends HomeBaseController{
 		// }
 		// unset($data1);
 	}
+
 	/**
 	* 旧用户注册
 	**/
@@ -50,17 +51,17 @@ class HapylifeApiController extends HomeBaseController{
                 $img_body1 = substr(strstr($data['JustIdcard'],','),1);
                 $JustIdcard = time().'_'.mt_rand().'.jpg';
                 $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
+                $tmpe['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
             }
             if(!empty($data['BackIdcard'])){
                 $img_body2 = substr(strstr($data['BackIdcard'],','),1);
                 $BackIdcard = time().'_'.mt_rand().'.jpg';
                 $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
+                $tmpe['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
             }
 			$tmpe = array(
 				'Phone'     =>$data['Phone'],
-				'PassWord'  =>md5($data['PassWord']),
-				'JustIdcard'=>C('WEB_URL').'/Upload/file/'.$JustIdcard,
-				'BackIdcard'=>C('WEB_URL').'/Upload/file/'.$BackIdcard
+				'PassWord'  =>md5($data['PassWord'])
 			);
 			$data['iuid'] = $find['iuid'];
 			$save = D('User')->where($where)->save($tmpe);
@@ -91,11 +92,13 @@ class HapylifeApiController extends HomeBaseController{
                 $img_body1 = substr(strstr($data['JustIdcard'],','),1);
                 $JustIdcard = time().'_'.mt_rand().'.jpg';
                 $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
+                $where['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
             }
             if(!empty($data['BackIdcard'])){
                 $img_body2 = substr(strstr($data['BackIdcard'],','),1);
                 $BackIdcard = time().'_'.mt_rand().'.jpg';
                 $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
+                $where['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
             }
 			$custid= D('User')->order('iuid desc')->getfield('CustomerID');
 			$where = array(
@@ -114,8 +117,6 @@ class HapylifeApiController extends HomeBaseController{
 				'WeeklyVolume'       => 0,
 				'PassWord'           => md5($data['PassWord']),
 				'Phone'              => $data['Phone'],
-				'JustIdcard'         => C('WEB_URL').'/Upload/file/'.$JustIdcard,
-				'BackIdcard'         => C('WEB_URL').'/Upload/file/'.$BackIdcard,
 				'Sex'                => $data['Sex'],
 				'IsCheck'            => 0
 			);
@@ -131,6 +132,7 @@ class HapylifeApiController extends HomeBaseController{
 			}
 		}
 	}
+
 	/**
 	* 登录
 	**/
@@ -155,6 +157,7 @@ class HapylifeApiController extends HomeBaseController{
 			$this->ajaxreturn($data);			
 		}
 	}
+
 	/**
 	* 获取用户信息
 	**/
@@ -181,6 +184,75 @@ class HapylifeApiController extends HomeBaseController{
 			$this->ajaxreturn($data);			
 		}
 	}
+
+    /**
+    * 编辑用户信息
+    **/
+    public function edituserinfo(){
+        $iuid         = I('post.iuid');
+        $para         = I('post.para');
+        $paravalue    = I('post.paravalue');
+        $user         = D('User')->where(array('iuid'=>$iuid))->find();
+        $data['iuid'] = $iuid;
+        switch ($para) {
+            case 'LastName':
+                $data['LastName']  = $paravalue;
+                $edit = D('User')->save($data);    
+            case 'FirstName':
+                $data['FirstName'] = $paravalue;
+                $edit = D('User')->save($data);
+                if($edit){
+                    $map = array('username2'=>$paravalue);
+                    $save  = D('Comment')->where(array('uid2'=>$iuid))->save($map); 
+                }    
+                break;
+            case 'City':
+                $data['City']      = $paravalue;
+                $edit = D('User')->save($data);    
+                break;
+            case 'State':
+                $data['State']     = $paravalue;
+                $edit = D('User')->save($data);    
+                break;
+             case 'Country':
+                $data['Country']   = $paravalue; 
+                $edit = D('User')->save($data);                  
+                break;
+            case 'Phone':
+                $data['Phone']     = $paravalue;
+                $edit = D('User')->save($data);
+                break;
+            case 'Sex':
+                $data['Sex']       = $paravalue;
+                $edit = D('User')->save($data); 
+                break;
+            case 'Email ':
+                $data['Email ']    = $paravalue;
+                $edit = D('User')->save($data); 
+                break;
+            case 'Children':
+                $data['Children']  = $paravalue;
+                $edit = D('User')->save($data); 
+                break;
+            case 'Photo':
+                $img_body = substr(strstr($paravalue,','),1);
+                $Photo = time().'_'.mt_rand().'.jpg';
+                $img = file_put_contents('./Upload/file/'.$Photo, base64_decode($img_body));
+                $data['Photo'] = C('WEB_URL').'./Upload/file/'.$Photo;
+                if($user['Photo']){
+                    unlink($user['Photo']);    
+                }
+                $edit = D('User')->save($data); 
+                break;
+        }          
+        if($edit){
+            $data['status'] = 1;
+            $this->ajaxreturn($data);
+        }else{
+            $data['status'] = 0;
+            $this->ajaxreturn($data);
+        }
+    }
 
 	/**
 	* 新闻列表
@@ -575,6 +647,11 @@ class HapylifeApiController extends HomeBaseController{
         if($comm){
             $comment          = subtree($comm,0,$lev=1);
             foreach ($comment as $key => $value) {
+                if($value['uid']==$iuid){
+                    $comm[$key]['show'] = 1;
+                }else{
+                    $comm[$key]['show'] = 0;
+                }
                 $comm[$key]   = $value;
                 $comm[$key]['time'] = formattime(strtotime($value['time']));
             }
@@ -591,6 +668,73 @@ class HapylifeApiController extends HomeBaseController{
                 'status'=>0,
                 'msg'   =>'获取旅游详情失败'
             );
+            $this->ajaxreturn($data);
+        }
+    }
+
+    /**
+    * 点赞
+    **/
+    public function like(){
+        $tid  = I('post.tid');
+        $iuid = I('post.iuid');
+        $type = I('post.type');
+        $where= array(
+            'pid'  => $tid,
+            'uid'  => $iuid,
+            'type' => $type
+        );
+        $find = D('Like')->where($where)->find();
+        if($find){
+            $save = D('Like')->where(array('id'=>$find['id']))->delete();
+            if($save){
+                $data['status']=2;
+                $this->ajaxreturn($data);
+            }else{
+                $data['status']=0;
+                $this->ajaxreturn($data);
+            }
+        }else{
+            $where['time']= date("m/d/Y h:i:s A");
+            $save = D('Like')->add($where);
+            if($save){
+                $data['status']=1;
+                $this->ajaxreturn($data);
+            }else{
+                $data['status']=0;
+                $this->ajaxreturn($data);
+            }
+        }
+    }
+    
+    /**
+    *添加评论
+    **/
+    public function comment(){
+        $tid  = I('post.tid');
+        $iuid = I('post.iuid');
+        $iuid2= I('post.iuid2')?I('post.iuid2'):0;
+        $cid  = I('post.id')?I('post.id'):0;
+        $type = I('post.type');
+        $comm = I('post.comm');
+        $temp= array(
+            'pid'     => $tid,
+            'uid'     => $iuid,
+            'uid2'    => $iuid2,
+            'cid'     => $cid,
+            'type'    => $type,
+            'content' => $comm,
+            'time'    => date("m/d/Y h:i:s A")
+        );
+        if($iuid2!=0){
+            $temp['username2'] = D('User')->where(array('iuid'=>$iuid2))->getfield('firstname');
+        }
+        $add = D('comment')->add($temp);
+        if($add){
+            $data['status']=1;
+            $this->ajaxreturn($data);
+        }else{
+            $data['status']=0;
             $this->ajaxreturn($data);
         }
     }
