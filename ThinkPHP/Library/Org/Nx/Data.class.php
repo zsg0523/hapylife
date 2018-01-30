@@ -27,10 +27,39 @@ final class Data
             if ($v[$fieldPid] == $pid) {
                 $arr[$v[$fieldPri]] = $v;
                 $arr[$v[$fieldPri]]['_level'] = $level;
-                $arr[$v[$fieldPri]]['_html'] = str_repeat($html, $level - 1);
-                $arr[$v[$fieldPri]]["_data"] = self::channelLevel($data, $v[$fieldPri], $html, $fieldPri, $fieldPid, $level + 1);
+                $arr[$v[$fieldPri]]['_html']  = str_repeat($html, $level - 1);
+                $arr[$v[$fieldPri]]["_data"]  = self::channelLevel($data, $v[$fieldPri], $html, $fieldPri, $fieldPid, $level + 1);
             }
         }
+        return $arr;
+    }
+
+
+    /**
+     * 返回多层栏目
+     * @param $data 操作的数组
+     * @param int $parent_id 一级PID的值
+     * @param string $html 栏目名称前缀
+     * @param string $fieldPri 唯一键名，如果是表则是表的主键
+     * @param string $fieldPid 父ID键名
+     * @param int $level 不需要传参数（执行时调用）
+     * @return array
+     */
+    static public function channelLevelNew($data, $parent_id = 0, $html = "&nbsp;", $fieldPri = 'cid', $fieldPid = 'pid', $level = 1)
+    {
+        if (empty($data)) {
+            return array();
+        }
+        $arr = array();
+        foreach ($data as $v) {
+            if ($v[$fieldPid] == $parent_id) {
+                $arr[$v[$fieldPri]] = $v;
+                $arr[$v[$fieldPri]]['_level'] = $level;
+                $arr[$v[$fieldPri]]['_html']  = str_repeat($html, $level - 1);
+                $arr[$v[$fieldPri]]["_data"]  = self::channelLevel($data, $v[$fieldPri], $html, $fieldPri, $fieldPid, $level + 1);
+            }
+        }
+        
         return $arr;
     }
 
