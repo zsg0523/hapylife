@@ -23,12 +23,12 @@ class HapylifeController extends AdminBaseController{
 		$upload=post_upload();
 		// p($upload);die;
 		$data=array(
-				'news_title'	=>I('news_title'),
-				'news_content'	=>I('news_content'),
-				'addtime'		=>date('Y-m-d H:i:s'),
-				'news_des'		=>I('post.news_des')?I('post.news_des'):mb_substr(I('post.news_content'),0,20).'.....',
-				'news_picture'	=>C('WEB_URL').$upload['name']
-			);
+			'news_title'	=>I('news_title'),
+			'news_content'	=>I('news_content'),
+			'addtime'		=>date('Y-m-d H:i:s'),
+			'news_des'		=>I('post.news_des')?I('post.news_des'):mb_substr(I('post.news_content'),0,20).'.....',
+			'news_picture'	=>C('WEB_URL').$upload['name']
+		);
 		$result=D('News')->addData($data);
 		if($result){
 			$this->redirect('Admin/Hapylife/news');
@@ -124,32 +124,33 @@ class HapylifeController extends AdminBaseController{
 	public function add_travel(){
 		$upload=several_upload_arr();
 		$data=array(
-				'travel_title'	=>I('post.travel_title'),
-				'travel_content'=>I('post.travel_content'),
-				'whattime'		=>I('post.whattime'),
-				'include'		=>I('post.include'),
-				'hotel'		    =>I('post.hotel'),
-				'addition'		=>I('post.addition'),
-				'destination'	=>I('post.destination'),
-				'itinerary'		=>I('post.itinerary'),
-				'platinum'		=>I('post.platinum'),
-				'policies'		=>I('post.policies'),
-				'address'		=>I('post.address'),
-				'travel_price'  =>I('post.travel_price'),
-				'travel_des'	=>I('post.travel_des')?I('post.travel_des'):mb_substr(I('post.travel_content'),0,50).'.....',
-				'keyword'	    =>mb_substr(I('post.travel_content'),0,50)
-			);
+			'travel_title'	=>I('post.travel_title'),
+			'travel_content'=>I('post.travel_content'),
+			'whattime'		=>I('post.whattime'),
+			'include'		=>I('post.include'),
+			'hotel'		    =>I('post.hotel'),
+			'addition'		=>I('post.addition'),
+			'destination'	=>I('post.destination'),
+			'itinerary'		=>I('post.itinerary'),
+			'platinum'		=>I('post.platinum'),
+			'policies'		=>I('post.policies'),
+			'address'		=>I('post.address'),
+			'travel_price'  =>I('post.travel_price'),
+			'travel_des'	=>I('post.travel_des')?I('post.travel_des'):mb_substr(I('post.travel_content'),0,50).'.....',
+			'keyword'	    =>mb_substr(I('post.travel_content'),0,50)
+		);
 		$data['starttime'] = I('post.starttime');
-		$time= strtotime($data['starttime']);
-		$moth= date('M');
 		$tmpe= explode('/',$data['starttime']);
+		$moth= substr(date('F',strtotime($data['starttime'])),0,3);
 		$i   = $tmpe[1]+$data['whattime'];
 		if($i<10){
 			$j = '0'.$i;
 		}else{
 			$j = $i;
 		}
+		$endtime = strtotime($data['starttime'])+$data['whattime']*86400;
 		$data['addtime'] = $moth.' '.$tmpe[1].' - '.$j.', '.$tmpe[2];
+		$data['endtime'] = date('m/d/Y',$endtime);
 		if($upload['name'][1]){
 			$data['travel_picture'] = C('WEB_URL').$upload['name'][1];
 		}
@@ -186,24 +187,23 @@ class HapylifeController extends AdminBaseController{
 			);
 		$upload=several_upload_arr();
 		$data=array(
-				'travel_title'	=>I('post.travel_title'),
-				'travel_content'=>I('post.travel_content'),
-				'whattime'		=>I('post.whattime'),
-				'include'		=>I('post.include'),
-				'hotel'		    =>I('post.hotel'),
-				'addition'		=>I('post.addition'),
-				'destination'	=>I('post.destination'),
-				'itinerary'		=>I('post.itinerary'),
-				'platinum'		=>I('post.platinum'),
-				'policies'		=>I('post.policies'),
-				'address'		=>I('post.address'),
-				'travel_price'  =>I('post.travel_price'),
-				'travel_des'	=>I('post.travel_des')?I('post.travel_des'):mb_substr(I('post.travel_content'),0,50).'.....',
-				'keyword'	    =>mb_substr(I('post.travel_content'),0,50)
-			);
+			'travel_title'	=>I('post.travel_title'),
+			'travel_content'=>I('post.travel_content'),
+			'whattime'		=>I('post.whattime'),
+			'include'		=>I('post.include'),
+			'hotel'		    =>I('post.hotel'),
+			'addition'		=>I('post.addition'),
+			'destination'	=>I('post.destination'),
+			'itinerary'		=>I('post.itinerary'),
+			'platinum'		=>I('post.platinum'),
+			'policies'		=>I('post.policies'),
+			'address'		=>I('post.address'),
+			'travel_price'  =>I('post.travel_price'),
+			'travel_des'	=>I('post.travel_des')?I('post.travel_des'):mb_substr(I('post.travel_content'),0,50).'.....',
+			'keyword'	    =>mb_substr(I('post.travel_content'),0,50)
+		);
 		$data['starttime'] = I('post.starttime');
-		$time= strtotime($data['starttime']);
-		$moth= date('M');
+		$moth= substr(date('F',strtotime($data['starttime'])),0,3);
 		$tmpe= explode('/',$data['starttime']);
 		$i   = $tmpe[1]+$data['whattime'];
 		if($i<10){
@@ -211,7 +211,9 @@ class HapylifeController extends AdminBaseController{
 		}else{
 			$j = $i;
 		}
+		$endtime = strtotime($data['starttime'])+$data['whattime']*86400;
 		$data['addtime'] = $moth.' '.$tmpe[1].' - '.$j.', '.$tmpe[2];
+		$data['endtime'] = date('m/d/Y',$endtime);
 		if($upload['name'][1]){
 			$data['travel_picture'] = C('WEB_URL').$upload['name'][1];
 		}
@@ -343,7 +345,7 @@ class HapylifeController extends AdminBaseController{
 		$id=I('get.id');
 		$map=array(
 			'id'=>$id
-			);
+		);
 		$result=D('Category')->deleteData($map);
 		if($result){
 			$this->redirect('Admin/Hapylife/category');
@@ -369,7 +371,7 @@ class HapylifeController extends AdminBaseController{
 		}else{
 			$map=array(
 				'ip_name_zh'=>$word
-				);
+			);
 		}
 		$assign=D('Product')->getAllData(D('Product'),$map);
 		$this->assign('catList',$catList);
@@ -453,12 +455,15 @@ class HapylifeController extends AdminBaseController{
 		$map  = array(
 			'ipid'=>array('in',$data['ck'])
 		);
-
-		$delete_all = M('Product')->where($map)->delete();
-		if($delete_all){
-			redirect($_SERVER['HTTP_REFERER']);
+		if($data){
+			$delete_all = M('Product')->where($map)->delete();
+			if($delete_all){
+				redirect($_SERVER['HTTP_REFERER']);
+			}else{
+				$this->error("删除失败");
+			}
 		}else{
-			$this->error("删除失败");
+			$this->error("请选择要删除的选项");
 		}
 	}
 
@@ -660,192 +665,80 @@ class HapylifeController extends AdminBaseController{
 		}
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	/**
+	* 房间列表
+	**/
+	public function room(){
+		$cid       =I('get.cid');
+		$keyword   =I('get.keyword');
+		$travel=D('Travel')->select();
+		$assign=D('Room')->getAllData(D('Room'),$map,$cid,$keyword,$order='rid desc');
+		$this->assign($assign);
+		$this->assign('travel',$travel);
+		$this->assign('cid',$cid);
+		$this->assign('keyword',$keyword);
+		$this->display();
+	}
+
+	/**
+	* 添加房间(默认显示is_show 1)
+	**/
+	public function add_room(){
+		$upload=post_upload();
+		// p($upload);die;
+		$data=array(
+				'news_title'	=>I('news_title'),
+				'news_content'	=>I('news_content'),
+				'addtime'		=>date('Y-m-d H:i:s'),
+				'news_des'		=>I('post.news_des')?I('post.news_des'):mb_substr(I('post.news_content'),0,20).'.....',
+				'news_picture'	=>C('WEB_URL').$upload['name']
+			);
+		$result=D('Room')->addData($data);
+		if($result){
+			$this->redirect('Admin/Hapylife/news');
+		}else{
+			$this->error('添加失败');
+		}
+	}
+
+	/**
+	* 编辑房间
+	**/
+	public function edit_room(){
+		$data=I('post.');
+		if(empty($data['news_des'])){
+			$data['news_des'] = mb_substr(I('post.news_content'),0,20).'.....';
+		}
+		$map=array(
+			'rid'=>$data['id']
+			);
+		$upload=post_upload();
+		if(isset($upload['name'])){
+			$data['news_picture']=C('WEB_URL').$upload['name'];
+		}
+		$result=D('Room')->editData($map,$data);
+		if($result){
+			$this->redirect('Admin/Hapylife/news');
+		}else{
+			$this->error('编辑失败');
+		}
+	}
+
+	/**
+	* 删除房间
+	**/
+	public function delete_room(){
+		$id=I('get.id');
+		$map=array(
+			'rid'=>$id
+			);
+		$result=D('Room')->deleteData($map);
+		if($result){
+			$this->redirect('Admin/Hapylife/news');
+		}else{
+			$this->error('删除失败');
+		}
+	}
 
 
 }

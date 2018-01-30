@@ -7,6 +7,7 @@ use Common\Controller\HomeBaseController;
 class HapylifeApiController extends HomeBaseController{
 
 	public function index(){
+        // p($data);
 		// // die;
 		// set_time_limit(10000);
 		// $data1 = D('Users')->limit('900000,1000000')->select();
@@ -98,7 +99,7 @@ class HapylifeApiController extends HomeBaseController{
                 $img_body2 = substr(strstr($data['BackIdcard'],','),1);
                 $BackIdcard = time().'_'.mt_rand().'.jpg';
                 $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
-                $where['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
+                $where['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
             }
 			$custid= D('User')->order('iuid desc')->getfield('CustomerID');
 			$where = array(
@@ -226,8 +227,8 @@ class HapylifeApiController extends HomeBaseController{
                 $data['Sex']       = $paravalue;
                 $edit = D('User')->save($data); 
                 break;
-            case 'Email ':
-                $data['Email ']    = $paravalue;
+            case 'Email':
+                $data['Email']    = $paravalue;
                 $edit = D('User')->save($data); 
                 break;
             case 'Children':
@@ -235,10 +236,10 @@ class HapylifeApiController extends HomeBaseController{
                 $edit = D('User')->save($data); 
                 break;
             case 'Photo':
-                $img_body = substr(strstr($paravalue,','),1);
+                $img_body1 = substr(strstr($paravalue,','),1);
                 $Photo = time().'_'.mt_rand().'.jpg';
-                $img = file_put_contents('./Upload/file/'.$Photo, base64_decode($img_body));
-                $data['Photo'] = C('WEB_URL').'./Upload/file/'.$Photo;
+                $img1 = file_put_contents('./Upload/file/'.$Photo, base64_decode($img_body1));
+                $data['Photo'] = C('WEB_URL').'/Upload/file/'.$Photo;
                 if($user['Photo']){
                     unlink($user['Photo']);    
                 }
@@ -269,9 +270,9 @@ class HapylifeApiController extends HomeBaseController{
 			$this->ajaxreturn($data);
 		}else{
 			$data = array(
-					'status'=>0,
-					'msg'	=>'无法获取新闻列表'
-				);
+				'status'=>0,
+				'msg'	=>'无法获取新闻列表'
+			);
 			$this->ajaxreturn($data);
 		}
 	}
@@ -286,9 +287,9 @@ class HapylifeApiController extends HomeBaseController{
             $this->ajaxreturn($data);
         }else{
             $data = array(
-					'status'=>0,
-					'msg'	=>'获取新闻详情失败'
-				);
+				'status'=>0,
+				'msg'	=>'获取新闻详情失败'
+			);
             $this->ajaxreturn($data);
         }
 	}
@@ -306,9 +307,9 @@ class HapylifeApiController extends HomeBaseController{
             $this->ajaxreturn($data);
         }else{
             $data = array(
-					'status'=>0,
-					'msg'	=>'获取商品列表失败'
-				);
+				'status'=>0,
+				'msg'	=>'获取商品列表失败'
+			);
             $this->ajaxreturn($data);
         }
 	}
@@ -317,18 +318,18 @@ class HapylifeApiController extends HomeBaseController{
 	* 商品详情
 	**/
 	public function product(){
-			$ipid = I('post.ipid');
-            $data = M('Product')
-            			->where(array('ipid'=>$ipid))
-            			->find();
-            if($data){
-           		$this->ajaxreturn($data);
-        	}else{
-	            $data = array(
-					'status'=>0,
-					'msg'	=>'获取商品详情失败'
-				);
-	            $this->ajaxreturn($data);
+		$ipid = I('post.ipid');
+        $data = M('Product')
+        			->where(array('ipid'=>$ipid))
+        			->find();
+        if($data){
+       		$this->ajaxreturn($data);
+    	}else{
+            $data = array(
+				'status'=>0,
+				'msg'	=>'获取商品详情失败'
+			);
+            $this->ajaxreturn($data);
         }
 	}
 	/**
@@ -349,56 +350,55 @@ class HapylifeApiController extends HomeBaseController{
             $ordertype = 0;
         }
         $order = array(
-                //订单编号
-                'ir_receiptnum' =>$order_num,
-                //订单创建日期
-                'ir_date'=>time(),
-                //订单的状态(0待生成订单，1待支付订单，2已付款订单)
-                'ir_status'=>0,
-                //下单用户id
-                'iuid'=>$iuid,
-                //下单用户
-                'CustomerID'=>$userinfo['customerid'],
-                //收货人
-                'ia_name'=>$userinfo['firstname'],
-                //收货人电话
-                'ia_phone'=>$userinfo['phone'],
-                //收货地址
-                'ia_address'=>$userinfo['city'],
-                //订单总商品数量
-                'ir_productnum'=>1,
-                //订单总金额
-                'ir_price'=>$product['ip_price_rmb']+$product['ip_oneprice'],
-                //订单总积分
-                'ir_point'=>$product['ip_point'],
-                //订单备注
-                'ir_desc'=>'首月+月费',
-                //订单类型
-                'ir_ordertype' => $ordertype
-            );
-
+            //订单编号
+            'ir_receiptnum' =>$order_num,
+            //订单创建日期
+            'ir_date'=>time(),
+            //订单的状态(0待生成订单，1待支付订单，2已付款订单)
+            'ir_status'=>0,
+            //下单用户id
+            'iuid'=>$iuid,
+            //下单用户
+            'CustomerID'=>$userinfo['customerid'],
+            //收货人
+            'ia_name'=>$userinfo['firstname'],
+            //收货人电话
+            'ia_phone'=>$userinfo['phone'],
+            //收货地址
+            'ia_address'=>$userinfo['city'],
+            //订单总商品数量
+            'ir_productnum'=>1,
+            //订单总金额
+            'ir_price'=>$product['ip_price_rmb']+$product['ip_oneprice'],
+            //订单总积分
+            'ir_point'=>$product['ip_point'],
+            //订单备注
+            'ir_desc'=>'首月+月费',
+            //订单类型
+            'ir_ordertype' => $ordertype
+        );
         $receipt = M('Receipt')->add($order);
         if($receipt){
             $map = array(
-                        'ir_receiptnum'     =>  $order_num,
-                        'ipid'              =>  $product['ipid'],
-                        'product_num'       =>  1,
-                        'product_point'     =>  $product['ip_point'],
-                        'product_price'     =>  $product['ip_price_rmb'],
-                        'product_name'      =>  $product['ip_name_zh'],
-                        'product_picture'   =>  $product['ip_picture_zh']
-                    );
+                'ir_receiptnum'     =>  $order_num,
+                'ipid'              =>  $product['ipid'],
+                'product_num'       =>  1,
+                'product_point'     =>  $product['ip_point'],
+                'product_price'     =>  $product['ip_price_rmb'],
+                'product_name'      =>  $product['ip_name_zh'],
+                'product_picture'   =>  $product['ip_picture_zh']
+            );
             $addReceiptlist = M('Receiptlist')->add($map);
         }
          //生成日志记录
         $content = '您的首购订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
         $log = array(
-                'from_iuid' =>$iuid,
-                'content'   =>$content,
-                'action'    =>0,
-                'type'      =>2,
-                'date'      =>date('Y-m-d H:i:s')          
-            );
+            'from_iuid' =>$iuid,
+            'content'   =>$content,
+            'action'    =>0,
+            'type'      =>2,
+            'date'      =>date('Y-m-d H:i:s')          
+        );
         $addlog = M('Log')->add($log);
         if($addlog){
             $order['status'] = 1;
@@ -453,33 +453,32 @@ class HapylifeApiController extends HomeBaseController{
         $kq_payerId         =date('YmdHis').rand(10000, 99999);       //付款人标识
 
         $map = array(
-                'inputCharset'      =>$kq_inputCharset,
-                'pageUrl'           =>$kq_pageUrl,
-                'bgUrl'             =>$kq_bgUrl,
-                'version'           =>$kq_version,
-                'language'          =>$kq_language,
-                'signType'          =>$kq_signType,
-                'merchantAcctId'    =>$kq_merchantAcctId,
-                'payerName'         =>$kq_payerName,
-                'payerContactType'  =>$kq_payerContactType,
-                'payerContact'      =>$kq_payerContact,
-                'payerIdType'       =>$kq_payerIdType,
-                'payerId'           =>$kq_payerId,
-                'orderId'           =>$kq_orderId,
-                'orderAmount'       =>$kq_orderAmount,
-                'orderTime'         =>$kq_orderTime,
-                'productName'       =>$kq_productName,
-                'productNum'        =>$kq_productNum,
-                'productId'         =>$kq_productId,
-                'productDesc'       =>$kq_productDesc,
-                'ext1'              =>$kq_ext1,
-                'ext2'              =>$kq_ext2,
-                'payType'           =>$kq_payType,
-                'bankId'            =>$kq_bankId,
-                'redoFlag'          =>$kq_redoFlag,
-                'pid'               =>$kq_pid
-            );
-
+            'inputCharset'      =>$kq_inputCharset,
+            'pageUrl'           =>$kq_pageUrl,
+            'bgUrl'             =>$kq_bgUrl,
+            'version'           =>$kq_version,
+            'language'          =>$kq_language,
+            'signType'          =>$kq_signType,
+            'merchantAcctId'    =>$kq_merchantAcctId,
+            'payerName'         =>$kq_payerName,
+            'payerContactType'  =>$kq_payerContactType,
+            'payerContact'      =>$kq_payerContact,
+            'payerIdType'       =>$kq_payerIdType,
+            'payerId'           =>$kq_payerId,
+            'orderId'           =>$kq_orderId,
+            'orderAmount'       =>$kq_orderAmount,
+            'orderTime'         =>$kq_orderTime,
+            'productName'       =>$kq_productName,
+            'productNum'        =>$kq_productNum,
+            'productId'         =>$kq_productId,
+            'productDesc'       =>$kq_productDesc,
+            'ext1'              =>$kq_ext1,
+            'ext2'              =>$kq_ext2,
+            'payType'           =>$kq_payType,
+            'bankId'            =>$kq_bankId,
+            'redoFlag'          =>$kq_redoFlag,
+            'pid'               =>$kq_pid
+        );
         foreach ($map as $k => $v) {
             if(!empty($v)){
                 $k.='='.$v.'&';
@@ -528,13 +527,13 @@ class HapylifeApiController extends HomeBaseController{
         if ($ok == 1) {
             //写入日志记录
             $map = array(
-                    'content'=>'<result>1</result><redirecturl>http://success.html</redirecturl>',
-                    'date'   =>date('Y-m-d H:i:s'),
-                    'billno' =>$_GET['orderId'],
-                    'amount' =>$_GET['orderAmount'],
-                    'action' =>1,
-                    'status' =>1
-                ); 
+                'content'=>'<result>1</result><redirecturl>http://success.html</redirecturl>',
+                'date'   =>date('Y-m-d H:i:s'),
+                'billno' =>$_GET['orderId'],
+                'amount' =>$_GET['orderAmount'],
+                'action' =>1,
+                'status' =>1
+            ); 
             $add = M('Log')->add($map);
             //修改用户最近订单日期
             $tmpe['OrderDate']= date("m/d/Y h:i:s A");
@@ -557,11 +556,11 @@ class HapylifeApiController extends HomeBaseController{
             }
         }else{
             $map = array(
-                    'content'=>'<result>1</result><redirecturl>http://false.html</redirecturl>',
-                    'date'   =>date('Y-m-d H:i:s'),
-                    'action' =>1,
-                    'status' =>0
-                ); 
+                'content'=>'<result>1</result><redirecturl>http://false.html</redirecturl>',
+                'date'   =>date('Y-m-d H:i:s'),
+                'action' =>1,
+                'status' =>0
+            ); 
             //通知快钱商户收到的结果
             echo '<result>1</result><redirecturl>http://false.html</redirecturl>';
             $this->ajaxreturn($map);
@@ -595,13 +594,17 @@ class HapylifeApiController extends HomeBaseController{
 	* 旅游列表
 	**/	
 	public function travellist(){
-		$map  = array(
+		$map    = array(
 				'is_show' =>1
 			);
-		$data = M('Travel')
+		$travel = M('Travel')
 				->where($map)
 				->order('addtime desc')
 				->select();
+        foreach ($travel as $key => $value) {
+            $data[$key]                 = $value;
+            $data[$key]['travel_price'] = sprintf("%.2f",$value['travel_price']);
+        }
 		if($data){
 			$this->ajaxreturn($data);
 		}else{
@@ -643,6 +646,8 @@ class HapylifeApiController extends HomeBaseController{
             $data['likenum']  = 0;
             $data['like']     = 0;
         }
+        $data['whattime']     = $data['whattime']-1;
+        $data['travel_price'] = sprintf("%.2f",$data['travel_price']);
         $comm = D('Comment')->join('hapylife_user on hapylife_comment.uid = hapylife_user.iuid')->where(array('pid'=>$tid,'type'=>1))->select();
         if($comm){
             $comment          = subtree($comm,0,$lev=1);
@@ -854,17 +859,29 @@ class HapylifeApiController extends HomeBaseController{
         if($room){ 
             if($rid==0){
                 $data['type']    = $room[0]['type'];
-                $room[0]['show'] = 1;
+                foreach ($room as $key => $value) {
+                    if($key==0){
+                        $room[$key]['show'] = 1;
+                    }else{
+                        $room[$key]['show'] = 0;
+                    }
+                }
             }else{
                 $data['type'] = D('Room')->where(array('rid'=>$rid))->getfield('type');
                 foreach ($room as $key => $value) {
                     if($value['rid']==$rid){
                         $room[$key]['show'] = 1;
+                    }else{
+                        $room[$key]['show'] = 0;
                     }
                 }
             }
+            foreach ($room as $key => $value) {
+                $rooms[$key]           = $value;
+                $rooms[$key]['adult0'] = sprintf("%.2f",$value['adult0']);
+            }
             $data['status']= 1;
-            $data['room']  = $room;
+            $data['room']  = $rooms;
             $data['start'] = D('Travel')->where(array('tid'=>$tid))->getfield('starttime');
             $this->ajaxreturn($data);
         }else{
@@ -960,40 +977,40 @@ class HapylifeApiController extends HomeBaseController{
         }
         switch ($adultnum) {
             case '1':
-                $data['adultmony'] = $room['adult1'];
+                $data['adultmony'] = sprintf("%.2f",$room['adult1']);
                 break;
             case '2':
-                $data['adultmony'] = $room['adult2'];
+                $data['adultmony'] = sprintf("%.2f",$room['adult2']);
                 break;
             case '3':
-                $data['adultmony'] = $room['adult3'];
+                $data['adultmony'] = sprintf("%.2f",$room['adult3']);
                 break;
             case '4':
-                $data['adultmony'] = $room['adult4'];
+                $data['adultmony'] = sprintf("%.2f",$room['adult4']);
                 break;
             case '5':
-                $data['adultmony'] = $room['adult5'];
+                $data['adultmony'] = sprintf("%.2f",$room['adult5']);
                 break;
             case '6':
-                $data['adultmony'] = $room['adult6'];
+                $data['adultmony'] = sprintf("%.2f",$room['adult6']);
                 break;
             case '7':
-                $data['adultmony'] = $room['adult7'];
+                $data['adultmony'] = sprintf("%.2f",$room['adult7']);
                 break;
             case '8':
-                $data['adultmony'] = $room['adult8'];
+                $data['adultmony'] = sprintf("%.2f",$room['adult8']);
                 break;
             case '9':
-                $data['adultmony'] = $room['adult9'];
+                $data['adultmony'] = sprintf("%.2f",$room['adult9']);
                 break;
             case '10':
-                $data['adultmony'] = $room['adult10'];
+                $data['adultmony'] = sprintf("%.2f",$room['adult10']);
                 break;
             case '11':
-                $data['adultmony'] = $room['adult11'];
+                $data['adultmony'] = sprintf("%.2f",$room['adult11']);
                 break;
             case '12':
-                $data['adultmony'] = $room['adult12'];
+                $data['adultmony'] = sprintf("%.2f",$room['adult12']);
                 break;
         }
         foreach ($chiarr as $key => $value) {
@@ -1001,9 +1018,20 @@ class HapylifeApiController extends HomeBaseController{
         }
         foreach ($agearr as $key => $value) {
             if($value>3){
-                $data['childmony'] += $room['child'];
+                $childmony += $room['child'];
             }
         }
-        p($data); 
+        if($data){
+            $data['status']   = 1;
+            $data['adultnum'] = $adultnum;
+            $data['childnum'] = $childnum;
+            $data['childmony']= sprintf("%.2f",$childmony);
+            $data['average']  = sprintf("%.2f",($data['adultmony']+$data['childmony'])/($adultnum+$childnum));
+            $this->ajaxreturn($data);
+        }else{
+            $data['status']   = 0;
+            $this->ajaxreturn($data);
+        }
     }
+
 }
