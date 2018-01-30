@@ -1018,6 +1018,55 @@ function word_time($time) {
     }
     return $str;
 }
+/**
+ * 传入时间戳,计算距离现在的时间(英文版)
+ * @param  number $time 时间戳
+ * @return string 返回多少以前
+ */
+function formattime($time){
+    if (is_int($time)) {
+        $time = intval($time);
+    }elseif ($time instanceof Carbon) {
+        $time = intval(strtotime($time));
+    }else {
+        return '';
+    }
+    $ctime = time();
+    $t = $ctime - $time; //时间差 （秒）
+    if ($t < 0) {
+        return date('Y-m-d', $time);
+    }
+    $y = intval(date('Y', $ctime) - date('Y', $time));//是否跨年
+    if($t == 0){
+        $text = 'a moment ago';
+    }elseif ($t < 60) {//一分钟内
+        $text = $t . 'seconds ago';
+    }elseif ($t < 3600) {//一小时内
+        $text = floor($t / 60) . 'minutes ago';
+    }elseif ($t < 86400) {//一天内
+        $text = floor($t / 3600) . 'hours ago'; // 一天内
+    }elseif ($t < 2592000) {//30天内
+        if ($time > strtotime(date('Ymd', strtotime("-1 day")))) {
+            $text = 'yesterday';
+        } elseif ($time > strtotime(date('Ymd', strtotime("-2 days")))) {
+            $text = 'before yesterday';
+        } else {
+            $text = floor($t / 86400) . 'days ago';
+        }
+    }elseif ($t < 31536000 && $y == 0) {//一年内 不跨年
+        $m = date('m', $ctime) - date('m', $time) - 1;
+        if ($m == 0) {
+            $text = floor($t / 86400) . 'days ago';
+        } else {
+            $text = $m . 'months ago';
+        }
+    }elseif ($t < 31536000 && $y > 0) {//一年内 跨年
+        $text = (12 - date('m', $time) + date('m', $ctime)) . 'months ago';
+    }else {
+        $text = (date('Y', $ctime) - date('Y', $time)) . 'years ago';
+    }
+    return $text;
+}
 
 /**
  * 生成缩略图
@@ -2076,10 +2125,10 @@ function debugPrint($log){
 }
 
 /**
- *无限极分类函数
+ *评论无限极分类函数
  * @param  [type]  $arr   [原数组]
  * @param  integer $id    [父id]
- * @param  integer $huid  [自增huid]
+ * @param  integer id     [自增id]
  * @return [type]  $lev   [标记第几级]
  * @return [type]  $subs  [重构数组]
  */
@@ -2087,10 +2136,10 @@ function subtree($arr,$id=0,$lev=1) {
     static $subs = array(); //子孙数组
     static $num  = 1; //子孙数组
     foreach ($arr as $v) {
-        if ($v['hu_hpid'] == $id) {
+        if ($v['cid'] == $id) {
             $v['lev']   = $lev;
             $subs[] = $v;
-            subtree($arr,$v['huid'],$lev+1);
+            subtree($arr,$v['id'],$lev+1);
         }       
     }
     return $subs;
@@ -2218,7 +2267,7 @@ function several_upload_arr($path='file',$format='empty',$maxSize='3145728000'){
     ini_set('max_execution_time', '0');
     // 去除两边的/
     $path=trim($path,'/');
-    // 添加Upload根目录
+    // // 添加Upload根目录
     $path=strtolower(substr($path, 0,6))==='upload' ? ucfirst($path) : 'Upload/'.$path;
     // 上传文件类型控制
     $ext_arr= array(

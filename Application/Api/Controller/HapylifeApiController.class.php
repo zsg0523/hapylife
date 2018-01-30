@@ -7,10 +7,7 @@ use Common\Controller\HomeBaseController;
 class HapylifeApiController extends HomeBaseController{
 
 	public function index(){
-		$data = D('Users')->limit('0,400000')->getfield('lastname',true);
-		$this->ajaxreturn($data);
-		unset($data);
-		// foreach ($data as $key => $value) {
+        // p($data);
 		// // die;
 		// set_time_limit(10000);
 		// $data1 = D('Users')->limit('900000,1000000')->select();
@@ -31,11 +28,6 @@ class HapylifeApiController extends HomeBaseController{
 		// 	$tmpe['HighestAchievedRank']= trim($value['highestachievedrank']);
 		// 	$tmpe['WeeklyVolume']= trim($value['weeklyvolume']);
 		// 	$tmpe['OrderDate']= trim($value['orderdate']);
-		// 	$add = D('User')->add($tmpe);
-		// }
-		// if($add){
-		// 	echo '添加完毕';
-		// }
 		// 	$add = D('User1')->add($tmpe);
 		// }
 		// if($add){
@@ -43,6 +35,7 @@ class HapylifeApiController extends HomeBaseController{
 		// }
 		// unset($data1);
 	}
+
 	/**
 	* 旧用户注册
 	**/
@@ -59,17 +52,17 @@ class HapylifeApiController extends HomeBaseController{
                 $img_body1 = substr(strstr($data['JustIdcard'],','),1);
                 $JustIdcard = time().'_'.mt_rand().'.jpg';
                 $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
+                $tmpe['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
             }
             if(!empty($data['BackIdcard'])){
                 $img_body2 = substr(strstr($data['BackIdcard'],','),1);
                 $BackIdcard = time().'_'.mt_rand().'.jpg';
                 $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
+                $tmpe['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
             }
 			$tmpe = array(
 				'Phone'     =>$data['Phone'],
-				'PassWord'  =>md5($data['PassWord']),
-				'JustIdcard'=>C('WEB_URL').'/Upload/file/'.$JustIdcard,
-				'BackIdcard'=>C('WEB_URL').'/Upload/file/'.$BackIdcard
+				'PassWord'  =>md5($data['PassWord'])
 			);
 			$data['iuid'] = $find['iuid'];
 			$save = D('User')->where($where)->save($tmpe);
@@ -87,13 +80,6 @@ class HapylifeApiController extends HomeBaseController{
 	}
 
 	/**
-	* 新用户注册
-	**/
-	public function newregister(){
-
-	}
-
-	/**
 	* 新用户注册LastName FirstName EnrollerID Email PassWord Phone JustIdcard BackIdcard Sex
 	**/
 	public function newregister(){
@@ -107,11 +93,13 @@ class HapylifeApiController extends HomeBaseController{
                 $img_body1 = substr(strstr($data['JustIdcard'],','),1);
                 $JustIdcard = time().'_'.mt_rand().'.jpg';
                 $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
+                $where['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
             }
             if(!empty($data['BackIdcard'])){
                 $img_body2 = substr(strstr($data['BackIdcard'],','),1);
                 $BackIdcard = time().'_'.mt_rand().'.jpg';
                 $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
+                $where['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
             }
 			$custid= D('User')->order('iuid desc')->getfield('CustomerID');
 			$where = array(
@@ -130,8 +118,6 @@ class HapylifeApiController extends HomeBaseController{
 				'WeeklyVolume'       => 0,
 				'PassWord'           => md5($data['PassWord']),
 				'Phone'              => $data['Phone'],
-				'JustIdcard'         => C('WEB_URL').'/Upload/file/'.$JustIdcard,
-				'BackIdcard'         => C('WEB_URL').'/Upload/file/'.$BackIdcard,
 				'Sex'                => $data['Sex'],
 				'IsCheck'            => 0
 			);
@@ -147,6 +133,7 @@ class HapylifeApiController extends HomeBaseController{
 			}
 		}
 	}
+
 	/**
 	* 登录
 	**/
@@ -171,6 +158,7 @@ class HapylifeApiController extends HomeBaseController{
 			$this->ajaxreturn($data);			
 		}
 	}
+
 	/**
 	* 获取用户信息
 	**/
@@ -198,6 +186,75 @@ class HapylifeApiController extends HomeBaseController{
 		}
 	}
 
+    /**
+    * 编辑用户信息
+    **/
+    public function edituserinfo(){
+        $iuid         = I('post.iuid');
+        $para         = I('post.para');
+        $paravalue    = I('post.paravalue');
+        $user         = D('User')->where(array('iuid'=>$iuid))->find();
+        $data['iuid'] = $iuid;
+        switch ($para) {
+            case 'LastName':
+                $data['LastName']  = $paravalue;
+                $edit = D('User')->save($data);    
+            case 'FirstName':
+                $data['FirstName'] = $paravalue;
+                $edit = D('User')->save($data);
+                if($edit){
+                    $map = array('username2'=>$paravalue);
+                    $save  = D('Comment')->where(array('uid2'=>$iuid))->save($map); 
+                }    
+                break;
+            case 'City':
+                $data['City']      = $paravalue;
+                $edit = D('User')->save($data);    
+                break;
+            case 'State':
+                $data['State']     = $paravalue;
+                $edit = D('User')->save($data);    
+                break;
+             case 'Country':
+                $data['Country']   = $paravalue; 
+                $edit = D('User')->save($data);                  
+                break;
+            case 'Phone':
+                $data['Phone']     = $paravalue;
+                $edit = D('User')->save($data);
+                break;
+            case 'Sex':
+                $data['Sex']       = $paravalue;
+                $edit = D('User')->save($data); 
+                break;
+            case 'Email':
+                $data['Email']    = $paravalue;
+                $edit = D('User')->save($data); 
+                break;
+            case 'Children':
+                $data['Children']  = $paravalue;
+                $edit = D('User')->save($data); 
+                break;
+            case 'Photo':
+                $img_body1 = substr(strstr($paravalue,','),1);
+                $Photo = time().'_'.mt_rand().'.jpg';
+                $img1 = file_put_contents('./Upload/file/'.$Photo, base64_decode($img_body1));
+                $data['Photo'] = C('WEB_URL').'/Upload/file/'.$Photo;
+                if($user['Photo']){
+                    unlink($user['Photo']);    
+                }
+                $edit = D('User')->save($data); 
+                break;
+        }          
+        if($edit){
+            $data['status'] = 1;
+            $this->ajaxreturn($data);
+        }else{
+            $data['status'] = 0;
+            $this->ajaxreturn($data);
+        }
+    }
+
 	/**
 	* 新闻列表
 	**/	
@@ -213,9 +270,9 @@ class HapylifeApiController extends HomeBaseController{
 			$this->ajaxreturn($data);
 		}else{
 			$data = array(
-					'status'=>0,
-					'msg'	=>'无法获取新闻列表'
-				);
+				'status'=>0,
+				'msg'	=>'无法获取新闻列表'
+			);
 			$this->ajaxreturn($data);
 		}
 	}
@@ -230,9 +287,9 @@ class HapylifeApiController extends HomeBaseController{
             $this->ajaxreturn($data);
         }else{
             $data = array(
-					'status'=>0,
-					'msg'	=>'获取新闻详情失败'
-				);
+				'status'=>0,
+				'msg'	=>'获取新闻详情失败'
+			);
             $this->ajaxreturn($data);
         }
 	}
@@ -250,9 +307,9 @@ class HapylifeApiController extends HomeBaseController{
             $this->ajaxreturn($data);
         }else{
             $data = array(
-					'status'=>0,
-					'msg'	=>'获取商品列表失败'
-				);
+				'status'=>0,
+				'msg'	=>'获取商品列表失败'
+			);
             $this->ajaxreturn($data);
         }
 	}
@@ -261,18 +318,18 @@ class HapylifeApiController extends HomeBaseController{
 	* 商品详情
 	**/
 	public function product(){
-			$ipid = I('post.ipid');
-            $data = M('Product')
-            			->where(array('ipid'=>$ipid))
-            			->find();
-            if($data){
-           		$this->ajaxreturn($data);
-        	}else{
-	            $data = array(
-					'status'=>0,
-					'msg'	=>'获取商品详情失败'
-				);
-	            $this->ajaxreturn($data);
+		$ipid = I('post.ipid');
+        $data = M('Product')
+        			->where(array('ipid'=>$ipid))
+        			->find();
+        if($data){
+       		$this->ajaxreturn($data);
+    	}else{
+            $data = array(
+				'status'=>0,
+				'msg'	=>'获取商品详情失败'
+			);
+            $this->ajaxreturn($data);
         }
 	}
 	/**
@@ -293,56 +350,55 @@ class HapylifeApiController extends HomeBaseController{
             $ordertype = 0;
         }
         $order = array(
-                //订单编号
-                'ir_receiptnum' =>$order_num,
-                //订单创建日期
-                'ir_date'=>time(),
-                //订单的状态(0待生成订单，1待支付订单，2已付款订单)
-                'ir_status'=>0,
-                //下单用户id
-                'iuid'=>$iuid,
-                //下单用户
-                'CustomerID'=>$userinfo['customerid'],
-                //收货人
-                'ia_name'=>$userinfo['firstname'],
-                //收货人电话
-                'ia_phone'=>$userinfo['phone'],
-                //收货地址
-                'ia_address'=>$userinfo['city'],
-                //订单总商品数量
-                'ir_productnum'=>1,
-                //订单总金额
-                'ir_price'=>$product['ip_price_rmb']+$product['ip_oneprice'],
-                //订单总积分
-                'ir_point'=>$product['ip_point'],
-                //订单备注
-                'ir_desc'=>'首月+月费',
-                //订单类型
-                'ir_ordertype' => $ordertype
-            );
-
+            //订单编号
+            'ir_receiptnum' =>$order_num,
+            //订单创建日期
+            'ir_date'=>time(),
+            //订单的状态(0待生成订单，1待支付订单，2已付款订单)
+            'ir_status'=>0,
+            //下单用户id
+            'iuid'=>$iuid,
+            //下单用户
+            'CustomerID'=>$userinfo['customerid'],
+            //收货人
+            'ia_name'=>$userinfo['firstname'],
+            //收货人电话
+            'ia_phone'=>$userinfo['phone'],
+            //收货地址
+            'ia_address'=>$userinfo['city'],
+            //订单总商品数量
+            'ir_productnum'=>1,
+            //订单总金额
+            'ir_price'=>$product['ip_price_rmb']+$product['ip_oneprice'],
+            //订单总积分
+            'ir_point'=>$product['ip_point'],
+            //订单备注
+            'ir_desc'=>'首月+月费',
+            //订单类型
+            'ir_ordertype' => $ordertype
+        );
         $receipt = M('Receipt')->add($order);
         if($receipt){
             $map = array(
-                        'ir_receiptnum'     =>  $order_num,
-                        'ipid'              =>  $product['ipid'],
-                        'product_num'       =>  1,
-                        'product_point'     =>  $product['ip_point'],
-                        'product_price'     =>  $product['ip_price_rmb'],
-                        'product_name'      =>  $product['ip_name_zh'],
-                        'product_picture'   =>  $product['ip_picture_zh']
-                    );
+                'ir_receiptnum'     =>  $order_num,
+                'ipid'              =>  $product['ipid'],
+                'product_num'       =>  1,
+                'product_point'     =>  $product['ip_point'],
+                'product_price'     =>  $product['ip_price_rmb'],
+                'product_name'      =>  $product['ip_name_zh'],
+                'product_picture'   =>  $product['ip_picture_zh']
+            );
             $addReceiptlist = M('Receiptlist')->add($map);
         }
          //生成日志记录
         $content = '您的首购订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
         $log = array(
-                'from_iuid' =>$iuid,
-                'content'   =>$content,
-                'action'    =>0,
-                'type'      =>2,
-                'date'      =>date('Y-m-d H:i:s')          
-            );
+            'from_iuid' =>$iuid,
+            'content'   =>$content,
+            'action'    =>0,
+            'type'      =>2,
+            'date'      =>date('Y-m-d H:i:s')          
+        );
         $addlog = M('Log')->add($log);
         if($addlog){
             $order['status'] = 1;
@@ -397,33 +453,32 @@ class HapylifeApiController extends HomeBaseController{
         $kq_payerId         =date('YmdHis').rand(10000, 99999);       //付款人标识
 
         $map = array(
-                'inputCharset'      =>$kq_inputCharset,
-                'pageUrl'           =>$kq_pageUrl,
-                'bgUrl'             =>$kq_bgUrl,
-                'version'           =>$kq_version,
-                'language'          =>$kq_language,
-                'signType'          =>$kq_signType,
-                'merchantAcctId'    =>$kq_merchantAcctId,
-                'payerName'         =>$kq_payerName,
-                'payerContactType'  =>$kq_payerContactType,
-                'payerContact'      =>$kq_payerContact,
-                'payerIdType'       =>$kq_payerIdType,
-                'payerId'           =>$kq_payerId,
-                'orderId'           =>$kq_orderId,
-                'orderAmount'       =>$kq_orderAmount,
-                'orderTime'         =>$kq_orderTime,
-                'productName'       =>$kq_productName,
-                'productNum'        =>$kq_productNum,
-                'productId'         =>$kq_productId,
-                'productDesc'       =>$kq_productDesc,
-                'ext1'              =>$kq_ext1,
-                'ext2'              =>$kq_ext2,
-                'payType'           =>$kq_payType,
-                'bankId'            =>$kq_bankId,
-                'redoFlag'          =>$kq_redoFlag,
-                'pid'               =>$kq_pid
-            );
-
+            'inputCharset'      =>$kq_inputCharset,
+            'pageUrl'           =>$kq_pageUrl,
+            'bgUrl'             =>$kq_bgUrl,
+            'version'           =>$kq_version,
+            'language'          =>$kq_language,
+            'signType'          =>$kq_signType,
+            'merchantAcctId'    =>$kq_merchantAcctId,
+            'payerName'         =>$kq_payerName,
+            'payerContactType'  =>$kq_payerContactType,
+            'payerContact'      =>$kq_payerContact,
+            'payerIdType'       =>$kq_payerIdType,
+            'payerId'           =>$kq_payerId,
+            'orderId'           =>$kq_orderId,
+            'orderAmount'       =>$kq_orderAmount,
+            'orderTime'         =>$kq_orderTime,
+            'productName'       =>$kq_productName,
+            'productNum'        =>$kq_productNum,
+            'productId'         =>$kq_productId,
+            'productDesc'       =>$kq_productDesc,
+            'ext1'              =>$kq_ext1,
+            'ext2'              =>$kq_ext2,
+            'payType'           =>$kq_payType,
+            'bankId'            =>$kq_bankId,
+            'redoFlag'          =>$kq_redoFlag,
+            'pid'               =>$kq_pid
+        );
         foreach ($map as $k => $v) {
             if(!empty($v)){
                 $k.='='.$v.'&';
@@ -472,17 +527,26 @@ class HapylifeApiController extends HomeBaseController{
         if ($ok == 1) {
             //写入日志记录
             $map = array(
-                    'content'=>'<result>1</result><redirecturl>http://success.html</redirecturl>',
-                    'date'   =>date('Y-m-d H:i:s'),
-                    'billno' =>$_GET['orderId'],
-                    'amount' =>$_GET['orderAmount'],
-                    'action' =>1,
-                    'status' =>1
-                ); 
+                'content'=>'<result>1</result><redirecturl>http://success.html</redirecturl>',
+                'date'   =>date('Y-m-d H:i:s'),
+                'billno' =>$_GET['orderId'],
+                'amount' =>$_GET['orderAmount'],
+                'action' =>1,
+                'status' =>1
+            ); 
             $add = M('Log')->add($map);
             //修改用户最近订单日期
             $tmpe['OrderDate']= date("m/d/Y h:i:s A");
             $tmpe['iuid']     =D('Receipt')->where(array('ir_receiptnum'=>$_GET['orderId']))->getfield('iuid');
+            $find             =D('User')->where(array('iuid'=>$tmpe['iuid']))->find();
+            if($find['isnew']==0){
+                if($find['number']==0){
+                    $tmpe['IsCheck'] = 1;   
+                }
+            }else{
+                $tmpe['IsCheck'] = 2;
+            }
+            $tmpe['Number']   =$find['number']+1;
             $update           =D('User')->save($tmpe);
             //做订单的处理
             $receipt = M('Receipt')->where(array('ir_receiptnum'=>$_GET['orderId']))->setField('ir_status',2);
@@ -492,11 +556,11 @@ class HapylifeApiController extends HomeBaseController{
             }
         }else{
             $map = array(
-                    'content'=>'<result>1</result><redirecturl>http://false.html</redirecturl>',
-                    'date'   =>date('Y-m-d H:i:s'),
-                    'action' =>1,
-                    'status' =>0
-                ); 
+                'content'=>'<result>1</result><redirecturl>http://false.html</redirecturl>',
+                'date'   =>date('Y-m-d H:i:s'),
+                'action' =>1,
+                'status' =>0
+            ); 
             //通知快钱商户收到的结果
             echo '<result>1</result><redirecturl>http://false.html</redirecturl>';
             $this->ajaxreturn($map);
@@ -530,13 +594,17 @@ class HapylifeApiController extends HomeBaseController{
 	* 旅游列表
 	**/	
 	public function travellist(){
-		$map  = array(
+		$map    = array(
 				'is_show' =>1
 			);
-		$data = M('Travel')
+		$travel = M('Travel')
 				->where($map)
 				->order('addtime desc')
 				->select();
+        foreach ($travel as $key => $value) {
+            $data[$key]                 = $value;
+            $data[$key]['travel_price'] = sprintf("%.2f",$value['travel_price']);
+        }
 		if($data){
 			$this->ajaxreturn($data);
 		}else{
@@ -553,7 +621,51 @@ class HapylifeApiController extends HomeBaseController{
     **/
     public function travelcontent(){
         $tid  = I('post.tid');
+        $iuid = I('post.iuid');
         $data = M('Travel')->where(array('tid'=>$tid))->find();
+        $bann = array($data['travel_picture'],$data['travel_picture1'],$data['travel_picture2'],$data['travel_picture3'],$data['travel_picture4'],$data['travel_picture5']);
+        foreach ($bann as $key => $value) {
+            if(!empty($value)){
+                $data['banner'][]['pic'] = $value;
+            }
+        }
+        $like = D('Like')->where(array('pid'=>$tid,'type'=>1))->select();
+        if($like){
+            $data['likenum'] = count($like); 
+            foreach ($like as $key => $value){
+                if($value['uid']==$iuid){
+                    $tmpe = 1;
+                }
+            }
+            if($tmpe==1){
+                $data['like'] = 1;
+            }else{
+                $data['like'] = 0;
+            }
+        }else{
+            $data['likenum']  = 0;
+            $data['like']     = 0;
+        }
+        $data['whattime']     = $data['whattime']-1;
+        $data['travel_price'] = sprintf("%.2f",$data['travel_price']);
+        $comm = D('Comment')->join('hapylife_user on hapylife_comment.uid = hapylife_user.iuid')->where(array('pid'=>$tid,'type'=>1))->select();
+        if($comm){
+            $comment          = subtree($comm,0,$lev=1);
+            foreach ($comment as $key => $value) {
+                if($value['uid']==$iuid){
+                    $comm[$key]['show'] = 1;
+                }else{
+                    $comm[$key]['show'] = 0;
+                }
+                $comm[$key]   = $value;
+                $comm[$key]['time'] = formattime(strtotime($value['time']));
+            }
+            $data['comm']     = $comm;  
+            $data['commnum']  = count($comm);
+        }else{
+            $data['comm']     = array();
+            $data['commnum']  =0;
+        }
         if($data){
             $this->ajaxreturn($data);
         }else{
@@ -566,71 +678,165 @@ class HapylifeApiController extends HomeBaseController{
     }
 
     /**
+    * 点赞
+    **/
+    public function like(){
+        $tid  = I('post.tid');
+        $iuid = I('post.iuid');
+        $type = I('post.type');
+        $where= array(
+            'pid'  => $tid,
+            'uid'  => $iuid,
+            'type' => $type
+        );
+        $find = D('Like')->where($where)->find();
+        if($find){
+            $save = D('Like')->where(array('id'=>$find['id']))->delete();
+            if($save){
+                $data['status']=2;
+                $this->ajaxreturn($data);
+            }else{
+                $data['status']=0;
+                $this->ajaxreturn($data);
+            }
+        }else{
+            $where['time']= date("m/d/Y h:i:s A");
+            $save = D('Like')->add($where);
+            if($save){
+                $data['status']=1;
+                $this->ajaxreturn($data);
+            }else{
+                $data['status']=0;
+                $this->ajaxreturn($data);
+            }
+        }
+    }
+    
+    /**
+    *添加评论
+    **/
+    public function comment(){
+        $tid  = I('post.tid');
+        $iuid = I('post.iuid');
+        $iuid2= I('post.iuid2')?I('post.iuid2'):0;
+        $cid  = I('post.id')?I('post.id'):0;
+        $type = I('post.type');
+        $comm = I('post.comm');
+        $temp= array(
+            'pid'     => $tid,
+            'uid'     => $iuid,
+            'uid2'    => $iuid2,
+            'cid'     => $cid,
+            'type'    => $type,
+            'content' => $comm,
+            'time'    => date("m/d/Y h:i:s A")
+        );
+        if($iuid2!=0){
+            $temp['username2'] = D('User')->where(array('iuid'=>$iuid2))->getfield('firstname');
+        }
+        $add = D('comment')->add($temp);
+        if($add){
+            $data['status']=1;
+            $this->ajaxreturn($data);
+        }else{
+            $data['status']=0;
+            $this->ajaxreturn($data);
+        }
+    }
+
+    /**
 	* 升级产品
 	**/
 	public function upgrade(){
 		$iuid  = I('post.iuid');
         $find  = M('User')->where(array('iuid'=>$iuid))->find();
-        if($find['customertype']!='Distributor'){
-            $tmpe    = array(
+        $type  = trim($find['distributortype']); 
+        switch ($type) {
+            case 'Pc':
+                $tmpe    = array(
                 'ip_type'    =>1,
                 'ip_name_zh' =>array('NEQ','Rbs')
-            );
-            $product = D('Product')->where($tmpe)->order('is_sort desc')->select();
-            foreach ($product as $key => $value) {
-                $data['grade'][$key]         = $value; 
-                $data['grade'][$key]['show'] = 0; 
-            }
-            $data['rbs'] = D('Product')->where(array('ip_type'=>1,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
-            $data['rbs'][0]['show'] =1;
-        }else{
-            $type = trim($find['distributortype']); 
-            switch ($type) {
-                case 'Pc':
-                    $product = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
-                    break;
-                case 'Gob':
-                    $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
-                    $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Gob'))->order('is_sort desc')->find();
-                    foreach ($arr as $key => $value) {
-                        if($value['ip_name_zh']!='Gob'){
-                            $product[$key] = $value; 
-                        }else{
-                            $product[$key] = $gob;
-                        }
-                    }
-                    break;
-                case 'Platinum':
-                    $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
-                    $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Platinum'))->order('is_sort desc')->find();
-                    foreach ($arr as $key => $value) {
-                        if($value['ip_name_zh']!='Platinum'){
-                            $product[$key] = $value; 
-                        }else{
-                            $product[$key] = $gob;
-                        }
-                    }
-                    break;
-                case 'Titanium':
-                    $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
-                    $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Titanium'))->order('is_sort desc')->find();
-                    foreach ($arr as $key => $value) {
-                        if($value['ip_name_zh']!='Titanium'){
-                            $product[$key] = $value; 
-                        }else{
-                            $product[$key] = $gob;
-                        }
-                    }
-                    break;
-            }
-            foreach ($product as $key => $value) {
-                if($value['ip_name_zh']!='Rbs'){
-                    $data['grade'][$key]         = $value;
+                );
+                $product = D('Product')->where($tmpe)->order('is_sort desc')->select();
+                foreach ($product as $key => $value) {
+                    $data['grade'][$key]         = $value; 
                     $data['grade'][$key]['show'] = 1; 
                 }
-            }
-            $data['rbs'] = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
-            $data['rbs'][0]['show'] =1;
+                $data['rbs'] = D('Product')->where(array('ip_type'=>1,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
+                $data['rbs'][0]['show'] =0;
+                break;
+            case 'Gob':
+                $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
+                $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Gob'))->order('is_sort desc')->find();
+                foreach ($arr as $key => $value) {
+                    if($value['ip_name_zh']!='Gob'){
+                        $product[$key] = $value; 
+                    }else{
+                        $product[$key] = $gob;
+                    }
+                }
+                foreach ($product as $key => $value) {
+                    if($value['ip_name_zh']!='Rbs'){
+                        $data['grade'][$key]         = $value;
+                        $data['grade'][$key]['show'] = 1; 
+                    }
+                }
+                if($find['CustomerType']!='Distributor'){
+                    $data['rbs'] = D('Product')->where(array('ip_type'=>1,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
+                    $data['rbs'][0]['show'] =1; 
+                }else{
+                    $data['rbs'] = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
+                    $data['rbs'][0]['show'] =1;       
+                }
+                break;
+            case 'Platinum':
+                $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
+                $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Platinum'))->order('is_sort desc')->find();
+                foreach ($arr as $key => $value) {
+                    if($value['ip_name_zh']!='Platinum'){
+                        $product[$key] = $value; 
+                    }else{
+                        $product[$key] = $gob;
+                    }
+                }
+                foreach ($product as $key => $value) {
+                    if($value['ip_name_zh']!='Rbs'){
+                        $data['grade'][$key]         = $value;
+                        $data['grade'][$key]['show'] = 1; 
+                    }
+                }
+                if($find['CustomerType']!='Distributor'){
+                    $data['rbs'] = D('Product')->where(array('ip_type'=>1,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
+                    $data['rbs'][0]['show'] =1; 
+                }else{
+                    $data['rbs'] = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
+                    $data['rbs'][0]['show'] =1;       
+                }
+                break;
+            case 'Titanium':
+                $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
+                $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Titanium'))->order('is_sort desc')->find();
+                foreach ($arr as $key => $value) {
+                    if($value['ip_name_zh']!='Titanium'){
+                        $product[$key] = $value; 
+                    }else{
+                        $product[$key] = $gob;
+                    }
+                }
+                foreach ($product as $key => $value) {
+                    if($value['ip_name_zh']!='Rbs'){
+                        $data['grade'][$key]         = $value;
+                        $data['grade'][$key]['show'] = 1; 
+                    }
+                }
+                if($find['CustomerType']!='Distributor'){
+                    $data['rbs'] = D('Product')->where(array('ip_type'=>1,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
+                    $data['rbs'][0]['show'] =1; 
+                }else{
+                    $data['rbs'] = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
+                    $data['rbs'][0]['show'] =1;       
+                }
+                break;
         }
         if($data){
             $this->ajaxreturn($data);
@@ -643,6 +849,189 @@ class HapylifeApiController extends HomeBaseController{
         }  
 	}
 
+    /**
+    * 获取房间类型
+    **/
+    public function roomtype(){
+        $tid = I('post.tid');
+        $rid = I('post.rid');
+        $room= D('Room')->where(array('tid'=>$tid))->select();
+        if($room){ 
+            if($rid==0){
+                $data['type']    = $room[0]['type'];
+                foreach ($room as $key => $value) {
+                    if($key==0){
+                        $room[$key]['show'] = 1;
+                    }else{
+                        $room[$key]['show'] = 0;
+                    }
+                }
+            }else{
+                $data['type'] = D('Room')->where(array('rid'=>$rid))->getfield('type');
+                foreach ($room as $key => $value) {
+                    if($value['rid']==$rid){
+                        $room[$key]['show'] = 1;
+                    }else{
+                        $room[$key]['show'] = 0;
+                    }
+                }
+            }
+            foreach ($room as $key => $value) {
+                $rooms[$key]           = $value;
+                $rooms[$key]['adult0'] = sprintf("%.2f",$value['adult0']);
+            }
+            $data['status']= 1;
+            $data['room']  = $rooms;
+            $data['start'] = D('Travel')->where(array('tid'=>$tid))->getfield('starttime');
+            $this->ajaxreturn($data);
+        }else{
+            $data['status'] = 0;
+            $data['msg']    = '没有获取到内容';
+            $this->ajaxreturn($data);
+        }
+    }
 
+    /**
+    * 获取people数量
+    **/
+    public function people(){
+        $tid = I('post.tid');
+        $rid = I('post.rid');
+        $num = I('post.num');
+        if($rid==0){ 
+            $room= D('Room')->where(array('tid'=>$tid))->find();        
+        }else{
+            $room= D('Room')->where(array('rid'=>$rid))->find();           
+        }
+        $isadult = D('Travel')->where(array('tid'=>$tid))->getfield('isadult');
+        $where   = array('lptype'=>1,'lpnum'=>array('ELT',$room['adultnum']));
+        $adultnum= D('People')->where($where)->order('lpnum asc')->select();
+        $temp    = array('lptype'=>2,'lpnum'=>array('ELT',$room['childnum']));
+        $childnum= D('People')->where($temp)->order('lpnum asc')->select();
+        $number  = $isadult-1;
+        if($room['childnum']>0){
+            for($i=0;$i<$num;$i++){
+                $data['adult'][$i] = $adultnum;
+                $data['aged']      = $isadult;
+                $data['child'][$i] = $childnum;
+                $data['stage']     = '0'.'-'.$number;
+                $data['show']      = 1;
+            }
+        }else{
+            for($i=0;$i<$num;$i++){
+                $data['adult'][$i] = $adultnum;
+                $data['aged']      = $isadult;
+                $data['show']      = 0;
+            }
+        }
+        if($data){
+            $data['status'] = 1;
+            $this->ajaxreturn($data);
+        }else{
+            $data['status'] = 0;
+            $data['msg']    = '没有获取到内容';
+            $this->ajaxreturn($data);
+        }
+    }
+
+    /**
+    * 获取child年龄段
+    **/
+    public function age(){
+        $tid    = I('post.tid');
+        $lpnum  = I('post.lpnum');
+        $isadult= D('Travel')->where(array('tid'=>$tid))->getfield('isadult');
+        $temp   = array('lptype'=>3,'lpnum'=>array('ELT',$isadult));
+        $child  = D('People')->where($temp)->order('lpnum asc')->select();
+        for($i=0;$i<$lpnum;$i++){
+            $data[$i] = $child;
+        }
+        if($data){
+            $this->ajaxreturn($data);
+        }else{
+            $data['status'] = 0;
+            $data['msg']    = '没有获取到内容';
+            $this->ajaxreturn($data);
+        }
+    }
+
+    /**
+    * 计算金额
+    **/
+    public function total(){
+        $tid   = I('post.tid');  
+        $rid   = I('post.rid');  
+        $adult = I('post.adult');  
+        $child = I('post.child');  
+        $age   = I('post.age');
+        $aduarr= explode('-',$adult); 
+        $chiarr= explode('-',$child); 
+        $agearr= explode('-',$age);
+        if($rid==0){ 
+            $room= D('Room')->where(array('tid'=>$tid))->find();        
+        }else{
+            $room= D('Room')->where(array('rid'=>$rid))->find();           
+        }
+        foreach ($aduarr as $key => $value) {
+            $adultnum += $value;
+        }
+        switch ($adultnum) {
+            case '1':
+                $data['adultmony'] = sprintf("%.2f",$room['adult1']);
+                break;
+            case '2':
+                $data['adultmony'] = sprintf("%.2f",$room['adult2']);
+                break;
+            case '3':
+                $data['adultmony'] = sprintf("%.2f",$room['adult3']);
+                break;
+            case '4':
+                $data['adultmony'] = sprintf("%.2f",$room['adult4']);
+                break;
+            case '5':
+                $data['adultmony'] = sprintf("%.2f",$room['adult5']);
+                break;
+            case '6':
+                $data['adultmony'] = sprintf("%.2f",$room['adult6']);
+                break;
+            case '7':
+                $data['adultmony'] = sprintf("%.2f",$room['adult7']);
+                break;
+            case '8':
+                $data['adultmony'] = sprintf("%.2f",$room['adult8']);
+                break;
+            case '9':
+                $data['adultmony'] = sprintf("%.2f",$room['adult9']);
+                break;
+            case '10':
+                $data['adultmony'] = sprintf("%.2f",$room['adult10']);
+                break;
+            case '11':
+                $data['adultmony'] = sprintf("%.2f",$room['adult11']);
+                break;
+            case '12':
+                $data['adultmony'] = sprintf("%.2f",$room['adult12']);
+                break;
+        }
+        foreach ($chiarr as $key => $value) {
+            $childnum += $value;
+        }
+        foreach ($agearr as $key => $value) {
+            if($value>3){
+                $childmony += $room['child'];
+            }
+        }
+        if($data){
+            $data['status']   = 1;
+            $data['adultnum'] = $adultnum;
+            $data['childnum'] = $childnum;
+            $data['childmony']= sprintf("%.2f",$childmony);
+            $data['average']  = sprintf("%.2f",($data['adultmony']+$data['childmony'])/($adultnum+$childnum));
+            $this->ajaxreturn($data);
+        }else{
+            $data['status']   = 0;
+            $this->ajaxreturn($data);
+        }
+    }
 
 }
