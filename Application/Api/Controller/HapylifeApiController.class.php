@@ -850,39 +850,41 @@ class HapylifeApiController extends HomeBaseController{
 	}
 
     /**
-    * 获取房间类型
+    * 获取房间
     **/
     public function roomtype(){
         $tid = I('post.tid');
+        $data= D('Room')->where(array('tid'=>$tid))->select();
+        if($room){
+            $data['status']    = 1;
+            $this->ajaxreturn($data);
+        }else{
+            $data['status'] = 0;
+            $data['msg']    = '没有获取到内容';
+            $this->ajaxreturn($data);
+        }
+    }
+    /**
+    * 获取房间详情
+    **/
+    public function roominfo(){
+        $tid = I('post.tid');
         $rid = I('post.rid');
-        $room= D('Room')->where(array('tid'=>$tid))->select();
-        if($room){ 
-            if($rid==0){
-                $data['type']    = $room[0]['type'];
-                foreach ($room as $key => $value) {
-                    if($key==0){
-                        $room[$key]['show'] = 1;
-                    }else{
-                        $room[$key]['show'] = 0;
-                    }
-                }
-            }else{
-                $data['type'] = D('Room')->where(array('rid'=>$rid))->getfield('type');
-                foreach ($room as $key => $value) {
-                    if($value['rid']==$rid){
-                        $room[$key]['show'] = 1;
-                    }else{
-                        $room[$key]['show'] = 0;
-                    }
-                }
-            }
-            foreach ($room as $key => $value) {
-                $rooms[$key]           = $value;
-                $rooms[$key]['adult0'] = sprintf("%.2f",$value['adult0']);
-            }
-            $data['status']= 1;
-            $data['room']  = $rooms;
-            $data['start'] = D('Travel')->where(array('tid'=>$tid))->getfield('starttime');
+        $find          = D('Travel')->where(array('tid'=>$tid))->find();
+        $data['start'] = $find['starttime'];
+        $data['end']   = $find['endtime'];
+        if($rid==0){
+            $room= D('Room')->where(array('tid'=>$tid))->find();
+        }else{
+            $room= D('Room')->where(array('rid'=>$rid))->find();
+        }
+        $rooms['name']     = $room['name'];
+        $rooms['adult0']   = sprintf("%.2f",$room['adult0']);
+        $data['type']      = $room['rtype'];
+        $data['room']      = $rooms;
+        $data['number']    = D('Number')->where(array('lptype'=>4))->order('lpnum asc')->find();
+        if($data){
+            $data['status']    = 1;
             $this->ajaxreturn($data);
         }else{
             $data['status'] = 0;
@@ -892,12 +894,12 @@ class HapylifeApiController extends HomeBaseController{
     }
 
     /**
-    * 获取people数量
+    * 选择房间数获取people层数
     **/
     public function people(){
-        $tid = I('post.tid');
-        $rid = I('post.rid');
-        $num = I('post.num');
+        $tid   = I('post.tid');
+        $rid   = I('post.rid');
+        $lpnum = I('post.lpnum');
         if($rid==0){ 
             $room= D('Room')->where(array('tid'=>$tid))->find();        
         }else{
@@ -905,23 +907,23 @@ class HapylifeApiController extends HomeBaseController{
         }
         $isadult = D('Travel')->where(array('tid'=>$tid))->getfield('isadult');
         $where   = array('lptype'=>1,'lpnum'=>array('ELT',$room['adultnum']));
-        $adultnum= D('People')->where($where)->order('lpnum asc')->select();
+        $adultnum= D('Number')->where($where)->order('lpnum asc')->select();
         $temp    = array('lptype'=>2,'lpnum'=>array('ELT',$room['childnum']));
-        $childnum= D('People')->where($temp)->order('lpnum asc')->select();
+        $childnum= D('Number')->where($temp)->order('lpnum asc')->select();
         $number  = $isadult-1;
         if($room['childnum']>0){
-            for($i=0;$i<$num;$i++){
-                $data['adult'][$i] = $adultnum;
-                $data['aged']      = $isadult;
-                $data['child'][$i] = $childnum;
-                $data['stage']     = '0'.'-'.$number;
-                $data['show']      = 1;
+            for($i=0;$i<$lpnum;$i++){
+                $data[$i]['adult'] = $adultnum[0];
+                $data[$i]['aged']  = $isadult;
+                $data[$i]['child'] = $childnum[0];
+                $data[$i]['stage'] = '0'.'-'.$number;
+                $data[$i]['show']  = 1;
             }
         }else{
-            for($i=0;$i<$num;$i++){
-                $data['adult'][$i] = $adultnum;
-                $data['aged']      = $isadult;
-                $data['show']      = 0;
+            for($i=0;$i<$lpnum;$i++){
+                $data[$i]['adult'] = $adultnum[0];
+                $data[$i]['aged']  = $isadult;
+                $data[$i]['show']  = 0;
             }
         }
         if($data){
@@ -933,18 +935,17 @@ class HapylifeApiController extends HomeBaseController{
             $this->ajaxreturn($data);
         }
     }
-
     /**
-    * 获取child年龄段
+    * 获取child层数
     **/
-    public function age(){
+    public function child(){
         $tid    = I('post.tid');
         $lpnum  = I('post.lpnum');
         $isadult= D('Travel')->where(array('tid'=>$tid))->getfield('isadult');
         $temp   = array('lptype'=>3,'lpnum'=>array('ELT',$isadult));
-        $child  = D('People')->where($temp)->order('lpnum asc')->select();
+        $child  = D('Number')->where($temp)->order('lpnum asc')->select();
         for($i=0;$i<$lpnum;$i++){
-            $data[$i] = $child;
+            $data[$i] = $child[0];
         }
         if($data){
             $this->ajaxreturn($data);
@@ -954,7 +955,39 @@ class HapylifeApiController extends HomeBaseController{
             $this->ajaxreturn($data);
         }
     }
-
+    /**
+    * 获取adult/child/年龄
+    **/
+    public function quantity(){
+        $tid    = I('post.tid');
+        $lptype = I('post.lptype');
+        $rid    = I('post.rid');
+        $room   = D('Room')->where(array('rid'=>$rid))->find();
+        switch ($lptype) {
+            case '1':
+                $where   = array('lptype'=>$lptype,'lpnum'=>array('ELT',$room['adultnum']));
+                break;
+            case '2':
+                $where   = array('lptype'=>$lptype,'lpnum'=>array('ELT',$room['childnum']));
+                break;
+            case '3':
+                $isadult = D('Travel')->where(array('tid'=>$tid))->getfield('isadult');
+                $number  = $isadult-1;
+                $where   = array('lptype'=>$lptype,'lpnum'=>array('ELT',$number));
+                break;
+            case '4':
+                $where   = array('lptype'=>$lptype);
+                break;
+        }
+        $data = D('Number')->where($where)->order('lpnum asc')->select();
+        if($data){
+            $this->ajaxreturn($data);
+        }else{
+            $data['status'] = 0;
+            $data['msg']    = '没有获取到内容';
+            $this->ajaxreturn($data);
+        }
+    }
     /**
     * 计算金额
     **/

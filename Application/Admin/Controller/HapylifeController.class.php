@@ -21,7 +21,6 @@ class HapylifeController extends AdminBaseController{
 	**/
 	public function add_news(){
 		$upload=post_upload();
-		// p($upload);die;
 		$data=array(
 			'news_title'	=>I('news_title'),
 			'news_content'	=>I('news_content'),
@@ -684,18 +683,10 @@ class HapylifeController extends AdminBaseController{
 	* 添加房间(默认显示is_show 1)
 	**/
 	public function add_room(){
-		$upload=post_upload();
-		// p($upload);die;
-		$data=array(
-				'news_title'	=>I('news_title'),
-				'news_content'	=>I('news_content'),
-				'addtime'		=>date('Y-m-d H:i:s'),
-				'news_des'		=>I('post.news_des')?I('post.news_des'):mb_substr(I('post.news_content'),0,20).'.....',
-				'news_picture'	=>C('WEB_URL').$upload['name']
-			);
+		$data=I('post.');
 		$result=D('Room')->addData($data);
 		if($result){
-			$this->redirect('Admin/Hapylife/news');
+			$this->redirect('Admin/Hapylife/room');
 		}else{
 			$this->error('添加失败');
 		}
@@ -706,19 +697,12 @@ class HapylifeController extends AdminBaseController{
 	**/
 	public function edit_room(){
 		$data=I('post.');
-		if(empty($data['news_des'])){
-			$data['news_des'] = mb_substr(I('post.news_content'),0,20).'.....';
-		}
 		$map=array(
-			'rid'=>$data['id']
+			'rid'=>$data['rid']
 			);
-		$upload=post_upload();
-		if(isset($upload['name'])){
-			$data['news_picture']=C('WEB_URL').$upload['name'];
-		}
 		$result=D('Room')->editData($map,$data);
 		if($result){
-			$this->redirect('Admin/Hapylife/news');
+			$this->redirect('Admin/Hapylife/room');
 		}else{
 			$this->error('编辑失败');
 		}
@@ -734,7 +718,7 @@ class HapylifeController extends AdminBaseController{
 			);
 		$result=D('Room')->deleteData($map);
 		if($result){
-			$this->redirect('Admin/Hapylife/news');
+			$this->redirect('Admin/Hapylife/room');
 		}else{
 			$this->error('删除失败');
 		}
