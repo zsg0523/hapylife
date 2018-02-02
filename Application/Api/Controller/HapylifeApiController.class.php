@@ -41,6 +41,7 @@ class HapylifeApiController extends HomeBaseController{
 	**/
 	public function oldregister(){
 		$data  = I('post.');
+        //匹配姓、名和CustomerID
 		$where= array(
 			'LastName'     =>$data['LastName'],
 			'FirstName'    =>$data['FirstName'],
@@ -48,6 +49,7 @@ class HapylifeApiController extends HomeBaseController{
 		);
 		$find = D('User')->where($where)->find();
 		if($find){
+            //正反面身份证
 			if(!empty($data['JustIdcard'])){
                 $img_body1 = substr(strstr($data['JustIdcard'],','),1);
                 $JustIdcard = time().'_'.mt_rand().'.jpg';
@@ -101,6 +103,7 @@ class HapylifeApiController extends HomeBaseController{
                 $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
                 $where['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
             }
+            //查询原先最大CustomerID，新添+1
 			$custid= D('User')->order('iuid desc')->getfield('CustomerID');
 			$where = array(
 				'CustomerID'         => $custid+1,
@@ -167,6 +170,7 @@ class HapylifeApiController extends HomeBaseController{
 		$data = D('User')->where(array('iuid'=>$iuid))->find();
 		$right= D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Right'))->select();
 		$left = D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Left'))->select();
+        //right右脚、left左脚
 		if($right){
 			$data['right'] = count($right);
 		}else{
@@ -202,6 +206,7 @@ class HapylifeApiController extends HomeBaseController{
             case 'FirstName':
                 $data['FirstName'] = $paravalue;
                 $edit = D('User')->save($data);
+                //同时修改评论里的名字
                 if($edit){
                     $map = array('username2'=>$paravalue);
                     $save  = D('Comment')->where(array('uid2'=>$iuid))->save($map); 
@@ -260,8 +265,8 @@ class HapylifeApiController extends HomeBaseController{
 	**/	
 	public function newslist(){
 		$map  = array(
-				'is_show' =>1
-			);
+			'is_show' =>1
+		);
 		$data = M('News')
 				->where($map)
 				->order('addtime desc')
@@ -320,8 +325,8 @@ class HapylifeApiController extends HomeBaseController{
 	public function product(){
 		$ipid = I('post.ipid');
         $data = M('Product')
-        			->where(array('ipid'=>$ipid))
-        			->find();
+			  ->where(array('ipid'=>$ipid))
+			  ->find();
         if($data){
        		$this->ajaxreturn($data);
     	}else{
@@ -595,8 +600,8 @@ class HapylifeApiController extends HomeBaseController{
 	**/	
 	public function travellist(){
 		$map    = array(
-				'is_show' =>1
-			);
+			'is_show' =>1
+		);
 		$travel = M('Travel')
 				->where($map)
 				->order('addtime desc')
@@ -629,6 +634,7 @@ class HapylifeApiController extends HomeBaseController{
                 $data['banner'][]['pic'] = $value;
             }
         }
+        //点赞列表 like--1、该用户已点赞 0、已点赞
         $like = D('Like')->where(array('pid'=>$tid,'type'=>1))->select();
         if($like){
             $data['likenum'] = count($like); 
@@ -651,6 +657,7 @@ class HapylifeApiController extends HomeBaseController{
         $comm = D('Comment')->join('hapylife_user on hapylife_comment.uid = hapylife_user.iuid')->where(array('pid'=>$tid,'type'=>1))->select();
         if($comm){
             $comment          = subtree($comm,0,$lev=1);
+            //show--1、评论可删除 0、评论不可删
             foreach ($comment as $key => $value) {
                 if($value['uid']==$iuid){
                     $comm[$key]['show'] = 1;
@@ -683,15 +690,18 @@ class HapylifeApiController extends HomeBaseController{
     public function like(){
         $tid  = I('post.tid');
         $iuid = I('post.iuid');
+        //类型：1、旅游 2、动态 3、...
         $type = I('post.type');
         $where= array(
             'pid'  => $tid,
             'uid'  => $iuid,
             'type' => $type
         );
+        //查看是否已经点赞
         $find = D('Like')->where($where)->find();
         if($find){
             $save = D('Like')->where(array('id'=>$find['id']))->delete();
+            //取消点赞
             if($save){
                 $data['status']=2;
                 $this->ajaxreturn($data);
@@ -700,6 +710,7 @@ class HapylifeApiController extends HomeBaseController{
                 $this->ajaxreturn($data);
             }
         }else{
+            //点赞
             $where['time']= date("m/d/Y h:i:s A");
             $save = D('Like')->add($where);
             if($save){
@@ -720,6 +731,7 @@ class HapylifeApiController extends HomeBaseController{
         $iuid = I('post.iuid');
         $iuid2= I('post.iuid2')?I('post.iuid2'):0;
         $cid  = I('post.id')?I('post.id'):0;
+        //类型：1、旅游 2、动态 3、...
         $type = I('post.type');
         $comm = I('post.comm');
         $temp= array(
@@ -750,7 +762,8 @@ class HapylifeApiController extends HomeBaseController{
 	public function upgrade(){
 		$iuid  = I('post.iuid');
         $find  = M('User')->where(array('iuid'=>$iuid))->find();
-        $type  = trim($find['distributortype']); 
+        $type  = trim($find['distributortype']);
+        //判断用户等级 show--1、可点击 2、不可点击
         switch ($type) {
             case 'Pc':
                 $tmpe    = array(
@@ -855,8 +868,7 @@ class HapylifeApiController extends HomeBaseController{
     public function roomtype(){
         $tid = I('post.tid');
         $data= D('Room')->where(array('tid'=>$tid))->select();
-        if($room){
-            $data['status']    = 1;
+        if($data){
             $this->ajaxreturn($data);
         }else{
             $data['status'] = 0;
@@ -873,18 +885,22 @@ class HapylifeApiController extends HomeBaseController{
         $find          = D('Travel')->where(array('tid'=>$tid))->find();
         $data['start'] = $find['starttime'];
         $data['end']   = $find['endtime'];
+        //rid默认为0,获取其中一个房间
         if($rid==0){
             $room= D('Room')->where(array('tid'=>$tid))->find();
         }else{
             $room= D('Room')->where(array('rid'=>$rid))->find();
         }
         $rooms['name']     = $room['name'];
+        $rooms['rid']      = $room['rid'];
         $rooms['adult0']   = sprintf("%.2f",$room['adult0']);
         $data['type']      = $room['rtype'];
         $data['room']      = $rooms;
-        $data['number']    = D('Number')->where(array('lptype'=>4))->order('lpnum asc')->find();
+        //房间数量参数
+        $data['number']['lpnum'] = 0;
+        $data['number']['lpid']  = 0;
+        $data['number']['lptype']= 4;
         if($data){
-            $data['status']    = 1;
             $this->ajaxreturn($data);
         }else{
             $data['status'] = 0;
@@ -899,35 +915,53 @@ class HapylifeApiController extends HomeBaseController{
     public function people(){
         $tid   = I('post.tid');
         $rid   = I('post.rid');
-        $lpnum = I('post.lpnum');
+        $lpnum = I('post.lpnum');//房间数
         if($rid==0){ 
             $room= D('Room')->where(array('tid'=>$tid))->find();        
         }else{
             $room= D('Room')->where(array('rid'=>$rid))->find();           
         }
         $isadult = D('Travel')->where(array('tid'=>$tid))->getfield('isadult');
+        //adult数量值
         $where   = array('lptype'=>1,'lpnum'=>array('ELT',$room['adultnum']));
-        $adultnum= D('Number')->where($where)->order('lpnum asc')->select();
+        $adultnum= D('Number')->where($where)->order('lpnum asc')->find();
+        //child的数量值
         $temp    = array('lptype'=>2,'lpnum'=>array('ELT',$room['childnum']));
-        $childnum= D('Number')->where($temp)->order('lpnum asc')->select();
+        $childnum= D('Number')->where($temp)->order('lpnum asc')->find();
         $number  = $isadult-1;
+        //判断是否能带小孩
         if($room['childnum']>0){
-            for($i=0;$i<$lpnum;$i++){
-                $data[$i]['adult'] = $adultnum[0];
-                $data[$i]['aged']  = $isadult;
-                $data[$i]['child'] = $childnum[0];
-                $data[$i]['stage'] = '0'.'-'.$number;
-                $data[$i]['show']  = 1;
+            for($i==0;$i<$lpnum;$i++){
+                $status[$i]['index']     = $i;
+                $status[$i]['room']      = 'Room'.($i+1);
+                $status[$i]['adultnum']  = $adultnum['lpnum'];
+                $status[$i]['adulttype'] = $adultnum['lptype'];
+                $status[$i]['aged']      = $isadult;
+                $status[$i]['childnum']  = $childnum['lpnum'];
+                $status[$i]['childtype'] = $childnum['lptype'];
+                $status[$i]['stage']     = '0'.'-'.$number;
+                $status[$i]['show']      = 1;
             }
         }else{
-            for($i=0;$i<$lpnum;$i++){
-                $data[$i]['adult'] = $adultnum[0];
-                $data[$i]['aged']  = $isadult;
-                $data[$i]['show']  = 0;
+            for($i==0;$i<$lpnum;$i++){
+                $status[$i]['index']     = $i;
+                $status[$i]['room']      = 'Room'.($i+1);
+                $status[$i]['adultnum']  = $adultnum['lpnum'];
+                $status[$i]['adulttype'] = $adultnum['lptype'];
+                $status[$i]['aged']      = $isadult;
+                $status[$i]['show']      = 0;
+            }
+        }
+        foreach ($status as $key => $value) {
+            $array[] = $value;
+        }
+        foreach ($array as $key => $value) {
+            $data[$key] = $value;
+            if($value['index']==null){
+                $data[$key]['index'] = 0;
             }
         }
         if($data){
-            $data['status'] = 1;
             $this->ajaxreturn($data);
         }else{
             $data['status'] = 0;
@@ -940,6 +974,7 @@ class HapylifeApiController extends HomeBaseController{
     **/
     public function child(){
         $tid    = I('post.tid');
+        //child数量
         $lpnum  = I('post.lpnum');
         $isadult= D('Travel')->where(array('tid'=>$tid))->getfield('isadult');
         $temp   = array('lptype'=>3,'lpnum'=>array('ELT',$isadult));
@@ -956,30 +991,34 @@ class HapylifeApiController extends HomeBaseController{
         }
     }
     /**
-    * 获取adult/child/年龄
+    * 获取adult/child/年龄/房间列表
     **/
     public function quantity(){
         $tid    = I('post.tid');
+        //lptype--1、adult 2、child 3、年龄 4、房间列表
         $lptype = I('post.lptype');
         $rid    = I('post.rid');
         $room   = D('Room')->where(array('rid'=>$rid))->find();
         switch ($lptype) {
             case '1':
                 $where   = array('lptype'=>$lptype,'lpnum'=>array('ELT',$room['adultnum']));
+                $data = D('Number')->where($where)->order('lpnum asc')->select();
                 break;
             case '2':
                 $where   = array('lptype'=>$lptype,'lpnum'=>array('ELT',$room['childnum']));
+                $data = D('Number')->where($where)->order('lpnum asc')->select();
                 break;
             case '3':
                 $isadult = D('Travel')->where(array('tid'=>$tid))->getfield('isadult');
                 $number  = $isadult-1;
                 $where   = array('lptype'=>$lptype,'lpnum'=>array('ELT',$number));
+                $data = D('Number')->where($where)->order('lpnum asc')->select();
                 break;
             case '4':
                 $where   = array('lptype'=>$lptype);
+                $data    = D('Number')->where($where)->order('lpnum asc')->select();
                 break;
         }
-        $data = D('Number')->where($where)->order('lpnum asc')->select();
         if($data){
             $this->ajaxreturn($data);
         }else{
@@ -992,78 +1031,105 @@ class HapylifeApiController extends HomeBaseController{
     * 计算金额
     **/
     public function total(){
-        $tid   = I('post.tid');  
         $rid   = I('post.rid');  
+        $tid   = I('post.tid');  
         $adult = I('post.adult');  
         $child = I('post.child');  
         $age   = I('post.age');
-        $aduarr= explode('-',$adult); 
-        $chiarr= explode('-',$child); 
-        $agearr= explode('-',$age);
-        if($rid==0){ 
-            $room= D('Room')->where(array('tid'=>$tid))->find();        
-        }else{
-            $room= D('Room')->where(array('rid'=>$rid))->find();           
-        }
+        // $adult = '2,3,2';  
+        // $child = '2,1';  
+        // $age   = '1-4,1';
+        //根据逗号转为数组
+        $aduarr= explode(',',$adult); 
+        $chiarr= explode(',',$child); 
+        $agearr= explode(',',$age);
+        $room  = D('Room')->where(array('rid'=>$rid))->find();
+        $travel= D('Travel')->where(array('tid'=>$tid))->find();
+        $temp  = explode('/',$travel['starttime']);
+        $data['address']  = $travel['address'];
+        $data['starttime']= $travel['starttime'];
+        $data['endtime']  = $travel['endtime'];
+        $data['day']      = $travel['whattime'];
+        $data['night']    = $travel['whattime']-1;
+        //根据成年数组得循环次数
         foreach ($aduarr as $key => $value) {
-            $adultnum += $value;
-        }
-        switch ($adultnum) {
-            case '1':
-                $data['adultmony'] = sprintf("%.2f",$room['adult1']);
-                break;
-            case '2':
-                $data['adultmony'] = sprintf("%.2f",$room['adult2']);
-                break;
-            case '3':
-                $data['adultmony'] = sprintf("%.2f",$room['adult3']);
-                break;
-            case '4':
-                $data['adultmony'] = sprintf("%.2f",$room['adult4']);
-                break;
-            case '5':
-                $data['adultmony'] = sprintf("%.2f",$room['adult5']);
-                break;
-            case '6':
-                $data['adultmony'] = sprintf("%.2f",$room['adult6']);
-                break;
-            case '7':
-                $data['adultmony'] = sprintf("%.2f",$room['adult7']);
-                break;
-            case '8':
-                $data['adultmony'] = sprintf("%.2f",$room['adult8']);
-                break;
-            case '9':
-                $data['adultmony'] = sprintf("%.2f",$room['adult9']);
-                break;
-            case '10':
-                $data['adultmony'] = sprintf("%.2f",$room['adult10']);
-                break;
-            case '11':
-                $data['adultmony'] = sprintf("%.2f",$room['adult11']);
-                break;
-            case '12':
-                $data['adultmony'] = sprintf("%.2f",$room['adult12']);
-                break;
+            $keyarr[] = $key;
+            $data['adultnum'] += $value;
         }
         foreach ($chiarr as $key => $value) {
-            $childnum += $value;
+            $data['chiidnum'] += $value;
         }
+        $data['room']     = count($aduarr);
+        //年龄数组根据(-)再转成二维数组
         foreach ($agearr as $key => $value) {
-            if($value>3){
-                $childmony += $room['child'];
+            $agearray[]= explode('-',$value);
+        }
+        //降维
+        foreach ($agearray as $key => $value) {
+            foreach ($value as $k => $v) {
+                $childage[]= $v;
+            }  
+        }
+        //循环得到adult价格和child价格
+        foreach ($keyarr as $key => $value) {
+            foreach ($aduarr as $k => $v) {
+                if($k==$value){
+                    switch ($v) {
+                        case '1':
+                            $adultmony += $room['adult1'];
+                            break;
+                        case '2':
+                            $adultmony += $room['adult2'];
+                            break;
+                        case '3':
+                            $adultmony += $room['adult3'];
+                            break;
+                        case '4':
+                            $adultmony += $room['adult4'];
+                            break;
+                        case '5':
+                            $adultmony += $room['adult5'];
+                            break;
+                        case '6':
+                            $adultmony += $room['adult6'];
+                            break;
+                        case '7':
+                            $adultmony += $room['adult7'];
+                            break;
+                        case '8':
+                            $adultmony += $room['adult8'];
+                            break;
+                        case '9':
+                            $adultmony += $room['adult9'];
+                            break;
+                        case '10':
+                            $adultmony += $room['adult10'];
+                            break;
+                        case '11':
+                            $adultmony += $room['adult11'];
+                            break;
+                        case '12':
+                            $adultmony += $room['adult12'];
+                            break;
+                    }
+                }
+            }
+            foreach ($childage as $key => $value) {
+                if($value>$room['age']){
+                    $childmony += $room['child'];
+                }
             }
         }
-        if($data){
-            $data['status']   = 1;
-            $data['adultnum'] = $adultnum;
-            $data['childnum'] = $childnum;
-            $data['childmony']= sprintf("%.2f",$childmony);
-            $data['average']  = sprintf("%.2f",($data['adultmony']+$data['childmony'])/($adultnum+$childnum));
+        $data['average']  = sprintf("%.2f",($adultmony+$childmony)/($data['adultnum']+$data['chiidnum']));
+        $data['adultmony']= sprintf("%.2f",$adultmony);
+        $data['childmony']= sprintf("%.2f",$childmony);
+        $data['ltine']    = 'Day'.$temp[1].'to'.$temp[0];
+        $data['hotel']    = $room['hotel'].'-'.$room['name'];
+        if($data['adultnum']){
             $this->ajaxreturn($data);
         }else{
-            $data['status']   = 0;
-            $this->ajaxreturn($data);
+            $mape['status']   = 0;
+            $this->ajaxreturn($mape);
         }
     }
 

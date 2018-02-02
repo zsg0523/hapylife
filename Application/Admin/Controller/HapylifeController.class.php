@@ -138,35 +138,40 @@ class HapylifeController extends AdminBaseController{
 			'travel_des'	=>I('post.travel_des')?I('post.travel_des'):mb_substr(I('post.travel_content'),0,50).'.....',
 			'keyword'	    =>mb_substr(I('post.travel_content'),0,50)
 		);
-		$data['starttime'] = I('post.starttime');
-		$tmpe= explode('/',$data['starttime']);
-		$moth= substr(date('F',strtotime($data['starttime'])),0,3);
-		$i   = $tmpe[1]+$data['whattime'];
-		if($i<10){
-			$j = '0'.$i;
-		}else{
-			$j = $i;
-		}
+		$data['starttime']  = I('post.starttime');
+		$tmpe1   = explode('/',$data['starttime']);
+		$moth1   = substr(date('F',strtotime($data['starttime'])),0,3);
 		$endtime = strtotime($data['starttime'])+$data['whattime']*86400;
-		$data['addtime'] = $moth.' '.$tmpe[1].' - '.$j.', '.$tmpe[2];
-		$data['endtime'] = date('m/d/Y',$endtime);
+		$data['endtime']    = date('m/d/Y',$endtime);
+		$tmpe2   = explode('/',$data['endtime']);
+		$moth2   = substr(date('F',$endtime),0,3);
+		if($tmpe1[2]==$tmpe2[2]){
+			if($tmpe1[0]==$tmpe2[0]){
+				$data['addtime'] = $moth1.' '.$tmpe1[1].' - '.$tmpe2[1].', '.$tmpe1[2];
+			}else{
+				$data['addtime'] = $moth1.' '.$tmpe1[1].' - '.$moth2.' '.$tmpe2[1].', '.$tmpe1[2];
+			}
+		}else{
+			$data['addtime']     = $moth1.' '.$tmpe1[1].', '.$tmpe1[2].' - '.$moth2.' '.$tmpe2[1].', '.$tmpe2[2];
+		}
+		// p($data);die;
+		if($upload['name'][0]){
+			$data['travel_picture'] = C('WEB_URL').$upload['name'][0];
+		}
 		if($upload['name'][1]){
-			$data['travel_picture'] = C('WEB_URL').$upload['name'][1];
+			$data['travel_picture1'] = C('WEB_URL').$upload['name'][1];
 		}
 		if($upload['name'][2]){
-			$data['travel_picture1'] = C('WEB_URL').$upload['name'][2];
+			$data['travel_picture2'] = C('WEB_URL').$upload['name'][2];
 		}
 		if($upload['name'][3]){
-			$data['travel_picture2'] = C('WEB_URL').$upload['name'][3];
+			$data['travel_picture3'] = C('WEB_URL').$upload['name'][3];
 		}
 		if($upload['name'][4]){
-			$data['travel_picture3'] = C('WEB_URL').$upload['name'][4];
+			$data['travel_picture4'] = C('WEB_URL').$upload['name'][4];
 		}
 		if($upload['name'][5]){
-			$data['travel_picture4'] = C('WEB_URL').$upload['name'][5];
-		}
-		if($upload['name'][6]){
-			$data['travel_picture5'] = C('WEB_URL').$upload['name'][6];
+			$data['travel_picture5'] = C('WEB_URL').$upload['name'][5];
 		}
 		// p($data);die;
 		$result=D('Travel')->addData($data);
@@ -201,35 +206,40 @@ class HapylifeController extends AdminBaseController{
 			'travel_des'	=>I('post.travel_des')?I('post.travel_des'):mb_substr(I('post.travel_content'),0,50).'.....',
 			'keyword'	    =>mb_substr(I('post.travel_content'),0,50)
 		);
-		$data['starttime'] = I('post.starttime');
-		$moth= substr(date('F',strtotime($data['starttime'])),0,3);
-		$tmpe= explode('/',$data['starttime']);
-		$i   = $tmpe[1]+$data['whattime'];
-		if($i<10){
-			$j = '0'.$i;
-		}else{
-			$j = $i;
-		}
+		$data['starttime']  = I('post.starttime');
+		$tmpe1   = explode('/',$data['starttime']);
+		$moth1   = substr(date('F',strtotime($data['starttime'])),0,3);
 		$endtime = strtotime($data['starttime'])+$data['whattime']*86400;
-		$data['addtime'] = $moth.' '.$tmpe[1].' - '.$j.', '.$tmpe[2];
-		$data['endtime'] = date('m/d/Y',$endtime);
+		$data['endtime']    = date('m/d/Y',$endtime);
+		$tmpe2   = explode('/',$data['endtime']);
+		$moth2   = substr(date('F',$endtime),0,3);
+		if($tmpe1[2]==$tmpe2[2]){
+			if($tmpe1[0]==$tmpe2[0]){
+				$data['addtime'] = $moth1.' '.$tmpe1[1].' - '.$tmpe2[1].', '.$tmpe1[2];
+			}else{
+				$data['addtime'] = $moth1.' '.$tmpe1[1].' - '.$moth2.' '.$tmpe2[1].', '.$tmpe1[2];
+			}
+		}else{
+			$data['addtime']     = $moth1.' '.$tmpe1[1].', '.$tmpe1[2].' - '.$moth2.' '.$tmpe2[1].', '.$tmpe2[2];
+		}
+		p($data);die;
+		if($upload['name'][0]){
+			$data['travel_picture'] = C('WEB_URL').$upload['name'][0];
+		}
 		if($upload['name'][1]){
-			$data['travel_picture'] = C('WEB_URL').$upload['name'][1];
+			$data['travel_picture1'] = C('WEB_URL').$upload['name'][1];
 		}
 		if($upload['name'][2]){
-			$data['travel_picture1'] = C('WEB_URL').$upload['name'][2];
+			$data['travel_picture2'] = C('WEB_URL').$upload['name'][2];
 		}
 		if($upload['name'][3]){
-			$data['travel_picture2'] = C('WEB_URL').$upload['name'][3];
+			$data['travel_picture3'] = C('WEB_URL').$upload['name'][3];
 		}
 		if($upload['name'][4]){
-			$data['travel_picture3'] = C('WEB_URL').$upload['name'][4];
+			$data['travel_picture4'] = C('WEB_URL').$upload['name'][4];
 		}
 		if($upload['name'][5]){
-			$data['travel_picture4'] = C('WEB_URL').$upload['name'][5];
-		}
-		if($upload['name'][6]){
-			$data['travel_picture5'] = C('WEB_URL').$upload['name'][6];
+			$data['travel_picture5'] = C('WEB_URL').$upload['name'][5];
 		}
 		$result=D('Travel')->editData($map,$data);
 		if($result){
