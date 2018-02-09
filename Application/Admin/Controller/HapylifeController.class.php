@@ -21,7 +21,7 @@ class HapylifeController extends AdminBaseController{
 	**/
 	public function add_news(){
 		$upload=post_upload();
-		// p($upload);die;
+		//p($upload);die;
 		$data=array(
 			'news_title'	=>I('news_title'),
 			'news_content'	=>I('news_content'),
