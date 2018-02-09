@@ -86,11 +86,11 @@ class HapylifeApiController extends HomeBaseController{
 	**/
 	public function newregister(){
 		$data  = I('post.');
-		$find  = D('User')->where(array('CustomerID'=>$data['EnrollerID']))->find();
-		if(!$find){
-			$tmpe['status'] = 2;
-			$this->ajaxreturn($tmpe);			
-		}else{
+		// $find  = D('User')->where(array('CustomerID'=>$data['EnrollerID']))->find();
+		// if(!$find){
+		// 	$tmpe['status'] = 2;
+		// 	$this->ajaxreturn($tmpe);			
+		// }else{
 			if(!empty($data['JustIdcard'])){
                 $img_body1 = substr(strstr($data['JustIdcard'],','),1);
                 $JustIdcard = time().'_'.mt_rand().'.jpg';
@@ -134,7 +134,7 @@ class HapylifeApiController extends HomeBaseController{
 				$tmpe['status'] = 0;
 				$this->ajaxreturn($tmpe);
 			}
-		}
+		// }
 	}
 
 	/**
@@ -338,7 +338,7 @@ class HapylifeApiController extends HomeBaseController{
         }
 	}
 	/**
-	* 订单
+	* 产品订单
 	**/
 	public function order(){
 		$iuid = trim(I('post.iuid'));
@@ -417,7 +417,7 @@ class HapylifeApiController extends HomeBaseController{
 	}
 
 	/**
-    * 快钱支付
+    * 购买产品快钱支付
     **/
     public function kqPayment(){
         //$order_num = trim(I('post.ir_receiptnum'))?trim(I('post.ir_receiptnum')):date(YmdHis);
@@ -520,7 +520,7 @@ class HapylifeApiController extends HomeBaseController{
         }
     }
 
-    //快钱返回结果
+    //购买产品快钱返回结果
     public function getKqReturn(){
         $kq_check_all_para=kq_ck_null($_GET['merchantAcctId'],'merchantAcctId').kq_ck_null($_GET['version'],'version').kq_ck_null($_GET['language'],'language').kq_ck_null($_GET['signType'],'signType').kq_ck_null($_GET['payType'],'payType').kq_ck_null($_GET['bankId'],'bankId').kq_ck_null($_GET['orderId'],'orderId').kq_ck_null($_GET['orderTime'],'orderTime').kq_ck_null($_GET['orderAmount'],'orderAmount').kq_ck_null($_GET['bindCard'],'bindCard').kq_ck_null($_GET['bindMobile'],'bindMobile').kq_ck_null($_GET['dealId'],'dealId').kq_ck_null($_GET['bankDealId'],'bankDealId').kq_ck_null($_GET['dealTime'],'dealTime').kq_ck_null($_GET['payAmount'],'payAmount').kq_ck_null($_GET['fee'],'fee').kq_ck_null($_GET['ext1'],'ext1').kq_ck_null($_GET['ext2'],'ext2').kq_ck_null($_GET['payResult'],'payResult').kq_ck_null($_GET['errCode'],'errCode');
 
@@ -544,9 +544,13 @@ class HapylifeApiController extends HomeBaseController{
             $tmpe['OrderDate']= date("m/d/Y h:i:s A");
             $tmpe['iuid']     =D('Receipt')->where(array('ir_receiptnum'=>$_GET['orderId']))->getfield('iuid');
             $find             =D('User')->where(array('iuid'=>$tmpe['iuid']))->find();
-            if($find['isnew']==0){
-                if($find['number']==0){
-                    $tmpe['IsCheck'] = 1;   
+            if($find['number']==0){
+                if($find['isnew']==0){
+                    if($find['number']==0){
+                        $tmpe['IsCheck'] = 1;   
+                    }
+                }else{
+                    $tmpe['IsCheck'] = 2;
                 }
             }else{
                 $tmpe['IsCheck'] = 2;
@@ -574,7 +578,7 @@ class HapylifeApiController extends HomeBaseController{
 
 
     /**
-    * 订单状态查询
+    * 购买产品订单状态查询
     * @param ir_status 0待付款 1待审核 2已支付待发货 3已发货待收货 4已收货待评价 5已评价完成 6审核未通过
     * @param ir_receiptnum 订单编号
     **/
@@ -931,34 +935,25 @@ class HapylifeApiController extends HomeBaseController{
         $number  = $isadult-1;
         //判断是否能带小孩
         if($room['childnum']>0){
-            for($i==0;$i<$lpnum;$i++){
-                $status[$i]['index']     = $i;
-                $status[$i]['room']      = 'Room'.($i+1);
-                $status[$i]['adultnum']  = $adultnum['lpnum'];
-                $status[$i]['adulttype'] = $adultnum['lptype'];
-                $status[$i]['aged']      = $isadult;
-                $status[$i]['childnum']  = $childnum['lpnum'];
-                $status[$i]['childtype'] = $childnum['lptype'];
-                $status[$i]['stage']     = '0'.'-'.$number;
-                $status[$i]['show']      = 1;
+            for($i=0;$i<$lpnum;$i++){
+                $data[$i]['index']     = $i;
+                $data[$i]['room']      = 'Room'.($i+1);
+                $data[$i]['adultnum']  = $adultnum['lpnum'];
+                $data[$i]['adulttype'] = $adultnum['lptype'];
+                $data[$i]['aged']      = $isadult;
+                $data[$i]['childnum']  = $childnum['lpnum'];
+                $data[$i]['childtype'] = $childnum['lptype'];
+                $data[$i]['stage']     = '0'.'-'.$number;
+                $data[$i]['show']      = 1;
             }
         }else{
-            for($i==0;$i<$lpnum;$i++){
-                $status[$i]['index']     = $i;
-                $status[$i]['room']      = 'Room'.($i+1);
-                $status[$i]['adultnum']  = $adultnum['lpnum'];
-                $status[$i]['adulttype'] = $adultnum['lptype'];
-                $status[$i]['aged']      = $isadult;
-                $status[$i]['show']      = 0;
-            }
-        }
-        foreach ($status as $key => $value) {
-            $array[] = $value;
-        }
-        foreach ($array as $key => $value) {
-            $data[$key] = $value;
-            if($value['index']==null){
-                $data[$key]['index'] = 0;
+            for($i=0;$i<$lpnum;$i++){
+                $data[$i]['index']     = $i;
+                $data[$i]['room']      = 'Room'.($i+1);
+                $data[$i]['adultnum']  = $adultnum['lpnum'];
+                $data[$i]['adulttype'] = $adultnum['lptype'];
+                $data[$i]['aged']      = $isadult;
+                $data[$i]['show']      = 0;
             }
         }
         if($data){
@@ -980,7 +975,8 @@ class HapylifeApiController extends HomeBaseController{
         $temp   = array('lptype'=>3,'lpnum'=>array('ELT',$isadult));
         $child  = D('Number')->where($temp)->order('lpnum asc')->select();
         for($i=0;$i<$lpnum;$i++){
-            $data[$i] = $child[0];
+            $data[$i]          = $child[0];
+            $data[$i]['index'] = $i;
         }
         if($data){
             $this->ajaxreturn($data);
@@ -1031,26 +1027,27 @@ class HapylifeApiController extends HomeBaseController{
     * 计算金额
     **/
     public function total(){
+        $iuid  = I('post.iuid');  
         $rid   = I('post.rid');  
         $tid   = I('post.tid');  
         $adult = I('post.adult');  
         $child = I('post.child');  
         $age   = I('post.age');
-        // $adult = '2,3,2';  
-        // $child = '2,1';  
-        // $age   = '1-4,1';
         //根据逗号转为数组
         $aduarr= explode(',',$adult); 
         $chiarr= explode(',',$child); 
         $agearr= explode(',',$age);
         $room  = D('Room')->where(array('rid'=>$rid))->find();
         $travel= D('Travel')->where(array('tid'=>$tid))->find();
+        $user  = D('User')->where(array('iuid'=>$iuid))->find();
         $temp  = explode('/',$travel['starttime']);
         $data['address']  = $travel['address'];
         $data['starttime']= $travel['starttime'];
         $data['endtime']  = $travel['endtime'];
         $data['day']      = $travel['whattime'];
         $data['night']    = $travel['whattime']-1;
+        $data['rid']      = $rid;
+        $data['tid']      = $tid;
         //根据成年数组得循环次数
         foreach ($aduarr as $key => $value) {
             $keyarr[] = $key;
@@ -1060,16 +1057,6 @@ class HapylifeApiController extends HomeBaseController{
             $data['chiidnum'] += $value;
         }
         $data['room']     = count($aduarr);
-        //年龄数组根据(-)再转成二维数组
-        foreach ($agearr as $key => $value) {
-            $agearray[]= explode('-',$value);
-        }
-        //降维
-        foreach ($agearray as $key => $value) {
-            foreach ($value as $k => $v) {
-                $childage[]= $v;
-            }  
-        }
         //循环得到adult价格和child价格
         foreach ($keyarr as $key => $value) {
             foreach ($aduarr as $k => $v) {
@@ -1114,16 +1101,29 @@ class HapylifeApiController extends HomeBaseController{
                     }
                 }
             }
-            foreach ($childage as $key => $value) {
-                if($value>$room['age']){
-                    $childmony += $room['child'];
-                }
+        }
+        foreach ($agearr as $key => $value) {
+            if($value>$room['age']){
+                $childmony += $room['child'];
+            }
+        }
+        if($user['point']>$travel['dispoint']){
+            $maximum  = sprintf("%.2f",$travel['dispoint']); 
+        }else{
+            if($user['point']){
+                $maximum  = sprintf("%.2f",$user['point']);
+            }else{
+                $maximum  = sprintf("%.2f",0);
             }
         }
         $data['average']  = sprintf("%.2f",($adultmony+$childmony)/($data['adultnum']+$data['chiidnum']));
         $data['adultmony']= sprintf("%.2f",$adultmony);
         $data['childmony']= sprintf("%.2f",$childmony);
-        $data['ltine']    = 'Day'.$temp[1].'to'.$temp[0];
+        $data['allpoint'] = sprintf("%.2f",($adultmony+$childmony));
+        $data['maximum']  = $maximum;
+        $data['maxicount']= sprintf("%.2f",$travel['discount']);
+        $data['total']    = sprintf("%.2f",($adultmony+$childmony-$travel['discount']-$travel['dispoint']));
+        $data['ltine']    = 'Day '.$temp[1].' to'.$temp[0];
         $data['hotel']    = $room['hotel'].'-'.$room['name'];
         if($data['adultnum']){
             $this->ajaxreturn($data);
@@ -1132,5 +1132,411 @@ class HapylifeApiController extends HomeBaseController{
             $this->ajaxreturn($mape);
         }
     }
+    /*
+    **填写游客信息
+    */
+    public function fillinfo(){
+        $rid   = I('post.rid');  
+        $tid   = I('post.tid');
+        $iuid  = I('post.iuid');
+        $adult = I('post.adult');
+        $child = I('post.child');
+        $user  = D('User')->where(array('iuid'=>$iuid))->find();
+        $room  = D('Room')->where(array('rid'=>$rid))->find();
+        $travel= D('Travel')->where(array('tid'=>$tid))->find();
+        $prefix= D('Around')->where(array('atype'=>1))->find();
+        $suffix= D('Around')->where(array('atype'=>2))->find();
+        $ptype = D('Around')->where(array('atype'=>3))->find();
+        $data['total']    = I('post.total');
+        $data['address']  = $travel['address'];
+        $data['starttime']= $travel['starttime'];
+        $data['endtime']  = $travel['endtime'];
+        $data['address1'] = '';
+        $data['address2'] = '';
+        $data['city']     = $user['city'];
+        $data['state']    = $user['state'];
+        $data['zip']      = '';
+        $data['country']  = $user['country'];
+        $data['day']      = $travel['whattime'];
+        $data['hotel']    = $room['hotel'];
+        $data['night']    = $travel['whattime']-1;
+        $aduarr= explode(',',$adult); 
+        $chiarr= explode(',',$child);
+        foreach ($aduarr as $key => $value){
+            $keyarr[] = $key;
+            $data['adultnum'] += $value;
+        }
+        foreach ($chiarr as $key => $value){
+            $data['chiidnum'] += $value;
+        }
+        foreach ($keyarr as $key => $value) {
+            foreach ($aduarr as $ke => $va) {
+                if($ke==$value){
+                    $status[$value][] = $va;
+                }
+            }
+            foreach ($chiarr as $k => $v) {
+                if($k==$value){
+                    $status[$value][] = $v;
+                }
+            }
+        }
+        foreach ($status as $key => $value) {
+            foreach ($value as $k => $v) {
+                for($i=0;$i<$v;$i++){
+                    if($k==0){
+                        $temp[$key][$k][$i]['legal']   = 'Room'.($key+1).':Adult '.($i+1).' Legal Name';
+                        $temp[$key][$k][$i]['room']    = ($key+1);
+                    }else{
+                        $temp[$key][$k][$i]['legal']   = 'Room'.($key+1).':Child '.($i+1).' Legal Name';
+                        $temp[$key][$k][$i]['room']    = ($key+1);
+                    }
+                    $temp[$key][$k][$i]['prefix']   = $prefix['aname'];
+                    $temp[$key][$k][$i]['prefid']   = $prefix['aid'];
+                    $temp[$key][$k][$i]['preftype'] = $prefix['atype'];
+                    $temp[$key][$k][$i]['suffix']   = $suffix['aname'];
+                    $temp[$key][$k][$i]['suffid']   = $suffix['aid'];
+                    $temp[$key][$k][$i]['sufftype'] = $suffix['atype'];
+                    $temp[$key][$k][$i]['phonename']= $ptype['aname'];
+                    $temp[$key][$k][$i]['phonetyid']= $ptype['aid'];
+                    $temp[$key][$k][$i]['phonetype'] = $ptype['atype'];
+                    $temp[$key][$k][$i]['firstname']= '';
+                    $temp[$key][$k][$i]['lastname'] = '';
+                    $temp[$key][$k][$i]['middle']   = '';
+                    $temp[$key][$k][$i]['gender']   = 0;
+                    $temp[$key][$k][$i]['email']    = '';
+                    $temp[$key][$k][$i]['phone']    = '';
+                }
+            }
+        }
+        foreach ($temp as $key => $value) {
+            foreach ($value as $key => $val) {
+                foreach ($val as $ke => $va) {
+                    $mapear[] = $va;
+                }
+            }
+        }
+        foreach ($mapear as $key => $value) {
+            $data['info'][$key]          = $value;
+            $data['info'][$key]['index'] = $key;
+            if($key==0){
+                $data['info'][$key]['firstname'] = $user['firstname'];
+                $data['info'][$key]['lastname']  = $user['lastname'];
+                $data['info'][$key]['email']     = $user['email'];
+                $data['info'][$key]['phone']     = $user['phone'];
+            }
+        }
+        if($data['adultnum']){
+            $this->ajaxreturn($data);
+        }else{
+            $mape['status']   = 0;
+            $this->ajaxreturn($mape);
+        }
+    }
 
+    /*
+    **获取前后缀和联系方式
+    */
+    public function around(){
+        $atype = I('post.atype');
+        switch ($atype) {
+            case '1':
+                $data = D('Around')->where(array('atype'=>1))->select();
+                break;
+            case '2':
+                $data = D('Around')->where(array('atype'=>2))->select();
+                    break;
+            case '3':
+                $data = D('Around')->where(array('atype'=>3))->select();
+                    break;
+        }
+        if($data){
+            $this->ajaxreturn($data);
+        }else{
+            $mape['status']   = 0;
+            $this->ajaxreturn($mape);
+        }
+    }
+    /*
+    **生成booking订单
+    */
+    public function bookingOrder(){
+        $mape   = I('post.');
+        $prefix = explode(',',$mape['prefix']);
+        $suffix = explode(',',$mape['suffix']);
+        $first  = explode(',',$mape['firstname']);
+        $last   = explode(',',$mape['lastname']);
+        $middle = explode(',',$mape['middle']);
+        $birth  = explode(',',$mape['birth']);
+        $gender = explode(',',$mape['gender']);
+        $email  = explode(',',$mape['email']);
+        $phone  = explode(',',$mape['phone']);
+        $user   = D('User')->where(array('iuid'=>$mape['iuid']))->find();
+        foreach ($prefix as $pey => $palue) {
+            $info[$pey]['prefix'] = $palue;
+            foreach ($suffix as $sey => $salue) {
+                if($sey==$pey){
+                    $info[$pey]['suffix'] = $salue;
+                }
+            }
+            foreach ($first as $fey => $falue) {
+                if($fey==$pey){
+                    $info[$pey]['firstname'] = $falue;
+                }
+            }
+            foreach ($last as $ley => $lalue) {
+                if($ley==$pey){
+                    $info[$pey]['lastname'] = $lalue;
+                }
+            }
+            foreach ($middle as $mey => $malue) {
+                if($mey==$pey){
+                    $info[$pey]['middle'] = $malue;
+                }
+            }
+            foreach ($birth as $bey => $balue) {
+                if($bey==$pey){
+                    $info[$pey]['birth'] = $balue;
+                }
+            }
+            foreach ($gender as $gey => $galue) {
+                if($gey==$pey){
+                    $info[$pey]['gender'] = $galue;
+                }
+            }
+            foreach ($email as $eey => $ealue) {
+                if($eey==$pey){
+                    $info[$pey]['email'] = $ealue;
+                }
+            }
+            foreach ($phone as $hey => $halue) {
+                if($hey==$pey){
+                    $info[$pey]['phone'] = $halue;
+                }
+            }
+        }
+        // p($info);
+        $trid   = D('Room')->where(array('hotel'=>$mape['hotel']))->find();
+        $travel = D('Travel')->where(array('tid'=>$trid['tid']))->find();
+        $ordnum = date('YmdHis').rand(100000, 999999);
+        $booking=array(
+            'iuid'       =>$mape['iuid'],
+            'customerid' =>$user['customerid'],
+            'breceiptnum'=>$ordnum,
+            'bstatus'    =>0,
+            'adultnum'   =>$mape['adultnum'],
+            'childnum'   =>$mape['childnum'],
+            'total'      =>$mape['total'],
+            'bname'      =>$user['firstname'].' '.$user['lastname'],
+            'bphone'     =>$user['phone'],
+            'address1'   =>$mape['address1'],
+            'address2'   =>$mape['address2'],
+            'city'       =>$mape['city'],
+            'state'      =>$mape['state'],
+            'country'    =>$mape['country'],
+            'zip'        =>$mape['zip'],
+            'hotel'      =>$mape['hotel'],
+            'room'       =>$trid['name'],
+            'tid'        =>$trid['tid'],
+            'rid'        =>$trid['rid'],
+            'starttime'  =>$travel['starttime'],
+            'endtime'    =>$travel['endtime'],
+            'bpaytype'   =>0,
+            'bdate'      =>time(),
+        );
+        // p($booking);
+        $addbooking = D('booking')->add($booking);
+        if($addbooking){
+            //生成日志记录
+            $content = '您的旅游行程已生成,编号:'.$ordnum.',总价:'.$mape['total'];
+            $log = array(
+                'from_iuid' =>$mape['iuid'],
+                'content'   =>$content,
+                'action'    =>0,
+                'type'      =>2,
+                'date'      =>date('Y-m-d H:i:s')          
+            );
+            $addlog = M('Log')->add($log);
+            foreach ($info as $key => $value) {
+                $value['breceiptnum'] = $ordnum;
+                $addinfo = D('Visitor')->add($value);
+            } 
+        }
+        if($addinfo){
+            $data['status'] = 1;
+            $this->ajaxreturn($data);
+        }else{
+            $data['status'] = 1;
+            $this->ajaxreturn($data); 
+        }
+    }
+
+    /**
+    * booking快钱支付
+    **/
+    public function bookingPay(){
+        //$order_num = trim(I('post.ir_receiptnum'))?trim(I('post.ir_receiptnum')):date(YmdHis);
+        $order_num = trim(I('post.breceiptnum'));
+        //订单信息
+        $order     = M('Booking')->where(array('breceiptnum'=>$order_num))->find();
+        $peoplenum = $order['adultnum']+$order['childnum'];
+        $kq_target          = "https://www.99bill.com/mobilegateway/recvMerchantInfoAction.htm";
+        $kq_merchantAcctId  = "1020997278101";      //*  商家用户编号     (30)
+        $kq_inputCharset    = "1";  //   1 ->  UTF-8        2 -> GBK        3 -> GB2312   default: 1    (2)
+        $kq_pageUrl         = ""; //   直接跳转页面 (256)
+        $kq_bgUrl           = "http://apps.hapy-life.com/hapylife/index.php/Api/HapylifeApi/bookingReturn"; //   后台通知页面 (256)
+        $kq_version         = "mobile1.0";  //*  版本  固定值 v2.0   (10)
+        $kq_language        = "1";  //*  默认 1 ， 显示 汉语   (2)
+        $kq_signType        = "4";   //*  固定值 1 表示 MD5 加密方式 , 4 表示 PKI 证书签名方式   (2)
+        $kq_payerName       = $order['customerid']; //   英文或者中文字符   (32)
+        $kq_payerContactType= "1";    //  支付人联系类型  固定值： 1  代表电子邮件方式 (2)
+        $kq_payerContact    = "";     //   支付人联系方式    (50)
+        $kq_orderId         = $order_num; //*  字母数字或者, _ , - ,  并且字母数字开头 并且在自身交易中式唯一  (50)
+        $kq_orderAmount     = $order['total']*100; //*   字符金额 以 分为单位 比如 10 元， 应写成 1000 (10)
+        $kq_orderTime       = date(YmdHis);  //*  交易时间  格式: 20110805110533
+        $kq_productName     = "hapylife";//    商品名称英文或者中文字符串(256)
+        $kq_productNum      = $peoplenum;   //    商品数量  (8)
+        $kq_productId       = "";   //    商品代码，可以是 字母,数字,-,_   (20) 
+        $kq_productDesc     = ""; //    商品描述， 英文或者中文字符串  (400)
+        $kq_ext1            = "";   //    扩展字段， 英文或者中文字符串，支付完成后，按照原样返回给商户。 (128)
+        $kq_ext2            = "";
+        $kq_payType         = "21"; //*  固定选择值：00、15、21、21-1、21-2
+        //00代表显示快钱各支付方式列表；
+        //15信用卡无卡支付
+        //21 快捷支付
+        //21-1 代表储蓄卡快捷；21-2 代表信用卡快捷
+        //*其中”-”只允许在半角状态下输入。
+        $kq_bankId          = "";   //银行代码 银行代码 要在开通银行时 使用， 默认不开通 (8)
+        $kq_redoFlag        = "0";  //同一订单禁止重复提交标志  固定值 1 、 0      
+                                    //1 表示同一订单只允许提交一次 ； 0 表示在订单没有支付成功状态下 可以重复提交； 默认 0 
+        $kq_pid             = "";       //合作伙伴在快钱的用户编号 (30)
+        $kq_payerIdType     ="3";        //指定付款人
+        $kq_payerId         =date('YmdHis').rand(100000, 999999);       //付款人标识
+
+        $map = array(
+            'inputCharset'      =>$kq_inputCharset,
+            'pageUrl'           =>$kq_pageUrl,
+            'bgUrl'             =>$kq_bgUrl,
+            'version'           =>$kq_version,
+            'language'          =>$kq_language,
+            'signType'          =>$kq_signType,
+            'merchantAcctId'    =>$kq_merchantAcctId,
+            'payerName'         =>$kq_payerName,
+            'payerContactType'  =>$kq_payerContactType,
+            'payerContact'      =>$kq_payerContact,
+            'payerIdType'       =>$kq_payerIdType,
+            'payerId'           =>$kq_payerId,
+            'orderId'           =>$kq_orderId,
+            'orderAmount'       =>$kq_orderAmount,
+            'orderTime'         =>$kq_orderTime,
+            'productName'       =>$kq_productName,
+            'productNum'        =>$kq_productNum,
+            'productId'         =>$kq_productId,
+            'productDesc'       =>$kq_productDesc,
+            'ext1'              =>$kq_ext1,
+            'ext2'              =>$kq_ext2,
+            'payType'           =>$kq_payType,
+            'bankId'            =>$kq_bankId,
+            'redoFlag'          =>$kq_redoFlag,
+            'pid'               =>$kq_pid
+        );
+        foreach ($map as $k => $v) {
+            if(!empty($v)){
+                $k.='='.$v.'&';
+                $kq_all_para .= $k;
+            }
+        }
+        $kq_all_para = rtrim($kq_all_para,'&');
+        //生成证书
+        $priv_key = file_get_contents("./99bill-rsa.pem");
+        $pkeyid   = openssl_get_privatekey($priv_key);
+        // compute signature
+        openssl_sign($kq_all_para, $signMsg, $pkeyid);
+        // free the key from memory
+        openssl_free_key($pkeyid);
+        $kq_sign_msg = urlencode(base64_encode($signMsg));
+        $url = $kq_target.'?'.$kq_all_para.'&signMsg='.$kq_sign_msg;
+        //header("Location:".$url);
+        if($url){
+            $data = array(
+                'ir_receiptnum'=>$order_num,
+                'url'          =>$url,
+                'status'       =>1,
+                'msg'          =>'跳转至该url，使用快钱支付'
+            );
+            $this->ajaxreturn($data);
+        }else{
+            $data = array(
+                'ir_receiptnum'=>$order_num,
+                'url'          =>'请求失败',
+                'status'       =>0,
+                'msg'          =>'支付请求失败'
+            );
+            $this->ajaxreturn($data);
+        }
+    }
+
+    /*
+    **旅游快钱返回结果
+    */
+    public function bookingReturn(){
+        $kq_check_all_para=kq_ck_null($_GET['merchantAcctId'],'merchantAcctId').kq_ck_null($_GET['version'],'version').kq_ck_null($_GET['language'],'language').kq_ck_null($_GET['signType'],'signType').kq_ck_null($_GET['payType'],'payType').kq_ck_null($_GET['bankId'],'bankId').kq_ck_null($_GET['orderId'],'orderId').kq_ck_null($_GET['orderTime'],'orderTime').kq_ck_null($_GET['orderAmount'],'orderAmount').kq_ck_null($_GET['bindCard'],'bindCard').kq_ck_null($_GET['bindMobile'],'bindMobile').kq_ck_null($_GET['dealId'],'dealId').kq_ck_null($_GET['bankDealId'],'bankDealId').kq_ck_null($_GET['dealTime'],'dealTime').kq_ck_null($_GET['payAmount'],'payAmount').kq_ck_null($_GET['fee'],'fee').kq_ck_null($_GET['ext1'],'ext1').kq_ck_null($_GET['ext2'],'ext2').kq_ck_null($_GET['payResult'],'payResult').kq_ck_null($_GET['errCode'],'errCode');
+
+        $trans_body= substr($kq_check_all_para,0,strlen($kq_check_all_para)-1);
+        $MAC       = base64_decode($_GET['signMsg']);
+        $cert      = file_get_contents("./99bill.cert.rsa.20340630.cer");
+        $pubkeyid  = openssl_get_publickey($cert); 
+        $ok        = openssl_verify($trans_body, $MAC, $pubkeyid); 
+        if ($ok == 1) {
+            //写入日志记录
+            $map = array(
+                'content'=>'<result>1</result><redirecturl>http://success.html</redirecturl>',
+                'date'   =>date('Y-m-d H:i:s'),
+                'billno' =>$_GET['orderId'],
+                'amount' =>$_GET['orderAmount'],
+                'action' =>1,
+                'status' =>1
+            ); 
+            $add = M('Log')->add($map);
+            //做订单的处理
+            $receipt = M('Booking')->where(array('breceiptnum'=>$_GET['orderId']))->setField('bstatus',2);
+            if($receipt){
+                //通知快钱商户收到的结果
+                echo '<result>1</result><redirecturl>http://success.html</redirecturl>';
+            }
+        }else{
+            $map = array(
+                'content'=>'<result>1</result><redirecturl>http://false.html</redirecturl>',
+                'date'   =>date('Y-m-d H:i:s'),
+                'action' =>1,
+                'status' =>0
+            ); 
+            //通知快钱商户收到的结果
+            echo '<result>1</result><redirecturl>http://false.html</redirecturl>';
+            $this->ajaxreturn($map);
+        }
+    }
+
+
+    /**
+    * 旅游订单状态查询
+    * @param bstatus 0待付款 1待审核 2已支付待发货 3已发货待收货 4已收货待评价 5已评价完成 6审核未通过
+    * @param breceiptnum 订单编号
+    **/
+    public function bookingCheck(){
+        $ir_receiptnum = I('post.breceiptnum');
+        //订单状态查询
+        $data = M('Booking')->where(array('breceiptnum'=>$ir_receiptnum))->find();
+        $data['info']  = D('Visitor')->where(array('breceiptnum'=>$ir_receiptnum))->select();
+        if($data['bstatus'] == 2){
+            //支付成功
+            $data['status'] = 1;
+            $data['msg'] = '支付成功，请跳转...';
+            $this->ajaxreturn($data);
+        }else{
+            $mape['status'] = 0;
+            $mape['msg'] = '正在支付，请等待...';
+            $this->ajaxreturn($mape);
+        }
+    }
 }
