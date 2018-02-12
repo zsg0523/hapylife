@@ -7,33 +7,7 @@ use Common\Controller\HomeBaseController;
 class HapylifeApiController extends HomeBaseController{
 
 	public function index(){
-        // p($data);
-		// // die;
-		// set_time_limit(10000);
-		// $data1 = D('Users')->limit('900000,1000000')->select();
-		// // print_r($data);
-		// foreach ($data1 as $key => $value) {
-		// 	$tmpe['LastName']  = trim($value['lastname']);
-		// 	$tmpe['FirstName'] = trim($value['firstname']);
-		// 	$tmpe['CustomerID']= trim($value['customerid']);
-		// 	$tmpe['Placement']= trim($value['placement']);
-		// 	$tmpe['CustomerStatus ']= trim($value['customerstatus']);
-		// 	$tmpe['CustomerType']= trim($value['customertype']);
-		// 	$tmpe['EnrollerID']= trim($value['enrollerid']);
-		// 	$tmpe['SponsorID']= trim($value['sponsorid']);
-		// 	$tmpe['City']= trim($value['city']);
-		// 	$tmpe['State']= trim($value['state']);
-		// 	$tmpe['Country']= trim($value['country']);
-		// 	$tmpe['JoinedOn']= trim($value['joinedon']);
-		// 	$tmpe['HighestAchievedRank']= trim($value['highestachievedrank']);
-		// 	$tmpe['WeeklyVolume']= trim($value['weeklyvolume']);
-		// 	$tmpe['OrderDate']= trim($value['orderdate']);
-		// 	$add = D('User1')->add($tmpe);
-		// }
-		// if($add){
-		// 	echo '80-90添加完毕';
-		// }
-		// unset($data1);
+        
 	}
 
 	/**
@@ -1364,9 +1338,12 @@ class HapylifeApiController extends HomeBaseController{
         }
         if($addinfo){
             $data['status'] = 1;
+            $data['ordnum'] = $ordnum;
+            $data['message']= "订单已成功生成";
             $this->ajaxreturn($data);
         }else{
-            $data['status'] = 1;
+            $data['status'] = 0;
+            $data['message']= "订单生成失败";
             $this->ajaxreturn($data); 
         }
     }
@@ -1537,6 +1514,23 @@ class HapylifeApiController extends HomeBaseController{
             $mape['status'] = 0;
             $mape['msg'] = '正在支付，请等待...';
             $this->ajaxreturn($mape);
+        }
+    }
+
+    /**
+    * 订单信息查询
+    **/
+    public function getOrderInfo(){
+        //订单信息查询
+        $ir_receiptnum = I('post.breceiptnum');
+        $data          = M('Booking')->where(array('breceiptnum'=>$ir_receiptnum))->find();
+        $data['info']  = D('Visitor')->where(array('breceiptnum'=>$ir_receiptnum))->select();
+        if($data){
+            $this->ajaxreturn($data);
+        }else{
+            $data['status'] = 0;
+            $data['message']= '查询不到该订单';
+            $this->ajaxreturn($data);
         }
     }
 }
