@@ -1107,22 +1107,22 @@ class HapylifeApiController extends HomeBaseController{
                 $childmony += $room['child'];
             }
         }
-        if($user['point']>$travel['dispoint']){
-            $maximum  = sprintf("%.2f",$travel['dispoint']); 
+        if($user['point']>=$travel['dispoint']){
+            $maximum  = $travel['dispoint']; 
         }else{
-            if($user['point']){
-                $maximum  = sprintf("%.2f",$user['point']);
+            if($user['point']!=0){
+                $maximum  = $user['point'];
             }else{
-                $maximum  = sprintf("%.2f",0);
+                $maximum  = 0;
             }
         }
         $data['average']  = sprintf("%.2f",($adultmony+$childmony)/($data['adultnum']+$data['chiidnum']));
         $data['adultmony']= sprintf("%.2f",$adultmony);
         $data['childmony']= sprintf("%.2f",$childmony);
         $data['allpoint'] = sprintf("%.2f",($adultmony+$childmony));
-        $data['maximum']  = $maximum;
+        $data['maximum']  = sprintf("%.2f",$maximum);
         $data['maxicount']= sprintf("%.2f",$travel['discount']);
-        $data['total']    = sprintf("%.2f",($adultmony+$childmony-$travel['discount']-$travel['dispoint']));
+        $data['total']    = sprintf("%.2f",($adultmony+$childmony-$travel['discount']-$maximum));
         $data['ltine']    = 'Day '.$temp[1].' to'.$temp[0];
         $data['hotel']    = $room['hotel'].'-'.$room['name'];
         if($data['adultnum']){
