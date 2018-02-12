@@ -931,34 +931,25 @@ class HapylifeApiController extends HomeBaseController{
         $number  = $isadult-1;
         //判断是否能带小孩
         if($room['childnum']>0){
-            for($i==0;$i<$lpnum;$i++){
-                $status[$i]['index']     = $i;
-                $status[$i]['room']      = 'Room'.($i+1);
-                $status[$i]['adultnum']  = $adultnum['lpnum'];
-                $status[$i]['adulttype'] = $adultnum['lptype'];
-                $status[$i]['aged']      = $isadult;
-                $status[$i]['childnum']  = $childnum['lpnum'];
-                $status[$i]['childtype'] = $childnum['lptype'];
-                $status[$i]['stage']     = '0'.'-'.$number;
-                $status[$i]['show']      = 1;
+            for($i=0;$i<$lpnum;$i++){
+                $data[$i]['index']     = $i;
+                $data[$i]['room']      = 'Room'.($i+1);
+                $data[$i]['adultnum']  = $adultnum['lpnum'];
+                $data[$i]['adulttype'] = $adultnum['lptype'];
+                $data[$i]['aged']      = $isadult;
+                $data[$i]['childnum']  = $childnum['lpnum'];
+                $data[$i]['childtype'] = $childnum['lptype'];
+                $data[$i]['stage']     = '0'.'-'.$number;
+                $data[$i]['show']      = 1;
             }
         }else{
-            for($i==0;$i<$lpnum;$i++){
-                $status[$i]['index']     = $i;
-                $status[$i]['room']      = 'Room'.($i+1);
-                $status[$i]['adultnum']  = $adultnum['lpnum'];
-                $status[$i]['adulttype'] = $adultnum['lptype'];
-                $status[$i]['aged']      = $isadult;
-                $status[$i]['show']      = 0;
-            }
-        }
-        foreach ($status as $key => $value) {
-            $array[] = $value;
-        }
-        foreach ($array as $key => $value) {
-            $data[$key] = $value;
-            if($value['index']==null){
-                $data[$key]['index'] = 0;
+            for($i=0;$i<$lpnum;$i++){
+                $data[$i]['index']     = $i;
+                $data[$i]['room']      = 'Room'.($i+1);
+                $data[$i]['adultnum']  = $adultnum['lpnum'];
+                $data[$i]['adulttype'] = $adultnum['lptype'];
+                $data[$i]['aged']      = $isadult;
+                $data[$i]['show']      = 0;
             }
         }
         if($data){
@@ -980,7 +971,8 @@ class HapylifeApiController extends HomeBaseController{
         $temp   = array('lptype'=>3,'lpnum'=>array('ELT',$isadult));
         $child  = D('Number')->where($temp)->order('lpnum asc')->select();
         for($i=0;$i<$lpnum;$i++){
-            $data[$i] = $child[0];
+            $data[$i]          = $child[0];
+            $data[$i]['index'] = $i;
         }
         if($data){
             $this->ajaxreturn($data);
@@ -1031,6 +1023,7 @@ class HapylifeApiController extends HomeBaseController{
     * 计算金额
     **/
     public function total(){
+        $iuid  = I('post.iuid');  
         $rid   = I('post.rid');  
         $tid   = I('post.tid');  
         $adult = I('post.adult');  
@@ -1045,6 +1038,7 @@ class HapylifeApiController extends HomeBaseController{
         $agearr= explode(',',$age);
         $room  = D('Room')->where(array('rid'=>$rid))->find();
         $travel= D('Travel')->where(array('tid'=>$tid))->find();
+        $user  = D('User')->where(array('iuid'=>$iuid))->find();
         $temp  = explode('/',$travel['starttime']);
         $data['address']  = $travel['address'];
         $data['starttime']= $travel['starttime'];
@@ -1060,16 +1054,6 @@ class HapylifeApiController extends HomeBaseController{
             $data['chiidnum'] += $value;
         }
         $data['room']     = count($aduarr);
-        //年龄数组根据(-)再转成二维数组
-        foreach ($agearr as $key => $value) {
-            $agearray[]= explode('-',$value);
-        }
-        //降维
-        foreach ($agearray as $key => $value) {
-            foreach ($value as $k => $v) {
-                $childage[]= $v;
-            }  
-        }
         //循环得到adult价格和child价格
         foreach ($keyarr as $key => $value) {
             foreach ($aduarr as $k => $v) {
@@ -1114,17 +1098,116 @@ class HapylifeApiController extends HomeBaseController{
                     }
                 }
             }
-            foreach ($childage as $key => $value) {
-                if($value>$room['age']){
-                    $childmony += $room['child'];
-                }
+        }
+        foreach ($agearr as $key => $value) {
+            if($value>$room['age']){
+                $childmony += $room['child'];
+            }
+        }
+        if($user['point']>$travel['dispoint']){
+            $maximum  = sprintf("%.2f",$travel['dispoint']); 
+        }else{
+            if($user['point']){
+                $maximum  = sprintf("%.2f",$user['point']);
+            }else{
+                $maximum  = sprintf("%.2f",0);
             }
         }
         $data['average']  = sprintf("%.2f",($adultmony+$childmony)/($data['adultnum']+$data['chiidnum']));
         $data['adultmony']= sprintf("%.2f",$adultmony);
         $data['childmony']= sprintf("%.2f",$childmony);
-        $data['ltine']    = 'Day'.$temp[1].'to'.$temp[0];
+        $data['allpoint'] = sprintf("%.2f",($adultmony+$childmony));
+        $data['maximum']  = $maximum;
+        $data['maxicount']= sprintf("%.2f",$travel['discount']);
+        $data['total']    = sprintf("%.2f",($adultmony+$childmony-$travel['discount']-$travel['dispoint']));
+        $data['ltine']    = 'Day '.$temp[1].' to'.$temp[0];
         $data['hotel']    = $room['hotel'].'-'.$room['name'];
+        if($data['adultnum']){
+            $this->ajaxreturn($data);
+        }else{
+            $mape['status']   = 0;
+            $this->ajaxreturn($mape);
+        }
+    }
+
+    /*
+    **填写游客信息
+    */
+    public function fillinfo(){
+        $rid   = I('post.rid');  
+        $tid   = I('post.tid');
+        $iuid  = I('post.iuid');
+        $adult = I('post.adult');
+        $child = I('post.child');
+        $user  = D('User')->where(array('iuid'=>$iuid))->find();
+        $room  = D('Room')->where(array('rid'=>$rid))->find();
+        $travel= D('Travel')->where(array('tid'=>$tid))->find();
+        $prefix= D('Around')->where(array('atype'=>1))->find();
+        $suffix= D('Around')->where(array('atype'=>2))->find();
+        $suffix= D('Around')->where(array('atype'=>3))->find();
+        $data['total']    = I('post.total');
+        $data['address']  = $travel['address'];
+        $data['starttime']= $travel['starttime'];
+        $data['endtime']  = $travel['endtime'];
+        $data['address1'] = '';
+        $data['address2'] = '';
+        $data['city']     = $user['city'];
+        $data['state']    = $user['state'];
+        $data['zip']      = '';
+        $data['country']  = $user['country'];
+        $aduarr= explode(',',$adult); 
+        $chiarr= explode(',',$child);
+        foreach ($aduarr as $key => $value){
+            $keyarr[] = $key;
+            $data['adultnum'] += $value;
+        }
+        foreach ($chiarr as $key => $value){
+            $data['chiidnum'] += $value;
+        }
+        foreach ($keyarr as $key => $value) {
+            foreach ($aduarr as $ke => $va) {
+                if($ke==$value){
+                    $status[$value][] = $va;
+                }
+            }
+            foreach ($chiarr as $k => $v) {
+                if($k==$value){
+                    $status[$value][] = $v;
+                }
+            }
+        }
+        foreach ($status as $key => $value) {
+            foreach ($value as $k => $v) {
+                for($i=0;$i<$v;$i++){
+                    if($k==0){
+                        $temp[$key][$k][$i]['legal']   = 'Adult '.($i+1).' Legal Name';
+                    }else{
+                        $temp[$key][$k][$i]['legal']   = 'Child '.($i+1).' Legal Name';
+                    }
+                    $temp[$key][$k][$i]['suffix']   = $suffix['aname'];
+                    $temp[$key][$k][$i]['suffid']   = $suffix['aid'];
+                    $temp[$key][$k][$i]['sufftype'] = $suffix['atype'];
+                    $temp[$key][$k][$i]['prefix']   = $prefix['aname'];
+                    $temp[$key][$k][$i]['prefid']   = $prefix['aid'];
+                    $temp[$key][$k][$i]['preftype'] = $prefix['atype'];
+                    $temp[$key][$k][$i]['firstname']= '';
+                    $temp[$key][$k][$i]['lastname'] = '';
+                    $temp[$key][$k][$i]['middle']   = '';
+                    $temp[$key][$k][$i]['gender']   = 0;
+                    $temp[$key][$k][$i]['email']    = '';
+                    $temp[$key][$k][$i]['phone']    = '';
+                }
+            }
+        }
+        foreach ($temp as $key => $value) {
+            foreach ($value as $key => $val) {
+                foreach ($value as $ke => $va) {
+                    foreach ($va as $k => $v) {
+                        $data['info'][] = $v;
+                    }
+                }
+            }
+        }
         if($data['adultnum']){
             $this->ajaxreturn($data);
         }else{
