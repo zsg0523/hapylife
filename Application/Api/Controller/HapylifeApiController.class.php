@@ -1523,7 +1523,7 @@ class HapylifeApiController extends HomeBaseController{
     public function getOrderInfo(){
         //订单信息查询
         $ir_receiptnum = I('post.breceiptnum');
-        $data = M('Booking')->where(array('breceiptnum'=>$ir_receiptnum))->find();
+        $data          = M('Booking')->where(array('breceiptnum'=>$ir_receiptnum))->find();
         $data['info']  = D('Visitor')->where(array('breceiptnum'=>$ir_receiptnum))->select();
         if($data){
             $this->ajaxreturn($data);

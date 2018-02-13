@@ -222,7 +222,6 @@ class HapylifeController extends AdminBaseController{
 		}else{
 			$data['addtime']     = $moth1.' '.$tmpe1[1].', '.$tmpe1[2].' - '.$moth2.' '.$tmpe2[1].', '.$tmpe2[2];
 		}
-		p($data);die;
 		if($upload['name'][0]){
 			$data['travel_picture'] = C('WEB_URL').$upload['name'][0];
 		}
