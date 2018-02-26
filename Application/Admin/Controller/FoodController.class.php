@@ -40,6 +40,19 @@ class FoodController extends AdminBaseController{
 		}
 	}
 
+	/**
+	* 添加餐厅时间
+	**/
+	public function addShopTime(){
+		$data   = I('post.');
+		$result = M('shoptime')->add($data);
+		if($result){
+			$this->redirect('Admin/Food/food');
+		}else{
+			$this->error('添加失败');
+		}
+	}
+
 
 	/**
 	* 编辑餐厅信息

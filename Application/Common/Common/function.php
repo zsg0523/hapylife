@@ -2525,3 +2525,36 @@ function import_csv($file){
     $data = explode("\r\n", $data);
     return $data;
 }
+
+/********************************************************日志*******************************************************************
+    * @param type   1EP 2订单 3VP 4会员
+    * @param action 1EP  （0积分提现的提交 1转出 2转入 3支付 4积分提现的审核 5发放） 
+    * @param action 2订单 (1生成 2支付 3发货  4审核 5退货 6退款) 
+    * @param action 3VP  （1转出 2转入 3商品兑换VP 4vp兑换商品） 
+    * @param action 4会员（1注册 2退出 3信息编辑 4会员升级 ）
+    **/
+
+    /**
+    * 添加积分提取日志
+    * iuid 会员id
+    * content 日志记录内容
+    * create_month 冗余归档日期,如 2017-8
+    * create_time  创建时间 存储格式时间戳
+    **/
+    function addLog($iuid,$content,$action,$type){
+        $create_month = date('Y-m',time());    
+        $log = array(
+                'iuid'        =>$iuid,
+                'content'     =>$content,
+                'create_month'=>$create_month,
+                'create_time' =>time(),
+                'type'        =>$type,
+                'action'      =>$action
+            );
+        $add = M('Log')->add($log);
+        if($add){
+            return "日志记录成功";
+        }else{
+            return "日志记录失败";
+        }
+    }

@@ -107,6 +107,7 @@ class HapylifeController extends AdminBaseController{
 		}
 	}
 
+
 //***********************旅游*******************
 	/**
 	* 旅游列表
@@ -607,13 +608,21 @@ class HapylifeController extends AdminBaseController{
 	**/
 	public function user(){
 		//账户昵称搜索
-		$word = I('post.word');
-		if(empty($word)){
-			$map=array();
-		}else{
-			$map=array(
-				'CustomerID'=>$word
-			);
+		$data['CustomerID']     = strtoupper(trim(I('get.customerId')));
+		$data['SponsorID']      = trim(I('get.sponsorId'));
+		$data['EnrollerID']     = trim(I('get.enrollerId'));
+		$data['Placement']      = trim(I('get.placement'));
+		$data['CustomerStatus'] = trim(I('get.customerstatus'));
+		
+		foreach ($data as $key => $value) {
+			if(empty($value)){
+				$map = array();
+			}else{
+				$map = array(
+					$key=>$value
+				);
+				break;
+			}
 		}
 		$assign=D('User')->getAllData(D('User'),$map,$word,$order="iuid desc");
 		$this->assign($assign);

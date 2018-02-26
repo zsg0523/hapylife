@@ -21,6 +21,9 @@
 			    <li>
 					<a href="javascript:;" onclick="add()">添加餐厅</a>
 				</li>
+				<li>
+					<a href="javascript:;" onclick="addtime()">添加餐厅营业时间</a>
+				</li>
             </ul>
             <div class="tab-content">
 				<table class="table table-striped table-bordered table-hover table-condensed">
@@ -185,6 +188,87 @@
 	</div>
 	<!-- 添加菜单模态框结束 -->
 
+	<!-- 添加餐厅时间模态框开始 -->
+	<div class="modal fade" id="bjy-addtime" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						添加餐厅营业时间
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Food/addShopTime')}" method="post" enctype="multipart/form-data">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="15%">餐厅名称：</th>
+								<td>
+									<select name='fid'>
+										<volist name='data' id='a'>
+										<option value='{$a.fid}'>{$a.shopname}</option>
+										</volist>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">Monday：</th>
+								<td>
+									<input class="input-medium" type="text" name="Monday">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">Tuesday：</th>
+								<td>
+									<input class="input-medium" type="text" name="Tuesday">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">Wednesday：</th>
+								<td>
+									<input class="input-medium" type="text" name="Wednesday">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">Thursday：</th>
+								<td>
+									<input class="input-medium" type="text" name="Thursday">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">Friday：</th>
+								<td>
+									<input class="input-medium" type="text" name="Friday">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">Saturday：</th>
+								<td>
+									<input class="input-medium" type="text" name="Saturday">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">Sunday：</th>
+								<td>
+									<input class="input-medium" type="text" name="Sunday">
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="添加">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加菜单模态框结束 -->
+
 	<!-- 修改菜单模态框开始 -->
 	<div class="modal fade" id="bjy-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -303,8 +387,11 @@
 	<script>
 	// 添加菜单
 	function add(){
-		$("input[name='title']").val('');
 		$('#bjy-add').modal('show');
+	}
+	// 添加时间菜单
+	function addtime(){
+		$('#bjy-addtime').modal('show');
 	}
 	// 修改菜单
 	function edit(obj){

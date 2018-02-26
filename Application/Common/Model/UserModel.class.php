@@ -5,7 +5,7 @@ use Common\Model\BaseModel;
 * HapylifeÓÃ»§model
 **/
 class UserModel extends BaseModel{
-	public function getAllData($model,$map,$keyword='',$order='',$limit=30,$field=''){
+	public function getAllData($model,$map,$keyword='',$order='',$limit=100,$field=''){
 		$count=$model
 			  ->where($map)
 			  ->count();
