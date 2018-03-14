@@ -78,13 +78,48 @@ class HapylifeApiController extends HomeBaseController{
                 $where['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
             }
             //查询原先最大CustomerID，新添+1
-			$custid= D('User')->order('iuid desc')->getfield('CustomerID');
-			$where = array(
-				'CustomerID'         => $custid+1,
+            $keyword= 'HPL';
+			$custid = D('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
+            
+            if(empty($custid)){
+                $CustomerID = 'HPL00000001';
+            }else{
+                $num   = substr($custid,3);
+                $nums  = $num+1;
+                $count = strlen($nums);
+                switch ($count) {
+                    case '1':
+                        $CustomerID = 'HPL0000000'.$nums;
+                        break;
+                    case '2':
+                        $CustomerID = 'HPL000000'.$nums;
+                        break;
+                    case '3':
+                        $CustomerID = 'HPL00000'.$nums;
+                        break;
+                    case '4':
+                        $CustomerID = 'HPL0000'.$nums;
+                        break;
+                    case '5':
+                        $CustomerID = 'HPL000'.$nums;
+                        break;
+                    case '6':
+                        $CustomerID = 'HPL00'.$nums;
+                        break;
+                    case '7':
+                        $CustomerID = 'HPL0'.$nums;
+                        break;
+                    default:
+                        $CustomerID = 'HPL'.$nums;
+                        break;
+                 } 
+            }
+			$where  = array(
+				'CustomerID'         => $CustomerID,
 				'IsNew'              => 1,
-				'Placement'          => 'Right',
+				'Placement'          => '',
 				'CustomerStatus'     => 'Active',
-				'CustomerType'       => 'Distributor',
+				'CustomerType'       => 'Import',
 				'LastName'           => $data['LastName'],
 				'FirstName'          => $data['FirstName'],
 				'EnrollerID'         => $data['EnrollerID'],
@@ -100,8 +135,8 @@ class HapylifeApiController extends HomeBaseController{
 			);
 			$add   = D('User')->add($where);
 			if($add){
-				$tmpe  = D('User')->where(array('CustomerID'=>$custid+1))->find();
-				$tmpe['CustomerID'] = $custid+1;
+				$tmpe  = D('User')->where(array('CustomerID'=>$CustomerID))->find();
+				$tmpe['CustomerID'] = $CustomerID;
 				$tmpe['status']     = 1;
 				$this->ajaxreturn($tmpe);				
 			}else{
@@ -323,10 +358,16 @@ class HapylifeApiController extends HomeBaseController{
         $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
         //生成唯一订单号
         $order_num = date('YmdHis').rand(10000, 99999);
-        if($product['ip_name_zh']!='Rbs'){
-            $ordertype = 1;
-        }else{
-            $ordertype = 0;
+        switch ($product['ip_type']) {
+            case '1':
+                $con = '首购单';
+                break;
+            case '2':
+                $con = '升级单';
+                break;
+            case '3':
+                $con = '月费单';
+                break;
         }
         $order = array(
             //订单编号
@@ -352,9 +393,9 @@ class HapylifeApiController extends HomeBaseController{
             //订单总积分
             'ir_point'=>$product['ip_point'],
             //订单备注
-            'ir_desc'=>'首月+月费',
+            'ir_desc'=>$con,
             //订单类型
-            'ir_ordertype' => $ordertype
+            'ir_ordertype' => $product['ip_grade']
         );
         $receipt = M('Receipt')->add($order);
         if($receipt){
@@ -370,7 +411,7 @@ class HapylifeApiController extends HomeBaseController{
             $addReceiptlist = M('Receiptlist')->add($map);
         }
          //生成日志记录
-        $content = '您的首购订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
+        $content = '您的'.$con.'订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
         $log = array(
             'from_iuid' =>$iuid,
             'content'   =>$content,
@@ -516,7 +557,8 @@ class HapylifeApiController extends HomeBaseController{
             $add = M('Log')->add($map);
             //修改用户最近订单日期
             $tmpe['OrderDate']= date("m/d/Y h:i:s A");
-            $tmpe['iuid']     =D('Receipt')->where(array('ir_receiptnum'=>$_GET['orderId']))->getfield('iuid');
+            $receiptlist      =D('Receipt')->join('hapylife_receiptlist on hapylife_receipt.ir_receiptnum = hapylife_receiptlist.ir_receiptnum')->where(array('ir_receiptnum'=>$_GET['orderId']))->find();
+            $tmpe['iuid']     =$receiptlist['iuid'];
             $find             =D('User')->where(array('iuid'=>$tmpe['iuid']))->find();
             if($find['number']==0){
                 if($find['isnew']==0){
@@ -528,6 +570,19 @@ class HapylifeApiController extends HomeBaseController{
                 }
             }else{
                 $tmpe['IsCheck'] = 2;
+            }
+            $product = D('Product')->where(array('ipid'=>$receiptlist['ipid']))->find();
+            switch ($receiptlist['ip_grade']) {
+                case 'Import':
+                    $tmpe['CustomerType']    = $product['ip_after_grade'];
+                    break;  
+                case 'Distributor':
+                    $tmpe['CustomerType']    = $product['ip_after_grade'];
+                    break;  
+                default:
+                    $tmpe['DistributorType'] = $product['ip_after_grade'];
+                    break;
+                
             }
             $tmpe['Number']   =$find['number']+1;
             $update           =D('User')->save($tmpe);
@@ -735,100 +790,28 @@ class HapylifeApiController extends HomeBaseController{
     }
 
     /**
-	* 升级产品
+	* 产品 1收购 2升级 3月费
 	**/
 	public function upgrade(){
 		$iuid  = I('post.iuid');
         $find  = M('User')->where(array('iuid'=>$iuid))->find();
         $type  = trim($find['distributortype']);
+        $mtype = trim($find['customertype']);
         //判断用户等级 show--1、可点击 2、不可点击
-        switch ($type) {
-            case 'Pc':
-                $tmpe    = array(
-                'ip_type'    =>1,
-                'ip_name_zh' =>array('NEQ','Rbs')
-                );
-                $product = D('Product')->where($tmpe)->order('is_sort desc')->select();
-                foreach ($product as $key => $value) {
-                    $data['grade'][$key]         = $value; 
-                    $data['grade'][$key]['show'] = 1; 
-                }
-                $data['rbs'] = D('Product')->where(array('ip_type'=>1,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
-                $data['rbs'][0]['show'] =0;
-                break;
-            case 'Gob':
-                $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
-                $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Gob'))->order('is_sort desc')->find();
-                foreach ($arr as $key => $value) {
-                    if($value['ip_name_zh']!='Gob'){
-                        $product[$key] = $value; 
-                    }else{
-                        $product[$key] = $gob;
-                    }
-                }
-                foreach ($product as $key => $value) {
-                    if($value['ip_name_zh']!='Rbs'){
-                        $data['grade'][$key]         = $value;
-                        $data['grade'][$key]['show'] = 1; 
-                    }
-                }
-                if($find['CustomerType']!='Distributor'){
-                    $data['rbs'] = D('Product')->where(array('ip_type'=>1,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
-                    $data['rbs'][0]['show'] =1; 
-                }else{
-                    $data['rbs'] = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
-                    $data['rbs'][0]['show'] =1;       
-                }
-                break;
-            case 'Platinum':
-                $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
-                $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Platinum'))->order('is_sort desc')->find();
-                foreach ($arr as $key => $value) {
-                    if($value['ip_name_zh']!='Platinum'){
-                        $product[$key] = $value; 
-                    }else{
-                        $product[$key] = $gob;
-                    }
-                }
-                foreach ($product as $key => $value) {
-                    if($value['ip_name_zh']!='Rbs'){
-                        $data['grade'][$key]         = $value;
-                        $data['grade'][$key]['show'] = 1; 
-                    }
-                }
-                if($find['CustomerType']!='Distributor'){
-                    $data['rbs'] = D('Product')->where(array('ip_type'=>1,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
-                    $data['rbs'][0]['show'] =1; 
-                }else{
-                    $data['rbs'] = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
-                    $data['rbs'][0]['show'] =1;       
-                }
-                break;
-            case 'Titanium':
-                $arr = D('Product')->where(array('ip_type'=>1))->order('is_sort desc')->select();
-                $gob = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'Titanium'))->order('is_sort desc')->find();
-                foreach ($arr as $key => $value) {
-                    if($value['ip_name_zh']!='Titanium'){
-                        $product[$key] = $value; 
-                    }else{
-                        $product[$key] = $gob;
-                    }
-                }
-                foreach ($product as $key => $value) {
-                    if($value['ip_name_zh']!='Rbs'){
-                        $data['grade'][$key]         = $value;
-                        $data['grade'][$key]['show'] = 1; 
-                    }
-                }
-                if($find['CustomerType']!='Distributor'){
-                    $data['rbs'] = D('Product')->where(array('ip_type'=>1,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
-                    $data['rbs'][0]['show'] =1; 
-                }else{
-                    $data['rbs'] = D('Product')->where(array('ip_type'=>2,'ip_name_zh'=>'rbs'))->order('is_sort desc')->select();
-                    $data['rbs'][0]['show'] =1;       
-                }
-                break;
+        // p($type);die;
+        $tmpe    = array(
+            'ip_grade' =>$type
+        ); 
+        $product = D('Product')->where($tmpe)->order('is_sort desc')->select();
+        foreach ($product as $key => $value) {
+            $data['grade'][$key]         = $value; 
+            $data['grade'][$key]['show'] = 1; 
         }
+        $mape    = array(
+            'ip_grade' =>$mtype
+        );
+        $data['rbs'] = D('Product')->where($mape)->order('is_sort desc')->select();
+        $data['rbs'][0]['show'] =1; 
         if($data){
             $this->ajaxreturn($data);
         }else{
