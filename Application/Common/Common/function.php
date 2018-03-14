@@ -62,7 +62,7 @@ function new_oss(){
 * FILE_APPEND 在文件末尾追加数据
 **/
 function logTest($data){
-    $log = date('Y-m-d H:i:s').$data.PHP_EOL;
+    $log  = date('Y-m-d H:i:s').'**********'.$data.'**********'.PHP_EOL;
     $add  = file_put_contents('./log.txt', $log,FILE_APPEND);
     return;
 }
@@ -2558,3 +2558,111 @@ function import_csv($file){
             return "日志记录失败";
         }
     }
+
+
+/*********************************************************************畅捷支付********************************************************************/
+
+/*
+ * 直接支付请求接口（畅捷前台）   nmg_quick_onekeypay
+ */
+function rsaSign($args) {
+    $args  = array_filter($args);//过滤掉空值
+    ksort($args);
+    $query = '';
+    foreach($args as $k=>$v){
+        if($k=='SignType'){
+            continue;
+        }
+        if($query){
+            $query  .=  '&'.$k.'='.$v;
+        }else{
+            $query  =  $k.'='.$v;
+        }
+    }
+    //这地方不能用 http_build_query  否则会urlencode
+    //$query=http_build_query($args);
+    $path        = "./rsa_private_key.pem";  //私钥地址
+    $private_key = file_get_contents($path);
+    $pkeyid      = openssl_get_privatekey($private_key);
+    openssl_sign($query, $sign, $pkeyid);
+    openssl_free_key($pkeyid);
+    $sign        = base64_encode($sign);
+    return $sign;
+}
+
+/**
+* 加解密
+**/
+function rsaEncrypt($content){
+    $public_key_path = "./rsa_public_key.pem";  //公钥地址 
+    $pubKey          = file_get_contents($public_key_path);
+    $res             = openssl_get_publickey($pubKey);
+    //把需要加密的内容，按128位拆开解密
+    $result  = '';
+    for($i = 0; $i < strlen($content)/128; $i++  ) {
+        $data = substr($content, $i * 128, 128);
+        openssl_public_encrypt ($data, $encrypt, $res);
+        $result .= $encrypt;
+    }
+    $result = base64_encode($result);
+    openssl_free_key($res);
+    return $result;
+}
+
+
+function httpGet_a($order_url) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $order_url);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)');
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+    curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, "");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $json = curl_exec($ch);
+    curl_close($ch);
+    return $json;
+}
+
+
+/**
+ * RSA验签
+ * $postData 请传入完整$_POST数据
+ * 调用方法 rsaVerify($_POST);即可完成验签 
+ */
+function rsaVerify($postData)
+{
+    $rsaVerify_arr = $postData;
+
+    unset($rsaVerify_arr['sign']); //移除不参与验签的参数
+    unset($rsaVerify_arr['sign_type']); //移除不参与验签的参数
+    $rsaVerify_arr = array_filter($rsaVerify_arr); //过滤掉空值
+    ksort($rsaVerify_arr);
+    $rsaVerify_str = '';
+    foreach ($rsaVerify_arr as $k => $v)
+    {
+        if ($rsaVerify_str)
+        {
+            $rsaVerify_str .= '&' . $k . '=' . $v;
+        } else
+        {
+            $rsaVerify_str = $k . '=' . $v;
+        }
+    }
+    $public_key_path   =   "./rsa_public_key.pem";  
+    $pubKey = file_get_contents($public_key_path);
+    $res = openssl_get_publickey($pubKey);
+    //print_R($postData['sign']);
+    $result = (bool)openssl_verify($rsaVerify_str, base64_decode($postData['sign']), $res);
+    openssl_free_key($res);
+    if (!$result)
+    {
+        return "false";
+        exit;
+    } else
+    {
+        return "true";
+    }
+}

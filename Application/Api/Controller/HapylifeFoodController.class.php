@@ -443,7 +443,7 @@ class HapylifeFoodController extends HomeBaseController{
     /************************************************************工具类********************************************************
     /**
 	* 用户反馈
-	* 1ibos 2nlc  3hrac 4elpa 5hapylife
+	* 1ibos 2nlc  3hrac 4elpa 5hapylife 
 	**/
 	public function feedback(){
 		//最多三张图	
@@ -456,6 +456,7 @@ class HapylifeFoodController extends HomeBaseController{
 					'iuid'         => trim(I('post.iuid')),
 					'whichApp'     => trim(I('post.whichApp')),
 					'content'      => trim(I('post.content')),
+					'type'		   => trim(I('post.type')),	
 					'create_month' => date('Y-m',time()),
 					'create_time'  => time()
 				);
