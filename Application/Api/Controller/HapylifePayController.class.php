@@ -5,27 +5,19 @@ use Common\Controller\HomeBaseController;
 * 畅捷支付
 **/
 class HapylifePayController extends HomeBaseController{
-
-	public function test(){
-		$data = 'eLHVpdcIaIyXM6H0//xnNFrKp9ZnWJE7/TNAkKvJXYytRdHlt9w2aPyDIyV1yl7K8ZKNUcjqI4tA3GXW5FDW6USuwrmeMYM8SqNnFrkEWHgul4NHccGAAQ6PjVc66mTiCMk5/1zfItW9Uq/ydlvJEUgJzxNCejnVcaoc3AfPwXc=';
-		$temp = urlencode($data);
-		$map  = urldecode($temp);
-		p($map);
-
-	}
 	/**
 	* 直接支付请求接口（畅捷前台）   nmg_quick_onekeypay
 	**/
 	public function nmg_quick_onekeypay(){
 		//订单号
 		$order_num                     = I('post.ir_receiptnum');
-		//订单信息
-		$order                         = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->find();
+		$order = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->find();
 		$postData                      = array();	
 		// 基本参数
 		$postData['Service']           = 'nmg_quick_onekeypay';
 		$postData['Version']           = '1.0';
-		$postData['PartnerId']         = '200001280051';//商户号
+		// $postData['PartnerId']         = '200001280051';//商户号
+		$postData['PartnerId']         = '200001380239';//商户号
 		$postData['InputCharset']      = 'UTF-8';
 		$postData['TradeDate']         = date('Ymd').'';
 		$postData['TradeTime']         = date('His').'';
@@ -33,8 +25,8 @@ class HapylifePayController extends HomeBaseController{
 		$postData['Memo']              = '备注';
 		// 4.4.2.8. 直接支付请求接口（畅捷前台） 业务参数
 		$postData['TrxId']             = $order_num; //外部流水号
-		$postData['SellerId']          = '200001380005'; //商户编号，调用畅捷子账户开通接口获取的子账户编号;该字段可以传入平台id或者平台id下的子账户号;作为收款方使用；与鉴权请求接口中MerchantNo保持一致
-		$postData['SubMerchantNo']     = '200001380005'; //子商户，在畅捷商户自助平台申请开通的子商户，用于自动结算
+		$postData['SellerId']          = '200001380239'; //商户编号，调用畅捷子账户开通接口获取的子账户编号;该字段可以传入平台id或者平台id下的子账户号;作为收款方使用；与鉴权请求接口中MerchantNo保持一致
+		$postData['SubMerchantNo']     = '200001380239'; //子商户，在畅捷商户自助平台申请开通的子商户，用于自动结算
 		$postData['ExpiredTime']       = '48h'; //订单有效期，取值范围：1m～48h。单位为分，如1.5h，可转换为90m。用来标识本次鉴权订单有效时间，超过该期限则该笔订单作废
 		$postData['MerUserId']         = '5433333'; //用户标识
 		$postData['BkAcctTp']          = ''; //卡类型（00 –银行贷记账户;01 –银行借记账户;）
@@ -80,9 +72,9 @@ class HapylifePayController extends HomeBaseController{
 			$temp = explode('=', $value);
 			$map[$temp[0]]=urldecode(trim($temp[1]));
 		}
+		$receipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->find();
 		//验签
 		$return = rsaVerify($map);
-
 		//更改订单状态
 		if($return == "true"){
 			$status  = array(

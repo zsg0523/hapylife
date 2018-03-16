@@ -2651,7 +2651,7 @@ function rsaVerify($postData)
             $rsaVerify_str = $k . '=' . $v;
         }
     }
-    $public_key_path   =   "./rsa_public_key.pem";  
+    $public_key_path   =   "./cj_rsa_public_key.pem";  
     $pubKey = file_get_contents($public_key_path);
     $res = openssl_get_publickey($pubKey);
     //print_R($postData['sign']);
