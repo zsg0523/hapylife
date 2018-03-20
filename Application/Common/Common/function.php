@@ -2166,6 +2166,18 @@ function IbosSubtree($arr,$id=0,$lev=1) {
     return $subs;
 }
 
+function hapysubtree($arr,$id=0,$lev=1) {
+    static $subs = array(); //子孙数组
+    static $num  = 1; //子孙数组
+    foreach ($arr as $v) {
+        if ($v['pid'] == $id) {
+            $v['lev']   = $lev;
+            $subs[] = $v;
+            hapysubtree($arr,$v['uid'],$lev+1);
+        }       
+    }
+    return $subs;
+}
 /**
  * 把返回的数据集根据字段排序
  * @param array $arr   要转换的数据集
