@@ -2145,6 +2145,33 @@ function subtree($arr,$id=0,$lev=1) {
     return $subs;
 }
 
+function leftTree($arr,$sponsorid,$lev=1) {
+    static $subs = array(); //子孙数组
+    static $num  = 1; //子孙数组
+    foreach ($arr as $v) {
+        if ($v['sponsorid'] == $sponsorid) {
+            $v['lev']   = $lev;
+            $subs[] = $v;
+            leftTree($arr,$v['userid'],$lev+1);
+        }       
+    }
+    return $subs;
+}
+
+function rightTree($arr,$sponsorid,$lev=1) {
+    static $subs = array(); //子孙数组
+    static $num  = 1; //子孙数组
+    foreach ($arr as $v) {
+        if ($v['sponsorid'] == $sponsorid) {
+            $v['lev']   = $lev;
+            $subs[] = $v;
+            rightTree($arr,$v['userid'],$lev+1);
+        }       
+    }
+    return $subs;
+}
+
+
 /**
  *无限极分类函数
  * @param  [type]  $arr   [原数组]
@@ -2663,7 +2690,7 @@ function rsaVerify($postData)
             $rsaVerify_str = $k . '=' . $v;
         }
     }
-    $public_key_path   =   "./rsa_public_key.pem";  
+    $public_key_path   =   "./cj_rsa_public_key.pem";  
     $pubKey = file_get_contents($public_key_path);
     $res = openssl_get_publickey($pubKey);
     //print_R($postData['sign']);
