@@ -11,62 +11,141 @@ class RewardController extends HomeBaseController{
 	* 上线 层级 左右位置 是否对碰
 	**/
 	public function weekReward(){
-		//userid
+		$iuid   = trim(I('post.iuid'));
 		$userid = trim(I('post.userid'));
-		$data  = M('weekbonus')->select();
-		//左右点位,第一层
-		$firstLevel=M('weekbonus')->where(array('sponsorid'=>$userid))->select();
-		$AllUser[0] = $firstLevel;
-		//获取左大区 右大区人数,第二层
-		$AllUser[1]  = leftTree($data,$firstLevel[0]['userid']);
-		$AllUser[2]  = rightTree($data,$firstLevel[1]['userid']);
-		foreach ($AllUser as $key => $value) {
-			foreach ($value as $k => $v) {
-				if($v['is_bonus'] == 0 && time()-$v['create_time']<=26*7*86400){
-					$tmpe[$key][] = $v;
-				}
-			}
+		$data   = D('weekbonus')->weekBonus($iuid,$userid);
+		echo $data;
+	}
+
+
+	/**
+	* 重置对碰数据
+	**/
+	public function reset(){
+		$userid = trim(I('post.userid'));
+		$data   = M('weekbonus')->where(array('iuid'=>$userid))->select();
+		foreach ($data as $key => $value) {
+			$save = M('weekbonus')->where(array('id'=>$value['id']))->setField('is_bonus',0);
 		}
-		if($tmpe[0]){
-			$leftNumber   = count($tmpe[1])+1;
-			$rightNumber  = count($tmpe[2])+1;
-		}else{
-			$leftNumber   = count($tmpe[1]);
-			$rightNumber  = COUNT($tmpe[2]);
-		}
-
-		//是否可发生对碰
-		if($leftNumber>=3 && $rightNumber>=3){
-			echo "左大区总人数".$leftNumber.'****'."右大区总人数".$rightNumber.":准备对碰".'<br>';
-			//量碰次数
-			if(floor($leftNumber/3)-floor($rightNumber/3)>=0){
-				$loopNumber = $rightNumber-2;
-				$bonusNumber= floor($rightNumber/3);
-			}else{
-				$loopNumber = $leftNumber-2;
-				$bonusNumber= floor($leftNumber/3);
-			}
-			$map = array(
-				'bonus_time'=>time(),
-				'is_bonus'=>1
-			);
-			//左右点位
-			foreach ($firstLevel as $key => $value) {
-				$save = M('weekbonus')->where(array('userid'=>$value['userid']))->save($map);
-			}
-			//左右大区对碰
-			for ($i=0; $i <= $loopNumber; $i++) {
-				$saveLeft = M('weekbonus')->where(array('userid'=>$tmpe[1][$i]['userid']))->save($map); 
-				$saveRight = M('weekbonus')->where(array('userid'=>$tmpe[2][$i]['userid']))->save($map); 
-			}
-			//核算奖金
-			$bonus = $bonusNumber*100;
-			//判断是否超过上限值
-
-			echo $bonus;
-
-		}else{
-			echo "左大区总人数".$leftNumber.'****'."右大区总人数".$rightNumber.":不符合发生对碰条件";
+		if($save){
+			echo "重置对碰数据成功";
 		}
 	}
+
+	/**
+	* 添加月费记录，计算bonus
+	**/
+	public function addBonusList(){
+		//一个人交月费，层层往上添加需要进行对碰的记录
+		$iuid        = trim(I('iuid'));
+		$user        = M('testuser')->where(array('iuid'=>$iuid))->find();
+		//所有数据
+		$data        = M('testuser')->select();
+		//所有父元素节点(从用户表中获取)
+		$sponsorList = getSponsor($data,$user['sponsor']);
+		foreach ($sponsorList as $k => $v) {
+			//给父元素添加付费记录
+			$map  = array(
+				'iuid'         =>$v['iuid'],
+				'userid'       =>$user['account'],
+				'sponsorid'    =>$user['sponsor'],
+				'placement'    =>$user['placement'],
+				'create_time'  =>time(),
+				'create_month' =>date('Y-m',time())
+			);
+			$add = M('weekbonus')->add($map);
+		}
+		if($add){
+			echo "添加首购list成功";
+		}
+	}
+
+	/**
+	* binary 自动排网
+	**/
+	public function binary(){
+		$account = trim(I('post.account'));
+		$iu_logic= trim(I('post.iu_logic'));
+		$data    = D('testuser')->getMemberPlacement($account,$iu_logic);
+		// $data    = D('testuser')->getMostLeftPlacement($account);
+		echo $data;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

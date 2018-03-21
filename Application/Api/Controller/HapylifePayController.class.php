@@ -28,7 +28,7 @@ class HapylifePayController extends HomeBaseController{
 		$postData['SellerId']          = '200001380239'; //商户编号，调用畅捷子账户开通接口获取的子账户编号;该字段可以传入平台id或者平台id下的子账户号;作为收款方使用；与鉴权请求接口中MerchantNo保持一致
 		$postData['SubMerchantNo']     = '200001380239'; //子商户，在畅捷商户自助平台申请开通的子商户，用于自动结算
 		$postData['ExpiredTime']       = '48h'; //订单有效期，取值范围：1m～48h。单位为分，如1.5h，可转换为90m。用来标识本次鉴权订单有效时间，超过该期限则该笔订单作废
-		$postData['MerUserId']         = '5433333'; //用户标识
+		$postData['MerUserId']         = $order['iuid']; //用户标识
 		$postData['BkAcctTp']          = ''; //卡类型（00 –银行贷记账户;01 –银行借记账户;）
 		// $postData['BkAcctNo']       =   rsaEncrypt('XXXXX'); //卡号
 		$postData['BkAcctNo']          = ''; //卡号

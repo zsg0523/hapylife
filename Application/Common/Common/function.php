@@ -2145,6 +2145,9 @@ function subtree($arr,$id=0,$lev=1) {
     return $subs;
 }
 
+/**
+* weekbonus 左大区
+**/
 function leftTree($arr,$sponsorid,$lev=1) {
     static $subs = array(); //子孙数组
     static $num  = 1; //子孙数组
@@ -2157,7 +2160,9 @@ function leftTree($arr,$sponsorid,$lev=1) {
     }
     return $subs;
 }
-
+/**
+* weekbonus 右大区
+**/
 function rightTree($arr,$sponsorid,$lev=1) {
     static $subs = array(); //子孙数组
     static $num  = 1; //子孙数组
@@ -2170,29 +2175,35 @@ function rightTree($arr,$sponsorid,$lev=1) {
     }
     return $subs;
 }
-
-
 /**
- *无限极分类函数
- * @param  [type]  $arr   [原数组]
- * @param  integer $id    [父id]
- * @param  integer $iuid  [自增huid]
- * @return [type]  $lev   [标记第几级]
- * @return [type]  $subs  [重构数组]
- */
-function IbosSubtree($arr,$id=0,$lev=1) {
-    static $subs = array(); //子孙数组
-    static $num  = 1; //子孙数组
-    foreach ($arr as $v) {
-        if ($v['iu_upid'] == $id) {
-            $v['lev']   = $lev;
-            $subs[] = $v;
-            subtree($arr,$v['iuid'],$lev+1);
-        }       
+* 获取父级元素
+**/
+function getSponsor($arr,$sponsor,$lev=0){
+    static $subs = array();
+    foreach ($arr as $key => $value) {
+        if($value['account'] == $sponsor){
+            $value['lev'] = $lev;
+            $subs[]   = $value;
+            getSponsor($arr,$value['sponsor'],$lev-1);
+        }
     }
     return $subs;
 }
 
+/**
+* binary 二叉树
+**/
+function getBinary($arr,$sponsor,$lev=1){
+    static $subs = array();
+    foreach ($arr as $k => $v) {
+        if($v['sponsor'] == $sponsor){
+            $v['lev'] = $lev;
+            $subs[]   = $v;
+            getBinary($arr,$v['account'],$lev+1);
+        }
+    }
+    return $subs;
+}
 /**
  * 把返回的数据集根据字段排序
  * @param array $arr   要转换的数据集
