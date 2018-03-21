@@ -8,8 +8,51 @@ class HapylifeApiController extends HomeBaseController{
 
 	public function index(){
         
-	}
-
+    }
+    public function hapy(){
+        // $hu_nickname = I('post.hu_nickname')?I('post.hu_nickname'):"1";  
+        // //根节点
+        // $users  = M('Wvusers')
+        //         ->where(array('uid'=>$hu_nickname))
+        //         ->find();
+        // //hrac所有用户
+        // $vip    = M('Wvusers')->select();
+        // // p($users);die;
+        // if($vip){
+        //     //无限极分类
+        //     $treearr = hapysubtree($vip,$users['uid'],$lev=1);
+        //     // p($treearr);die;
+        //     foreach ($treearr as $key => $value) {
+        //         $tree[] = $value['uid'];
+        //     }
+        //     $count = count($tree);
+        //     $int   = floor($count/3);
+        //     // p($int);
+        //     if($int>0){
+        //         $num = $int*3-1;
+        //         switch ($int) {
+        //             case '1':
+        //                 $sum = $int*100;
+        //                 break;
+        //             default:
+        //                 $sum = $int*150;
+        //                 break;
+        //         }
+        //         foreach ($tree as $key => $value) {
+        //             if($key<=$num){
+        //                 $mape[] = $value;
+        //             }
+        //         }
+        //     }
+        //     // p($mape);
+        //     if($mape){
+        //         foreach ($mape as $key => $value) {
+        //             $where = array('uid'=>$value,'iscount'=>0);
+        //             $save  = M('Wvusers')->save($where);
+        //         }
+        //     }
+        // }
+    }
 	/**
 	* 旧用户注册
 	**/
@@ -60,11 +103,11 @@ class HapylifeApiController extends HomeBaseController{
 	**/
 	public function newregister(){
 		$data  = I('post.');
-		// $find  = D('User')->where(array('CustomerID'=>$data['EnrollerID']))->find();
-		// if(!$find){
-		// 	$tmpe['status'] = 2;
-		// 	$this->ajaxreturn($tmpe);			
-		// }else{
+		$find  = D('User')->where(array('CustomerID'=>$data['EnrollerID']))->find();
+		if(!$find){
+			$tmpe['status'] = 2;
+			$this->ajaxreturn($tmpe);			
+		}else{
 			if(!empty($data['JustIdcard'])){
                 $img_body1 = substr(strstr($data['JustIdcard'],','),1);
                 $JustIdcard = time().'_'.mt_rand().'.jpg';
@@ -119,7 +162,6 @@ class HapylifeApiController extends HomeBaseController{
 				'IsNew'              => 1,
 				'Placement'          => '',
 				'CustomerStatus'     => 'Active',
-				'CustomerType'       => 'Import',
 				'LastName'           => $data['LastName'],
 				'FirstName'          => $data['FirstName'],
 				'EnrollerID'         => $data['EnrollerID'],
@@ -131,19 +173,22 @@ class HapylifeApiController extends HomeBaseController{
 				'PassWord'           => md5($data['PassWord']),
 				'Phone'              => $data['Phone'],
 				'Sex'                => $data['Sex'],
-				'IsCheck'            => 0
+                'IsCheck'            => 0,
+                'ShopAddress1'       => $data['ShopAddress1'],
+				'Idcard'             => $data['Idcard']
 			);
 			$add   = D('User')->add($where);
 			if($add){
 				$tmpe  = D('User')->where(array('CustomerID'=>$CustomerID))->find();
-				$tmpe['CustomerID'] = $CustomerID;
+                $tmpe['CustomerID'] = $CustomerID;
+				$tmpe['pass']       = $data['PassWord'];
 				$tmpe['status']     = 1;
 				$this->ajaxreturn($tmpe);				
 			}else{
 				$tmpe['status'] = 0;
 				$this->ajaxreturn($tmpe);
 			}
-		// }
+		}
 	}
 
 	/**
