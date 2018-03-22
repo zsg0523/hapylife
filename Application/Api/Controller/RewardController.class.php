@@ -61,14 +61,50 @@ class RewardController extends HomeBaseController{
 	}
 
 	/**
-	* binary 自动排网
+	* 自动获取sponsor排网
+	* @param account 会员account
+	* @param iu_logic会员点位位置 0左 1右
 	**/
-	public function binary(){
+	public function autoGetSponsor(){
 		$account = trim(I('post.account'));
 		$iu_logic= trim(I('post.iu_logic'));
 		$data    = D('testuser')->getMemberPlacement($account,$iu_logic);
-		// $data    = D('testuser')->getMostLeftPlacement($account);
 		echo $data;
+	}
+
+	/**
+	* 推荐网查询
+	* @param account 会员account
+	* @param sponsor 会员推荐网上线ID
+	**/
+	public function getUserBinary(){
+		$account = trim(I('post.account'));
+		$data    = D('testuser')->getUserBinary($account);
+		p($data);
+	}
+
+	/**
+	* 创建网络
+	**/
+	public function makeBinary(){
+		// sponsorID = 35862601
+		$SponsorID = trim(I('post.sponsorid'));
+		$arr = M('user')->select();
+		$data= getAllBinary($arr,$SponsorID);
+		p($data);
+	}
+
+	public function check(){
+		$arr = M('user')->limit(1000)->select();
+		$num = 0;
+		foreach ($arr as $key => $value) {
+			$data = M('user')->where(array('CustomerID'=>$value['enrollerid']))->find();
+			if(!$data){
+				echo $value['enrollerid'].'********';
+				$num++;
+			}
+		}
+		echo $num;
 	}
 
 

@@ -2216,6 +2216,21 @@ function getBinary($arr,$sponsor,$lev=1){
     }
     return $subs;
 }
+
+/**
+* binary 二叉树
+**/
+function getAllBinary($arr,$SponsorID,$lev=1){
+    static $subs = array();
+    foreach ($arr as $k => $v) {
+        if($v['sponsorid'] == $SponsorID){
+            $v['lev'] = $lev;
+            $subs[]   = $v;
+            getAllBinary($arr,$v['customerid'],$lev+1);
+        }
+    }
+    return $subs;
+}
 /**
  * 把返回的数据集根据字段排序
  * @param array $arr   要转换的数据集

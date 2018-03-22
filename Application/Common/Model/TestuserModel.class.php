@@ -76,12 +76,14 @@ class TestuserModel extends BaseModel{
 	}
 
 
-	//下线查询
+	/**
+	* 推荐网查询
+	**/
 	public function getUserBinary($account){
-		$data = $this->getMostLeftPlacement($account);
-		return $data;
+		$data = M('testuser')->select();
+		$binary = getBinary($data,$account);
+		return $binary;
 	}
-
 
 
 }
