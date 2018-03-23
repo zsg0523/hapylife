@@ -28,7 +28,7 @@ class HapylifePayController extends HomeBaseController{
 		$postData['SellerId']          = '200001380239'; //商户编号，调用畅捷子账户开通接口获取的子账户编号;该字段可以传入平台id或者平台id下的子账户号;作为收款方使用；与鉴权请求接口中MerchantNo保持一致
 		$postData['SubMerchantNo']     = '200001380239'; //子商户，在畅捷商户自助平台申请开通的子商户，用于自动结算
 		$postData['ExpiredTime']       = '48h'; //订单有效期，取值范围：1m～48h。单位为分，如1.5h，可转换为90m。用来标识本次鉴权订单有效时间，超过该期限则该笔订单作废
-		$postData['MerUserId']         = '5433333'; //用户标识
+		$postData['MerUserId']         = $order['iuid']; //用户标识
 		$postData['BkAcctTp']          = ''; //卡类型（00 –银行贷记账户;01 –银行借记账户;）
 		// $postData['BkAcctNo']       =   rsaEncrypt('XXXXX'); //卡号
 		$postData['BkAcctNo']          = ''; //卡号
@@ -77,12 +77,59 @@ class HapylifePayController extends HomeBaseController{
 		$return = rsaVerify($map);
 		//更改订单状态
 		if($return == "true"){
+			//修改用户最近订单日期/是否通过/等级/数量
+            $tmpe['iuid']     =$receipt['iuid'];
+            $find             =D('User')->where(array('iuid'=>$receipt['iuid']))->find();
+            if($find['number']==0){
+            	$tmpe['OrderDate']= date("m/d/Y h:i:s A");
+            	$OrderDate        = date("Y-m-d",strtotime("-1 month",time()));
+                if($find['isnew']==0){
+                    if($find['number']==0){
+                        $tmpe['IsCheck'] = 1;   
+                    }
+                }else{
+                    $tmpe['IsCheck'] = 2;
+                }
+            }else{
+            	$OrderDate       = $find['orderdate'];
+                $tmpe['IsCheck'] = 2;
+            }
+            $tmpe['DistributorType'] = D('Product')->where(array('ipid'=>$receipt['ipid']))->getfield('ip_after_grade');
+            $tmpe['Number']   =$find['number']+1;
 			$status  = array(
-					'ir_status'  =>2,
-					'ir_paytype' =>1
-				);
-        	$receipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($status);
-        	if($receipt){
+				'ir_status'  =>2,
+				'ir_paytype' =>1
+			);
+			$activaDate = D('Activation')->where(array('iuid'=>$receipt['iuid'],'is_tick'=>1))->order('datetime desc')->getfield('datetime');
+			if(empty($activaDate)){
+				$activa = $OrderDate;
+			}else{
+				$activa = $activaDate;
+			}
+			$day = date('d',strtotime($OrderDate));
+            if($day>=28){
+                $allday = 28;
+            }else{
+                $allday = $day;
+            }
+            $ddd    = $allday-1;
+            if($ddd>=10){
+                $oneday = $ddd;
+            }else{
+                $oneday = '0'.$ddd;
+            }
+            // for($i=0;$i<$receipt['ir_productnum'];$i++) {
+            	//删除原先未激活，添加激活
+            	$time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
+            	$year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
+    			$endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
+				$delete= D('Activation')->where(array('iuid'=>$receipt['iuid'],'datetime'=>$time))->delete();
+				$where =array('iuid'=>$receipt['iuid'],'ir_receiptnum'=>$map['outer_trade_no'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
+				$save  = D('Activation')->add($where);
+            // }   
+        	$upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($status);
+            $update  =D('User')->save($tmpe);
+        	if($upreceipt){
         		//通知畅捷完成支付
 				echo "success";
         	}
@@ -109,6 +156,74 @@ class HapylifePayController extends HomeBaseController{
             $data['msg'] = '正在支付，请等待...';
             $this->ajaxreturn($data);
         }
+    }
+
+    public function freeay(){
+    	$ir_receiptnum = I('post.ir_receiptnum');
+    	$receipt = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
+    	if($receipt){
+    		//修改用户最近订单日期/是否通过/等级/数量
+            $tmpe['iuid']     =$receipt['iuid'];
+            $find             =D('User')->where(array('iuid'=>$receipt['iuid']))->find();
+            if($find['number']==0){
+            	$tmpe['OrderDate']= date("m/d/Y h:i:s A");
+            	$OrderDate        = date("Y-m-d",strtotime("-1 month",time()));
+                if($find['isnew']==0){
+                    if($find['number']==0){
+                        $tmpe['IsCheck'] = 1;   
+                    }
+                }else{
+                    $tmpe['IsCheck'] = 2;
+                }
+            }else{
+            	$OrderDate       = $find['orderdate'];
+                $tmpe['IsCheck'] = 2;
+            }
+            $tmpe['DistributorType'] = D('Product')->where(array('ipid'=>$receipt['ipid']))->getfield('ip_after_grade');
+            $tmpe['Number']   =$find['number']+1;
+			$status  = array(
+				'ir_status'  =>2,
+				'ir_paytype' =>1
+			);
+			$activaDate = D('Activation')->where(array('iuid'=>$receipt['iuid'],'is_tick'=>1))->order('datetime desc')->getfield('datetime');
+			if(empty($activaDate)){
+				$activa = $OrderDate;
+			}else{
+				$activa = $activaDate;
+			}
+			$day = date('d',strtotime($OrderDate));
+            if($day>=28){
+                $allday = 28;
+            }else{
+                $allday = $day;
+            }
+            $ddd    = $allday-1;
+            if($ddd>=10){
+                $oneday = $ddd;
+            }else{
+                $oneday = '0'.$ddd;
+            }
+            //删除原先未激活，添加激活
+        	$time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
+        	$year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
+			$endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
+			$delete= D('Activation')->where(array('iuid'=>$receipt['iuid'],'datetime'=>$time))->delete();
+			$where =array('iuid'=>$receipt['iuid'],'ir_receiptnum'=>$ir_receiptnum,'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
+			$save  = D('Activation')->add($where);
+			$upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->save($status);
+			if($save && $upreceipt){
+				$tmpe['DistributorType'] = 'Platinum';
+				$update=D('User')->save($tmpe);
+				$data['ir_price'] = $receipt['ir_price'];
+	            $data['status'] = 1;
+	            $data['msg'] = '支付成功，请跳转...';
+	            $this->ajaxreturn($data);
+			}else{
+				$data['status'] = 0;
+	            $data['msg'] = '正在支付，请等待...';
+	            $this->ajaxreturn($data);
+			}
+    	}
     }
 
 
