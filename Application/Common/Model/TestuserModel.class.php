@@ -5,13 +5,17 @@ use Common\Model\BaseModel;
 * testuser Model
 */
 class TestuserModel extends BaseModel{
-	//获取左右点位
+	/**
+	*获取左右点位
+	**/
 	public function getPlacement($account){
 		$data = M('testuser')->where(array('sponsor'=>$account))->select();
 		return $data;
 	}
 
-	//获取极左安置
+	/**
+	*获取极左安置
+	**/
 	public function getMostLeftPlacement($account){
 		$data = M('testuser')->select();
 		$binary = getBinary($data,$account);
@@ -84,6 +88,8 @@ class TestuserModel extends BaseModel{
 		$binary = getBinary($data,$account);
 		return $binary;
 	}
+
+	
 
 
 }
