@@ -131,7 +131,7 @@ class HapylifeBankController extends HomeBaseController{
                 );
                 $arr    = D('Bank')->where($map)->setField('isshow',0);
             }
-            if($tmp && $arr){
+            if($tmp){
                 $data['status'] = 1;
                 $this->ajaxreturn($data);
             }

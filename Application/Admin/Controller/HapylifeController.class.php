@@ -489,10 +489,10 @@ class HapylifeController extends AdminBaseController{
 			$map=array();
 		}else{
 			$map=array(
-				'hu_nickname'=>$word,
+				'CustomerID '=>$word,
 			);
 		}
-		$assign = D('IbosReceipt')->getPage(D('IbosReceipt'),$map,$order='ir_date desc');
+		$assign = D('Receipt')->getPage(D('Receipt'),$map,$order='ir_date desc');
 		//p($assign);die;
 		$this->assign($assign);
 		$this->display();
@@ -503,15 +503,15 @@ class HapylifeController extends AdminBaseController{
 		$ir_status=I('get.ir_status');
 		if(empty($word)){
 			$map=array(
-				'ir_status'=>1
+				'ir_status'=>0
 			);
 		}else{
 			$map=array(
-				'hu_nickname'=>$word,
-				'ir_status'=>1
+				'CustomerID '=>$word,
+				'ir_status'=>0
 			);
 		}
-		$assign = D('IbosReceipt')->getPage(D('IbosReceipt'),$map,$order='ir_date desc');
+		$assign = D('Receipt')->getPage(D('Receipt'),$map,$order='ir_date desc');
 		$this->assign($assign);
 		$this->display();
 	}
@@ -525,11 +525,11 @@ class HapylifeController extends AdminBaseController{
 			);
 		}else{
 			$map=array(
-				'hu_nickname'=>$word,
+				'CustomerID '=>$word,
 				'ir_status'=>2
 			);
 		}
-		$assign = D('IbosReceipt')->getPage(D('IbosReceipt'),$map,$order='ir_date desc');
+		$assign = D('Receipt')->getPage(D('Receipt'),$map,$order='ir_date desc');
 		$this->assign($assign);
 		$this->display();
 	}
@@ -543,11 +543,11 @@ class HapylifeController extends AdminBaseController{
 			);
 		}else{
 			$map=array(
-				'hu_nickname'=>$word,
+				'CustomerID '=>$word,
 				'ir_status'=>3
 			);
 		}
-		$assign = D('IbosReceipt')->getPage(D('IbosReceipt'),$map,$order='ir_date desc');
+		$assign = D('Receipt')->getPage(D('Receipt'),$map,$order='ir_date desc');
 		$this->assign($assign);
 		$this->display();
 	}
@@ -561,11 +561,11 @@ class HapylifeController extends AdminBaseController{
 			);
 		}else{
 			$map=array(
-				'hu_nickname'=>$word,
+				'CustomerID '=>$word,
 				'ir_status'=>4
 			);
 		}
-		$assign = D('IbosReceipt')->getPage(D('IbosReceipt'),$map,$order='ir_date desc');
+		$assign = D('Receipt')->getPage(D('Receipt'),$map,$order='ir_date desc');
 		$this->assign($assign);
 		$this->display();
 	}
@@ -578,7 +578,7 @@ class HapylifeController extends AdminBaseController{
 		$map=array(
 			'irid'=>$data['id']
 		);
-		$result=D('IbosReceipt')->editData($map,$data);
+		$result=D('Receipt')->editData($map,$data);
 		if($result){
 			redirect($_SERVER['HTTP_REFERER']);
 		}else{
@@ -594,7 +594,7 @@ class HapylifeController extends AdminBaseController{
 		$map=array(
 			'irid'=>$id
 			);
-		$result=D('IbosReceipt')->deleteData($map);
+		$result=D('Receipt')->deleteData($map);
 		if($result){
 			redirect($_SERVER['HTTP_REFERER']);
 		}else{

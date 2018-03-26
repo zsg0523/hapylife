@@ -510,7 +510,14 @@ class HapylifeApiController extends HomeBaseController{
         $order_num = date('YmdHis').rand(10000, 99999);
         switch ($product['ip_type']) {
             case '1':
-                $con = '首购单';
+                $list= D('Receipt')->where(array('ir_ordertype'=>$product['ip_type']))->select();
+                // if($list){
+                //     $order['status'] = 2;
+                //     $order['msg']    = '订单已存在,请付款或删除重新下单';
+                //     $this->ajaxreturn($order);
+                // }else{
+                    $con = '首购单';
+                // }
                 break;
             case '2':
                 $con = '升级单';
@@ -535,7 +542,7 @@ class HapylifeApiController extends HomeBaseController{
             //收货人电话
             'ia_phone'=>$userinfo['phone'],
             //收货地址
-            'ia_address'=>$userinfo['city'],
+            'ia_address'=>$userinfo['ShopAddress1'].' '.$userinfo['ShopAddress2'],
             //订单总商品数量
             'ir_productnum'=>1,
             //订单总金额
