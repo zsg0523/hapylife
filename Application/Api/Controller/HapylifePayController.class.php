@@ -23,7 +23,7 @@ class HapylifePayController extends HomeBaseController{
 		$postData['TradeTime']         = date('His').'';
 		$postData['ReturnUrl']         = 'http://dev.chanpay.com/receive.php';// 前台跳转url
 		$postData['Memo']              = '备注';
-		// 4.4.2.8. 直接支付请求接口（畅捷前台） 业务参数
+		// 4.4.2.8. 直接支付请求接口（畅捷前台） 业务参数++++++++++++++++++
 		$postData['TrxId']             = $order_num; //外部流水号
 		$postData['SellerId']          = '200001380239'; //商户编号，调用畅捷子账户开通接口获取的子账户编号;该字段可以传入平台id或者平台id下的子账户号;作为收款方使用；与鉴权请求接口中MerchantNo保持一致
 		$postData['SubMerchantNo']     = '200001380239'; //子商户，在畅捷商户自助平台申请开通的子商户，用于自动结算
@@ -76,7 +76,7 @@ class HapylifePayController extends HomeBaseController{
 		//验签
 		$return = rsaVerify($map);
 		//更改订单状态
-		if($return == "true"){
+		if($return == "true" && $map['trade_status'] == 'TRADE_SUCCESS'){
 			//修改用户最近订单日期/是否通过/等级/数量
             $tmpe['iuid']     =$receipt['iuid'];
             $find             =D('User')->where(array('iuid'=>$receipt['iuid']))->find();

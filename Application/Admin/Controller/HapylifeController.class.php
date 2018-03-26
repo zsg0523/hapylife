@@ -493,7 +493,7 @@ class HapylifeController extends AdminBaseController{
 			);
 		}
 		$assign = D('IbosReceipt')->getPage(D('IbosReceipt'),$map,$order='ir_date desc');
-		//p($assign);die;
+		p($assign);die;
 		$this->assign($assign);
 		$this->display();
 	}
