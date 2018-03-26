@@ -4,7 +4,7 @@ use Common\Model\BaseModel;
 /**
 * 订单model
 **/
-class IbosReceiptModel extends BaseModel{
+class ReceiptModel extends BaseModel{
 	
 
 	

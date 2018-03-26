@@ -7,7 +7,7 @@
         <h1>
             首页
             &gt;
-            Ibos
+            Hapylife
             &gt;
 			订单管理
         </h1>
@@ -15,23 +15,23 @@
     <div class="col-xs-12">
         <div class="tabbable">
 	            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
-				  	<li >
-						<a href="{:U('Admin/Ibos/receipt')}">所有订单</a>
+				  	<li class="active">
+						<a href="{:U('Admin/Hapylife/receipt')}">所有订单</a>
 				    </li>
 				    <li >
-						<a href="{:U('Admin/Ibos/receipt1')}" >待审核</a>
-				    </li>
-				    <li class="active">
-						<a href="{:U('Admin/Ibos/receipt2')}" >已支付</a>
+						<a href="{:U('Admin/Hapylife/receipt1')}" >待支付</a>
 				    </li>
 				    <li >
-						<a href="{:U('Admin/Ibos/receipt3')}" >已发货</a>
+						<a href="{:U('Admin/Hapylife/receipt2')}" >已支付</a>
 				    </li>
 				    <li >
-						<a href="{:U('Admin/Ibos/receipt4')}" >已完成</a>
+						<a href="{:U('Admin/Hapylife/receipt3')}" >已发货</a>
+				    </li>
+				    <li >
+						<a href="{:U('Admin/Hapylife/receipt4')}" >已完成</a>
 				    </li>
 				    <li>
-				    	<form action="{:U('Admin/Ibos/receipt2')}" method="get">
+				    	<form action="{:U('Admin/Hapylife/receipt2')}" method="get">
 	                        <input name="word" type="text" placeholder="输入会员名" size="20" />
 	                        <input class='btn btn-sm' type="submit" value="筛选" />
 	                	</form>
@@ -44,11 +44,7 @@
 						<th>订单编号</th>
 						<th >会员</th>
                         <th >订单总金额</th>
-                        <th >总积分</th>
-                        <th >支付类型</th>
                         <th >订单备注</th>
-                        <th >银行账号</th>
-                        <th >银行单据</th>
                         <th >订单状态</th>
                         <th >送货地址</th>
                         <th >是否送货</th>
@@ -58,19 +54,9 @@
 					<foreach name="data" item="v">
 						<tr>
 							<td>{$v['ir_receiptnum']}</td>
-							<td>{$v['hu_nickname']}</td>
+							<td>{$v['customerid']}</td>
 							<td>{$v['ir_price']}</td>
-							<td>{$v['ir_point']}</td>
-							<td>
-								<if 	condition="$v['ir_paytype'] eq 0">未支付
-                                <elseif condition="$v['ir_paytype'] eq 1"/>微信支付
-                                <elseif condition="$v['ir_paytype'] eq 2"/>积分支付
-                                <elseif condition="$v['ir_paytype'] eq 3"/>单据转账
-                                </if>
-							</td>
 							<td>{$v['ir_desc']}</td>
-							<td>{$v['ir_banknumber']}</td>
-							<td><?php if(!empty($v['ir_bankreceipt'])){echo '<img width="25px" height="25px" src="'.$v['ir_bankreceipt'].'">';}else{echo '';}?></td>
 							<td>
 								<if 	condition="$v['ir_status'] eq 0">待付款
                                 <elseif condition="$v['ir_status'] eq 1"/>待审核
@@ -89,8 +75,8 @@
 							</td>
 							<td>{:date('Y:m:d h:i:s',$v['ir_date'])}</td>
 							<td>
-								<a href="javascript:;" receiptId="{$v['irid']}" receiptNum="{$v['ir_receiptnum']}" receiptDate="{$v['ir_date']}" receiptPrice="{$v[ir_price]}" receiptUser="{$v['hu_nickname']}" receiptPhone="{$v[ia_phone]}" receiptAddress="{$v['ia_address']}" receiptPoint="{$v[ir_point]}" receiptBanknumber="{$v['ir_banknumber']}" receiptBankreceipt="{$v['ir_bankreceipt']}" receiptStatus="{$v[ir_status]}" receiptDesc="{$v['ir_desc']}" onclick="edit(this)">查看</a> |
-								<a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Ibos/delete_receipt',array('id'=>$v['irid']))}'">删除</a> 
+								<a href="javascript:;" receiptId="{$v['irid']}" receiptNum="{$v['ir_receiptnum']}" receiptDate="{$v['ir_date']}" receiptPrice="{$v[ir_price]}" receiptUser="{$v['customerid']}" receiptPhone="{$v[ia_phone]}" receiptAddress="{$v['ia_address']}" receiptPoint="{$v[ir_point]}" receiptBanknumber="{$v['ir_banknumber']}" receiptBankreceipt="{$v['ir_bankreceipt']}" receiptStatus="{$v[ir_status]}" receiptDesc="{$v['ir_desc']}" onclick="edit(this)">查看</a> |
+								<a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Hapylife/delete_receipt',array('id'=>$v['irid']))}'">删除</a> 
 							</td>
 						</tr>
 					</foreach>
@@ -116,7 +102,7 @@
 					</h4>
 				</div>
 				<div class="modal-body">
-					<form id="bjy-form" class="form-inline" action="{:U('Admin/Ibos/edit_receipt')}" method="post">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Hapylife/edit_receipt')}" method="post">
 						<input type="hidden" name="id">
 						<table class="table table-striped table-bordered table-hover table-condensed">
 							<tr>
@@ -130,20 +116,6 @@
                         <tr>
                             <th>金额：</th>
                             <td id='Receiptprice'></td>
-                        </tr>
-                        <tr>
-                            <th>积分：</th>
-                            <td id='Receiptpoint'></td>
-                        </tr>
-                        <tr>
-                            <th>银行账号：</th>
-                            <td id='Receiptbanknumber'><td>
-                        </tr>
-                        <tr>
-                            <th>银行单据：</th>
-                            <td>
-                                <a href="" id='bankpicture' target="_blank"><img src="http://localhost/nulife/Public/idcard/default.jpg" id='bankreceipt' width='100' height='100'><br>点击查看大图</a>
-                            </td>
                         </tr>
                         <tr>
                         	<th>电话：</th>
@@ -161,9 +133,6 @@
                                 <select name="ir_status" id="status">
                                     <option value="0" >
                                         待付款
-                                    </option>
-                                    <option value="1" >
-                                        待审核
                                     </option>
                                     <option value="2" >
                                         已支付待发货
@@ -213,8 +182,6 @@
 		var receiptPhone=$(obj).attr('receiptPhone');
 		var receiptAddress=$(obj).attr('receiptAddress');
 		var receiptBankreceipt=$(obj).attr('receiptBankreceipt');
-		var receiptBanknumber=$(obj).attr('receiptBanknumber');
-		var receiptPoint=$(obj).attr('receiptPoint');
 		var receiptStatus=$(obj).attr('receiptStatus');
 		var receiptDesc=$(obj).attr('receiptDesc');
 		Receiptdesc.innerText=receiptDesc;
@@ -222,8 +189,6 @@
 		Receiptuser.innerText=receiptUser;
 		Receiptphone.innerText=receiptPhone;
 		Receiptprice.innerText=receiptPrice;
-		Receiptpoint.innerText=receiptPoint;
-		Receiptbanknumber.innerText=receiptBanknumber;
 		$("input[name='id']").val(receiptId);
 		$("#bankreceipt").attr("src",receiptBankreceipt);
 		$("#bankpicture").attr("href",receiptBankreceipt);
