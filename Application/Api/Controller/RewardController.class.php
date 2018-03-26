@@ -107,8 +107,29 @@ class RewardController extends HomeBaseController{
 		echo $num;
 	}
 
+	/**
+	* 远程文件采集
+	* @param string $remote 远程文件名
+	* @param string $local 本地保存文件名
+	* @return mixed
+	**/
+	public function getRemoveFile(){
+		$remove = 'http://apps.hapy-life.com/hapylife/http.txt';
+		$local  = './log.txt';
+
+		//静态方法调用
+		// $http   = \Org\Net\Http::curlDownload($remove,$local);
+
+		//公共方法调用
+		$http = new \Org\Net\Http();
+		$http->curlDownload($remove,$local);
+
+		echo file_get_contents('./log.txt');
+    }
 
 
+    
+    
 
 
 
