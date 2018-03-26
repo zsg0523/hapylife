@@ -484,92 +484,44 @@ class HapylifeController extends AdminBaseController{
 		//关键字筛选，分类筛选,分页
 		//0未支付 1待审核 2已支付 3已完成 
 		$word=I('get.word','');
-		$ir_status=I('get.ir_status');
-		if(empty($word)){
-			$map=array();
-		}else{
-			$map=array(
-				'CustomerID '=>$word,
-			);
-		}
-
-		$assign = D('Receipt')->getPage(D('Receipt'),$map,$order='ir_date desc');
-		//p($assign);die;
+		$status=I('get.ir_status');
+		$assign = D('Receipt')->getPage(D('Receipt'),$word,$order='ir_date desc',$status);
 		$this->assign($assign);
 		$this->display();
 	}
 
-	public function receipt1(){
-		$word=I('get.word','');
-		$ir_status=I('get.ir_status');
-		if(empty($word)){
-			$map=array(
-				'ir_status'=>0
-			);
-		}else{
-			$map=array(
-				'CustomerID '=>$word,
-				'ir_status'=>0
-			);
-		}
-		$assign = D('Receipt')->getPage(D('Receipt'),$map,$order='ir_date desc');
-		$this->assign($assign);
-		$this->display();
-	}
+	// public function receipt1(){
+	// 	$word=I('get.word','');
+	// 	$ir_status=I('get.ir_status');
+	// 	$assign = D('Receipt')->where(array('ir_status'=>$ir_status))->getPage(D('Receipt'),$word,$order='ir_date desc');
+	// 	p($ir_status);die;
+	// 	$this->assign($assign);
+	// 	$this->display();
+	// }
 
-	public function receipt2(){
-		$word=I('get.word','');
-		$ir_status=I('get.ir_status');
-		if(empty($word)){
-			$map=array(
-				'ir_status'=>2
-			);
-		}else{
-			$map=array(
-				'CustomerID '=>$word,
-				'ir_status'=>2
-			);
-		}
-		$assign = D('Receipt')->getPage(D('Receipt'),$map,$order='ir_date desc');
-		$this->assign($assign);
-		$this->display();
-	}
+	// public function receipt2(){
+	// 	$word=I('get.word','');
+	// 	$ir_status=I('get.ir_status');
+	// 	$assign = D('Receipt')->getPage(D('Receipt'),$word,$order='ir_date desc');
+	// 	$this->assign($assign);
+	// 	$this->display();
+	// }
 
-	public function receipt3(){
-		$word=I('get.word','');
-		$ir_status=I('get.ir_status');
-		if(empty($word)){
-			$map=array(
-				'ir_status'=>3
-			);
-		}else{
-			$map=array(
-				'CustomerID '=>$word,
-				'ir_status'=>3
-			);
-		}
-		$assign = D('Receipt')->getPage(D('Receipt'),$map,$order='ir_date desc');
-		$this->assign($assign);
-		$this->display();
-	}
+	// public function receipt3(){
+	// 	$word=I('get.word','');
+	// 	$ir_status=I('get.ir_status');
+	// 	$assign = D('Receipt')->getPage(D('Receipt'),$word,$order='ir_date desc');
+	// 	$this->assign($assign);
+	// 	$this->display();
+	// }
 
-	public function receipt4(){
-		$word=I('get.word','');
-		$ir_status=I('get.ir_status');
-		if(empty($word)){
-			$map=array(
-				'ir_status'=>4
-			);
-		}else{
-			$map=array(
-				'CustomerID '=>$word,
-				'ir_status'=>4
-			);
-		}
-		$assign = D('Receipt')->getPage(D('Receipt'),$map,$order='ir_date desc');
-		$this->assign($assign);
-		$this->display();
-	}
+	// public function receipt4(){
+	// 	$word=I('get.word','');
+	// 	$ir_status=I('get.ir_status');
+	// 	$assign = D('Receipt')->getPage(D('Receipt'),$word,$order='ir_date desc');
+	// 	$this->assign($assign);
+	// 	$this->display();
+	// }
 
 	/**
 	* 订单修改
