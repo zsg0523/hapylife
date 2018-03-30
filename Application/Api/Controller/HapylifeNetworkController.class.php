@@ -11,34 +11,54 @@ class HapylifeNetworkController extends HomeBaseController{
     **/
     public function getUserBinary(){
         $account = I('post.CustomerID');
-        $mape    = D('User')->where(array('EnrollerID'=>$account))->select();
+        $data    = D('User')->where(array('EnrollerID'=>$account,'CustomerID'=>array('like','%'.'HPL'.'%')))->select();
         // p($account);
-        p($mape);die;
+        if($data){
+            $this->ajaxreturn($data);
+        }else{
+            $data['status']=0;
+            $this->ajaxreturn($data); 
+        }
     }
 
     /**
-    * 修改推荐人
+    * 推荐--下级信息
     **/
-    public function againEnrollerID(){
-        $CustomerID = I('post.CustomerID');
-        $EnrollerID = I('post.EnrollerID');
-        $user       = D('User')->where(array('CustomerID'=>$EnrollerID))->find();
-        if($user){
-            $mape   = D('User')->where(array('CustomerID'=>$CustomerID))->setField('EnrollerID',$EnrollerID);    
+    public function getUserInfo(){
+        $account = I('post.CustomerID');
+        $data    = D('User')->where(array('CustomerID'=>$account))->find();
+        // p($account);
+        if($data){
+            $this->ajaxreturn($data);
+        }else{
+            $data['status']=0;
+            $this->ajaxreturn($data); 
         }
-        p($mape);die;
     }
     /**
-    * 修改左右脚
+    * 修改左右脚及双轨id
     **/
-    // public function againEnrollerID(){
-    //     $CustomerID = I('post.CustomerID');
-    //     $EnrollerID = I('post.EnrollerID');
-    //     $user       = D('User')->where(array('CustomerID'=>$EnrollerID))->find();
-    //     if($user){
-    //         $mape   = D('User')->where(array('CustomerID'=>$CustomerID))->setField('EnrollerID',$EnrollerID);    
-    //     }
-    //     p($mape);die;
-    // }
+    public function editUserInfo(){
+        $CustomerID = I('post.CustomerID');
+        $para       = I('post.para');
+        $paravalue  = I('post.paravalue');
+        switch ($para) {
+            case 'Placement':
+                $data['Placement'] = $paravalue;
+                break;
+            case 'SponsorID':
+                $data['SponsorID'] = $paravalue;
+                break;
+        }
+        $mape['CustomerID'] = $CustomerID;
+        $save = D('User')->where($mape)->save($data);  
+        if($save){
+            $data['status']=1;
+            $this->ajaxreturn($data); 
+        }else{
+            $data['status']=0;
+            $this->ajaxreturn($data); 
+        }  
+    }
 	
 }

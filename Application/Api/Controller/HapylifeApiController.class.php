@@ -61,11 +61,11 @@ class HapylifeApiController extends HomeBaseController{
 	public function newregister(){
 		$data  = I('post.');
         if($data['IsNew']==1){
-            $find  = D('User')->where(array('CustomerID'=>$data['EnrollerID']))->find();
-            if(!$find){
-                $tmpe['status'] = 2;
-                $this->ajaxreturn($tmpe);           
-            }else{
+            // $find  = D('User')->where(array('CustomerID'=>$data['EnrollerID']))->find();
+            // if(!$find){
+            //     $tmpe['status'] = 2;
+            //     $this->ajaxreturn($tmpe);           
+            // }else{
                 if(!empty($data['JustIdcard'])){
                     $img_body1 = substr(strstr($data['JustIdcard'],','),1);
                     $JustIdcard = time().'_'.mt_rand().'.jpg';
@@ -123,7 +123,6 @@ class HapylifeApiController extends HomeBaseController{
                     'LastName'           => $data['LastName'],
                     'FirstName'          => $data['FirstName'],
                     'EnrollerID'         => $data['EnrollerID'],
-                    'SponsorID'          => $data['EnrollerID'],
                     'JoinedOn'           => date("m/d/Y h:i:s A"),
                     'HighestAchievedRank'=> 'Director',
                     'Email'              => $data['Email'],
@@ -147,69 +146,83 @@ class HapylifeApiController extends HomeBaseController{
                     $tmpe['status'] = 0;
                     $this->ajaxreturn($tmpe);
                 }
-            }
+            // }
         }else{
-            $where= array(
-                'LastName'     =>$data['LastName'],
-                'FirstName'    =>$data['FirstName'],
-                'CustomerID'   =>$data['EnrollerID']
-            );
-            $find = D('User')->where($where)->find();
-            if($find){
-                if($find['password']){
-                    $tmpe['status'] = 3;
-                    $this->ajaxreturn($tmpe);
-                }else{
-                    //正反面身份证
-                    if(!empty($data['JustIdcard'])){
-                        $img_body1 = substr(strstr($data['JustIdcard'],','),1);
-                        $JustIdcard = time().'_'.mt_rand().'.jpg';
-                        $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
-                        $tmpe['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
-                    }
-                    if(!empty($data['BackIdcard'])){
-                        $img_body2 = substr(strstr($data['BackIdcard'],','),1);
-                        $BackIdcard = time().'_'.mt_rand().'.jpg';
-                        $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
-                        $tmpe['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
-                    }
-                    $mape  = array('CustomerID'=>$data['EnrollerID']);
-                    $tmpe  = array(
-                        'Email'              => $data['Email'],
-                        'PassWord'           => md5($data['PassWord']),
-                        'Phone'              => $data['Phone'],
-                        'Sex'                => $data['Sex'],
-                        'ShopAddress1'       => $data['ShopAddress1'],
-                        'ShopAddress2'       => $data['ShopAddress2'],
-                        'Idcard'             => $data['Idcard'],
-                        'OrderDate'          => '3/16/2018 12:00:00 AM',
-                        'Number'             => '1',
-                        'DistributorType'    => 'Platinum'
-                    );
-                    $data['iuid']      = $find['iuid'];
-                    $data['CustomerID']= $data['EnrollerID'];
-                    $data['pass']      = $data['PassWord'];
-                    $save = D('User')->where($mape)->save($tmpe);
-                    // $array= array(
-                    //     array('iuid'=>$find['iuid'],'datetime'=>'2018-03','hatime'=>'2018年03月23日','endtime'=>'2018年04月15日','is_tick'=>1),
-                    //     array('iuid'=>$find['iuid'],'datetime'=>'2018-04','hatime'=>'2018年04月16日','endtime'=>'2018年05月15日','is_tick'=>1),
-                    //     array('iuid'=>$find['iuid'],'datetime'=>'2018-05','hatime'=>'2018年05月16日','endtime'=>'2018年06月15日','is_tick'=>1)
-                    // );
-                    if($save){
-                        // foreach ($array as $key => $value) {
-                        //     D('Activation')->add($value);
-                        // }
-                        $data['status'] = 1;
-                        $this->ajaxreturn($data);               
-                    }else{
-                        $data['status'] = 0;
-                        $this->ajaxreturn($data);
-                    }
-                }
-            }else{
+            // //正反面身份证
+            // if(!empty($data['JustIdcard'])){
+            //     $img_body1 = substr(strstr($data['JustIdcard'],','),1);
+            //     $JustIdcard = time().'_'.mt_rand().'.jpg';
+            //     $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
+            //     $tmpe['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
+            // }
+            // if(!empty($data['BackIdcard'])){
+            //     $img_body2 = substr(strstr($data['BackIdcard'],','),1);
+            //     $BackIdcard = time().'_'.mt_rand().'.jpg';
+            //     $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
+            //     $tmpe['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
+            // }
+            // $tmpe  = array(
+            //     'Email'              => $data['Email'],
+            //     'PassWord'           => md5($data['PassWord']),
+            //     'Phone'              => $data['Phone'],
+            //     'Sex'                => $data['Sex'],
+            //     'ShopAddress1'       => $data['ShopAddress1'],
+            //     'ShopAddress2'       => $data['ShopAddress2'],
+            //     'Idcard'             => $data['Idcard'],
+            //     'OrderDate'          => '3/16/2018 12:00:00 AM',
+            //     'Number'             => '1',
+            //     'DistributorType'    => 'Platinum'
+            // );
+            // $data['CustomerID']= $data['EnrollerID'];
+            // $data['pass']      = $data['PassWord'];
+            // $where= array(
+            //     'CustomerID'   =>$data['EnrollerID']
+            // );
+            // $find = D('User')->where($where)->find();
+            // if($find){
+            //     if($find['password']){
+            //         $data['status'] = 3;
+            //         $this->ajaxreturn($data);
+            //     }else{
+            //         // echo 2;die;
+            //         $arr= array(
+            //             'LastName'     =>$data['LastName'],
+            //             'FirstName'    =>$data['FirstName'],
+            //             'CustomerID'   =>$data['EnrollerID']
+            //         );
+            //         $user = D('User')->where($arr)->find();
+            //         if($user){
+            //             $mape  = array('CustomerID'=>$data['EnrollerID']);
+            //             $data['iuid'] = $find['iuid'];
+            //             $save = D('User')->where($mape)->save($tmpe);
+            //         }
+            //     }
+            // }else{
+            //     $strlen = strlen($data['EnrollerID']);
+            //     if($strlen==8){
+            //         $tmpe['CustomerID']=$data['EnrollerID'];
+            //         $tmpe['LastName']  =$data['LastName'];
+            //         $tmpe['FirstName'] =$data['FirstName'];
+            //         $tmpe['Placement']      ='Right';
+            //         $save = D('User')->add($tmpe);
+            //         $data['iuid'] = D('User')->where(array('CustomerID'=>$data['EnrollerID']))->getfield('iuid');
+            //     }
+            // }
+            // // $array= array(
+            // //     array('iuid'=>$find['iuid'],'datetime'=>'2018-03','hatime'=>'2018年03月23日','endtime'=>'2018年04月15日','is_tick'=>1),
+            // //     array('iuid'=>$find['iuid'],'datetime'=>'2018-04','hatime'=>'2018年04月16日','endtime'=>'2018年05月15日','is_tick'=>1),
+            // //     array('iuid'=>$find['iuid'],'datetime'=>'2018-05','hatime'=>'2018年05月16日','endtime'=>'2018年06月15日','is_tick'=>1)
+            // // );
+            // if($save){
+            //     // foreach ($array as $key => $value) {
+            //     //     D('Activation')->add($value);
+            //     // }
+            //     $data['status'] = 1;
+            //     $this->ajaxreturn($data);               
+            // }else{
                 $data['status'] = 0;
                 $this->ajaxreturn($data);
-            }
+            // }
         }
 		
 	}
@@ -219,24 +232,29 @@ class HapylifeApiController extends HomeBaseController{
 	**/
 	public function login(){
 		$tmpe = I('post.');
-		$where= array(
-			'CustomerID'=>$tmpe['CustomerID'],
-			'PassWord'  =>md5($tmpe['PassWord'])
-		);
-		$data = D('User')->where($where)->find();
-		if($data){
-			// $time=strtotime($data['orderdate']);
-			// if($time>time()){
-				$data['status'] = 1;
-				$this->ajaxreturn($data);	
-			// }else{
-				// $data['status'] = 2;
-				// $this->ajaxreturn($data);					
-			// }
-		}else{
-			$data['status'] = 0;
-			$this->ajaxreturn($data);			
-		}
+        if(strlen($tmpe['CustomerID'])==8){
+            $data['status'] = 0;
+            $this->ajaxreturn($data);    
+        }else{
+    		$where= array(
+    			'CustomerID'=>$tmpe['CustomerID'],
+    			'PassWord'  =>md5($tmpe['PassWord'])
+    		);
+    		$data = D('User')->where($where)->find();
+    		if($data){
+    			// $time=strtotime($data['orderdate']);
+    			// if($time>time()){
+    				$data['status'] = 1;
+    				$this->ajaxreturn($data);	
+    			// }else{
+    				// $data['status'] = 2;
+    				// $this->ajaxreturn($data);					
+    			// }
+    		}else{
+    			$data['status'] = 0;
+    			$this->ajaxreturn($data);			
+    		}
+        }
 	}
 
 	/**
@@ -510,14 +528,14 @@ class HapylifeApiController extends HomeBaseController{
         $order_num = date('YmdHis').rand(10000, 99999);
         switch ($product['ip_type']) {
             case '1':
-                $list= D('Receipt')->where(array('ir_ordertype'=>$product['ip_type']))->select();
-                // if($list){
-                //     $order['status'] = 2;
-                //     $order['msg']    = '订单已存在,请付款或删除重新下单';
-                //     $this->ajaxreturn($order);
-                // }else{
+                $list= D('Receipt')->where(array('ir_ordertype'=>$product['ip_type'],'iuid'=>$iuid,'is_delete'=>0))->select();
+                if($list){
+                    $order['status'] = 2;
+                    $order['msg']    = '订单已存在,请付款或删除重新下单';
+                    $this->ajaxreturn($order);
+                }else{
                     $con = '首购单';
-                // }
+                }
                 break;
             case '2':
                 $con = '升级单';
@@ -525,6 +543,11 @@ class HapylifeApiController extends HomeBaseController{
             case '3':
                 $con = '月费单';
                 break;
+        }
+        if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
+            $order['status'] = 3;
+            $order['msg']    = '请先填写个人信息的地区和详细地址';
+            $this->ajaxreturn($order);
         }
         $order = array(
             //订单编号
