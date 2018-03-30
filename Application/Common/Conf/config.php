@@ -19,6 +19,7 @@ return array(
         '__PUBLIC_CSS__'     => __ROOT__.trim(TMPL_PATH,'.').'Public/css',
         '__PUBLIC_JS__'      => __ROOT__.trim(TMPL_PATH,'.').'Public/js',
         '__PUBLIC_IMAGES__'  => OSS_URL.trim(TMPL_PATH,'.').'Public/images',
+        '__PUBLIC_IMAGE__'  => __ROOT__.trim(TMPL_PATH,'.').'Public/images',
         '__USER_CSS__'       => __ROOT__.trim(TMPL_PATH,'.').'User/Public/css',
         '__USER_JS__'        => __ROOT__.trim(TMPL_PATH,'.').'User/Public/js',
         '__USER_IMAGES__'    => OSS_URL.trim(TMPL_PATH,'.').'User/Public/images',

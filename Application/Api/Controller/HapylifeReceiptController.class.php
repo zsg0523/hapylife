@@ -56,4 +56,7 @@ class HapylifeReceiptController extends HomeBaseController{
 			$this->ajaxreturn($data);
 		}
 	}
+
+
+	
 }

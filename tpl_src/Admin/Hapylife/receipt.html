@@ -15,29 +15,23 @@
     <div class="col-xs-12">
         <div class="tabbable">
 	            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
-				  	<li class="active">
-						<a href="{:U('Admin/Hapylife/receipt?ir_status=-1')}">所有订单</a>
-				    </li>
-				    <li >
-						<a href="{:U('Admin/Hapylife/receipt?ir_status=0')}" >待支付</a>
-				    </li>
-				    <li >
-						<a href="{:U('Admin/Hapylife/receipt?ir_status=2')}" >已支付</a>
-				    </li>
-				    <li >
-						<a href="{:U('Admin/Hapylife/receipt?ir_status=3')}" >已发货</a>
-				    </li>
-				    <li >
-						<a href="{:U('Admin/Hapylife/receipt?ir_status=4')}" >已完成</a>
-				    </li>
 				    <li>
 				    	<form action="{:U('Admin/Hapylife/receipt')}" method="get">
-	                        <input name="word" type="text" placeholder="输入会员名" size="20" />
+				    		<select name="status">
+				    			<option <?php if($status == 0)echo "selected";?>  value="0">所有</option>
+				    			<option <?php if($status == 1)echo "selected";?>  value="1">待付款</option>
+				    			<option <?php if($status == 3)echo "selected";?>  value="3">已支付</option>
+				    			<option <?php if($status == 4)echo "selected";?>  value="4">已完成</option>
+				    		</select>
+				    		<input type="text" name='starttime' value="{$starttime}" placeholder="起始时间,年-月-日">
+					    	<input type="text" name='endtime'   value="{$endtime}" placeholder="结束时间,年-月-日">
+	                        <input name="word" type="text" placeholder="关键词" value="{$word}" size="20" />
 	                        <input class='btn btn-sm' type="submit" value="筛选" />
+	                        <input class='btn btn-sm' type="submit" name='excel' value="excel" />
 	                	</form>
 				    </li>
 	            </ul>
-
+		</div>
             <div class="tab-content">
 				<table class="table table-striped table-bordered table-hover table-condensed">
 					<tr>
@@ -67,11 +61,8 @@
 							<td>{$v['ir_desc']}</td>
 							<td>
 								<if 	condition="$v['ir_status'] eq 0">待付款
-                                <elseif condition="$v['ir_status'] eq 1"/>待审核
                                 <elseif condition="$v['ir_status'] eq 2"/>已支付
-                                <elseif condition="$v['ir_status'] eq 3"/>已发货
-                                <elseif condition="$v['ir_status'] eq 4"/>已收货
-                                <elseif condition="$v['ir_status'] eq 5"/>待评价
+                                <elseif condition="$v['ir_status'] eq 3"/>交易完成
                                 <else />已评价
                                 </if>
 							</td>
@@ -81,7 +72,7 @@
                                 <elseif condition="$v['is_delivery'] eq 1"/>送货
                                 </if>
 							</td>
-							<td>{:date('Y:m:d h:i:s',$v['ir_date'])}</td>
+							<td>{:date('Y-m-d h:i:s',$v['ir_date'])}</td>
 							<td>
 								<a href="javascript:;" receiptId="{$v['irid']}" receiptNum="{$v['ir_receiptnum']}" receiptDate="{$v['ir_date']}" receiptPrice="{$v[ir_price]}" receiptUser="{$v['customerid']}" receiptPhone="{$v[ia_phone]}" receiptAddress="{$v['ia_address']}" receiptPoint="{$v[ir_point]}" receiptBanknumber="{$v['ir_banknumber']}" receiptBankreceipt="{$v['ir_bankreceipt']}" receiptStatus="{$v[ir_status]}" receiptDesc="{$v['ir_desc']}" onclick="edit(this)">查看</a> |
 								<a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Hapylife/delete_receipt',array('id'=>$v['irid']))}'">删除</a> 
@@ -182,21 +173,21 @@
 
 	// 修改菜单
 	function edit(obj){
-		var receiptId=$(obj).attr('receiptId');
-		var receiptNum=$(obj).attr('receiptNum');
-		var receiptDate=$(obj).attr('receiptDate');
-		var receiptPrice=$(obj).attr('receiptPrice');
-		var receiptUser=$(obj).attr('receiptUser');
-		var receiptPhone=$(obj).attr('receiptPhone');
-		var receiptAddress=$(obj).attr('receiptAddress');
-		var receiptBankreceipt=$(obj).attr('receiptBankreceipt');
-		var receiptStatus=$(obj).attr('receiptStatus');
-		var receiptDesc=$(obj).attr('receiptDesc');
-		Receiptdesc.innerText=receiptDesc;
-		Receiptnum.innerText=receiptNum;
-		Receiptuser.innerText=receiptUser;
-		Receiptphone.innerText=receiptPhone;
-		Receiptprice.innerText=receiptPrice;
+		var receiptId          =$(obj).attr('receiptId');
+		var receiptNum         =$(obj).attr('receiptNum');
+		var receiptDate        =$(obj).attr('receiptDate');
+		var receiptPrice       =$(obj).attr('receiptPrice');
+		var receiptUser        =$(obj).attr('receiptUser');
+		var receiptPhone       =$(obj).attr('receiptPhone');
+		var receiptAddress     =$(obj).attr('receiptAddress');
+		var receiptBankreceipt =$(obj).attr('receiptBankreceipt');
+		var receiptStatus      =$(obj).attr('receiptStatus');
+		var receiptDesc        =$(obj).attr('receiptDesc');
+		Receiptdesc.innerText  =receiptDesc;
+		Receiptnum.innerText   =receiptNum;
+		Receiptuser.innerText  =receiptUser;
+		Receiptphone.innerText =receiptPhone;
+		Receiptprice.innerText =receiptPrice;
 		$("input[name='id']").val(receiptId);
 		$("#bankreceipt").attr("src",receiptBankreceipt);
 		$("#bankpicture").attr("href",receiptBankreceipt);
@@ -204,5 +195,7 @@
 		$("select[name='ir_status']").val(receiptStatus);
 		$('#bjy-edit').modal('show');
 	}
+
+	//
 	</script>
 </block>

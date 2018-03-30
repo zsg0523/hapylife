@@ -479,49 +479,33 @@ class HapylifeController extends AdminBaseController{
 	//**********************订单*********************
 	/**
 	* 订单列表
+	*@param ir_status -1所有订单 0待付款 1待审核 2已支付 3已完成
+	*@param excel 导出excel
+	*@param word  搜索关键词
+	*@param status订单状态筛选
+	*@param starttime 起始时间 endtime 结束时间
 	**/
 	public function receipt(){
-		//关键字筛选，分类筛选,分页
-		//0未支付 1待审核 2已支付 3已完成 
-		$word=I('get.word','');
-		$status=I('get.ir_status');
-		$assign = D('Receipt')->getPage(D('Receipt'),$word,$order='ir_date desc',$status);
-		$this->assign($assign);
-		$this->display();
+		$excel     = I('get.excel');
+		$word      = trim(I('get.word',''));
+		$status    = I('get.status')-1;
+		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime')):time();
+		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$order='ir_date desc',$status,$starttime,$endtime);
+		
+		//导出excel
+		if($excel == 'excel'){
+			$export_excel = D('Receipt')->export_excel($assign['data']);
+		}else{
+			$this->assign($assign);
+			$this->assign('status',I('get.status'));
+			$this->assign('word',$word);
+			$this->assign('starttime',I('get.starttime'));
+			$this->assign('endtime',I('get.endtime'));
+			$this->display();
+		}
+		
 	}
-
-	// public function receipt1(){
-	// 	$word=I('get.word','');
-	// 	$ir_status=I('get.ir_status');
-	// 	$assign = D('Receipt')->where(array('ir_status'=>$ir_status))->getPage(D('Receipt'),$word,$order='ir_date desc');
-	// 	p($ir_status);die;
-	// 	$this->assign($assign);
-	// 	$this->display();
-	// }
-
-	// public function receipt2(){
-	// 	$word=I('get.word','');
-	// 	$ir_status=I('get.ir_status');
-	// 	$assign = D('Receipt')->getPage(D('Receipt'),$word,$order='ir_date desc');
-	// 	$this->assign($assign);
-	// 	$this->display();
-	// }
-
-	// public function receipt3(){
-	// 	$word=I('get.word','');
-	// 	$ir_status=I('get.ir_status');
-	// 	$assign = D('Receipt')->getPage(D('Receipt'),$word,$order='ir_date desc');
-	// 	$this->assign($assign);
-	// 	$this->display();
-	// }
-
-	// public function receipt4(){
-	// 	$word=I('get.word','');
-	// 	$ir_status=I('get.ir_status');
-	// 	$assign = D('Receipt')->getPage(D('Receipt'),$word,$order='ir_date desc');
-	// 	$this->assign($assign);
-	// 	$this->display();
-	// }
 
 	/**
 	* 订单修改
@@ -560,24 +544,19 @@ class HapylifeController extends AdminBaseController{
 	* 用户列表
 	**/
 	public function user(){
+		//有密码账户搜索
+		$count = M('user')->where(array('PassWord'=>array('neq','')))->count();
 		//账户昵称搜索
-		$data['CustomerID']     = strtoupper(trim(I('get.customerId')));
-		$data['SponsorID']      = trim(I('get.sponsorId'));
-		$data['EnrollerID']     = trim(I('get.enrollerId'));
-		$data['Placement']      = trim(I('get.placement'));
-		$data['CustomerStatus'] = trim(I('get.customerstatus'));
-		
-		foreach ($data as $key => $value) {
-			if(empty($value)){
-				$map = array();
-			}else{
-				$map = array(
-					$key=>$value
-				);
-				break;
-			}
+		$word = trim(I('get.word'));
+		if(empty($word)){
+			$map = array();
+		}else{
+			$map = array(
+				'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%')
+			);
 		}
 		$assign=D('User')->getAllData(D('User'),$map,$word,$order="iuid desc");
+		$this->assign('count',$count);
 		$this->assign($assign);
 		$this->display();
 	}
