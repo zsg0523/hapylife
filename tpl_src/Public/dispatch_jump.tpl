@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <title>跳转提示 - bjyadmin</title>
+    <title>跳转提示 - Hapylife</title>
     <bootstrapcss />
 </head>
 <body>
