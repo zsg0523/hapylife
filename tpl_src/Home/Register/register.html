@@ -20,7 +20,8 @@
 					<!-- <div class="form-group">
 						<label for="" class="col-lg-2 col-xs-4 control-label">头像:</label>
 						<div class="col-lg-10 col-xs-8">						
-							<div class="rg-headimg"></div>	
+							<!--<div class="rg-headimg"></div>-->	
+							<input type="password" class="form-control" id="" name="" placeholder="">
 						</div>
 					</div> -->
 					<div class="form-group">
@@ -254,6 +255,7 @@
 										<input type="file" id='id-face' name='face' accept="image/*" />
 										<div id='face-empty-result'> 
 											<img style='width:4rem;' src="__PUBLIC_IMAGE__/camera.png" alt="">
+											<!--<img style='width:4rem;' src="images/camera.png" alt="">-->
 										    <p>身份证正面照</p>
 										</div> 
 										<img style='width: 100px;' id='face-result' /> 
@@ -271,6 +273,7 @@
 										<input type="file" id='id-back' name='back' accept="image/*" />
 										<div id='back-empty-result'> 
 											<img style='width:4rem;margin: auto;' src="__PUBLIC_IMAGE__/camera.png" alt="">
+												<!--<img style='width:4rem;margin: auto;' src="images/camera.png" alt="">-->
 										    <p>身份证反面照</p>
 										</div>
 										<img style='width: 100px;margin: auto;' id='back-result' /> 
@@ -304,15 +307,10 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="" class="col-lg-2 col-xs-4 control-label">是否通过:</label>
-						<div class="col-lg-10 col-xs-8">
-							<div class="col-lg-5 col-xs-4">
-								<input type="radio" name="pass"  id="yespass" >是
-							</div>
-							<div class="col-lg-5 col-xs-4">
-								<input type="radio" name="pass"  id="nopass" >否
-							</div>
+						<div class="col-lg-offset-2 col-lg-1 col-xs-offset-4 col-xs-4">
+							<input type="checkbox"  id="" name="">
 						</div>
+						<label for="" class="col-lg-2 col-xs-4 control-label">是否通过</label>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-xs-4 control-label">继承人:</label>
@@ -351,16 +349,16 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="" class="col-lg-2 col-xs-4 control-label">是否同意条款:</label>
-						<div class="col-lg-10 col-xs-8">
-							<input type="" class="form-control" id="" name="" placeholder="">
+						<div class="col-lg-offset-2 col-lg-1 col-xs-offset-4 col-xs-4">
+							<input type="checkbox"  id="" name="">
 						</div>
+						<label for="" class="col-lg-2 col-xs-4 control-label">是否同意条款</label>
 					</div>
 					<div class="form-group">
-						<label for="" class="col-lg-2 col-xs-4 control-label">是否买过东西:</label>
-						<div class="col-lg-10 col-xs-8">
-							<input type="" class="form-control" id="" name="" placeholder="">
+						<div class="col-lg-offset-2 col-lg-1 col-xs-offset-4 col-xs-4">
+							<input type="checkbox"  id="" name="">
 						</div>
+						<label for="" class="col-lg-2 col-xs-4 control-label">是否买过东西</label>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-xs-4 control-label">第一次购买时间:</label>
@@ -402,10 +400,10 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<div class="col-lg-offset-2 col-lg-1 col-xs-4">
+						<div class="col-lg-offset-2 col-lg-1 col-xs-offset-4 col-xs-4">
 							<input type="checkbox"  id="" name="">
 						</div>
-						<label for="" class="col-lg-2 col-xs-8 control-label">是否同意授权</label>												
+						<label for="" class="col-lg-2 col-xs-4 control-label">是否同意授权</label>										
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-xs-4 control-label">设备地理位置:</label>
@@ -438,7 +436,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<div class="col-lg-offset-2 col-lg-10">
+						<div class="col-lg-offset-2 col-lg-10 col-xs-offset-4 col-xs-8">
 							<button type="submit" class="btn  btn-block  btn-info">注册</button>
 						</div>
 					</div>
