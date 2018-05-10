@@ -52,8 +52,8 @@ class IndexController extends HomeBaseController{
                     $this->error('账号或密码错误');
                 }else{
                     $_SESSION['user']=array(
-                        'id'=>$data['id'],
-                        'username'=>$data['username'],
+                        'id'       =>$data['iuid'],
+                        'username' =>$data['customerid'],
                         );
                     $this->success('登录成功',U('Home/Purchase/main'));
                 }
@@ -74,6 +74,35 @@ class IndexController extends HomeBaseController{
     public function logout(){
         session('user',null);
         $this->success('退出成功、前往登录页面',U('Home/Index/index'));
+    }
+
+    /**
+    * 注册
+    **/
+    public function register(){
+        if(IS_POST){
+            $tmpe = I('post.');
+            if(strlen($tmpe['CustomerID'])==8){
+            $this->error('账号格式错误');  
+            }else{
+                $where= array(
+                    'CustomerID'=>$tmpe['CustomerID'],
+                    'PassWord'  =>md5($tmpe['PassWord'])
+                );
+                $data = D('User')->where($where)->find();
+                if (empty($data)) {
+                    $this->error('账号或密码错误');
+                }else{
+                    $_SESSION['user']=array(
+                        'id'       =>$data['iuid'],
+                        'username' =>$data['customerid'],
+                        );
+                    $this->success('登录成功',U('Home/Purchase/main'));
+                }
+            }
+        }else{
+            $this->display('Register/register');
+        }
     }
 
 

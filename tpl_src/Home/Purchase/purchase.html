@@ -24,14 +24,16 @@
 </head>
 <body class="">
 	<div class="main container-fluid">
-		<div class="giftPackage col-xs-12 col-sm-6  col-md-4" id="giftPackage">
-			<img src="__PUBLIC_IMAGE__/tp1.jpg">
-			<div class="intro">
-			<span>名称：Platinum月费</span>
-			<i>售价：￥9999</i>
+		<volist id='v' name='product'>
+			<div class="giftPackage col-xs-12 col-sm-6  col-md-4" id="giftPackage">
+				<img src="__PUBLIC_IMAGE__/tp1.jpg">
+				<div class="intro">
+				<span>名称：{$v.ip_name_zh}</span>
+				<i>售价：￥{$v.ip_price_rmb}</i>
+				</div>
+				<a class="well" href="{:U('Home/Purchase/purchaseInfo',array('ipid'=>$v['ipid']))}">查看详情</a>
 			</div>
-			<a class="well">查看详情</a>
-		</div>
+	    </volist>
 	</div>
 	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
 	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>

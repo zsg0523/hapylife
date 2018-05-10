@@ -4,19 +4,20 @@
 	<title>个人资料</title>
 </head>
 <body>
-	个人资料
-	<table>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
+
+	<table border="1" >
+		<th>信息</th>
+		<th>信息</th>
+		<tr><td>头像</td><td>{$userinfo.photo}</td></tr>
+		<tr><td>会员ID</td><td>{$userinfo.customerid}</td></tr>
+		<tr><td>会员等级</td><td>{$userinfo.customertype}</td></tr>
+		<tr><td>名字</td><td>{$userinfo.lastname}</td></tr>
+		<tr><td>姓氏</td><td>{$userinfo.firstname}</td></tr>
+		<tr><td>性别</td><td>{$userinfo.sex}</td></tr>
+		<tr><td>电话</td><td>{$userinfo.phone}</td></tr>
+		<tr><td>邮箱</td><td>{$userinfo.email}</td></tr>
+		<tr><td>所在地区</td><td>{$userinfo.country}</td></tr>
+		<tr><td>详细地址</td><td>{$userinfo.shopaddress1}</td></tr>
 	</table>
 </body>
 </html>

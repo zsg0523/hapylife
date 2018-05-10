@@ -511,7 +511,7 @@ class HapylifeApiController extends HomeBaseController{
 				'status'=>0,
 				'msg'	=>'获取商品详情失败'
 			);
-            $this->ajaxreturn($data);
+        $this->ajaxreturn($data);
         }
 	}
 	/**
