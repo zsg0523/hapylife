@@ -8,9 +8,11 @@
 		<title>Happylife-login</title>
 	</head>
 
-	<link rel="stylesheet" href="__PUBLIC_CSS__/bootstrap.min.css" />
+	<!--<link rel="stylesheet" href="css/bootstrap.min.css" />
+	<link rel="stylesheet" href="css/login.css" />-->
+    
+    <link rel="stylesheet" href="__PUBLIC_CSS__/bootstrap.min.css" />
 	<link rel="stylesheet" href="__PUBLIC_CSS__/login.css" />
-
 	<body>
 		<div class="container-fluid">
 			<div class="row">
@@ -47,38 +49,39 @@
 		</div>
 	</body>
 
+	<!--<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>-->
+	
 	<script type="text/javascript" src="__PUBLIC_JS__/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript" src="__PUBLIC_JS__/jquery.validate.min.js"></script>
 	<script type="text/javascript" src="__PUBLIC_JS__/bootstrap.min.js"></script>
-	<script type="text/javascript" src="__PUBLIC_JS__/url.js" ></script>
 	<script>
-		$(function() {
-			//var url=SERVER_URL+"";
-			$("#btn").click(function() {
-				var username = $("input[name='username']").val();
-				var pwd = $("input[name='password']").val();
-				
-				$.ajax({
-					url: "", 
-					type: "post", 	
-					dataType: "json", 
-					async: false, 						
-					data: {
-						username: username,
-						pwd:pwd
-					},								
-					success: function(ret) {
-						//请求成功时处理
-						
-						
-					},					
-					error: function() {
-						//请求出错处理
-						
-					}
-				});
-
-			});
+//		$(function() {
+//			//var url=SERVER_URL+"";
+//			$("#btn").click(function() {
+//				var username = $("input[name='username']").val();
+//				var pwd = $("input[name='password']").val();
+//				
+//				$.ajax({
+//					url: "", 
+//					type: "post", 	
+//					dataType: "json", 
+//					async: false, 						
+//					data: {
+//						username: username,
+//						pwd:pwd
+//					},								
+//					success: function(ret) {
+//						//请求成功时处理
+//						
+//						
+//					},					
+//					error: function() {
+//						//请求出错处理
+//						
+//					}
+//				});
+//
+//			});
 		});
 	</script>
 
