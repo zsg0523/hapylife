@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta http-equiv="X-UA-Compatible" content="IE=9" />
+		<title>Happylife-login</title>
+		<!--[if lt IE 9]>
+		  <script src="http://apps.bdimg.com/libs/html5shiv/3.7/html5shiv.min.js"></script>
+		  <script src="http://apps.bdimg.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+	<link rel="stylesheet" href="__PUBLIC_CSS__/bootstrap.min.css" />
+	<link rel="stylesheet" href="__PUBLIC_CSS__/login.css" />
+
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="lg-center lg-div">
+					<div class="row">
+						<div class="lg-center lg-form-div">
+							<form class="form-horizontal" role="form" method="post" action="{:U('Home/index/index')}">
+								<div class="form-group">
+									<label for="name" class="col-lg-2 control-label">姓名:</label>
+									<div class="col-lg-10">
+										<input type="text" class="form-control" id="name" name="CustomerID" placeholder="请输入名字">
+										<span></span>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="psw" class="col-lg-2 control-label">密码:</label>
+									<div class="col-lg-10">
+										<input type="text" class="form-control" id="psw" name="PassWord" placeholder="请输入密码">
+										<span></span>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-lg-offset-2 col-lg-10" style="margin-top: 10px;">
+										<button type="submit" class="btn  btn-block  btn-info" id="btn">登录</button>
+									</div>
+								</div>
+							</form>
+							<a href="../register.html" class="lg-member" style="float: right;padding: 4px;">新会员注册</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="__PUBLIC_JS__/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="__PUBLIC_JS__/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="__PUBLIC_JS__/bootstrap.min.js"></script>
+	<script type="text/javascript" src="__PUBLIC_JS__/url.js" ></script>
+	<script>
+		$(function(){
+			$("#btn").click(function(){
+				
+			});
+		});
+	</script>
+</html>
