@@ -39,19 +39,24 @@ class IndexController extends HomeBaseController{
     **/
     public function index(){
         if(IS_POST){
-            // 做一个简单的登录 组合where数组条件 
-            $map=I('post.');
-            $map['password']=md5($map['password']);
-            $data=M('User')->where($map)->find();
-            if (empty($data)) {
-                $this->error('账号或密码错误');
+            $tmpe = I('post.');
+            if(strlen($tmpe['CustomerID'])==8){
+            $this->error('账号格式错误');  
             }else{
-                $_SESSION['user']=array(
-                    'id'=>$data['id'],
-                    'username'=>$data['username'],
-                    'avatar'=>$data['avatar']
-                    );
-                $this->success('登录成功',U('Home/Index/test'));
+                $where= array(
+                    'CustomerID'=>$tmpe['CustomerID'],
+                    'PassWord'  =>md5($tmpe['PassWord'])
+                );
+                $data = D('User')->where($where)->find();
+                if (empty($data)) {
+                    $this->error('账号或密码错误');
+                }else{
+                    $_SESSION['user']=array(
+                        'id'=>$data['id'],
+                        'username'=>$data['username'],
+                        );
+                    $this->success('登录成功',U('Home/Purchase/main'));
+                }
             }
         }else{
             $data=check_login() ? $_SESSION['user']['username'].'已登录' : '未登录';
@@ -59,10 +64,9 @@ class IndexController extends HomeBaseController{
                 'data'=>$data
                 );
             $this->assign($assign);
-            $this->display();
+            $this->display('Login/login');
         }
     }
-
 
     /**
      * 后台退出
