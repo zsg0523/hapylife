@@ -48,10 +48,29 @@ class PurchaseController extends HomeBaseController{
 
 
 	/**
-	* 我的订单
+	* 我的订单列表
 	**/
 	public function myOrder(){
+		$iuid = $_SESSION['user']['id'];
+		$map  = array(
+				'iuid'=>$iuid
+			);
+		$data = M('Receipt')
+				->alias('r')
+				->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
+				->join('hapylife_product hp on hr.ipid=hp.ipid')
+				->where($map)
+				->select();
+		// p($data);
+		$this->assign('data',$data);
 		$this->display();
+	}
+
+	/**
+	* 订单详情
+	**/
+	public function orderDetail(){
+
 	}
 
 	/**
