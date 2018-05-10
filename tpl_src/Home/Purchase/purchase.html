@@ -8,19 +8,19 @@
 	<title>购买礼包</title>
 	<link href="./bootstrap/css/bootstrap.css" rel="stylesheet">
 	<style type="text/css">
-		*{margin: 0;padding: 0;}
+		body,html{margin: 0;padding: 0;}
 		.main{width: 100%;height: auto;}
-		.giftPackage{height: 120px;float: left;}
+		.giftPackage{height: 180px;float: left;}
 		.giftPackage:hover{cursor: pointer;}
-		.giftPackage>img{width:200px;height:120px;float: left;}
+		.giftPackage>img{width:60%;height:180px;float: left;}
 		.intro{width: 40%;height: 30px;font-size: 16px;float: left;text-align:center;}
 		.intro span{width: auto;height: 30px;display: block;}
-		.intro>i{width: auto;height: 30px;display: block;margin-top: 50px;}
+		.intro>i{width: auto;height: 30px;display: block;margin-top:100px;}
 
 	</style>
 </head>
-<body>
-	<div class="main container">
+<body class="">
+	<div class="main container-fluid">
 		<div class="giftPackage col-xs-12 col-sm-6  col-md-6" id="giftPackage">
 			<img src="images/tp1.jpg">
 			<div class="intro">
@@ -35,7 +35,6 @@
 			window.location.href = "purchaseInfo.html";
 		})
 	</script>
-	 <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
     <script src="./bootstrap/js/bootstrap.min.js"></script>
 </body>
 </html>

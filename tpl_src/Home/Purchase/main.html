@@ -11,41 +11,32 @@
     *{margin: 0;padding: 0;}
     	ul,li{list-style: none;display: block;}
     	a{text-decoration: none;color: #000;font-weight: bold;}
-    	iframe{border: none;height:auto;scroll-behavior: no;}
+    	iframe{border: none;width: 100%;height: 100%;  outline: 1px red solid;}
     	.wrap{width: 100%;}
-        .main{width: 100%;height: auto;margin: auto;}
+      .main{width: 100%;height: auto;margin:0px;overflow: hidden;}
     	header{width: 100%;height: 100px;background:#ff00ff;}
 	    header h1{
 	      margin-top: 0px;
 	    }
-    	nav{width: 100%;height:auto;background: #fff0f0;margin: auto;}
-    	nav div{width: 100%;height: auto;}
-    	nav>div>a{width: 20%;height: 40px;line-height: 40px;text-align: center;font-size:16px;}
+    	nav{width: 100%;height:40px;background: #fff0f0;margin: auto;}
+    	nav>a{width: 20%;height: 40px;line-height: 40px;text-align: center;font-size:16px;background: #fff0f0;}
     	
     </style>
   </head>
   <body>
-  		<div class="wrap container">
-  			<header>
+  		<div class="wrap container-fluid">
+  			<header class="row">
   				<h1>HAPYLIFE</h1>
   			</header>
-
-  			<nav class="">
-  				<div class="row">
-  					<div class="col-xs-0	 col-sm-0  col-md-1"></div>
-   					<a class="col-xs-12	 col-sm-6  col-md-2" target="content" href="purchase.html">购买礼包</a>
-   					<a class="col-xs-12	 col-sm-6  col-md-2" target="content" href="activaction.html">会籍激活</a>
-   					<a class="col-xs-12	 col-sm-6  col-md-2" target="content" href="myOrder.html">我的订单</a>
-   					<a class="col-xs-12	 col-sm-6  col-md-2" target="content" href="myProfile.html">个人资料</a>
-   					<a class="col-xs-12	 col-sm-6  col-md-2" target="content" href="bankInfo.html">银行资料</a>
-   					<div class="col-xs-0	 col-sm-0  col-md-1"></div>
-   				</div>
+  			<nav class="row">		
+   					<a class="col-xs-12	 col-sm-6 col-md-3" target="content" href="purchase.html">购买礼包</a>
+   					<a class="col-xs-12	 col-sm-6 col-md-2" target="content" href="activaction.html">会籍激活</a>
+   					<a class="col-xs-12	 col-sm-6 col-md-2" target="content" href="myOrder.html">我的订单</a>
+   					<a class="col-xs-12	 col-sm-6 col-md-2" target="content" href="myProfile.html">个人资料</a>
+   					<a class="col-xs-12	 col-sm-6 col-md-3" target="content" href="bankInfo.html">银行资料</a>
   			</nav>
-  			<div class="main">
-  				<div>
-  					
-  				</div>
-  				<iframe class="col-xs-12	 col-sm-12  col-md-12" id="test" name="content" src="purchase.html" frameborder="0" scrolling="no"onload="this.height=100">
+  			<div class="main row">
+  				<iframe class="col-xs-12 col-sm-12  col-md-12" id="iframepage" name="content" src="purchase.html" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" onLoad="reinitIfram()">
   					 
   				</iframe>
   			</div>
@@ -54,20 +45,12 @@
   			</footer>
   		</div>
 
-    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="./bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript">
-		function reinitIframe(){
-		var iframe = document.getElementById("test");
-		try{
-		var bHeight = iframe.contentWindow.document.body.scrollHeight;
-		var dHeight = iframe.contentWindow.document.documentElement.scrollHeight;
-		var height = Math.max(bHeight, dHeight);
-		iframe.height = height;
-		console.log(height);
-		}catch (ex){}
-		}
-		window.setInterval("reinitIframe()", 200);
-	</script>
+    
+<script type="text/javascript" language="javascript">  
+  
+  
+</script> 
   </body>
 </html>
