@@ -33,7 +33,7 @@
 						<li class="col-xs-6 col-sm-6  col-md-1">总价:￥{$v.ir_price}</li>
 						<li class="col-xs-6 col-sm-6  col-md-1">
 							<if 	condition="$v['ir_status'] eq 0">交易状态:待付款
-								<a href="{:U('Home/Purchase/kqPayment',array('ir_receiptnum'=>$v['ir_receiptnum']))}">
+								<a href="{:U('Home/Purchase/cjPayment',array('ir_receiptnum'=>$v['ir_receiptnum']))}">
 									<button class="col-xs-12 col-sm-12  col-md-12" type="submit">去支付</button>
 								</a>
 	                        <elseif condition="$v['ir_status'] eq 1"/>交易状态:待审核

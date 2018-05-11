@@ -106,6 +106,15 @@ class IndexController extends HomeBaseController{
     }
 
 
+    /**
+    * 前台退出登录
+    **/
+    public function log_out(){
+        session('user',null);
+        $this->success('退出成功,前往登录页面',U('Home/Index/index'));
+    }
+
+
 
 }
 
