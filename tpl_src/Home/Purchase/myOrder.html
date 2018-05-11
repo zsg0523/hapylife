@@ -23,16 +23,37 @@
 	<body class="">
 		<div class="main container-fluid ">
 			<div class="order_list">
-				<ul class="row panel panel-default">
-					<li class="col-xs-12 col-sm-12  col-md-2"><img src="__PUBLIC_IMAGE__/tp1.jpg"></li>
-					<li class="col-xs-6 col-sm-6  col-md-2">时间:2018-05-10</li>
-					<li class="col-xs-6 col-sm-6  col-md-2">商品名:Platinum月费</li>
-					<li class="col-xs-6 col-sm-6  col-md-1">单价:￥128</li>
-					<li class="col-xs-6 col-sm-6  col-md-1">数量:2</li>
-					<li class="col-xs-6 col-sm-6  col-md-1">总价:￥248</li>
-					<li class="col-xs-6 col-sm-6  col-md-1">交易状态:已支付</li>
-					<li class="col-xs-12 col-sm-6  col-md-2">订单号:2018050112121212</li>
-				</ul>
+				<volist name='data' id='v'>
+					<ul class="row panel panel-default">
+						<li class="col-xs-12 col-sm-12  col-md-2"><img src="__PUBLIC_IMAGE__/tp1.jpg"></li>
+						<li class="col-xs-6 col-sm-6  col-md-2">时间:{:date('Y-m-d H:i:s',$v['ir_date'])}</li>
+						<li class="col-xs-6 col-sm-6  col-md-2">商品名:{$v.product_name}</li>
+						<li class="col-xs-6 col-sm-6  col-md-1">单价:￥{$v.ip_price_rmb}</li>
+						<li class="col-xs-6 col-sm-6  col-md-1">数量:{$v.product_num}</li>
+						<li class="col-xs-6 col-sm-6  col-md-1">总价:￥{$v.ir_price}</li>
+						<li class="col-xs-6 col-sm-6  col-md-1">
+							<if 	condition="$v['ir_status'] eq 0">交易状态:待付款
+								<a href="{:U('Home/Purchase/kqPayment',array('ir_receiptnum'=>$v['ir_receiptnum']))}">
+									<button class="col-xs-12 col-sm-12  col-md-12" type="submit">去支付</button>
+								</a>
+	                        <elseif condition="$v['ir_status'] eq 1"/>交易状态:待审核
+	                        <elseif condition="$v['ir_status'] eq 2"/>交易状态:已支付
+	                        <elseif condition="$v['ir_status'] eq 3"/>交易状态:已发货
+	                        <elseif condition="$v['ir_status'] eq 4"/>交易状态:已到达
+	                        <elseif condition="$v['ir_status'] eq 5"/>交易状态:待评价
+	                        <else />已评价
+	                        </if>
+						</li>
+						<li class="col-xs-6 col-sm-6  col-md-1">
+							<if 	condition="$v['ir_ordertype'] eq 1" >订单类型:首购单
+	                        <elseif condition="$v['ir_ordertype'] eq 2"/>订单类型:升级单
+	                        <elseif condition="$v['ir_ordertype'] eq 3"/>订单类型:月费单
+	                        <else />
+	                        </if>
+						</li>
+						<li class="col-xs-12 col-sm-6  col-md-2">订单号:{$v.ir_receiptnum}</li>
+					</ul>
+			    </volist>
 			</div>
 		</div>
 
