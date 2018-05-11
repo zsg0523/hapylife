@@ -44,7 +44,7 @@ class IndexController extends HomeBaseController{
             $this->error('账号格式错误');  
             }else{
                 $where= array(
-                    'CustomerID'=>$tmpe['CustomerID'],
+                    'CustomerID'=>trim($tmpe['CustomerID']),
                     'PassWord'  =>md5($tmpe['PassWord'])
                 );
                 $data = D('User')->where($where)->find();
@@ -103,6 +103,15 @@ class IndexController extends HomeBaseController{
         }else{
             $this->display('Register/register');
         }
+    }
+
+
+    /**
+    * 前台退出登录
+    **/
+    public function log_out(){
+        session('user',null);
+        $this->success('退出成功,前往登录页面',U('Home/Index/index'));
     }
 
 

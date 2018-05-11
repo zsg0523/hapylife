@@ -7,34 +7,178 @@ use Common\Controller\HomeBaseController;
 class RegisterController extends HomeBaseController{
 	public function register(){
 		$data = I('post.');
-		// print_r($data);
 
-		// $rules = array(
-		//      array('verify','require','验证码必须！'), //默认情况下用正则进行验证
-		//      array('CustomerID','','帐号名称已经存在！',0,'unique',1), // 在新增的时候验证name字段是否唯一
-		//      array('value',array(1,2,3),'值的范围不正确！',2,'in'), // 当值不为空的时候判断是否在一个范围内
-		//      array('repassword','password','确认密码不正确',0,'confirm'), // 验证确认密码是否和密码一致
-		//      array('password','checkPwd','密码格式不正确',0,'function'), // 自定义函数验证密码格式
-		// );
-		// $User = M("User1"); // 实例化User对象
-		// if (!$User->validate($rules)->create()){
-		//      // 如果创建失败 表示验证没有通过 输出错误提示信息
-		//      // exit($User->getError());
-		// 	$error = $User->getError();
-
-		// }else{
-		//      // 验证通过 可以进行其他数据操作
-		// }
+		$upload = several_upload();
 		if(IS_POST){
-			$User = D("User1"); // 实例化User对象
-			if (!$User->create($data)){
-			     // 如果创建失败 表示验证没有通过 输出错误提示信息
-			    $error = $User->getError();
-			    var_dump($error);
+			if($data['Sex']){
+				$User = D("User1"); // 实例化User对象
+				if (!$User->create($data)){
+				     // 如果创建失败 表示验证没有通过 输出错误提示信息
+				    $error = $User->getError();
+				}else{
+				     // 验证通过 可以进行其他数据操作
+					if(isset($upload['name'])){
+						$data['JustIdcard']=C('WEB_URL').$upload['name'][0];
+						$data['BackIdcard']=C('WEB_URL').$upload['name'][1];
+						$data['PassWord'] = md5($data['PassWord']);
+						if(empty($custid)){
+	                    	$CustomerID = 'HPL00000001';
+		                }else{
+		                    $num   = substr($custid,3);
+		                    $nums  = $num+1;
+		                    $count = strlen($nums);
+		                    switch ($count) {
+		                        case '1':
+		                            $CustomerID = 'HPL0000000'.$nums;
+		                            break;
+		                        case '2':
+		                            $CustomerID = 'HPL000000'.$nums;
+		                            break;
+		                        case '3':
+		                            $CustomerID = 'HPL00000'.$nums;
+		                            break;
+		                        case '4':
+		                            $CustomerID = 'HPL0000'.$nums;
+		                            break;
+		                        case '5':
+		                            $CustomerID = 'HPL000'.$nums;
+		                            break;
+		                        case '6':
+		                            $CustomerID = 'HPL00'.$nums;
+		                            break;
+		                        case '7':
+		                            $CustomerID = 'HPL0'.$nums;
+		                            break;
+		                        default:
+		                            $CustomerID = 'HPL'.$nums;
+		                            break;
+		                     } 
+		                }
+		                $data['CustomerID'] = $CustomerID;
+						$result	= D('User')->add($data);
+						if($result){
+							$this->redirect('Home/Purchase/main');
+						}
+					}else{
+						$error['img'] = '请上传照片';
+					}
+				}
 			}else{
-			     // 验证通过 可以进行其他数据操作
-				echo '成功';
+				$error['Sex'] = '请选择性别';
 			}
+			if($data['DistributorType']){
+				$User = D("User1"); // 实例化User对象
+				if (!$User->create($data)){
+				     // 如果创建失败 表示验证没有通过 输出错误提示信息
+				    $error = $User->getError();
+				}else{
+				     // 验证通过 可以进行其他数据操作
+					if(isset($upload['name'])){
+						$data['JustIdcard']=C('WEB_URL').$upload['name'][0];
+						$data['BackIdcard']=C('WEB_URL').$upload['name'][1];
+						$data['PassWord'] = md5($data['PassWord']);
+						if(empty($custid)){
+	                    	$CustomerID = 'HPL00000001';
+		                }else{
+		                    $num   = substr($custid,3);
+		                    $nums  = $num+1;
+		                    $count = strlen($nums);
+		                    switch ($count) {
+		                        case '1':
+		                            $CustomerID = 'HPL0000000'.$nums;
+		                            break;
+		                        case '2':
+		                            $CustomerID = 'HPL000000'.$nums;
+		                            break;
+		                        case '3':
+		                            $CustomerID = 'HPL00000'.$nums;
+		                            break;
+		                        case '4':
+		                            $CustomerID = 'HPL0000'.$nums;
+		                            break;
+		                        case '5':
+		                            $CustomerID = 'HPL000'.$nums;
+		                            break;
+		                        case '6':
+		                            $CustomerID = 'HPL00'.$nums;
+		                            break;
+		                        case '7':
+		                            $CustomerID = 'HPL0'.$nums;
+		                            break;
+		                        default:
+		                            $CustomerID = 'HPL'.$nums;
+		                            break;
+		                     } 
+		                }
+		                $data['CustomerID'] = $CustomerID;
+						$result	= D('User')->add($data);
+						if($result){
+							$this->redirect('Home/Purchase/main');
+						}
+					}else{
+						$error['img'] = '请上传照片';
+					}
+				}
+			}else{
+				$error['DistributorType'] = '请选择销售类型';
+			}
+			if($data['clause']){
+				$User = D("User1"); // 实例化User对象
+				if (!$User->create($data)){
+				     // 如果创建失败 表示验证没有通过 输出错误提示信息
+				    $error = $User->getError();
+				}else{
+				     // 验证通过 可以进行其他数据操作
+					if(isset($upload['name'])){
+						$data['JustIdcard']=C('WEB_URL').$upload['name'][0];
+						$data['BackIdcard']=C('WEB_URL').$upload['name'][1];
+						$data['PassWord'] = md5($data['PassWord']);
+						if(empty($custid)){
+	                    	$CustomerID = 'HPL00000001';
+		                }else{
+		                    $num   = substr($custid,3);
+		                    $nums  = $num+1;
+		                    $count = strlen($nums);
+		                    switch ($count) {
+		                        case '1':
+		                            $CustomerID = 'HPL0000000'.$nums;
+		                            break;
+		                        case '2':
+		                            $CustomerID = 'HPL000000'.$nums;
+		                            break;
+		                        case '3':
+		                            $CustomerID = 'HPL00000'.$nums;
+		                            break;
+		                        case '4':
+		                            $CustomerID = 'HPL0000'.$nums;
+		                            break;
+		                        case '5':
+		                            $CustomerID = 'HPL000'.$nums;
+		                            break;
+		                        case '6':
+		                            $CustomerID = 'HPL00'.$nums;
+		                            break;
+		                        case '7':
+		                            $CustomerID = 'HPL0'.$nums;
+		                            break;
+		                        default:
+		                            $CustomerID = 'HPL'.$nums;
+		                            break;
+		                     } 
+		                }
+		                $data['CustomerID'] = $CustomerID;
+						$result	= D('User')->add($data);
+						if($result){
+							$this->redirect('Home/Purchase/main');
+						}
+					}else{
+						$error['img'] = '请上传照片';
+					}
+				}
+			}else{
+				$error['clause'] = '未选择同意条款';
+			}
+			
 		}
 		
 

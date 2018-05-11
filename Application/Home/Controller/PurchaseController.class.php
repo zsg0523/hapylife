@@ -10,12 +10,22 @@ class PurchaseController extends HomeBaseController{
 	* 主界面
 	**/
 	public function main(){
-		//礼包详情
-		$map = array(
-            'ip_type'    =>1,
-            'ip_name_zh '=>array('NEQ','Rbs'),
-        );
-        $data= M('Product')->where($map)->order('is_sort desc')->select();
+		$iuid  = $_SESSION['user']['id'];
+        $find  = M('User')->where(array('iuid'=>$iuid))->find();
+        $type  = trim($find['distributortype']);
+        $mtype = trim($find['customertype']);
+        //判断用户等级 show--1、可点击 2、不可点击
+        // p($type);
+        $tmpe    = array(
+            'ip_grade' =>$type,
+            'is_pull'  =>1
+        ); 
+        $product = D('Product')->where($tmpe)->order('is_sort desc')->select();
+
+        foreach ($product as $key => $value) {
+            $data[$key]         = $value; 
+            $data[$key]['show'] = 1; 
+        }
         // p($data);die;
         $this->assign('product',$data);
 		$this->display();
@@ -26,12 +36,22 @@ class PurchaseController extends HomeBaseController{
 	* 购买礼包
 	**/
 	public function purchase(){
-		//礼包详情
-		$map = array(
-            'ip_type'    =>1,
-            'ip_name_zh '=>array('NEQ','Rbs'),
-        );
-        $data= M('Product')->where($map)->order('is_sort desc')->select();
+		$iuid  = $_SESSION['user']['id'];
+        $find  = M('User')->where(array('iuid'=>$iuid))->find();
+        $type  = trim($find['distributortype']);
+        $mtype = trim($find['customertype']);
+        //判断用户等级 show--1、可点击 2、不可点击
+        // p($type);die;
+        $tmpe    = array(
+            'ip_grade' =>$type,
+            'is_pull'  =>1
+        ); 
+        $product = D('Product')->where($tmpe)->order('is_sort desc')->select();
+
+        foreach ($product as $key => $value) {
+            $data[$key]         = $value; 
+            $data[$key]['show'] = 1; 
+        }
         // p($data);die;
         $this->assign('product',$data);
 		$this->display();
@@ -42,7 +62,7 @@ class PurchaseController extends HomeBaseController{
 	* 会籍激活记录
 	**/
 	public function activaction(){
-		$iuid     = I('post.iuid')?I('post.iuid'):978241;
+		$iuid     = $_SESSION['user']['id'];
         $orderTime= D('User')->where(array('iuid'=>$iuid))->getfield('OrderDate');
         if($orderTime){
             $date     = date('Y-m',time());
@@ -268,126 +288,89 @@ class PurchaseController extends HomeBaseController{
         );
         $addlog = M('Log')->add($log);
         if($addlog){
-            $this->success('下单成功,前往支付页面',U('Home/Purchase/kqPayment',array('ir_receiptnum'=>$order_num)));
+            $this->success('下单成功,前往支付页面',U('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num)));
         }else{
             $this->error('订单生成失败');
         }
 	}
 
-
 	/**
-    * 购买产品快钱支付
+    * 购买产品畅捷支付
     **/
-    public function kqPayment(){
-        //$order_num = trim(I('post.ir_receiptnum'))?trim(I('post.ir_receiptnum')):date(YmdHis);
-        $order_num = trim(I('get.ir_receiptnum'));
-        //订单信息
-        $order     = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->find();
-        $kq_target          = "https://www.99bill.com/mobilegateway/recvMerchantInfoAction.htm";
-        $kq_merchantAcctId  = "1020997278101";      //*  商家用户编号     (30)
-        $kq_inputCharset    = "1";  //   1 ->  UTF-8        2 -> GBK        3 -> GB2312   default: 1    (2)
-        $kq_pageUrl         = ""; //   直接跳转页面 (256)
-        $kq_bgUrl           = "http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/getKqReturn"; //   后台通知页面 (256)
-        $kq_version         = "mobile1.0";  //*  版本  固定值 v2.0   (10)
-        $kq_language        = "1";  //*  默认 1 ， 显示 汉语   (2)
-        $kq_signType        = "4";   //*  固定值 1 表示 MD5 加密方式 , 4 表示 PKI 证书签名方式   (2)
-        $kq_payerName       = $order['customerid']; //   英文或者中文字符   (32)
-        $kq_payerContactType= "1";    //  支付人联系类型  固定值： 1  代表电子邮件方式 (2)
-        $kq_payerContact    = "";     //   支付人联系方式    (50)
-        $kq_orderId         = $order_num; //*  字母数字或者, _ , - ,  并且字母数字开头 并且在自身交易中式唯一  (50)
-        $kq_orderAmount     = $order['ir_price']*100; //*   字符金额 以 分为单位 比如 10 元， 应写成 1000 (10)
-        $kq_orderTime       = date(YmdHis);  //*  交易时间  格式: 20110805110533
-        $kq_productName     = "nulife";//    商品名称英文或者中文字符串(256)
-        $kq_productNum      = $order['ir_productnum'];   //    商品数量  (8)
-        $kq_productId       = "";   //    商品代码，可以是 字母,数字,-,_   (20) 
-        $kq_productDesc     = ""; //    商品描述， 英文或者中文字符串  (400)
-        $kq_ext1            = "";   //    扩展字段， 英文或者中文字符串，支付完成后，按照原样返回给商户。 (128)
-        $kq_ext2            = "";
-        $kq_payType         = "21"; //*  固定选择值：00、15、21、21-1、21-2
-        //00代表显示快钱各支付方式列表；
-        //15信用卡无卡支付
-        //21 快捷支付
-        //21-1 代表储蓄卡快捷；21-2 代表信用卡快捷
-        //*其中”-”只允许在半角状态下输入。
-        $kq_bankId          = "";   //银行代码 银行代码 要在开通银行时 使用， 默认不开通 (8)
-        $kq_redoFlag        = "0";  //同一订单禁止重复提交标志  固定值 1 、 0      
-                                    //1 表示同一订单只允许提交一次 ； 0 表示在订单没有支付成功状态下 可以重复提交； 默认 0 
-        $kq_pid             = "";       //合作伙伴在快钱的用户编号 (30)
-        $kq_payerIdType     ="3";        //指定付款人
-        $kq_payerId         =date('YmdHis').rand(10000, 99999);       //付款人标识
-
-        $map = array(
-            'inputCharset'      =>$kq_inputCharset,
-            'pageUrl'           =>$kq_pageUrl,
-            'bgUrl'             =>$kq_bgUrl,
-            'version'           =>$kq_version,
-            'language'          =>$kq_language,
-            'signType'          =>$kq_signType,
-            'merchantAcctId'    =>$kq_merchantAcctId,
-            'payerName'         =>$kq_payerName,
-            'payerContactType'  =>$kq_payerContactType,
-            'payerContact'      =>$kq_payerContact,
-            'payerIdType'       =>$kq_payerIdType,
-            'payerId'           =>$kq_payerId,
-            'orderId'           =>$kq_orderId,
-            'orderAmount'       =>$kq_orderAmount,
-            'orderTime'         =>$kq_orderTime,
-            'productName'       =>$kq_productName,
-            'productNum'        =>$kq_productNum,
-            'productId'         =>$kq_productId,
-            'productDesc'       =>$kq_productDesc,
-            'ext1'              =>$kq_ext1,
-            'ext2'              =>$kq_ext2,
-            'payType'           =>$kq_payType,
-            'bankId'            =>$kq_bankId,
-            'redoFlag'          =>$kq_redoFlag,
-            'pid'               =>$kq_pid
-        );
-        foreach ($map as $k => $v) {
-            if(!empty($v)){
-                $k.='='.$v.'&';
-                $kq_all_para .= $k;
-            }
-        }
-        $kq_all_para = rtrim($kq_all_para,'&');
-        //生成证书
-        $priv_key = file_get_contents("./99bill-rsa.pem");
-        $pkeyid   = openssl_get_privatekey($priv_key);
-        // compute signature
-        openssl_sign($kq_all_para, $signMsg, $pkeyid);
-        // free the key from memory
-        openssl_free_key($pkeyid);
-        $kq_sign_msg = urlencode(base64_encode($signMsg));
-        $url = $kq_target.'?'.$kq_all_para.'&signMsg='.$kq_sign_msg;
+    public function cjPayment(){
+        //订单号
+		$order_num                     = I('get.ir_receiptnum');
+		$order = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->find();
+		$postData                      = array();	
+		// 基本参数
+		$postData['Service']           = 'nmg_quick_onekeypay';
+		$postData['Version']           = '1.0';
+		// $postData['PartnerId']         = '200001280051';//商户号
+		$postData['PartnerId']         = '200001380239';//商户号
+		$postData['InputCharset']      = 'UTF-8';
+		$postData['TradeDate']         = date('Ymd').'';
+		$postData['TradeTime']         = date('His').'';
+		$postData['ReturnUrl']         = 'http://apps.hapy-life.com/hapylife';// 前台跳转url
+		$postData['Memo']              = '备注';
+		// 4.4.2.8. 直接支付请求接口（畅捷前台） 业务参数++++++++++++++++++
+		$postData['TrxId']             = $order_num; //外部流水号
+		$postData['SellerId']          = '200001380239'; //商户编号，调用畅捷子账户开通接口获取的子账户编号;该字段可以传入平台id或者平台id下的子账户号;作为收款方使用；与鉴权请求接口中MerchantNo保持一致
+		$postData['SubMerchantNo']     = '200001380239'; //子商户，在畅捷商户自助平台申请开通的子商户，用于自动结算
+		$postData['ExpiredTime']       = '48h'; //订单有效期，取值范围：1m～48h。单位为分，如1.5h，可转换为90m。用来标识本次鉴权订单有效时间，超过该期限则该笔订单作废
+		$postData['MerUserId']         = $order['iuid']; //用户标识
+		$postData['BkAcctTp']          = ''; //卡类型（00 –银行贷记账户;01 –银行借记账户;）
+		// $postData['BkAcctNo']       =   rsaEncrypt('XXXXX'); //卡号
+		$postData['BkAcctNo']          = ''; //卡号
+		$postData['IDTp']              = ''; //证件类型，01：身份证
+		//$postData['IDNo']            =   rsaEncrypt('XXXX'); //证件号
+		$postData['IDNo']              = ''; //证件号
+		// $postData['CstmrNm']        =   rsaEncrypt('XX'); //持卡人姓名
+		$postData['CstmrNm']           = ''; //持卡人姓名
+		// $postData['MobNo']          =   rsaEncrypt('XXXXX'); //银行预留手机号
+		$postData['MobNo']             = ''; //银行预留手机号		
+		$postData['CardCvn2']          = rsaEncrypt(''); //CVV2码，当卡类型为信用卡时必填
+		$postData['CardExprDt']        = rsaEncrypt(''); //有效期，当卡类型为信用卡时必填
+		$postData['TradeType']         = '11'; //交易类型（即时 11 担保 12）
+		$postData['TrxAmt']            = $order['ir_price']; //交易金额
+		$postData['EnsureAmount']      = ''; //担保金额
+		$postData['OrdrName']          = '商品名称'; //商品名称
+		$postData['OrdrDesc']          = ''; //商品详情
+		$postData['RoyaltyParameters'] = '';      //"[{'userId':'13890009900','PID':'2','account_type':'101','amount':'100.00'},{'userId':'13890009900','PID':'2','account_type':'101','amount':'100.00'}]"; //退款分润账号集
+		$postData['NotifyUrl']         = 'http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/notifyVerify';//异步通知地址
+		$postData['AccessChannel']     = 'wap';//用户终端类型；web,wap
+		$postData['Extension']         = '';//扩展字段
+		$postData['Sign']              = rsaSign($postData);
+		$postData['SignType']          = 'RSA'; //签名类型		
+		$query                         = http_build_query($postData);
+		$url                           = 'https://pay.chanpay.com/mag-unify/gateway/receiveOrder.do?'. $query; //该url为生产环境url
+		$data['url']                   = $url;
         header("Location:".$url);
     }
 
-    //购买产品快钱返回结果
-    public function getKqReturn(){
-        $kq_check_all_para=kq_ck_null($_GET['merchantAcctId'],'merchantAcctId').kq_ck_null($_GET['version'],'version').kq_ck_null($_GET['language'],'language').kq_ck_null($_GET['signType'],'signType').kq_ck_null($_GET['payType'],'payType').kq_ck_null($_GET['bankId'],'bankId').kq_ck_null($_GET['orderId'],'orderId').kq_ck_null($_GET['orderTime'],'orderTime').kq_ck_null($_GET['orderAmount'],'orderAmount').kq_ck_null($_GET['bindCard'],'bindCard').kq_ck_null($_GET['bindMobile'],'bindMobile').kq_ck_null($_GET['dealId'],'dealId').kq_ck_null($_GET['bankDealId'],'bankDealId').kq_ck_null($_GET['dealTime'],'dealTime').kq_ck_null($_GET['payAmount'],'payAmount').kq_ck_null($_GET['fee'],'fee').kq_ck_null($_GET['ext1'],'ext1').kq_ck_null($_GET['ext2'],'ext2').kq_ck_null($_GET['payResult'],'payResult').kq_ck_null($_GET['errCode'],'errCode');
-
-        $trans_body= substr($kq_check_all_para,0,strlen($kq_check_all_para)-1);
-        $MAC       = base64_decode($_GET['signMsg']);
-        $cert      = file_get_contents("./99bill.cert.rsa.20340630.cer");
-        $pubkeyid  = openssl_get_publickey($cert); 
-        $ok        = openssl_verify($trans_body, $MAC, $pubkeyid); 
-        if ($ok == 1) {
-            //写入日志记录
-            $map = array(
-                'content'=>'<result>1</result><redirecturl>http://success.html</redirecturl>',
-                'date'   =>date('Y-m-d H:i:s'),
-                'billno' =>$_GET['orderId'],
-                'amount' =>$_GET['orderAmount'],
-                'action' =>1,
-                'status' =>1
-            ); 
-            $add = M('Log')->add($map);
-            //修改用户最近订单日期
-            $tmpe['OrderDate']= date("m/d/Y h:i:s A");
-            $receiptlist      =D('Receipt')->join('hapylife_receiptlist on hapylife_receipt.ir_receiptnum = hapylife_receiptlist.ir_receiptnum')->where(array('ir_receiptnum'=>$_GET['orderId']))->find();
-            $tmpe['iuid']     =$receiptlist['iuid'];
-            $find             =D('User')->where(array('iuid'=>$tmpe['iuid']))->find();
+    //购买产品畅捷返回结果
+    public function notifyVerify(){
+        //I('post')，$_POST 无法获取API post过来的字符串数据
+		$jsonStr = file_get_contents("php://input");
+		//写入服务器日志文件
+		$log     = logTest($jsonStr);
+		$data    = explode('&', $jsonStr);
+		//签名数据会被转码，需解码urldecode
+		foreach ($data as $key => $value) {
+			$temp = explode('=', $value);
+			$map[$temp[0]]=urldecode(trim($temp[1]));
+		}
+		$receipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->find();
+		$cjPayStatus = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($map);
+		//验签
+		$return = rsaVerify($map);
+		//更改订单状态
+		if($return == "true" && $map['trade_status'] == 'TRADE_SUCCESS'){
+			//修改用户最近订单日期/是否通过/等级/数量
+            $tmpe['iuid']     =$receipt['iuid'];
+            $find             =D('User')->where(array('iuid'=>$receipt['iuid']))->find();
             if($find['number']==0){
+            	$tmpe['OrderDate']= date("m/d/Y h:i:s A");
+            	$OrderDate        = date("Y-m-d",strtotime("-1 month",time()));
                 if($find['isnew']==0){
                     if($find['number']==0){
                         $tmpe['IsCheck'] = 1;   
@@ -396,40 +379,50 @@ class PurchaseController extends HomeBaseController{
                     $tmpe['IsCheck'] = 2;
                 }
             }else{
+            	$OrderDate       = $find['orderdate'];
                 $tmpe['IsCheck'] = 2;
             }
-            $product = D('Product')->where(array('ipid'=>$receiptlist['ipid']))->find();
-            switch ($receiptlist['ip_grade']) {
-                case 'Import':
-                    $tmpe['CustomerType']    = $product['ip_after_grade'];
-                    break;  
-                case 'Distributor':
-                    $tmpe['CustomerType']    = $product['ip_after_grade'];
-                    break;  
-                default:
-                    $tmpe['DistributorType'] = $product['ip_after_grade'];
-                    break;
-                
-            }
+            $tmpe['DistributorType'] = D('Product')->where(array('ipid'=>$receipt['ipid']))->getfield('ip_after_grade');
             $tmpe['Number']   =$find['number']+1;
-            $update           =D('User')->save($tmpe);
-            //做订单的处理
-            $receipt = M('Receipt')->where(array('ir_receiptnum'=>$_GET['orderId']))->setField('ir_status',2);
-            if($receipt){
-                //通知快钱商户收到的结果
-                echo '<result>1</result><redirecturl>http://success.html</redirecturl>';
+			$status  = array(
+				'ir_status'  =>2,
+				'ir_paytype' =>1,
+			);
+			$activaDate = D('Activation')->where(array('iuid'=>$receipt['iuid'],'is_tick'=>1))->order('datetime desc')->getfield('datetime');
+			if(empty($activaDate)){
+				$activa = $OrderDate;
+			}else{
+				$activa = $activaDate;
+			}
+			$day = date('d',strtotime($OrderDate));
+            if($day>=28){
+                $allday = 28;
+            }else{
+                $allday = $day;
             }
-        }else{
-            $map = array(
-                'content'=>'<result>1</result><redirecturl>http://false.html</redirecturl>',
-                'date'   =>date('Y-m-d H:i:s'),
-                'action' =>1,
-                'status' =>0
-            ); 
-            //通知快钱商户收到的结果
-            echo '<result>1</result><redirecturl>http://false.html</redirecturl>';
-            $this->ajaxreturn($map);
-        }
+            $ddd    = $allday-1;
+            if($ddd>=10){
+                $oneday = $ddd;
+            }else{
+                $oneday = '0'.$ddd;
+            }
+            // for($i=0;$i<$receipt['ir_productnum'];$i++) {
+            	//删除原先未激活，添加激活
+            	$time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
+            	$year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
+    			$endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
+				$delete= D('Activation')->where(array('iuid'=>$receipt['iuid'],'datetime'=>$time))->delete();
+				$where =array('iuid'=>$receipt['iuid'],'ir_receiptnum'=>$map['outer_trade_no'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
+				$save  = D('Activation')->add($where);
+            // }   
+        	$upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($status);
+            $update  =D('User')->save($tmpe);
+        	if($upreceipt){
+        		//通知畅捷完成支付
+				echo "success";
+				$this->seccess('支付成功，跳转',U('Home/Purchase/myOrder'));
+        	}
+		}
     }
 
 
