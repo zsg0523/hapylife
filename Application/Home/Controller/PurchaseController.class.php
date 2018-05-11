@@ -268,12 +268,11 @@ class PurchaseController extends HomeBaseController{
         );
         $addlog = M('Log')->add($log);
         if($addlog){
-            $this->success('下单成功,前往支付页面',U('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num)));
+            $this->success('下单成功,前往支付页面',U('apps.nulifeshop.com/index.php/Api/WeChatPay/cjPayment',array('ir_receiptnum'=>$order_num)));
         }else{
             $this->error('订单生成失败');
         }
 	}
-
 
 	/**
     * 购买产品畅捷支付
