@@ -13,17 +13,15 @@
 	<link rel="stylesheet" href="__PUBLIC_CSS__/index.css" />
 	<body>
 		<div class="container">
+			<div class="rg-name">
+				<span>HAPYLIFE</span>
+			</div>
+			<div class="rg-name">
+				<span>新用户注册</span>
+			</div>
+			<hr />
 			<div class="rg-div">				
-				<form class="form-horizontal"  id="forms" method="post" action="{:U('Home/index/register')}">
-					<div class="form-group">
-						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>用户类型:</label>
-						<div class="col-lg-5 col-md-5 col-xs-4">
-							<input type="radio" name="user"  id="new" >新用户
-						</div>
-						<div class="col-lg-5 col-md-5 col-xs-4">
-							<input type="radio" name="user"  id="old" >老用户(已经拥有六位ID)
-						</div>
-					</div>
+				<form class="form-horizontal"  id="forms" method="post" action="{:U('Home/Register/register')}">
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>中文姓:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
@@ -69,12 +67,14 @@
 					
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>性别:</label>
-						<div class="col-lg-5 col-md-5 col-xs-4">
-							<input type="radio" name="sex"  id="man" >男
-						</div>
-						<div class="col-lg-5 col-md-5 col-xs-4">
-							<input type="radio" name="sex"  id="woman" >女
-						</div>
+						<div class="col-lg-10 col-md-10">
+							<div class="col-lg-5 col-md-5 col-xs-4">
+								<input type="radio" name="sex"  id="man" >男
+							</div>
+							<div class="col-lg-5 col-md-5 col-xs-4">
+								<input type="radio" name="sex"  id="woman" >女
+							</div>
+						</div>	
 					</div>					
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>电子邮箱:</label>
@@ -90,11 +90,13 @@
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>销售类型:</label>
-						<div class="col-lg-5 col-md-5 col-xs-4">
-						    <input type="radio" name="type"  id="person" >个人
-						</div>
-						<div class="col-lg-5 col-md-5 col-xs-4">
-							<input type="radio" name="type"  id="company" >公司
+						<div class="col-lg-10 col-md-10">
+							<div class="col-lg-5 col-md-5 col-xs-4">
+							    <input type="radio" name="type"  id="person" >个人
+							</div>
+							<div class="col-lg-5 col-md-5 col-xs-4">
+								<input type="radio" name="type"  id="company" >公司
+							</div>
 						</div>
 					</div>	
 					<div class="form-group">
@@ -151,13 +153,19 @@
 							<!--<input type="" class="form-control" id="" name="" placeholder="">-->
 						</div>
 					</div>
+					
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>银行名称:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="BankName" placeholder="">
 						</div>
 					</div>
-					
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>银行账号:</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">
+							<input type="" class="form-control" id="" name="BankName" placeholder="">
+						</div>
+					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>省:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
@@ -234,7 +242,7 @@
 						<label for="" class="col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>是否同意条款</label>
 					</div>
 					<div class="form-group">
-						<div class="col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">
+						<div class="col-md-offset-2 col-md-10  col-xs-12">
 							<button type="submit" class="btn  btn-block  btn-info">注册</button>
 						</div>
 					</div>
