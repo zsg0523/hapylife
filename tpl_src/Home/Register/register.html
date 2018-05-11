@@ -6,145 +6,438 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=9" />
 		<title>Happylife-register</title>		
 	</head>
-	<link rel="stylesheet" href="__PUBLIC_CSS__/bootstrap.min.css" />
+	<!--<link rel="stylesheet" href="css/bootstrap.min.css" />
 	<link rel="stylesheet" href="css/register.css" />
+	<link rel="stylesheet" href="css/index.css" />-->
+	
+	<link rel="stylesheet" href="__PUBLIC_CSS__/bootstrap.min.css" />
+	<link rel="stylesheet" href="__PUBLIC_CSS__/register.css" />
+	<link rel="stylesheet" href="__PUBLIC_CSS__/index.css" />
 	<body>
 		<div class="container">
 			<div class="rg-div">
-				<form class="form-horizontal" role="form" method="post" action="{:U('Home/Register/register')}">
+				<form class="form-horizontal"  id="forms" method="post" action="{:U('Home/index/register')}">
+					<!-- <div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">头像:</label>
+						<div class="col-lg-10 col-xs-8">						
+							<!--<div class="rg-headimg"></div>-->	
+							<input type="password" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div> -->
 					<div class="form-group">
-						<label for="name" class="col-lg-2 col-xs-4 control-label">CustomerID:</label>
-						
+						<label for="name" class="col-lg-2 col-xs-4 control-label">账 号:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="text" class="form-control" id="name" name="CustomerID" placeholder="" value="{$data['CustomerID']}">
-							{$error['CustomerID']}
+							<input type="text" class="form-control" id="name" name="username" placeholder="">							
 						</div>
 					</div>
+					
 					<div class="form-group">
 						<label for="psw" class="col-lg-2 col-xs-4 control-label">Placement:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="Placement" placeholder="">
-							{$error['Placement']}
+							<input type="password" class="form-control" id="psw" name="" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">EnrollerID:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">邀请登记:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="password" class="form-control" id="" name="" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">SponsorID:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">保证人:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="password" class="form-control" id="" name="" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">Product:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">产品编号:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="password" class="form-control" id="" name="" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">CustomerType:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">旅游or销售:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="password" class="form-control" id="" name="" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">DistributorType:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">销售类型:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<select style="width: 100%;padding: 9px;border-radius: 5px;">
+								<option></option>
+							</select>
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">Ownership:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">Ownership:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="password" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>					
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">性别:</label>
+						<div class="col-lg-5 col-xs-4">
+							<input type="radio" name="sex"  id="man" >男
+						</div>
+						<div class="col-lg-5 col-xs-4">
+							<input type="radio" name="sex"  id="woman" >女
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">Photo:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">英文姓:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="password" class="form-control" id="" name="" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">Sex:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">英文名:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="password" class="form-control" id="" name="" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">LastName:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">MiddleName:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="password" class="form-control" id="" name="" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">FirstName:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">邮箱:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="text" class="form-control" id="" name="" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">MiddleName:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">密码:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="password" class="form-control" id="" name="" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">Email:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">新老用户:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="text" class="form-control" id="" name="" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">PassWord:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">Question:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="" class="form-control" id="" name="" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">IsNew:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">Answer:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="" class="form-control" id="" name="password" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">密  码:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">电话:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="" class="form-control" id="" name="" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">密  码:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">Phone2:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="" class="form-control" id="" name="" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">密  码:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">Phone3:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="" class="form-control" id="" name="" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">密  码:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">MailAddress1:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="" class="form-control" id="" name="" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">密  码:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">MailAddress2:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="" class="form-control" id="" name="" placeholder="">
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="psw" class="col-lg-2 col-xs-4 control-label">密  码:</label>
+						<label for="" class="col-lg-2 col-xs-4 control-label">当前状态:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="password" class="form-control" id="psw" name="password" placeholder="">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">城市:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">MailCode:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">州:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">国家:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">IsAlike:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">ShopAddress1:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">ShopAddress2:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">ShopCode:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">ShopCity:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">ShopProvince:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">ShopCountry:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">身份证号码:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">加入时间(登记):</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">身份证正面:</label>
+						<div class="col-lg-10 col-xs-8">
+							<div class="content">
+								<div class="img-area">					
+									<div class="container2"> 
+										<input type="file" id='id-face' name='face' accept="image/*" />
+										<div id='face-empty-result'> 
+											<img style='width:4rem;' src="__PUBLIC_IMAGE__/camera.png" alt="">
+											<!--<img style='width:4rem;' src="images/camera.png" alt="">-->
+										    <p>身份证正面照</p>
+										</div> 
+										<img style='width: 100px;' id='face-result' /> 
+									</div>
+								</div>				
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">身份证反面:</label>
+						<div class="col-lg-10 col-xs-8">
+							<div class="content">
+								<div class="img-area">					
+									<div class="container2" style='margin-top:0.5rem;'> 
+										<input type="file" id='id-back' name='back' accept="image/*" />
+										<div id='back-empty-result'> 
+											<img style='width:4rem;margin: auto;' src="__PUBLIC_IMAGE__/camera.png" alt="">
+												<!--<img style='width:4rem;margin: auto;' src="images/camera.png" alt="">-->
+										    <p>身份证反面照</p>
+										</div>
+										<img style='width: 100px;margin: auto;' id='back-result' /> 
+									</div>
+								</div>				
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">第几次购买产品:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">最高等级:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">WeeklyVolume:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">正式时间:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-lg-offset-2 col-lg-1 col-xs-offset-4 col-xs-4">
+							<input type="checkbox"  id="" name="">
+						</div>
+						<label for="" class="col-lg-2 col-xs-4 control-label">是否通过</label>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">继承人:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">钱包:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>					
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">积分:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">美食代理:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">Payment:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">PaymentDetails:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-lg-offset-2 col-lg-1 col-xs-offset-4 col-xs-4">
+							<input type="checkbox"  id="" name="">
+						</div>
+						<label for="" class="col-lg-2 col-xs-4 control-label">是否同意条款</label>
+					</div>
+					<div class="form-group">
+						<div class="col-lg-offset-2 col-lg-1 col-xs-offset-4 col-xs-4">
+							<input type="checkbox"  id="" name="">
+						</div>
+						<label for="" class="col-lg-2 col-xs-4 control-label">是否买过东西</label>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">第一次购买时间:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">用户选择语言:</label>
+						<div class="col-lg-10 col-xs-8">
+							<select style="width: 100%;padding: 9px;border-radius: 5px;">
+								<option>中文</option>
+								<option>英文</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">中文姓:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">中文名:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">CnMiddleName:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">详细地址:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-lg-offset-2 col-lg-1 col-xs-offset-4 col-xs-4">
+							<input type="checkbox"  id="" name="">
+						</div>
+						<label for="" class="col-lg-2 col-xs-4 control-label">是否同意授权</label>										
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">设备地理位置:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">设备型号:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">浏览器名称:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">浏览器版本:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-xs-4 control-label">支付方式:</label>
+						<div class="col-lg-10 col-xs-8">
+							<input type="" class="form-control" id="" name="" placeholder="">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-lg-offset-2 col-lg-10 col-xs-offset-4 col-xs-8">
+							<button type="submit" class="btn  btn-block  btn-info">注册</button>
 						</div>
 					</div>
 					<div class="form-group">
@@ -157,6 +450,16 @@
 			</div>
 		</div>
 	</body>
+	<!--<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="js/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/register.js" ></script>
+	<script type="text/javascript" src="js/index.js"></script>-->
+	
 	<script type="text/javascript" src="__PUBLIC_JS__/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="__PUBLIC_JS__/jquery.validate.min.js"></script>
 	<script type="text/javascript" src="__PUBLIC_JS__/bootstrap.min.js"></script>
+	<script type="text/javascript" src="__PUBLIC_JS__/register.js" ></script>
+	<script type="text/javascript" src="__PUBLIC_JS__/index.js"></script>
+	
 </html>
