@@ -5,7 +5,7 @@ body{font-family: "微软雅黑";}
 .lg-title{font-size: 5.5vw;color: white;}
 .lg-center{position: absolute;top: 45%;left: 50%;-webkit-transform: translate(-50%, -50%);-moz-transform: translate(-50%, -50%);transform: translate(-50%, -50%);}
 .lg-div{border: 1px solid #E0E0E0;background: white;padding:80px;}
-.lg-form{height:300px;margin: auto;}   
+.lg-form{/*height:300px;*/margin: auto;}   
 .lg-zt{width:250px;border-bottom: 1px solid #439dfe;text-align: center;}        
 .lg-font{font-size: 1em;color:#439dfe ;line-height: 50px;}           
 .btn-blue{background:#439dfe;color: white;}            
