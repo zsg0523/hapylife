@@ -1,13 +1,16 @@
-body{font-family: "微软雅黑";background:url(../images/login_bg_icon.png) no-repeat;background-size: 100%;}
-.lg-center{position: absolute;top: 50%;left: 50%;-webkit-transform: translate(-50%, -50%);-moz-transform: translate(-50%, -50%);transform: translate(-50%, -50%);}
-.lg-div{font-size:1em;padding: 20px;width:50%;height:50%; background: beige;color: gainsboro;border-radius: 4px;}
-.lg-form-div{font-size:1em;padding: 20px;width:50%;height:50%; background: lavender;color: black;-webkit-transform: translate(-50%, -50%);-moz-transform: translate(-50%, -50%);transform: translate(-50%, -50%);}           
-.lg-member{color:black;}        
-.lg-member:hover{text-decoration: none;}            
-            
-            
-            
-            
-            
-            
-
+body{font-family: "微软雅黑";}
+.container-fluid{background-color: #439dfe;height: 30vh;}
+.lg-fontmid{text-align: center;margin-top: 8vh;}
+.lg-bold{font-weight: bold;}
+.lg-title{font-size: 5.5vw;color: white;}
+.lg-form{margin-top: 20vh;}
+.lg-zt{width:100%;border-bottom: 1px solid #439dfe;text-align: center;}        
+.lg-font{font-size: 1em;color:#439dfe ;line-height: 50px;}           
+.btn-blue{background:#439dfe;color: white;}            
+.btn-blue:hover{color: white;}
+.lg-input{width: 100%;border-bottom: 1px solid #DDDDDD;height: 50px;padding-top: 20px;}
+.lg-input input{width:100%;border: none;}
+.lg-input input:focus{outline: none;}
+.lg-reg{text-align: right;line-height: 50px;}
+.lg-reg a{color: #439dfe;}
+.lg-reg a:hover{text-decoration: none;}
