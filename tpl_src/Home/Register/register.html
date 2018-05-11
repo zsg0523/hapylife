@@ -16,7 +16,7 @@
 	<body>
 		<div class="container">
 			<div class="rg-div">
-				<form class="form-horizontal"  id="forms" method="post" action="{:U('Home/index/register')}">
+				<form class="form-horizontal"  id="forms" method="post" action="{:U('Home/Register/register')}">
 					<!--  <div class="form-group">
 						<label for="" class="col-lg-2 col-xs-4 control-label">头像:</label>
 						<div class="col-lg-10 col-xs-8">						
@@ -236,8 +236,11 @@
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-xs-4 control-label">身份证号码:</label>
-						<div class="col-lg-10 col-xs-8">
-							<input type="" class="form-control" id="" name="" placeholder="">
+						<div class="col-lg-8 col-xs-8">
+							<input type="" class="form-control" id="" name="Idcard" placeholder="">
+						</div>
+						<div class="col-lg-2 control-label">
+							{$error['Idcard']}
 						</div>
 					</div>
 					<div class="form-group">
@@ -285,13 +288,15 @@
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-xs-4 control-label">第几次购买产品:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="" class="form-control" id="" name="" placeholder="">
+							<input type="" class="form-control" id="" name="Email" placeholder="">
+							{$error['Email']}
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-xs-4 control-label">最高等级:</label>
 						<div class="col-lg-10 col-xs-8">
-							<input type="" class="form-control" id="" name="" placeholder="">
+							<input type="" class="form-control" id="" name="Phone" placeholder="">
+							{$error['Phone']}
 						</div>
 					</div>
 					<div class="form-group">
