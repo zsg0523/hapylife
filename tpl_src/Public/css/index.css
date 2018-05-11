@@ -2,24 +2,18 @@ body {
 	margin: 0
 }
 .content {
-	padding: 0.5rem;
 	display: flex;
-	align-items: center;
 }
 .img-area {
 	flex: 1
 }
-
 .container2 {
 	background-color: #e7e7e7;
-	position: relative;
+	position: relative;	
 }
-
 .container2 div {
 	text-align: center;
-	padding: 0.5rem 0
 }
-
 .container2 input {
 	opacity: 0;
 	filter: alpha(opacity=0);
