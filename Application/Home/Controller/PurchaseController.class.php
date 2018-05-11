@@ -10,12 +10,22 @@ class PurchaseController extends HomeBaseController{
 	* 主界面
 	**/
 	public function main(){
-		//礼包详情
-		$map = array(
-            'ip_type'    =>1,
-            'ip_name_zh '=>array('NEQ','Rbs'),
-        );
-        $data= M('Product')->where($map)->order('is_sort desc')->select();
+		$iuid  = $_SESSION['user']['id'];
+        $find  = M('User')->where(array('iuid'=>$iuid))->find();
+        $type  = trim($find['distributortype']);
+        $mtype = trim($find['customertype']);
+        //判断用户等级 show--1、可点击 2、不可点击
+        // p($type);
+        $tmpe    = array(
+            'ip_grade' =>$type,
+            'is_pull'  =>1
+        ); 
+        $product = D('Product')->where($tmpe)->order('is_sort desc')->select();
+
+        foreach ($product as $key => $value) {
+            $data[$key]         = $value; 
+            $data[$key]['show'] = 1; 
+        }
         // p($data);die;
         $this->assign('product',$data);
 		$this->display();
@@ -26,12 +36,22 @@ class PurchaseController extends HomeBaseController{
 	* 购买礼包
 	**/
 	public function purchase(){
-		//礼包详情
-		$map = array(
-            'ip_type'    =>1,
-            'ip_name_zh '=>array('NEQ','Rbs'),
-        );
-        $data= M('Product')->where($map)->order('is_sort desc')->select();
+		$iuid  = $_SESSION['user']['id'];
+        $find  = M('User')->where(array('iuid'=>$iuid))->find();
+        $type  = trim($find['distributortype']);
+        $mtype = trim($find['customertype']);
+        //判断用户等级 show--1、可点击 2、不可点击
+        // p($type);die;
+        $tmpe    = array(
+            'ip_grade' =>$type,
+            'is_pull'  =>1
+        ); 
+        $product = D('Product')->where($tmpe)->order('is_sort desc')->select();
+
+        foreach ($product as $key => $value) {
+            $data[$key]         = $value; 
+            $data[$key]['show'] = 1; 
+        }
         // p($data);die;
         $this->assign('product',$data);
 		$this->display();
@@ -42,7 +62,7 @@ class PurchaseController extends HomeBaseController{
 	* 会籍激活记录
 	**/
 	public function activaction(){
-		$iuid     = I('post.iuid')?I('post.iuid'):978241;
+		$iuid     = $_SESSION['user']['id'];
         $orderTime= D('User')->where(array('iuid'=>$iuid))->getfield('OrderDate');
         if($orderTime){
             $date     = date('Y-m',time());
@@ -268,7 +288,7 @@ class PurchaseController extends HomeBaseController{
         );
         $addlog = M('Log')->add($log);
         if($addlog){
-            $this->success('下单成功,前往支付页面',U('apps.nulifeshop.com/index.php/Api/WeChatPay/cjPayment',array('ir_receiptnum'=>$order_num)));
+            $this->success('下单成功,前往支付页面',U('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num)));
         }else{
             $this->error('订单生成失败');
         }
@@ -290,7 +310,7 @@ class PurchaseController extends HomeBaseController{
 		$postData['InputCharset']      = 'UTF-8';
 		$postData['TradeDate']         = date('Ymd').'';
 		$postData['TradeTime']         = date('His').'';
-		$postData['ReturnUrl']         = 'http://http://apps.hapy-life.com/hapylife';// 前台跳转url
+		$postData['ReturnUrl']         = 'http://apps.hapy-life.com/hapylife';// 前台跳转url
 		$postData['Memo']              = '备注';
 		// 4.4.2.8. 直接支付请求接口（畅捷前台） 业务参数++++++++++++++++++
 		$postData['TrxId']             = $order_num; //外部流水号
@@ -317,7 +337,7 @@ class PurchaseController extends HomeBaseController{
 		$postData['OrdrDesc']          = ''; //商品详情
 		$postData['RoyaltyParameters'] = '';      //"[{'userId':'13890009900','PID':'2','account_type':'101','amount':'100.00'},{'userId':'13890009900','PID':'2','account_type':'101','amount':'100.00'}]"; //退款分润账号集
 		$postData['NotifyUrl']         = 'http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/notifyVerify';//异步通知地址
-		$postData['AccessChannel']     = 'wab';//用户终端类型；web,wap
+		$postData['AccessChannel']     = 'wap';//用户终端类型；web,wap
 		$postData['Extension']         = '';//扩展字段
 		$postData['Sign']              = rsaSign($postData);
 		$postData['SignType']          = 'RSA'; //签名类型		

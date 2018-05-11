@@ -44,7 +44,7 @@ class IndexController extends HomeBaseController{
             $this->error('账号格式错误');  
             }else{
                 $where= array(
-                    'CustomerID'=>$tmpe['CustomerID'],
+                    'CustomerID'=>trim($tmpe['CustomerID']),
                     'PassWord'  =>md5($tmpe['PassWord'])
                 );
                 $data = D('User')->where($where)->find();
