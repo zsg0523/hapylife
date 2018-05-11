@@ -8,6 +8,7 @@
     <title>HAPYLIFE</title>
     <link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
     <link href="./bootstrap/css/bootstrap.css" rel="stylesheet">
+    
     <style type="text/css">
     *{margin: 0;padding: 0;}
     	ul,li{list-style: none;display: block;}
@@ -70,10 +71,9 @@
   			<header>
   				<div class="head">
   					<span>HAPYLIFE<sup>TM</sup></span>
-  					<div>用户名,您好!</div>
-  					<a>退出登录</a>
-  				</div>
-  				
+  					<div>{$Think.session.user.username},您好!</div>
+  					<a  href="{:U('Home/index/log_out')}>退出登录</a>
+  				</div>  				
   			</header>
         <div class="content">
           <div class="container-fluid">
@@ -105,9 +105,7 @@
     		links[i].style.background='#fff';
     	}
 			obj.style.background="#d1e7fe";
-    }
-    	
-       
+    } 
     </script>
 
   </body>

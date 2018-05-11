@@ -1,6 +1,8 @@
 body {
 	margin: 0
 }
+
+/*上传身份证css*/
 .content {
 	display: flex;
 }
@@ -28,4 +30,12 @@ body {
 .container2 p {
 	font-size: 0.9rem;
 	color: #999
+}
+
+/*注册*/
+.rg-name{
+	margin-top: 10px;
+	color: #2491ee;
+	font-size:3vw;
+	text-align: center;
 }
