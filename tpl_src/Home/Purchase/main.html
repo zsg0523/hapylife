@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <title>HAPYLIFE</title>
-    <link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css" rel="stylesheet">
+    <link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
   
     <style type="text/css">
     *{margin: 0;padding: 0;}
@@ -19,11 +19,12 @@
       .main{height: auto;width: 100%}
     	header{width: 100%;height: 100px;background:#2491ee;color: #fff;}
 	    .head{height: 100px;margin: 0 auto;}
-	    .head>span{height: 100px;width: auto;line-height: 100px;font-size: 40px;display: block;float: left;}
+	    .head>span{height: 100px;width: 60%;line-height: 100px;font-size: 40px;display: block;float: left;}
 	    .head>span>sup{font-size:12px;top: -1.7em;}
       
-      .head>div{width: auto;height: 40px;line-height: 40px;float: right;font-size: 16px;margin-right: 5px;}
-			.head>a{width: 80px;height: 50px;line-height: 50px;float: right;font-size: 16px;display:inline-block;margin-top:50px;margin-right: 5px;color: #fff;}
+      .head>div{width: 36%;height: 40px;line-height: 40px;float: right;font-size: 16px;text-align: center;}
+     .head>div>span{width:100%;height: 40px;line-height: 40px;float: right;font-size: 16px;}
+			.head>div>a{width: 100%;height: 50px;line-height: 50px;float: right;font-size: 16px;display:inline-block;color: #fff;}
     	nav{width: 100%;height:40px;background: #fff;margin: auto;}
     	nav .col-md-4{height: 40px;line-height: 40px;padding:0px;text-align: center;font-size:16px;color: #2491ee;border-bottom:1px #dedede solid;}
       .active{background-color: #d1e7fe;}
@@ -37,14 +38,14 @@
       @media screen and (max-width: 768px){
      
          .head{text-indent: 1em;}
-        nav div{display: none;}
+       .content>div{width: 100%;}
         iframe{width:100%;}
       }
       /*平板*/
       @media screen and (min-width: 768px){
        
         .head>span{text-indent: 1em;}
-        nav div{display: none;}
+       .content>div{width: 100%;}
         iframe{width:100%;}
       }
         /*中等屏幕*/
@@ -69,26 +70,28 @@
   			<header>
   				<div class="head">
   					<span>HAPYLIFE<sup>TM</sup></span>
-  					<div>用户名,您好!</div>
-  					<a>退出登录</a>
+  					<div>
+  						<span>用户名,您好!</span>
+  						<a>退出登录</a>
+  					</div>
   				</div>
   				
   			</header>
         <div class="content">
           <div class="container-fluid">
             <nav class="row" id="menu">
-    					<!--<div class="col-xs-0	 col-sm-0  col-md-1"></div>-->
-     					<a class="col-xs-12	 col-sm-4  col-md-4 active" target="content" href="purchase1.html" onclick="change_bg(this);" >购买礼包</a>
+    				
+     					<a class="col-xs-12	 col-sm-4  col-md-4 active" target="content" href="{:U('Home/Purchase/purchase')}" onclick="change_bg(this);" >购买礼包</a>
      					<!--<a class="col-xs-12	 col-sm-6  col-md-3" target="content" href="{:U('Home/Purchase/activaction')}" onclick="change_bg(this);" >会籍激活</a>-->
      					<a class="col-xs-12	 col-sm-4  col-md-4" target="content" href="{:U('Home/Purchase/myOrder')}" onclick="change_bg(this);" >我的订单</a>
      					<a class="col-xs-12	 col-sm-4  col-md-4" target="content" href="{:U('Home/Purchase/myProfile')}" onclick="change_bg(this);" >个人资料</a>
      					<!-- <a class="col-xs-12	 col-sm-6  col-md-2" target="content" href="{:U('Home/Purchase/bankInfo')}" onclick="change_bg(this)">银行资料</a> -->
-     					<!--<div class="col-xs-0	 col-sm-0  col-md-1"></div>-->
+     				<!--<div class="col-xs-0	 col-sm-0  col-md-1"></div>-->
     			  </nav>
           </div>
         </div>
   			<div class="main">
-  				<iframe name="content" src="purchase1.html" frameborder="0" scrolling="yes">					 
+  				<iframe name="content" src="purchase.html" frameborder="0" scrolling="yes">
   				</iframe>
   			</div>
   		</div>
