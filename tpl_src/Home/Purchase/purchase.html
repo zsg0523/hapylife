@@ -25,13 +25,13 @@
 <body class="">
 	<div class="main container-fluid">
 		<volist id='v' name='product'>
-			<div class="giftPackage col-xs-12 col-sm-6  col-md-4" id="giftPackage">
+			<div class="giftPackage col-xs-12 col-sm-6  col-md-12" id="giftPackage">
 				<img src="__PUBLIC_IMAGE__/tp1.jpg">
 				<div class="intro">
 				<span>名称：{$v.ip_name_zh}</span>
 				<i>售价：￥{$v.ip_price_rmb}</i>
 				</div>
-				<a class="well" href="{:U('Home/Purchase/purchaseInfo',array('ipid'=>$v['ipid']))}">查看详情</a>
+				<a class="" href="{:U('Home/Purchase/purchaseInfo',array('ipid'=>$v['ipid']))}">查看详情</a>
 			</div>
 	    </volist>
 	</div>
