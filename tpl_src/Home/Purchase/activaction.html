@@ -16,11 +16,13 @@
 			<div>截止日期</div>
 			<div>状态</div>
 		</div>
-		<div class="content">
-			<div>2018年03月16日</div>
-			<div>2018年04月15日</div>
-			<div>已开启</div>
-		</div>
+		<volist name='data' id='v'>
+			<div class="content">
+				<div>{$v.hatime}</div>
+				<div>{$v.endtime}</div>
+				<div>{$v['is_tick']?已开启:未开启}</div>
+			</div>
+		</volist>
 	</div>
 	
 </body>

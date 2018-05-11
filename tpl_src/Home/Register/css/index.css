@@ -35,15 +35,3 @@ body {
 	font-size: 0.9rem;
 	color: #999
 }
-
-.btn {
-	background-color: #4363ab;
-	color: #fff;
-	text-align: center;
-	padding: 0.5rem 1rem;
-	width: 80%;
-	border-radius: 0.2rem;
-	margin: 2rem auto;
-	font-weight: 600;
-	font-size: 1.2rem
-}

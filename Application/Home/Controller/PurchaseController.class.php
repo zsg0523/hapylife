@@ -39,26 +39,109 @@ class PurchaseController extends HomeBaseController{
 
 
 	/**
-	* 会籍激活
+	* 会籍激活记录
 	**/
 	public function activaction(){
-
+		$iuid     = I('post.iuid')?I('post.iuid'):978241;
+        $orderTime= D('User')->where(array('iuid'=>$iuid))->getfield('OrderDate');
+        if($orderTime){
+            $date     = date('Y-m',time());
+            $time     = date('Y-m',strtotime($orderTime));
+            $day      = date('d',strtotime($orderTime));
+            if($day>=28){
+                $allday = 28;
+            }else{
+                $allday = $day;
+            }
+            $ddd    = $allday-1;
+            if($ddd>=10){
+                $oneday = $ddd;
+            }else{
+                $oneday = '0'.$ddd;
+            }
+            $date1    = explode('-',$date);
+            $date2    = explode('-',$time);
+            $number   = ($date1[0]-$date2[0])*12+($date1[1]-$date2[1]);
+            for($i=0;$i<$number;$i++){
+                $arr.=date("Y-m",strtotime("+1 month",strtotime($time))).',';
+                $time= date("Y-m",strtotime("+1 month",strtotime($time)));
+            }
+            $str    = chop($arr,',');
+            $strarr = explode(',', $str);
+            $mape   = D('Activation')->where(array('iuid'=>$iuid))->order('datetime asc')->getfield('datetime',true);
+            $end    = D('Activation')->where(array('iuid'=>$iuid))->order('datetime desc')->getfield('datetime');
+            $endtime= strtotime($end.'-'.$oneday);
+            if(empty($mape)){  
+                $diffarr[0]= $time;
+                foreach ($diffarr as $key => $value) {
+                    if(!empty($value)){
+                       $diff[] = $value;
+                    }
+                }
+                if($diff){
+                    foreach ($diff as $key => $value) {
+                        $year  = date("Y年m月",strtotime($value)).$allday.'日';
+                        $endday= date("Y年m月",strtotime("+1 month",strtotime($value))).$oneday.'日';
+                        $where = array('iuid'=>$iuid,'datetime'=>$value,'is_tick'=>1,'hatime'=>$year,'endtime'=>$endday);
+                        D('Activation')->add($where);
+                    }   
+                }
+            }else{ 
+                $diffarr   = array_diff($strarr,$mape);
+                foreach ($diffarr as $key => $value) {
+                    if(!empty($value)){
+                       $diff[] = $value;
+                    }
+                }
+                if($diff){
+                    foreach ($diff as $key => $value) {
+                        $year  = date("Y年m月",strtotime($value)).$allday.'日';
+                        $endday= date("Y年m月",strtotime("+1 month",strtotime($value))).$oneday.'日';
+                        $where = array('iuid'=>$iuid,'datetime'=>$value,'is_tick'=>0,'hatime'=>$year,'endtime'=>$endday);
+                        if(time()>$endtime){
+                            D('Activation')->add($where);
+                        }
+                    }   
+                }
+            }
+        }
+        $data = D('Activation')->where(array('iuid'=>$iuid))->select();
+        $this->assign('data',$data);
 		$this->display();
 	}
 
 
 	/**
-	* 我的订单
+	* 我的订单列表
 	**/
 	public function myOrder(){
+		$iuid = $_SESSION['user']['id'];
+		$map  = array(
+				'iuid'=>$iuid
+			);
+		$data = M('Receipt')
+				->alias('r')
+				->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
+				->join('hapylife_product hp on hr.ipid=hp.ipid')
+				->where($map)
+				->select();
+		// p($data);
+		$this->assign('data',$data);
 		$this->display();
+	}
+
+	/**
+	* 订单详情
+	**/
+	public function orderDetail(){
+
 	}
 
 	/**
 	* 个人资料
 	**/
 	public function myProfile(){
-		$iuid = I('post.iuid')?1:978185;
+		$iuid = I('post.iuid')?I('post.iuid'):978185;
 		$data = D('User')->where(array('iuid'=>$iuid))->find();
 		$right= D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Right'))->select();
 		$left = D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Left'))->select();
