@@ -29,15 +29,15 @@
 							   <span class="lg-font">密码登录</span>
 							</div>
 							<div>
-								<form method="" action="">
+								<form method="post" action="{:U('Home/index/index')}" >
 									<div class="lg-input">
-									    <input type="text" placeholder="请输入姓名"/>
+									    <input type="text" placeholder="请输入账号" name="CustomerID" />
 									</div>
 									<div class="lg-input">
-									    <input type="text" placeholder="请输入密码" />
+									    <input type="text" placeholder="请输入密码" name="PassWord" />
 									</div>
 									<div class="lg-reg" >
-										<a href="">立即注册</a>
+										<a href="{:U('Home/index/register')}">立即注册</a>
 									</div>
 									<div>
 										<button type="submit" class="btn btn-block btn-blue">登录</button>

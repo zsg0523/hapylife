@@ -12,20 +12,22 @@
 		a{text-decoration: none;color: #fff;}
 		a:hover{cursor: pointer;text-decoration: none;color: #fff;}
 		.main{width: 100%;height: auto;}
-		.giftPackage{height: 240px;float: left;}
-		.giftPackage:hover{cursor: pointer;}
-		.giftPackage>img{width:100%;height:180px;}
-		.giftPackage>a{width:100%;height: 50px;background: #5674ea;text-align:center;line-height: 50px;display: block;font-size: 18px;padding: 0;}
-		.intro{width: 100%;height: 50px;font-size: 16px;text-align:center;line-height: 50px;}
-		.intro span{width: 50%;height: 50px;display: block;float: left;}
-		.intro>i{width: 45%;height: 50px;display: block;float: right;}
+		.giftPackage{height: 120px; margin-top: 10px;}
+		.giftPackage>img{width:40%;height:120px;float: left;}
+		.giftPackage>a{width:30%;height: 40px;background: #ff6600;float:right;line-height: 40px;
+		display: block;font-size: 16px;margin-right: 20%;border-radius: 10px;text-align: center;}
+		.giftPackage>a:hover{cursor: pointer;}
+		.intro{width: 50%;height: 80px;font-size: 14px;line-height: 40px;float: right;}
+		.intro span{width: 100%;height: 40px;display: block;float: left;}
+		.intro>i{width: 100%;height: 40px;display: block;float: right;}
+		
 
 	</style>
 </head>
 <body class="">
 	<div class="main container-fluid">
 		<volist id='v' name='product'>
-			<div class="giftPackage col-xs-12 col-sm-6  col-md-12" id="giftPackage">
+			<div class="giftPackage col-xs-12 col-sm-12  col-md-12" id="giftPackage">
 				<img src="__PUBLIC_IMAGE__/tp1.jpg">
 				<div class="intro">
 				<span>名称：{$v.ip_name_zh}</span>
