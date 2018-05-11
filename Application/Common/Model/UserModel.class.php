@@ -2,7 +2,7 @@
 namespace Common\Model;
 use Common\Model\BaseModel;
 /**
-* Hapylife�û�model
+* HapylifeÓÃ»§model
 **/
 class UserModel extends BaseModel{
 	public function getAllData($model,$map,$word='',$order='',$limit=50,$field=''){
@@ -48,7 +48,7 @@ class UserModel extends BaseModel{
 			);
 		return $data;
 	}
-	//��ȡ���ҵ�λ
+	//»ñÈ¡×óÓÒµãÎ»
 	public function getPlacement($account){
 		$mape = M('User')->where(array('upperid'=>$account))->select();
 		foreach ($mape as $key => $value) {
@@ -61,7 +61,7 @@ class UserModel extends BaseModel{
 		return $data;
 	}
 
-	//��ȡ������
+	//»ñÈ¡¼«×ó°²ÖÃ
 	public function getMostLeftPlacement($account){
 		$data = D('User')->select();
 		$binary = getAllBinary($data,$account);
@@ -84,23 +84,23 @@ class UserModel extends BaseModel{
 	}
 
 	/**
-	* �Զ��ŵ�λ
-	* @param account  ע���Ա������memberNo
-	* @param iu_logic ѡ���λ����
+	* ×Ô¶¯ÅÅµãÎ»
+	* @param account  ×¢²á»áÔ±µÄÉÏÏßmemberNo
+	* @param iu_logic Ñ¡ÔñµãÎ»×óÓÒ
 	**/
 	public function getMemberPlacement($account,$iu_logic){
-	    //��ѯ�û�Ա�İ������
+	    //²éÑ¯¸Ã»áÔ±µÄ°²ÖÃÇé¿ö
 	    $placement = $this->getPlacement($account);
-	    //�õ�λ���û�Ա������
+	    //¸ÃµãÎ»°²ÖÃ»áÔ±µÄÊýÁ¿
 	    $memberNumber = count($placement);
 	    switch ($memberNumber) {
 	        case '0':
-	            //�Զ����ڵ�λ���,�޷�ѡ���λ����
+	            //×Ô¶¯ÅÅÔÚµãÎ»×ó±ß,ÎÞ·¢Ñ¡ÔñµãÎ»×óÓÒ
 	            $account = $account;
 	            break;
 	        case '1':
-	            //��ߣ����ڵ�λ��ߵ�����
-	            //�ұߣ����ڵ�λ���ұ�
+	            //×ó±ß£¬ÅÅÔÚµãÎ»×ó±ßµÄ×î×ó
+	            //ÓÒ±ß£¬ÅÅÔÚµãÎ»µÄÓÒ±ß
 	            switch ($iu_logic) {
 	                case 'Left':
 	                    $memberInfo = $this->getMostLeftPlacement($placement[0]['customerid']);
@@ -112,8 +112,8 @@ class UserModel extends BaseModel{
 	            }
 	            break;
 	        case '2':
-	            //��ߣ����ڵ�λ��ߵ�����
-	            //�ұߣ����ڵ�λ�ұߵ�����
+	            //×ó±ß£¬ÅÅÔÚµãÎ»×ó±ßµÄ×î×ó
+	            //ÓÒ±ß£¬ÅÅÔÚµãÎ»ÓÒ±ßµÄ×î×ó
 	            switch ($iu_logic) {
 	                case 'Left':
 	                    $memberInfo = $this->getMostLeftPlacement($placement[0]['customerid']);
@@ -129,4 +129,100 @@ class UserModel extends BaseModel{
 	    }
 	    return($account);
 	}
+
+	/**
+     * 获取分页数据
+     * @param  subject  $model  model对象
+     * @param  array    $map    where条件
+     * @param  string   $order  排序规则
+     * @param  integer  $limit  每页数量
+     * @param  integer  $field  $field
+     * @return array            分页数据
+     */
+    public function getPage($model,$word,$order='',$starttime,$endtime,$limit=20){
+    		if(empty($word)){
+				$count=$model
+					->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+					->count();
+			}else{
+				$count=$model
+	            ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+	            ->count();
+			}
+	        $page=new_page($count,$limit);
+	        // 获取分页数据
+	        if(empty($word)){
+	        	if (empty($field)) {
+		            $list=$model
+		            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }else{
+		            $list=$model
+		            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->field($field)
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }
+	        }else{
+	        	if (empty($field)) {
+		            $list=$model
+		                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }else{
+		            $list=$model
+		                ->field($field)
+		                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }
+	        }
+    		
+        $data=array(
+            'data'=>$list,
+            'page'=>$page->show()
+            );
+        return $data;
+    }
+
+	public function export_excel($data){
+		$title   = array('注册时间','用户ID','支付成功','支付日期','新用户注册','邀请人','产品编号','性别','中文名','中文姓','英文名','英文姓','邮箱地址','密码','手机号码','邮寄地址1','邮寄地址2','邮寄城市','邮政编码','邮寄省份','邮寄国家','身份证号码','同意条款','设备地理位置','设备类型','浏览器类型','浏览器版本','支付类型');
+		foreach ($data as $k => $v) {
+			$content[$k]['joinedon']     	= date('Y-m-d',$v['joinedon']);
+			$content[$k]['customerid']  	= $v['customerid'];
+			$content[$k]['paymentreceived'] = $v['paymentreceived'];
+			$content[$k]['paymentdateTime'] = $v['paymentdateTime'];
+			$content[$k]['isNew']       	= $v['isNew'];
+			$content[$k]['enrollerid']      = $v['enrollerid'];
+			$content[$k]['product']        = $v['product'];
+			$content[$k]['sex']       = $v['sex'];
+			$content[$k]['lastname']     = $v['lastname'];
+			$content[$k]['firstname']     = $v['firstname'];
+			$content[$k]['enlastname']     = $v['enlastname'];
+			$content[$k]['enfirstname']     = $v['enfirstname'];
+			$content[$k]['email']     = $v['email'];
+			$content[$k]['password']     = $v['password'];
+			$content[$k]['phone']     = $v['phone'];
+			$content[$k]['shopaddress1']     = $v['shopaddress1'];
+			$content[$k]['shopaddress2']     = $v['shopaddress2'];
+			$content[$k]['shopcity']     = $v['shopcity'];
+			$content[$k]['shopcode']     = $v['shopcode'];
+			$content[$k]['shopprovince']     = $v['shopprovince'];
+			$content[$k]['shopcountry']     = $v['shopcountry'];
+			$content[$k]['idcard']     = $v['idcard'];
+			$content[$k]['termsandconditions']     = $v['termsandconditions'];
+			$content[$k]['devicegeolocation']     = $v['devicegeolocation'];
+			$content[$k]['devicetype']     = $v['devicetype'];
+			$content[$k]['browser']     = $v['browser'];
+			$content[$k]['browserversion']     = $v['browserversion'];
+			$content[$k]['paymenttype']     = $v['paymenttype'];
+		}
+    	create_csv($content,$title);
+		return;
+    }
 }

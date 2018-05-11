@@ -34,21 +34,38 @@
 		</div>
             <div class="tab-content">
 				<table class="table table-striped table-bordered table-hover table-condensed">
-					<tr>
-						<th >订单编号</th>
-						<th >畅捷编号</th>
-						<th >畅捷订单状态</th>
-						<th >会员</th>
-						<th >姓</th>
-						<th >名</th>
-                        <th >订单总金额</th>
-                        <th >订单备注</th>
-                        <th >订单状态</th>
-                        <th >送货地址</th>
-                        <th >是否送货</th>
-                        <th >创建日期</th>
-						<th>操作</th>
-					</tr>
+					<if condition="$_SESSION['user']['username'] eq mary || $_SESSION['user']['username'] eq admin2">
+						<tr>
+							<th >订单编号</th>
+							<th >畅捷编号</th>
+							<th >畅捷订单状态</th>
+							<th >会员</th>
+							<th >姓</th>
+							<th >名</th>
+	                        <th >订单总金额</th>
+	                        <th >订单备注</th>
+	                        <th >订单状态</th>
+	                        <th >送货地址</th>
+	                        <th >是否送货</th>
+	                        <th >创建日期</th>
+						</tr>
+					<else />
+						<tr>
+							<th >订单编号</th>
+							<th >畅捷编号</th>
+							<th >畅捷订单状态</th>
+							<th >会员</th>
+							<th >姓</th>
+							<th >名</th>
+	                        <th >订单总金额</th>
+	                        <th >订单备注</th>
+	                        <th >订单状态</th>
+	                        <th >送货地址</th>
+	                        <th >是否送货</th>
+	                        <th >创建日期</th>
+							<th>操作</th>
+						</tr>
+					</if>
 					<foreach name="data" item="v">
 						<tr>
 							<td>{$v['ir_receiptnum']}</td>
@@ -73,10 +90,13 @@
                                 </if>
 							</td>
 							<td>{:date('Y-m-d h:i:s',$v['ir_date'])}</td>
-							<td>
-								<a href="javascript:;" receiptId="{$v['irid']}" receiptNum="{$v['ir_receiptnum']}" receiptDate="{$v['ir_date']}" receiptPrice="{$v[ir_price]}" receiptUser="{$v['customerid']}" receiptPhone="{$v[ia_phone]}" receiptAddress="{$v['ia_address']}" receiptPoint="{$v[ir_point]}" receiptBanknumber="{$v['ir_banknumber']}" receiptBankreceipt="{$v['ir_bankreceipt']}" receiptStatus="{$v[ir_status]}" receiptDesc="{$v['ir_desc']}" onclick="edit(this)">查看</a> |
-								<a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Hapylife/delete_receipt',array('id'=>$v['irid']))}'">删除</a> 
-							</td>
+							<if condition="$_SESSION['user']['username'] eq mary || $_SESSION['user']['username'] eq admin2">
+							<else />
+								<td>
+									<a href="javascript:;" receiptId="{$v['irid']}" receiptNum="{$v['ir_receiptnum']}" receiptDate="{$v['ir_date']}" receiptPrice="{$v[ir_price]}" receiptUser="{$v['customerid']}" receiptPhone="{$v[ia_phone]}" receiptAddress="{$v['ia_address']}" receiptPoint="{$v[ir_point]}" receiptBanknumber="{$v['ir_banknumber']}" receiptBankreceipt="{$v['ir_bankreceipt']}" receiptStatus="{$v[ir_status]}" receiptDesc="{$v['ir_desc']}" onclick="edit(this)">查看</a> |
+									<a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Hapylife/delete_receipt',array('id'=>$v['irid']))}'">删除</a> 
+								</td>
+							</if>
 						</tr>
 					</foreach>
 				</table>
