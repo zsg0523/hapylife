@@ -703,12 +703,10 @@ function post_upload($path='file',$format='empty',$maxSize='3145728000'){
                 'autoSub'   =>  true,                  //自动使用子目录保存上传文件 默认为true
                 'exts'      =>  isset($ext_arr[$format])?$ext_arr[$format]:'',
             );
-        p($config);
         // 实例化上传
         $upload=new \Think\Upload($config);
         // 调用上传方法
         $info=$upload->upload();
-        p($info);
         $data=array();
         if(!$info){
             // 返回错误信息
