@@ -7,7 +7,7 @@ use Common\Controller\HomeBaseController;
 class RegisterController extends HomeBaseController{
 	public function register(){
 		$data = I('post.');
-		print_r($data);
+		// print_r($data);
 
 		// $rules = array(
 		//      array('verify','require','验证码必须！'), //默认情况下用正则进行验证
