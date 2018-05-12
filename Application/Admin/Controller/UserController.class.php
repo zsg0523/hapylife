@@ -20,6 +20,7 @@ class UserController extends AdminBaseController{
 			);
 		}
 		$assign=D('IbosUsers')->getAllData(D('IbosUsers'),$map,$order="hu_nickname");
+		// p($assign);die;
 		// //hrac门店信息
 		$HracShop   =D('HracShop')->select();
 		$HracGrage 	=D('HracGrade')->select();
