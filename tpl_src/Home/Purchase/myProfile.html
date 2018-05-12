@@ -20,7 +20,7 @@
 					<span>用户ID:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span></span>
+					<span>{$userinfo.customerid}</span>
 				</div>
 			</div>
 			<div class="row">
@@ -28,7 +28,7 @@
 					<span>推荐人ID:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span></span>
+					<span>{$userinfo.enrollerid}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -36,7 +36,7 @@
 					<span>会员等级:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.customertype}</span>
+					<span>{$userinfo.distributortype}</span>
 				</div>
 			</div>
 			<div class="row">
@@ -60,7 +60,7 @@
 					<span>英文姓:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span></span>
+					<span>{$userinfo.enlastname}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -68,7 +68,7 @@
 					<span>英文名:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span></span>
+					<span>{$userinfo.enfirstname}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -76,7 +76,7 @@
 					<span>性别:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.sex}</span>
+					<span>{$userinfo['sex']?男:女}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -100,7 +100,7 @@
 					<span>销售类型:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span></span>
+					<span>{$userinfo.distributortype}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -108,7 +108,7 @@
 					<span>语言类型:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span></span>
+					<span>{$userinfo.language}</span>
 				</div>	
 			</div>
 			<hr />
@@ -126,7 +126,7 @@
 					<span>国家:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span></span>
+					<span>{$userinfo.shopcountry}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -134,7 +134,7 @@
 					<span>省:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span></span>
+					<span>{$userinfo.shopprovince}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -142,7 +142,7 @@
 					<span>市:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span></span>
+					<span>{$userinfo.shopcity}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -150,7 +150,7 @@
 					<span>区:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span></span>
+					<span>{$userinfo.shoparea}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -176,7 +176,7 @@
 					<span>银行名称:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span></span>
+					<span>{$userinfo.bankname}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -184,7 +184,7 @@
 					<span>银行账号:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span></span>
+					<span>{$userinfo.bankaccount}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -192,7 +192,7 @@
 					<span>省:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span></span>
+					<span>{$userinfo.bankprovince}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -200,7 +200,7 @@
 					<span>市:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span></span>
+					<span>{$userinfo.bankcity}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -208,7 +208,7 @@
 					<span>区:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span></span>
+					<span>{$userinfo.bankarea}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -216,7 +216,7 @@
 					<span>支行名称:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span></span>
+					<span>{$userinfo.subname}</span>
 				</div>	
 			</div>
 			
