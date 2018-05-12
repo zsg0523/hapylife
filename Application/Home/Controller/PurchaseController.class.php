@@ -161,7 +161,7 @@ class PurchaseController extends HomeBaseController{
 	* 个人资料
 	**/
 	public function myProfile(){
-		$iuid = I('post.iuid')?I('post.iuid'):978185;
+		$iuid = $_SESSION['user']['id'];
 		$data = D('User')->where(array('iuid'=>$iuid))->find();
 		$right= D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Right'))->select();
 		$left = D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Left'))->select();
@@ -176,7 +176,7 @@ class PurchaseController extends HomeBaseController{
 		}else{
 			$data['left'] = 0;
 		}
-		// p($data);die;
+		p($data);die;
 		$this->assign('userinfo',$data);
 		$this->display();
 	}
