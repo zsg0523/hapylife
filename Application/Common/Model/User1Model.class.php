@@ -29,6 +29,6 @@ class User1Model extends BaseModel{
         array('BankCity','require','请填写银行所在市'), 
         array('BankArea','require','请填写银行所在区'), 
         array('SubName','require','支行名称不能为空'), 
-        array('Idcard','/(\d{6})(\d{4})(\d{2})(\d{2})(\d{3})([0-9]|X|x)|[A-Za-z]{1}\d{6}[(\d)]{3}/','请输入有效身份证号码'),
+        // array('Idcard','/(\d{6})(\d{4})(\d{2})(\d{2})(\d{3})([0-9]|X|x)|[A-Za-z]{1}\d{6}[(\d)]{3}/','请输入有效身份证号码'),
    );
 }
