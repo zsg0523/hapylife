@@ -43,6 +43,10 @@
 			color: #2491ee;
 			font-size:20px;
 			text-align: center;
+			line-height: 40px;
+			height:40px;
+			border-bottom: 1px solid #DDDDDD;
+			margin-bottom: 10px;
 		}
 	</style>
 	<body>
@@ -50,7 +54,6 @@
 			<div class="rg-name">
 				<span>HAPYLIFE 新用户注册</span>
 			</div>
-			<hr />
 			<div class="rg-div">				
 				<form class="form-horizontal"  id="forms" method="post" action="{:U('Home/Register/register')}" enctype="multipart/form-data">
 					<div class="form-group">
@@ -310,7 +313,7 @@
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['clause']}</div>
 					</div>-->
 					<div class="form-group">
-						<div class="col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">
+						<div class="col-md-offset-2 col-md-10 col-xs-12">
 							<button type="submit" class="btn  btn-block  btn-info">注册</button>
 						</div>
 						<!--<div class="col-md-5 col-xs-4">
