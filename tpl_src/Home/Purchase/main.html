@@ -18,12 +18,12 @@
       .main{height: auto;width: 100%}
     	header{width: 100%;height: 100px;background:#2491ee;color: #fff;}
 	    .head{height: 100px;margin: 0 auto;}
-	    .head>span{height: 100px;width: 60%;line-height: 100px;font-size: 40px;display: block;float: left;}
+	    .head>span{height: 60px;width: 60%;line-height: 60px;font-size: 40px;display: block;float: left;margin-left: 5%;}
 	    .head>span>sup{font-size:12px;top: -1.7em;}
       
-      .head>div{width: 40%;height: 100px;float: right;text-align:center;}
-      .head>div>span{width:100%;height: 50px;float: right;font-size: 14px;line-height: 30px;}
-			.head>div>a{width: 100%;height: 40px;line-height:40px;float: right;font-size: 16px;display:inline-block;color: #fff;}
+      .head>div{width: 100%;height: 40px;float: left;}
+      .head>div>span{width:60%;height: 40px;float: left;font-size: 14px;line-height: 40px;margin-left: 5%;}
+			.head>div>a{width: 35%;height: 40px;line-height:40px;float: right;font-size: 14px;display:inline-block;color: #fff;text-align: right;}
     	nav{width: 100%;height:40px;background: #fff;margin: auto;}
     	nav .col-md-4{height: 40px;line-height: 40px;padding:0px;text-align: center;font-size:16px;color: #2491ee;border-bottom:1px #dedede solid;}
       .active{background-color: #d1e7fe;}
@@ -36,21 +36,21 @@
       /*手机*/
       @media screen and (max-width: 768px){
      
-         .head{text-indent: 1em;}
+         .head{}
        .content>div{width: 100%;}
         iframe{width:100%;}
       }
       /*平板*/
       @media screen and (min-width: 768px){
        
-        .head>span{text-indent: 1em;}
+        .head>span{}
        .content>div{width: 100%;}
         iframe{width:100%;}
       }
         /*中等屏幕*/
       @media screen and (min-width: 992px){
         
-        .head>span{text-indent: 1em;}
+        .head>span{}
         .content>div{width: 100%;}
         iframe{width:100%}
 
@@ -71,7 +71,7 @@
   					<span>HAPYLIFE<sup>TM</sup></span>
   					<div>
   						<span>{$Think.session.user.username},您好!</span>
-  						<a href="{:U('Home/index/log_out')}">退出登录</a>
+  						<a href="{:U('Home/index/log_out')}">退出登录&nbsp;&nbsp;</a>
   					</div>
   				</div>
   			</header>
