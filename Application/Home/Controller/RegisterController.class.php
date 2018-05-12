@@ -8,6 +8,7 @@ class RegisterController extends HomeBaseController{
 	// 用户注册
 	public function register(){
 		$data = I('post.');
+
 		$upload = several_upload();
 		if(IS_POST){
 			if($data['Sex']){
@@ -60,7 +61,6 @@ class RegisterController extends HomeBaseController{
 			                $data['CustomerID'] = $CustomerID;
 							$result	= D('User')->add($data);
 							if($result){
-								$_SESSION['user']['id'] = max(D('User')->select());
 								$this->redirect('Home/Register/regsuccess');
 							}
 						}
@@ -106,7 +106,6 @@ class RegisterController extends HomeBaseController{
 			                $data['CustomerID'] = $CustomerID;
 							$result	= D('User')->add($data);
 							if($result){
-								$_SESSION['user']['id'] = max(D('User')->select());
 								$this->redirect('Home/Register/regsuccess');
 							}
 						}
@@ -166,7 +165,6 @@ class RegisterController extends HomeBaseController{
 			                $data['CustomerID'] = $CustomerID;
 							$result	= D('User')->add($data);
 							if($result){
-								$_SESSION['user']['id'] = max(D('User')->select());
 								$this->redirect('Home/Register/regsuccess');
 							}
 						}
@@ -212,7 +210,6 @@ class RegisterController extends HomeBaseController{
 			                $data['CustomerID'] = $CustomerID;
 							$result	= D('User')->add($data);
 							if($result){
-								$_SESSION['user']['id'] = max(D('User')->select());
 								$this->redirect('Home/Register/regsuccess');
 							}
 						}
@@ -233,14 +230,13 @@ class RegisterController extends HomeBaseController{
 
 	// 注册成功显示页面
 	public function regsuccess(){
-		$_SESSION['user']['id'] = $_SESSION['user']['id']['iuid'];
-		$data = D('User')->where(array('iuid'=>$_SESSION['user']['id']))->find();
-
-		$_SESSION['user'] = array(
-								'id' => $_SESSION['user']['id']['iuid'],
-								'username' => $data['customerid']
-								);
-        $this->assign($_SESSION['user']);
+		$data = max(D('User')->select());
+		$data = D('User')->where(array('iuid'=>$data['iuid']))->find();
+		
+		$assign = array(
+						'data' => $data,
+						);
+        $this->assign($assign);
 		$this->display();
 	}
 
