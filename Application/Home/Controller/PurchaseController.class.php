@@ -155,7 +155,14 @@ class PurchaseController extends HomeBaseController{
 	* 删除订单
 	**/
 	public function delete_order(){
-		
+		//订单号
+		$order_num  = I('get.ir_receiptnum');
+	    $result = M('receipt')->where(array('ir_receiptnum'=>$order_num))->delete();
+	    if($result){
+	    	redirect($_SERVER['HTTP_REFERER']);
+	    }else{
+	    	$this->error('删除失败');
+	    }
 	}
 
 	/**
