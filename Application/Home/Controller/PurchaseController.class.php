@@ -165,12 +165,6 @@ class PurchaseController extends HomeBaseController{
 	    }
 	}
 
-	/**
-	* 订单详情
-	**/
-	public function orderDetail(){
-
-	}
 
 	/**
 	* 个人资料
@@ -195,14 +189,6 @@ class PurchaseController extends HomeBaseController{
 		$this->assign('userinfo',$data);
 		$this->display();
 	}
-
-	/**
-	* 银行资料
-	**/
-	public function bankInfo(){
-		$this->display();
-	}
-
 
 	/**
 	* 购买详情
