@@ -76,7 +76,11 @@
 					<span>性别:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo['sex']?男:女}</span>
+					<if condition="userinfo['sex'] eq 1">
+						<span>男</span>
+					<else />
+						<span>女</span>
+					</if>
 				</div>	
 			</div>
 			<div class="row">
