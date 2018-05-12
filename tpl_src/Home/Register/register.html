@@ -17,11 +17,13 @@
 			flex: 1
 		}
 		.container2 {
-			background-color: #e7e7e7;
 			position: relative;	
 		}
 		.container2 div {
 			text-align: center;
+			background-color: #e7e7e7;
+			padding-top:20px;
+			padding-bottom: 10px;
 		}
 		.container2 input {
 			opacity: 0;
@@ -106,30 +108,13 @@
 					
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>性别:</label>
-						<if condition="$data['Sex'] eq true">
-							<if condition="$data['Sex'] eq 1">
-								<div class="col-lg-5 col-md-5 col-xs-4">
-									<input type="radio" name="Sex" id="man" value="1" checked="checked">男
-								</div>
-								<div class="col-lg-5 col-md-5 col-xs-4">
-									<input type="radio" name="Sex" id="woman" value="0">女
-								</div>
-							<else />
-								<div class="col-lg-5 col-md-5 col-xs-4">
-									<input type="radio" name="Sex" id="man" value="1">男
-								</div>
-								<div class="col-lg-5 col-md-5 col-xs-4">
-									<input type="radio" name="Sex" id="woman" value="0" checked="checked">女
-								</div>
-							</if>
-						<else />
+						
 							<div class="col-lg-5 col-md-5 col-xs-4">
 								<input type="radio" name="Sex" id="man" value="1">男
 							</div>
 							<div class="col-lg-5 col-md-5 col-xs-4">
 								<input type="radio" name="Sex" id="woman" value="0">女
-							</div>
-						</if>
+							</div>						
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['Sex']}</div>
 					</div>					
 					<div class="form-group">
