@@ -30,12 +30,12 @@
 				<volist name='data' id='v'>
 					<ul class="row panel panel-default">
 						<li class="col-xs-12 col-sm-12  col-md-1"><img src="__PUBLIC_IMAGE__/1.jpg"></li>
-						<li class="col-xs-6 col-sm-6  col-md-3">时间:{:date('Y-m-d H:i:s',$v['ir_date'])}</li>
-						<li class="col-xs-6 col-sm-6  col-md-2">商品名:{$v.product_name}</li>
-						<li class="col-xs-6 col-sm-6  col-md-2">单价:￥{$v.ip_price_rmb}</li>
-						<li class="col-xs-6 col-sm-6  col-md-2">数量:{$v.product_num}</li>
-						<li class="col-xs-6 col-sm-6  col-md-2">总价:￥{$v.ir_price}</li>
-						<li class="col-xs-6 col-sm-6  col-md-3">
+						<li class="col-xs-12 col-sm-12  col-md-3">时间:{:date('Y-m-d H:i:s',$v['ir_date'])}</li>
+						<li class="col-xs-12 col-sm-12  col-md-2">商品名:{$v.product_name}</li>
+						<li class="col-xs-12 col-sm-12  col-md-2">单价:￥{$v.ip_price_rmb}</li>
+						<li class="col-xs-12 col-sm-12  col-md-2">数量:{$v.product_num}</li>
+						<li class="col-xs-12 col-sm-12  col-md-2">总价:￥{$v.ir_price}</li>
+						<li class="col-xs-12 col-sm-12  col-md-3">
 							<if condition="$v['ir_status'] eq 0">交易状态:待付款
 								<a href="{:U('Home/Purchase/cjPayment',array('ir_receiptnum'=>$v['ir_receiptnum']))}" target="_blank">
 									去支付
@@ -48,15 +48,16 @@
 	                        <else />已评价
 	                        </if>
 						</li>
-						<li class="col-xs-6 col-sm-6  col-md-3">
+						<li class="col-xs-12 col-sm-12  col-md-3">
 							<if 	condition="$v['ir_ordertype'] eq 1" >订单类型:首购单
 	                        <elseif condition="$v['ir_ordertype'] eq 2"/>订单类型:升级单
 	                        <elseif condition="$v['ir_ordertype'] eq 3"/>订单类型:月费单
 	                        <else />
 	                        </if>
 						</li>
-						<li class="col-xs-6 col-sm-6  col-md-3">订单号:{$v.ir_receiptnum}</li>
-						<li class="col-xs-6 col-sm-6  col-md-2"><div class="del" href="" >删除</div></li>
+						<li class="col-xs-12 col-sm-12  col-md-3">订单号:{$v.ir_receiptnum}</li>
+						<li class="col-xs-12 col-sm-12  col-md-2"><div class="del" href="" >去支付</div></li>
+						<li class="col-xs-12 col-sm-12  col-md-2"><div class="del" href="" >删除</div></li>
 					</ul>
 			    </volist>
 			</div>
