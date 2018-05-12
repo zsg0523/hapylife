@@ -56,13 +56,13 @@ class IndexController extends HomeBaseController{
                         'username' =>$data['customerid'],
                         );
 
-                    $this->success('登录成功',U('Home/Purchase/main'));
+                    $this->redirect('Home/Purchase/main');
                 }
             }
         }else{
             $data=check_login();
             if($data){
-                $this->success('登录成功',U('Home/Purchase/main'));
+                $this->redirect('Home/Purchase/main');
             }else{
                 $this->display('Login/login');
             }
