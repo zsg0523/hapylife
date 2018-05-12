@@ -1,38 +1,142 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>个人资料</title>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<meta http-equiv="X-UA-Compatible" content="IE=9" />
+		<title>HapyLife-personal</title>
+	</head>
+	<link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css" />
+	<!--<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />-->
 	<style>
-		header{width: 100%;height: auto;border:1px solid red;}
-		.icon{width: 100px;height: 100px;border-radius: 50px;background-color: #1B6D85;}
-		
+		body{background: #f5f5f5;}
+		.container-fluid{background: white;}
+		.row{border-bottom: 1px solid #DDDDDD;height: 40px;}
+		.row span{line-height: 40px;}
 	</style>
-</head>
-<body>
-	<div class="wrap">
-		<header>
-			<div class="icon">
-				<img src="images/1.jpg"/>
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>用户ID:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>
 			</div>
-		</header>
-		<div class="content">
-			
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>推荐人ID:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>会员等级:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span>{$userinfo.customertype}</span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>中文姓:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span>{$userinfo.lastname}</span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>中文名:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span>{$userinfo.firstname}</span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>英文姓:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>英文名:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>性别:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span>{$userinfo.sex}</span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>电子邮箱:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>电话号码:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>收货地址:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>手机号码:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span>{$userinfo.phone}</span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>我的邮箱:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span>{$userinfo.email}</span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>所在地区:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span>{$userinfo.country}</span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>详细地址:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span>{$userinfo.shopaddress1}</span>
+				</div>	
+			</div>
 		</div>
-	</div>
-	
-	<table border="1" >
-		<th>信息</th>
-		<th>信息</th>
-		<tr><td>头像</td><td>{$userinfo.photo}</td></tr>
-		<tr><td>会员ID</td><td>{$userinfo.customerid}</td></tr>
-		<tr><td>会员等级</td><td>{$userinfo.customertype}</td></tr>
-		<tr><td>名字</td><td>{$userinfo.lastname}</td></tr>
-		<tr><td>姓氏</td><td>{$userinfo.firstname}</td></tr>
-		<tr><td>性别</td><td>{$userinfo.sex}</td></tr>
-		<tr><td>电话</td><td>{$userinfo.phone}</td></tr>
-		<tr><td>邮箱</td><td>{$userinfo.email}</td></tr>
-		<tr><td>所在地区</td><td>{$userinfo.country}</td></tr>
-		<tr><td>详细地址</td><td>{$userinfo.shopaddress1}</td></tr>
-	</table>
-</body>
+	</body>
+
 </html>
