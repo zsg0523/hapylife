@@ -150,6 +150,14 @@ class PurchaseController extends HomeBaseController{
 		$this->display();
 	}
 
+
+	/**
+	* 删除订单
+	**/
+	public function delete_order(){
+		
+	}
+
 	/**
 	* 订单详情
 	**/
