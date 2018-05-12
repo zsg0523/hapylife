@@ -55,16 +55,17 @@ class IndexController extends HomeBaseController{
                         'id'       =>$data['iuid'],
                         'username' =>$data['customerid'],
                         );
+
                     $this->success('登录成功',U('Home/Purchase/main'));
                 }
             }
         }else{
-            $data=check_login() ? $_SESSION['user']['username'].'已登录' : '未登录';
-            $assign=array(
-                'data'=>$data
-                );
-            $this->assign($assign);
-            $this->display('Login/login');
+            $data=check_login();
+            if($data){
+                $this->success('登录成功',U('Home/Purchase/main'));
+            }else{
+                $this->display('Login/login');
+            }
         }
     }
 
