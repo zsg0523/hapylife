@@ -4,20 +4,53 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
 		<meta http-equiv="X-UA-Compatible" content="IE=9" />
-		<title>HapyLife-register</title>		
+		<title>新用户注册</title>		
 	</head>
-	<!--<link rel="stylesheet" href="css/bootstrap.min.css" />
-	<link rel="stylesheet" href="css/index.css" />-->
-	
-	<link rel="stylesheet" href="__PUBLIC_CSS__/bootstrap.min.css" />
-	<link rel="stylesheet" href="__PUBLIC_CSS__/index.css" />
+	<link rel="stylesheet" href="css/bootstrap.min.css" />
+	<!--<link rel="stylesheet" href="__PUBLIC_CSS__/bootstrap.min.css" />-->
+	<style>
+		/*上传身份证css*/
+		.content {
+			display: flex;
+		}
+		.img-area {
+			flex: 1
+		}
+		.container2 {
+			background-color: #e7e7e7;
+			position: relative;	
+		}
+		.container2 div {
+			text-align: center;
+		}
+		.container2 input {
+			opacity: 0;
+			filter: alpha(opacity=0);
+			height: 100%;
+			width: 100%;
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 9;
+		}
+		
+		.container2 p {
+			font-size: 0.9rem;
+			color: #999
+		}
+		
+		/*注册*/
+		.rg-name{
+			margin-top: 10px;
+			color: #2491ee;
+			font-size:3vw;
+			text-align: center;
+		}
+	</style>
 	<body>
 		<div class="container">
 			<div class="rg-name">
-				<span>HAPYLIFE</span>
-			</div>
-			<div class="rg-name">
-				<span>新用户注册</span>
+				<span>HAPYLIFE 新用户注册</span>
 			</div>
 			<hr />
 			<div class="rg-div">				
@@ -269,12 +302,6 @@
 			</div>
 		</div>
 	</body>
-	<!--<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript" src="js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="js/index.js"></script>-->
-	
-	<script type="text/javascript" src="__PUBLIC_JS__/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript" src="__PUBLIC_JS__/bootstrap.min.js"></script>
-	<script type="text/javascript" src="__PUBLIC_JS__/index.js"></script>
-	
+	<script type="text/javascript" src="js/index.js"></script>
+	<!--<script type="text/javascript" src="__PUBLIC_JS__/index.js"></script>-->
 </html>

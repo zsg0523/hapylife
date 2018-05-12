@@ -4,14 +4,29 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
 		<meta http-equiv="X-UA-Compatible" content="IE=9" />
-		<title>HapyLife-login</title>
+		<title>用户登录</title>
 	</head>
 
-	<!--<link rel="stylesheet" href="css/bootstrap.min.css" />
-	<link rel="stylesheet" href="css/login.css" />-->
-    
+	<!--<link rel="stylesheet" href="css/bootstrap.min.css" />-->   
     <link rel="stylesheet" href="__PUBLIC_CSS__/bootstrap.min.css" />
-	<link rel="stylesheet" href="__PUBLIC_CSS__/login.css" />
+    <style>
+    	body{font-family: "微软雅黑";}
+		.container-fluid{background-color: #439dfe;height: 30vh;}
+		.lg-fontmid{text-align: center;margin-top: 8vh;}
+		.lg-bold{font-weight: bold;}
+		.lg-title{font-size: 5.5vw;color: white;}
+		.lg-form{margin-top: 20vh;}
+		.lg-zt{width:100%;border-bottom: 1px solid #439dfe;text-align: center;}        
+		.lg-font{font-size: 1em;color:#439dfe ;line-height: 50px;}           
+		.btn-blue{background:#439dfe;color: white;}            
+		.btn-blue:hover{color: white;}
+		.lg-input{width: 100%;border-bottom: 1px solid #DDDDDD;height: 50px;padding-top: 20px;}
+		.lg-input input{width:100%;border: none;}
+		.lg-input input:focus{outline: none;}
+		.lg-reg{text-align: right;line-height: 50px;}
+		.lg-reg a{color: #439dfe;}
+		.lg-reg a:hover{text-decoration: none;}
+    </style>
 	<body>
 		<div class="container-fluid">
 			<div class="container">
@@ -29,10 +44,10 @@
 					<div>
 						<form method="post" action="{:U('Home/index/index')}" >
 							<div class="lg-input">
-							    <input type="text" placeholder="请输入账号" name="CustomerID" />
+							    <input type="text" placeholder="请输入账号" name="CustomerID"/>
 							</div>
 							<div class="lg-input">
-							    <input type="text" placeholder="请输入密码" name="PassWord" />
+							    <input type="password" placeholder="请输入密码" name="PassWord" />
 							</div>
 							<div class="lg-reg" >
 								<a href="{:U('Home/index/register')}">立即注册</a>
@@ -47,11 +62,4 @@
 			</div>
 		</div>
 	</body>
-
-	<!--<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript" src="js/bootstrap.min.js"></script>-->
-	
-	<script type="text/javascript" src="__PUBLIC_JS__/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript" src="__PUBLIC_JS__/bootstrap.min.js"></script>
-
 </html>

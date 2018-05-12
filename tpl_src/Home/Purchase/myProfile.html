@@ -4,15 +4,14 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
 		<meta http-equiv="X-UA-Compatible" content="IE=9" />
-		<title>HapyLife-personal</title>
+		<title>个人资料</title>
 	</head>
-	<link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css" />
-	<!--<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />-->
+	<!--<link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css" />-->
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
 	<style>
-		body{background: #f5f5f5;}
-		.container-fluid{background: white;}
-		.row{border-bottom: 1px solid #DDDDDD;height: 40px;}
-		.row span{line-height: 40px;}
+		body{background: white;margin: 0;padding: 0;font-size: 1em;font-family: "微软雅黑";}
+		.row{height: 30px;}
+		.row span{line-height: 30px;}
 	</style>
 	<body>
 		<div class="container-fluid">
@@ -82,31 +81,7 @@
 			</div>
 			<div class="row">
 				<div class="col-md-2 col-xs-4">
-					<span>电子邮箱:</span>
-				</div>
-				<div class="col-md-10 col-xs-8">
-					<span></span>
-				</div>	
-			</div>
-			<div class="row">
-				<div class="col-md-2 col-xs-4">
 					<span>电话号码:</span>
-				</div>
-				<div class="col-md-10 col-xs-8">
-					<span></span>
-				</div>	
-			</div>
-			<div class="row">
-				<div class="col-md-2 col-xs-4">
-					<span>收货地址:</span>
-				</div>
-				<div class="col-md-10 col-xs-8">
-					<span></span>
-				</div>	
-			</div>
-			<div class="row">
-				<div class="col-md-2 col-xs-4">
-					<span>手机号码:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
 					<span>{$userinfo.phone}</span>
@@ -122,10 +97,60 @@
 			</div>
 			<div class="row">
 				<div class="col-md-2 col-xs-4">
-					<span>所在地区:</span>
+					<span>销售类型:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.country}</span>
+					<span></span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>语言类型:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	
+			</div>
+			<hr />
+			<!--收货地址-->
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>收货地址</span>
+				</div>
+				<!--<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	-->
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>国家:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>省:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>市:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>区:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
 				</div>	
 			</div>
 			<div class="row">
@@ -136,6 +161,66 @@
 					<span>{$userinfo.shopaddress1}</span>
 				</div>	
 			</div>
+			<hr />
+			<!--银行信息-->			
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>银行信息</span>
+				</div>
+				<!--<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	-->
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>银行名称:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>银行账号:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>省:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>市:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>区:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>支行名称:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span></span>
+				</div>	
+			</div>
+			
+			
 		</div>
 	</body>
 
