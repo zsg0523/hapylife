@@ -24,7 +24,7 @@ class User1Model extends BaseModel{
         array('ShopAddress1','require','请填写详细地址'), 
         array('BankName','require','银行名称不能为空'), 
         array('BankAccount','require','银行账号不能为空'), 
-        array('BankNum','/^([1-9]{1})(\d{14}|\d{18})$/','请填写有效的银行账号'), 
+        // array('BankNum','/^([1-9]{1})(\d{14}|\d{18})$/','请填写有效的银行账号'), 
         array('BankProvince','require','请填写银行所在省'), 
         array('BankCity','require','请填写银行所在市'), 
         array('BankArea','require','请填写银行所在区'), 
