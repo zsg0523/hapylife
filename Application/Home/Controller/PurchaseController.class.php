@@ -150,6 +150,14 @@ class PurchaseController extends HomeBaseController{
 		$this->display();
 	}
 
+
+	/**
+	* 删除订单
+	**/
+	public function delete_order(){
+		
+	}
+
 	/**
 	* 订单详情
 	**/
@@ -161,7 +169,7 @@ class PurchaseController extends HomeBaseController{
 	* 个人资料
 	**/
 	public function myProfile(){
-		$iuid = I('post.iuid')?I('post.iuid'):978185;
+		$iuid = $_SESSION['user']['id'];
 		$data = D('User')->where(array('iuid'=>$iuid))->find();
 		$right= D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Right'))->select();
 		$left = D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Left'))->select();

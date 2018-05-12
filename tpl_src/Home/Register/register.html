@@ -4,20 +4,53 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
 		<meta http-equiv="X-UA-Compatible" content="IE=9" />
-		<title>HapyLife-register</title>		
+		<title>新用户注册</title>		
 	</head>
-	<!--<link rel="stylesheet" href="css/bootstrap.min.css" />
-	<link rel="stylesheet" href="css/index.css" />-->
-	
+	<!--<link rel="stylesheet" href="css/bootstrap.min.css" />-->
 	<link rel="stylesheet" href="__PUBLIC_CSS__/bootstrap.min.css" />
-	<link rel="stylesheet" href="__PUBLIC_CSS__/index.css" />
+	<style>
+		/*上传身份证css*/
+		.content {
+			display: flex;
+		}
+		.img-area {
+			flex: 1
+		}
+		.container2 {
+			background-color: #e7e7e7;
+			position: relative;	
+		}
+		.container2 div {
+			text-align: center;
+		}
+		.container2 input {
+			opacity: 0;
+			filter: alpha(opacity=0);
+			height: 100%;
+			width: 100%;
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 9;
+		}
+		
+		.container2 p {
+			font-size: 0.9rem;
+			color: #999
+		}
+		
+		/*注册*/
+		.rg-name{
+			margin-top: 10px;
+			color: #2491ee;
+			font-size:3vw;
+			text-align: center;
+		}
+	</style>
 	<body>
 		<div class="container">
 			<div class="rg-name">
-				<span>HAPYLIFE</span>
-			</div>
-			<div class="rg-name">
-				<span>新用户注册</span>
+				<span>HAPYLIFE 新用户注册</span>
 			</div>
 			<hr />
 			<div class="rg-div">				
@@ -26,29 +59,29 @@
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>中文姓:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
 							<input type="text" class="form-control" id="" name="LastName" placeholder="" value="{$data['LastName']}">
-							{$error['LastName']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['LastName']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>中文名:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
 							<input type="text" class="form-control" id="" name="FirstName" placeholder="" value="{$data['FirstName']}">
-							{$error['FirstName']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['FirstName']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>英文姓:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
 							<input type="text" class="form-control" id="" name="EnLastName" placeholder="" value="{$data['EnLastName']}">
-							{$error['EnLastName']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['EnLastName']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>英文名:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
 							<input type="text" class="form-control" id="" name="EnFirstName" placeholder="" value="{$data['EnFirstName']}">
-							{$error['EnFirstName']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['EnFirstName']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>密码:</label>
@@ -66,8 +99,8 @@
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>推荐人ID:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
 							<input type="text" class="form-control" id="" name="EnrollerID" placeholder="HPL开头或六位数的号码" value="{$data['EnrollerID']}">
-							{$error['EnrollerID']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['EnrollerID']}</div>
 					</div>
 					
 					<div class="form-group">
@@ -78,21 +111,21 @@
 						<div class="col-lg-5 col-md-5 col-xs-4">
 							<input type="radio" name="Sex"  id="woman" value="0">女
 						</div>
-						{$error['Sex']}
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['Sex']}</div>
 					</div>					
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>电子邮箱:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
 							<input type="text" class="form-control" id="" name="Email" placeholder="" value="{$data['Email']}">
-							{$error['Email']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['Email']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>电话号码:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="Phone" placeholder="请填写中国国内电话号码" value="{$data['Phone']}">
-							{$error['Phone']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['Phone']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>销售类型:</label>
@@ -102,7 +135,7 @@
 						<div class="col-lg-5 col-md-5 col-xs-4">
 							<input type="radio" name="DistributorType" id="company" value="0">公司
 						</div>
-						{$error['DistributorType']}
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['DistributorType']}</div>
 					</div>	
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>语言选择:</label>
@@ -124,37 +157,37 @@
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>国家:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="ShopCountry" placeholder="" value="中国" readonly="readonly" value="{$data['ShopCountry']}">
-							{$error['ShopCountry']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['ShopCountry']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>省:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="ShopProvince" placeholder="" value="{$data['ShopProvince']}">
-							{$error['ShopProvince']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['ShopProvince']}</div>
 					</div>
 					
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>市:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="ShopCity" placeholder="" value="{$data['ShopCity']}">
-							{$error['ShopCity']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['ShopCity']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>区:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="ShopArea" placeholder="" value="{$data['ShopArea']}">
-							{$error['ShopArea']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['ShopArea']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>详细地址:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="ShopAddress1" placeholder="街道-巷-小区-栋-层-室" value="{$data['ShopAddress1']}">
-							{$error['ShopAddress1']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['ShopAddress1']}</div>
 					</div>
 					<hr />
 					<div class="form-group">
@@ -168,52 +201,52 @@
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>银行名称:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="BankName" placeholder="" value="{$data['BankName']}">
-							{$error['BankName']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['BankName']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>银行账号:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="BankAccount" placeholder="" value="{$data['BankAccount']}">
-							{$error['BankAccount']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['BankAccount']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>省:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="BankProvince" placeholder="" value="{$data['BankProvince']}">
-							{$error['BankProvince']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['BankProvince']}</div>
 					</div>
 					
 					<div class="form-group">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>市:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="BankCity" placeholder="" value="{$data['BankCity']}">
-							{$error['BankCity']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['BankCity']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>区:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="BankArea" placeholder="" value="{$data['BankArea']}">
-							{$error['BankArea']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['BankArea']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>支行名称:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="SubName" placeholder="" value="{$data['SubName']}">
-							{$error['SubName']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['SubName']}</div>
 					</div>
 					<hr />
 					<div class="form-group">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>身份证号码:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="Idcard" placeholder="" value="{$data['Idcard']}">
-							{$error['Idcard']}
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['Idcard']}</div>
 					</div>
 					
 					<div class="form-group">
@@ -252,29 +285,26 @@
 							</div>
 						</div>
 					</div>
-					{$error['img']}				
-					<div class="form-group">
+					<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['img']}</div>
+					<!--<div class="form-group">
 						<div class="col-md-offset-2 col-md-1 col-xs-offset-4 col-xs-4">
 							<input type="radio"  id="" name="clause" value="1">
 						</div>
 						<label for="" class="col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>是否同意条款</label>
-						{$error['clause']}
-					</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['clause']}</div>
+					</div>-->
 					<div class="form-group">
-						<div class="col-md-offset-2 col-md-10  col-xs-12">
+						<div class="col-md-offset-2 col-md-5 col-xs-offset-4 col-xs-4">
 							<button type="submit" class="btn  btn-block  btn-info">注册</button>
+						</div>
+						<div class="col-md-5 col-xs-4">
+							<a href="{:U('Home/Index/index')}" class="btn  btn-block  btn-info">去登陆</a>
 						</div>
 					</div>
 				</form>
 			</div>
 		</div>
 	</body>
-	<!--<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript" src="js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="js/index.js"></script>-->
-	
-	<script type="text/javascript" src="__PUBLIC_JS__/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript" src="__PUBLIC_JS__/bootstrap.min.js"></script>
+	<!--<script type="text/javascript" src="js/index.js"></script>-->
 	<script type="text/javascript" src="__PUBLIC_JS__/index.js"></script>
-	
 </html>
