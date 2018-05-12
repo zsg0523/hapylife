@@ -176,7 +176,7 @@ class PurchaseController extends HomeBaseController{
 		}else{
 			$data['left'] = 0;
 		}
-		p($data);die;
+		// p($data);die;
 		$this->assign('userinfo',$data);
 		$this->display();
 	}
