@@ -98,7 +98,8 @@ class IndexController extends HomeBaseController{
                         'id'       =>$data['iuid'],
                         'username' =>$data['customerid'],
                         );
-                    $this->success('登录成功',U('Home/Purchase/main'));
+                    redirect('Home/Purchase/main');
+
                 }
             }
         }else{
@@ -112,7 +113,7 @@ class IndexController extends HomeBaseController{
     **/
     public function log_out(){
         session('user',null);
-        $this->success('退出成功,前往登录页面',U('Home/Index/index'));
+        $this->redirect('Home/Index/index');
     }
 
 
