@@ -12,15 +12,15 @@
 		body,html{margin: 0;padding: 0;}
 		a{text-decoration: none;color: #fff;}
 		a:hover{cursor: pointer;text-decoration: none;color: #fff;}
-		.main{width: 100%;height: auto;margin: auto;}
+		.main{width:100%;height: auto;margin: auto;}
+		.order_list{width: 100%;height: auto;}
 		.order_list>ul{margin: 0px;padding: 0px;margin-top: 5px;}
 		.order_list>ul>li{height: 40px;font-size: 13px;text-align: center;border-bottom: 1px #ddd solid;border-right: 1px #ddd solid;line-height: 40px;}
 		.order_list>ul>li:first-child{height: 80px;}
-		.order_list>ul>li>a{width:50px;height:30px;line-height:30px;font-size: 13px;border-radius: 5px;margin-top:10px;display: block;float: right;
+		.order_list>ul>li>a{width:50px;height:30px;line-height:30px;font-size: 13px;border-radius: 5px;margin-top:5px;display: block;float: right;
 		background: #ff6600;color:#fff;}
 		.order_list>ul>li img{width: 80px;height: 80px;}
 		.del{width: 100%;height: 40px;line-height: 40px;border-radius: 5px;display: block;background: #fff;color:#FF0000;}
-		
 		
 	</style>
 </head>
@@ -36,7 +36,7 @@
 						<li class="col-xs-6 col-sm-6  col-md-2">数量:{$v.product_num}</li>
 						<li class="col-xs-6 col-sm-6  col-md-2">总价:￥{$v.ir_price}</li>
 						<li class="col-xs-6 col-sm-6  col-md-3">
-							<if 	condition="$v['ir_status'] eq 0">交易状态:待付款
+							<if condition="$v['ir_status'] eq 0">交易状态:待付款
 								<a href="{:U('Home/Purchase/cjPayment',array('ir_receiptnum'=>$v['ir_receiptnum']))}">
 									去支付
 								</a>
@@ -62,9 +62,9 @@
 			</div>
 		</div>
 
-
-		<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
 		<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
+		
 		<script type="text/javascript">
 			
 		</script>
