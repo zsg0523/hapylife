@@ -23,6 +23,8 @@ class RegisterController extends HomeBaseController{
 						$data['BackIdcard']=C('WEB_URL').$upload['name'][1];
 						if($User->create($data)){
 							$data['PassWord'] = md5($data['PassWord']);
+							$data['JoinedOn'] = time();
+							$data['CustomerID'] = strtoupper($data['CustomerID']);
 							$keyword= 'HPL';
 	                		$custid = D('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
 							if(empty($custid)){
