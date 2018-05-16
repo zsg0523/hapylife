@@ -73,7 +73,6 @@
 							<th>Browser</th>
 							<th>Browser Version</th>
 							<th>Payment type</th>
-							<th>Account Type</th>
 						</tr>
 					<else />
 						<tr>
@@ -107,15 +106,11 @@
 								<td>{:date('Y-m-d',$v['joinedon'])}</td>
 								<td>{$v.customerid}</td>
 								<td>{$v.paymentreceived}</td>
-								<td>{$v.ir_paytime}</td>
+								<td>{$v.paymentdateTime}</td>
 								<td>{$v.isNew}</td>
 								<td>{$v.enrollerid}</td>
 								<td>{$v.product}</td>
-								<if condition="$v['sex'] eq 1">
-									<td>男</td>
-									<else />
-									<td>女</td>
-								</if>
+								<td>{$v.sex}</td>
 								<td>{$v.lastname}</td>
 								<td>{$v.firstname}</td>
 								<td>{$v.enlastname}</td>
@@ -136,7 +131,6 @@
 								<td>{$v.browser}</td>
 								<td>{$v.browserversion}</td>
 								<td>{$v.paymenttype}</td>
-								<td>{$v.accounttype}</td>
 							</tr>
 						</foreach>
 					<else />
