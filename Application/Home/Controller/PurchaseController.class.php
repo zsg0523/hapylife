@@ -136,6 +136,7 @@ class PurchaseController extends HomeBaseController{
 	**/
 	public function myOrder(){
 		$iuid = $_SESSION['user']['id'];
+        $data['status'] = $_SESSION['user']['status'];
 		$map  = array(
 				'iuid'=>$iuid
 			);
