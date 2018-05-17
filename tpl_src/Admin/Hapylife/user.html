@@ -47,9 +47,7 @@
 						<tr>
 							<th>UREGTIME</th>
 							<th>Happy Life ID</th>
-	                        <th>Payment Received</th>
 							<th>Payment Date Time (Dallas time)</th>
-	                        <th>User Type</th>
 	                        <th>Sponsor ID W &amp; H</th>
 	                        <th>Product</th>
 	                        <th>Gender</th>
@@ -61,18 +59,10 @@
 	                        <th>password</th>
 							<th>phone1</th>
 							<th>mailing address1</th>
-							<th>mailing address2</th>
 							<th>mailing city</th>
-							<th>mailing postal code</th>
 							<th>mailing province</th>
 							<th>mailing country</th>
 							<th>Identification Card (upload)</th>
-							<th>Terms and Conditions</th>
-							<th>Device Geolocation</th>
-							<th>Device Type</th>
-							<th>Browser</th>
-							<th>Browser Version</th>
-							<th>Payment type</th>
 							<th>Account Type</th>
 						</tr>
 					<else />
@@ -98,10 +88,11 @@
 							<tr>
 								<td>{:date('Y-m-d',$v['joinedon'])}</td>
 								<td>{$v.customerid}</td>
-								<td>{$v.paymentreceived}</td>
-								<td>{:date('Y-m-d',$v['ir_paytime'])}</td>
-								<!-- <td>{$v.ir_paytime}</td> -->
-								<td>{$v.isNew}</td>
+								<td>
+								<if condition="$v['ir_paytime'] eq 0">
+								<else/>{:date('Y-m-d H:i:s',$v['ir_paytime'])}
+								</if>
+								</td>
 								<td>{$v.enrollerid}</td>
 								<td>{$v.product_name}</td>
 								<if condition="$v['sex'] eq 1">
@@ -117,18 +108,10 @@
 								<td>{$v.password}</td>
 								<td>{$v.phone}</td>
 								<td>{$v.shopaddress1}</td>
-								<td>{$v.shopaddress2}</td>
 								<td>{$v.shopcity}</td>
-								<td>{$v.shopcode}</td>
 								<td>{$v.shopprovince}</td>
 								<td>{$v.shopcountry}</td>
 								<td>{$v.idcard}</td>
-								<td>{$v.termsandconditions}</td>
-								<td>{$v.devicegeolocation}</td>
-								<td>{$v.devicetype}</td>
-								<td>{$v.browser}</td>
-								<td>{$v.browserversion}</td>
-								<td>{$v.paymenttype}</td>
 								<td>{$v.accounttype}</td>
 							</tr>
 						</foreach>
