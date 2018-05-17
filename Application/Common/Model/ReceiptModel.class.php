@@ -135,8 +135,10 @@ class ReceiptModel extends BaseModel{
 
 
     public function export_excel($data){
-		$title   = array('用户ID','订单号','畅捷订单号','畅捷订单状态','订单状态','订单总积分','订单总价','收货人','联系电话','收货地址','创建日期','创建时间');
+		$title   = array('创建日期','创建时间','用户ID','订单号','畅捷订单号','畅捷订单状态','订单状态','订单总积分','订单总价','订货人','收货人','收货地址','收货人电话','产品数量');
 		foreach ($data as $k => $v) {
+			$content[$k]['ir_date']        = date('Y-m-d',$v['ir_date']);
+			$content[$k]['ir_time']        = date('H:i:s',$v['ir_date']);
 			$content[$k]['customerid']     = $v['customerid'];
 			$content[$k]['ir_receiptnum']  = $v['ir_receiptnum'];
 			$content[$k]['inner_trade_no'] = $v['inner_trade_no'];
@@ -154,11 +156,16 @@ class ReceiptModel extends BaseModel{
 			}
 			$content[$k]['ir_point']       = $v['ir_point'];
 			$content[$k]['ir_price']       = $v['ir_price'];
+			//订货人
 			$content[$k]['ia_name']        = $v['ia_name'];
-			$content[$k]['ia_phone']       = $v['ia_phone'];
+			//收货人
+			$content[$k]['ia_name']        = $v['ia_name'];
+			//收货详细地址
 			$content[$k]['ia_address']     = $v['ia_address'];
-			$content[$k]['ir_date']        = date('Y-m-d',$v['ir_date']);
-			$content[$k]['ir_time']        = date('H:i:s',$v['ir_date']);
+			//收货人电话
+			$content[$k]['ia_phone']       = $v['ia_phone'];
+			//产品数量
+			$content[$k]['ia_phone']       = $v['ia_phone'];
 		}
     	create_csv($content,$title);
 		return;
