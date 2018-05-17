@@ -555,15 +555,12 @@ class HapylifeController extends AdminBaseController{
 				'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%')
 			);
 		}
-		// $assign=D('User')->getAllData(D('User'),$map,$word,$order="iuid desc");
-		// $this->assign('count',$count);
-		// $this->assign($assign);
-		// $this->display();
+		
 		$excel     = I('get.excel');
 		$status    = I('get.status')-1;
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime')):time();
-		$assign    = D('User')->getPage(D('User'),$word,$order='joinedon desc',$status,$starttime,$endtime);
+		$assign    = D('User')->getPage(D('User'),$word,$order='CustomerID desc',$status,$starttime,$endtime);
 		
 		//导出excel
 		if($excel == 'excel'){
@@ -594,7 +591,7 @@ class HapylifeController extends AdminBaseController{
 		}
 		$result = D('User')->editData($map,$data);
 		if($result){
-			$this->redirect('Admin/Hapylife/user');
+			redirect($_SERVER['HTTP_REFERER']);
 		}else{
 			$this->error('修改失败');
 		}
@@ -610,7 +607,7 @@ class HapylifeController extends AdminBaseController{
 			);
 		$result=D('User')->editData($map,$data);
 		if($result){
-			$this->redirect('Admin/Hapylife/user');
+			redirect($_SERVER['HTTP_REFERER']);
 		}else{
 			$this->error('编辑失败');
 		}
@@ -626,7 +623,7 @@ class HapylifeController extends AdminBaseController{
 			);
 		$result=D('User')->deleteData($map);
 		if($result){
-			$this->redirect('Admin/Hapylife/user');
+			redirect($_SERVER['HTTP_REFERER']);
 		}else{
 			$this->error('删除失败');
 		}
@@ -654,7 +651,7 @@ class HapylifeController extends AdminBaseController{
 		$data=I('post.');
 		$result=D('Room')->addData($data);
 		if($result){
-			$this->redirect('Admin/Hapylife/room');
+			redirect($_SERVER['HTTP_REFERER']);
 		}else{
 			$this->error('添加失败');
 		}
@@ -670,7 +667,7 @@ class HapylifeController extends AdminBaseController{
 			);
 		$result=D('Room')->editData($map,$data);
 		if($result){
-			$this->redirect('Admin/Hapylife/room');
+			redirect($_SERVER['HTTP_REFERER']);
 		}else{
 			$this->error('编辑失败');
 		}
@@ -686,7 +683,7 @@ class HapylifeController extends AdminBaseController{
 			);
 		$result=D('Room')->deleteData($map);
 		if($result){
-			$this->redirect('Admin/Hapylife/room');
+			redirect($_SERVER['HTTP_REFERER']);
 		}else{
 			$this->error('删除失败');
 		}

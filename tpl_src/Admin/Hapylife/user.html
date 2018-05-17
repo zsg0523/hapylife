@@ -81,26 +81,18 @@
 					<else />
 						<tr>
 							<th>编号</th>
-	                        <!-- <th>头像</th> -->
 							<th>会员账号</th>
-							<th>会员状态</th>
 	                        <th>姓</th>
 	                        <th>名</th>
-	                        <!-- <th>积分</th> -->
-	                        <th>等级</th>
-	                        <!-- <th>最近登录</th> -->
-	                        <!-- <th>登记时间</th> -->
-	                        <!-- <th>最新订单时间</th> -->
-	                        <th>左右</th>>
-	                        <th>邀请人</th>
-	                        <th>保证人</th>
-	                        <th>地址</th>
-	                        <!-- <th>身份证正面</th>
-	                        <th>身份证反面</th>
 	                        <th>性别</th>
 	                        <th>电话</th>
-	                        <th>电邮</th>                              
-	                        <th>是否通过审核</th>-->					
+	                        <th>电邮</th>                              	                     
+	                        <th>邀请人</th>
+	                        <th>地址</th>
+	                        <th>身份证ID</th>
+	                        <th>身份证正面</th>
+	                        <th>身份证反面</th>
+	                        <th>登记时间</th>
 	                        <th>操作</th>
 						</tr>
 					</if>
@@ -146,31 +138,20 @@
 						<foreach name="data" item="v">
 							<tr>
 								<td>{$v.iuid}</td>
-								<!-- <td><?php if(!empty($v['photo'])){echo '<img width="20" height="20" src="'.$v['photo'].'">'.'<a>';}else{echo '';} ?></td> -->
 								<td>{$v.customerid}</td>
-								<td>{$v.customerstatus}</td>
 								<td>{$v.lastname}</td>
-								<td>{$v.firstname}</td>>
-								<td>{$v.highestachievedrank}</td>
-								<!-- <td>{$v.iu_logintime}</td> -->
-								<!-- <td>{$v.joinedon}</td> -->
-								<!-- <td>{$v.orderdate}</td> -->
-								<td>{$v.placement}</td>
-								<td>{$v.enrollerid}</td>
-								<td>{$v.sponsorid}</td>
-								<td>{$v.shopaddress1}{$v.shopaddress2}</td>
-								<!-- <td>{$v.children}</td> -->
-								<!-- <td><img width="20" height="20" src="{$v.justidcard}" alt=""></td>
-								<td><img width="20" height="20" src="{$v.backidcard}" alt=""></td>
+								<td>{$v.firstname}</td>
 								<td>{$v.sex}</td>
 								<td>{$v.phone}</td>
-								<td>{$v.email}</td> -->
-								<!-- <td>{$v.iu_point}</td> -->
-								<!-- <td>{$v.ischeck}</td> -->
+								<td>{$v.email}</td>
+								<td>{$v.enrollerid}</td>
+								<td>{$v.shopaddress1}</td>
+								<td>{$v.idcard}</td>
+								<td><?php if(!empty($v['justidcard'])){echo '<a href="'.$v['justidcard'].'" target="_blank"><img width="20" height="20" src="'.$v['justidcard'].'">'.'<a>';}else{echo '';} ?></td>
+								<td><?php if(!empty($v['backidcard'])){echo '<a href="'.$v['backidcard'].'" target="_blank"><img width="20" height="20" src="'.$v['backidcard'].'">'.'<a>';}else{echo '';} ?></td>
+								<td>{:date('Y-m-d H:i:s',$v['joinedon'])}</td>
 								<td>
-									<!-- <a href="javascript:;" usersId="{$v['iuid']}" usersDisplayname="{$v['hu_nickname']}" usersUsername="{$v['hu_username']}" usersPoint="{$v['iu_point']}" usersPhone="{$v['hu_phone']}" usersEmail="{$v[hu_email]}" usersGrade="{$v[iu_grade]}" onclick="edit(this)">修改</a> | -->
-									<a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Hapylife/delete_user',array('id'=>$v['iuid']))}'">删除</a> 
-									<!-- |<a href="{:U('Admin/Hapylife/lock_users',array('id'=>$v['iuid'],'is_lock'=>$v['is_lock']?0:1))}">{$v['is_lock']?已锁定:未锁定}</a> -->
+									<a href="javascript:if(confirm('确定删除{$v.customerid}？'))location='{:U('Admin/Hapylife/delete_user',array('id'=>$v['iuid']))}'">删除</a> 
 								</td>
 							</tr>
 						</foreach>
