@@ -546,7 +546,7 @@ class HapylifeController extends AdminBaseController{
 	public function user(){
 		//有密码账户搜索
 		$count = M('user')->where(array('PassWord'=>array('neq','')))->count();
-		//账户昵称搜索
+		// //账户昵称搜索
 		$word = trim(I('get.word'));
 		if(empty($word)){
 			$map = array();
@@ -555,11 +555,25 @@ class HapylifeController extends AdminBaseController{
 				'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%')
 			);
 		}
-		$assign=D('User')->getAllData(D('User'),$map,$word,$order="CustomerID desc");
-		// p($assign);die;
-		$this->assign('count',$count);
-		$this->assign($assign);
-		$this->display();
+		
+		$excel     = I('get.excel');
+		$status    = I('get.status')-1;
+		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime')):time();
+		$assign    = D('User')->getPage(D('User'),$word,$order='CustomerID desc',$status,$starttime,$endtime);
+		
+		//导出excel
+		if($excel == 'excel'){
+			$export_excel = D('User')->export_excel($assign['data']);
+		}else{
+			$this->assign($assign);
+			$this->assign('count',$count);
+			$this->assign('status',I('get.status'));
+			$this->assign('word',$word);
+			$this->assign('starttime',I('get.starttime'));
+			$this->assign('endtime',I('get.endtime'));
+			$this->display();
+		}
 	}
 
 	/**

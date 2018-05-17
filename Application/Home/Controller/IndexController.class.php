@@ -41,7 +41,7 @@ class IndexController extends HomeBaseController{
         if(IS_POST){
             $tmpe = I('post.');
             if(strlen($tmpe['CustomerID'])==8){
-            $this->error('账号格式错误');  
+                $this->error('账号格式错误');  
             }else{
                 $where= array(
                     'CustomerID'=>trim($tmpe['CustomerID']),
@@ -51,10 +51,18 @@ class IndexController extends HomeBaseController{
                 if (empty($data)) {
                     $this->error('账号或密码错误');
                 }else{
-                    $_SESSION['user']=array(
-                        'id'       =>$data['iuid'],
-                        'username' =>$data['customerid'],
-                        );
+                    if(substr($data['CustomerID'],0,2) == 'HK'){
+                        $_SESSION['user']=array(
+                                            'id'       =>$data['iuid'],
+                                            'username' =>$data['customerid'],
+                                            'status'   =>0,
+                                            );
+                    }else{
+                        $_SESSION['user']=array(
+                            'id'       =>$data['iuid'],
+                            'username' =>$data['customerid'],
+                            );
+                    }
 
                     $this->redirect('Home/Purchase/main');
                 }
@@ -75,36 +83,6 @@ class IndexController extends HomeBaseController{
     public function logout(){
         session('user',null);
         $this->success('退出成功、前往登录页面',U('Home/Index/admin'));
-    }
-
-    /**
-    * 注册
-    **/
-    public function register(){
-        if(IS_POST){
-            $tmpe = I('post.');
-            if(strlen($tmpe['CustomerID'])==8){
-            $this->error('账号格式错误');  
-            }else{
-                $where= array(
-                    'CustomerID'=>$tmpe['CustomerID'],
-                    'PassWord'  =>md5($tmpe['PassWord'])
-                );
-                $data = D('User')->where($where)->find();
-                if (empty($data)) {
-                    $this->error('账号或密码错误');
-                }else{
-                    $_SESSION['user']=array(
-                        'id'       =>$data['iuid'],
-                        'username' =>$data['customerid'],
-                        );
-                    redirect('Home/Purchase/main');
-
-                }
-            }
-        }else{
-            $this->display('Register/register');
-        }
     }
 
 
