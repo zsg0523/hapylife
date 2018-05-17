@@ -65,14 +65,14 @@ class PurchaseController extends HomeBaseController{
         $tmpe    = array(
             'ip_grade' =>$type,
             'is_pull'  =>1
-        ); 
+        );
         $product = D('Product')->where($tmpe)->order('is_sort desc')->select();
 
         foreach ($product as $key => $value) {
             $data[$key]         = $value; 
             $data[$key]['show'] = 1; 
         }
-        // p($data);die;
+        // p($tmpe);die;
         $this->assign('product',$data);
 		$this->display();
 	}
@@ -158,7 +158,7 @@ class PurchaseController extends HomeBaseController{
 		$iuid = $_SESSION['user']['id'];
         $data['status'] = $_SESSION['user']['status'];
 		$map  = array(
-				'iuid'=>$iuid
+				'riuid'=>$iuid
 			);
 		$data = M('Receipt')
 				->alias('r')
