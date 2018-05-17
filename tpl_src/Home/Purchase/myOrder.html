@@ -27,52 +27,55 @@
 	<body class="">
 		<div class="main container-fluid ">
 			<div class="order_list">
-				<volist name='data' id='v'>
-					<ul class="row panel panel-default">
-						<li class="col-xs-4 col-sm-4  col-md-1"><img src="{$v.ip_picture_zh}"></li>
-						<li class="col-xs-8 col-sm-8  col-md-3">&nbsp;商品名:<span>{$v.product_name}</span></li>
-						<li class="col-xs-8 col-sm-8  col-md-2">
-							&nbsp;
-							<if 	condition="$v['ir_ordertype'] eq 1" >订单类型:<span>首购单</span>
-	                        <elseif condition="$v['ir_ordertype'] eq 2"/>订单类型:<span>升级单</span>
-	                        <elseif condition="$v['ir_ordertype'] eq 3"/>订单类型:<span>月费单</span>
-	                        <else />
-	                        </if>
-						</li>
-						<li class="col-xs-12 col-sm-12  col-md-3">&nbsp;时间:<span>{:date('Y-m-d H:i:s',$v['ir_date'])}</span></li>
-						<li class="col-xs-12 col-sm-12  col-md-3">&nbsp;订单号:<span>{$v.ir_receiptnum}</span></li>
-						<li class="col-xs-12 col-sm-12  col-md-2">&nbsp;单价:<span>￥{$v.ip_price_rmb}</span></li>
-						<li class="col-xs-12 col-sm-12  col-md-2">&nbsp;数量:<span>{$v.product_num}</span></li>
-						<li class="col-xs-12 col-sm-12  col-md-2">&nbsp;总价:<span>￥{$v.ir_price}</span></li>
-						<li class="col-xs-12 col-sm-12  col-md-3">
-							&nbsp;
-						<if condition="$v['ir_status'] eq 0">交易状态:<span>待付款</span>
-								<!--<a href="{:U('Home/Purchase/cjPayment',array('ir_receiptnum'=>$v['ir_receiptnum']))}" id="pay" target="_blank">
-									去支付
-								</a>-->
-	                        <elseif condition="$v['ir_status'] eq 1"/>交易状态:<span>待审核</span>
-	                        <elseif condition="$v['ir_status'] eq 2"/>交易状态:<span>已支付</span>
-	                        <elseif condition="$v['ir_status'] eq 3"/>交易状态:<span>已发货</span>
-	                        <elseif condition="$v['ir_status'] eq 4"/>交易状态:<span>已到达</span>
-	                        <elseif condition="$v['ir_status'] eq 5"/>交易状态:<span>待评价</span>
-	                        <else /><span>已评价</span>
-	                        </if>
-						</li>
-						<if condition="$v['ir_status'] eq 0">
-							<li class="col-xs-6 col-sm-6 col-md-1">
-								<a href="{:U('Home/Purchase/cjPayment',array('ir_receiptnum'=>$v['ir_receiptnum']))}" id="pay" target="_blank">
-									去支付
-								</a>
+				<if condition="$Think.session.user.status eq 1">
+					<volist name='data' id='v'>
+						<ul class="row panel panel-default">
+							<li class="col-xs-4 col-sm-4  col-md-1"><img src="{$v.ip_picture_zh}"></li>
+							<li class="col-xs-8 col-sm-8  col-md-2">&nbsp;商品名:<span>{$v.product_name}</span></li>
+							<li class="col-xs-8 col-sm-8  col-md-3">
+								&nbsp;
+								<if 	condition="$v['ir_ordertype'] eq 1" >订单类型:<span>首购单</span>
+		                        <elseif condition="$v['ir_ordertype'] eq 2"/>订单类型:<span>升级单</span>
+		                        <elseif condition="$v['ir_ordertype'] eq 3"/>订单类型:<span>月费单</span>
+		                        <else />
+		                       </if>
 							</li>
-						</if>
-						<if condition="$v['ir_status'] eq 0">
-							<li class="col-xs-6 col-sm-6  col-md-1">
-								<a class="del" href="{:U('Home/Purchase/delete_order',array('ir_receiptnum'=>$v['ir_receiptnum']))}" >删除</a>
+							<li class="col-xs-12 col-sm-12  col-md-3">&nbsp;时间:<span>{:date('Y-m-d H:i:s',$v['ir_date'])}</span></li>
+							<li class="col-xs-12 col-sm-12  col-md-3">&nbsp;订单号:<span>{$v.ir_receiptnum}</span></li>
+							<li class="col-xs-12 col-sm-12  col-md-2">&nbsp;单价:<span>￥{$v.ip_price_rmb}</span></li>
+							<li class="col-xs-12 col-sm-12  col-md-2">&nbsp;数量:<span>{$v.product_num}</span></li>
+							<li class="col-xs-12 col-sm-12  col-md-2">&nbsp;总价:<span>￥{$v.ir_price}</span></li>
+							<li class="col-xs-12 col-sm-12  col-md-3">
+								&nbsp;
+							<if condition="$v['ir_status'] eq 0">交易状态:<span>待付款</span>
+									<!--<a href="{:U('Home/Purchase/cjPayment',array('ir_receiptnum'=>$v['ir_receiptnum']))}" id="pay" target="_blank">
+										去支付
+									</a>-->
+		                        <elseif condition="$v['ir_status'] eq 1"/>交易状态:<span>待审核</span>
+		                        <elseif condition="$v['ir_status'] eq 2"/>交易状态:<span>已支付</span>
+		                        <elseif condition="$v['ir_status'] eq 3"/>交易状态:<span>已发货</span>
+		                        <elseif condition="$v['ir_status'] eq 4"/>交易状态:<span>已到达</span>
+		                        <elseif condition="$v['ir_status'] eq 5"/>交易状态:<span>待评价</span>
+		                        <else /><span>已评价</span>
+		                        </if>
 							</li>
-						</if>
-						
-					</ul>
-			    </volist>
+							<if condition="$v['ir_status'] eq 0">
+								<li class="col-xs-6 col-sm-6 col-md-1">
+									<a href="{:U('Home/Purchase/cjPayment',array('ir_receiptnum'=>$v['ir_receiptnum']))}" id="pay" target="_blank">
+										去支付
+									</a>
+								</li>
+							</if>
+							<if condition="$v['ir_status'] eq 0">
+								<li class="col-xs-6 col-sm-6  col-md-1">
+									<a class="del" href="{:U('Home/Purchase/delete_order',array('ir_receiptnum'=>$v['ir_receiptnum']))}" >删除</a>
+								</li>
+							</if>
+							
+						</ul>
+				    </volist>
+				<else />
+				</if>
 			</div>
 		</div>
 

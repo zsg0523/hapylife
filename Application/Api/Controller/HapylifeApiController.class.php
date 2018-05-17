@@ -59,172 +59,177 @@ class HapylifeApiController extends HomeBaseController{
     * IsNew/1新 0旧
 	**/
 	public function newregister(){
-		$data  = I('post.');
-        if($data['IsNew']==1){
-            // $find  = D('User')->where(array('CustomerID'=>$data['EnrollerID']))->find();
-            // if(!$find){
-            //     $tmpe['status'] = 2;
-            //     $this->ajaxreturn($tmpe);           
-            // }else{
-                if(!empty($data['JustIdcard'])){
-                    $img_body1 = substr(strstr($data['JustIdcard'],','),1);
-                    $JustIdcard = time().'_'.mt_rand().'.jpg';
-                    $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
-                    $where['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
-                }
-                if(!empty($data['BackIdcard'])){
-                    $img_body2 = substr(strstr($data['BackIdcard'],','),1);
-                    $BackIdcard = time().'_'.mt_rand().'.jpg';
-                    $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
-                    $where['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
-                }
-                //查询原先最大CustomerID，新添+1
-                $keyword= 'HPL';
-                $custid = D('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
-                
-                if(empty($custid)){
-                    $CustomerID = 'HPL00000001';
-                }else{
-                    $num   = substr($custid,3);
-                    $nums  = $num+1;
-                    $count = strlen($nums);
-                    switch ($count) {
-                        case '1':
-                            $CustomerID = 'HPL0000000'.$nums;
-                            break;
-                        case '2':
-                            $CustomerID = 'HPL000000'.$nums;
-                            break;
-                        case '3':
-                            $CustomerID = 'HPL00000'.$nums;
-                            break;
-                        case '4':
-                            $CustomerID = 'HPL0000'.$nums;
-                            break;
-                        case '5':
-                            $CustomerID = 'HPL000'.$nums;
-                            break;
-                        case '6':
-                            $CustomerID = 'HPL00'.$nums;
-                            break;
-                        case '7':
-                            $CustomerID = 'HPL0'.$nums;
-                            break;
-                        default:
-                            $CustomerID = 'HPL'.$nums;
-                            break;
-                     } 
-                }
-                $where  = array(
-                    'CustomerID'         => $CustomerID,
-                    'IsNew'              => 1,
-                    'Placement'          => 'Right',
-                    'CustomerStatus'     => 'Active',
-                    'LastName'           => $data['LastName'],
-                    'FirstName'          => $data['FirstName'],
-                    'EnrollerID'         => $data['EnrollerID'],
-                    'JoinedOn'           => date("m/d/Y h:i:s A"),
-                    'HighestAchievedRank'=> 'Director',
-                    'Email'              => $data['Email'],
-                    'WeeklyVolume'       => 0,
-                    'PassWord'           => md5($data['PassWord']),
-                    'Phone'              => $data['Phone'],
-                    'Sex'                => $data['Sex'],
-                    'IsCheck'            => 0,
-                    'ShopAddress1'       => $data['ShopAddress1'],
-                    'ShopAddress2'       => $data['ShopAddress2'],
-                    'Idcard'             => $data['Idcard']
-                );
-                $add   = D('User')->add($where);
-                if($add){
-                    $tmpe  = D('User')->where(array('CustomerID'=>$CustomerID))->find();
-                    $tmpe['CustomerID'] = $CustomerID;
-                    $tmpe['pass']       = $data['PassWord'];
-                    $tmpe['status']     = 1;
-                    $this->ajaxreturn($tmpe);               
-                }else{
-                    $tmpe['status'] = 0;
-                    $this->ajaxreturn($tmpe);
-                }
-            // }
+        if(IS_POST){
+            $data['status'] = 0;
+            $data['message']= 'app暂不允许注册，请前往web端';
+            $this->ajaxreturn($data);
         }else{
-            // //正反面身份证
-            // if(!empty($data['JustIdcard'])){
-            //     $img_body1 = substr(strstr($data['JustIdcard'],','),1);
-            //     $JustIdcard = time().'_'.mt_rand().'.jpg';
-            //     $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
-            //     $tmpe['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
-            // }
-            // if(!empty($data['BackIdcard'])){
-            //     $img_body2 = substr(strstr($data['BackIdcard'],','),1);
-            //     $BackIdcard = time().'_'.mt_rand().'.jpg';
-            //     $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
-            //     $tmpe['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
-            // }
-            // $tmpe  = array(
-            //     'Email'              => $data['Email'],
-            //     'PassWord'           => md5($data['PassWord']),
-            //     'Phone'              => $data['Phone'],
-            //     'Sex'                => $data['Sex'],
-            //     'ShopAddress1'       => $data['ShopAddress1'],
-            //     'ShopAddress2'       => $data['ShopAddress2'],
-            //     'Idcard'             => $data['Idcard'],
-            //     'OrderDate'          => '3/16/2018 12:00:00 AM',
-            //     'Number'             => '1',
-            //     'DistributorType'    => 'Platinum'
-            // );
-            // $data['CustomerID']= $data['EnrollerID'];
-            // $data['pass']      = $data['PassWord'];
-            // $where= array(
-            //     'CustomerID'   =>$data['EnrollerID']
-            // );
-            // $find = D('User')->where($where)->find();
-            // if($find){
-            //     if($find['password']){
-            //         $data['status'] = 3;
-            //         $this->ajaxreturn($data);
-            //     }else{
-            //         // echo 2;die;
-            //         $arr= array(
-            //             'LastName'     =>$data['LastName'],
-            //             'FirstName'    =>$data['FirstName'],
-            //             'CustomerID'   =>$data['EnrollerID']
-            //         );
-            //         $user = D('User')->where($arr)->find();
-            //         if($user){
-            //             $mape  = array('CustomerID'=>$data['EnrollerID']);
-            //             $data['iuid'] = $find['iuid'];
-            //             $save = D('User')->where($mape)->save($tmpe);
-            //         }
-            //     }
-            // }else{
-            //     $strlen = strlen($data['EnrollerID']);
-            //     if($strlen==8){
-            //         $tmpe['CustomerID']=$data['EnrollerID'];
-            //         $tmpe['LastName']  =$data['LastName'];
-            //         $tmpe['FirstName'] =$data['FirstName'];
-            //         $tmpe['Placement']      ='Right';
-            //         $save = D('User')->add($tmpe);
-            //         $data['iuid'] = D('User')->where(array('CustomerID'=>$data['EnrollerID']))->getfield('iuid');
-            //     }
-            // }
-            // // $array= array(
-            // //     array('iuid'=>$find['iuid'],'datetime'=>'2018-03','hatime'=>'2018年03月23日','endtime'=>'2018年04月15日','is_tick'=>1),
-            // //     array('iuid'=>$find['iuid'],'datetime'=>'2018-04','hatime'=>'2018年04月16日','endtime'=>'2018年05月15日','is_tick'=>1),
-            // //     array('iuid'=>$find['iuid'],'datetime'=>'2018-05','hatime'=>'2018年05月16日','endtime'=>'2018年06月15日','is_tick'=>1)
-            // // );
-            // if($save){
-            //     // foreach ($array as $key => $value) {
-            //     //     D('Activation')->add($value);
-            //     // }
-            //     $data['status'] = 1;
-            //     $this->ajaxreturn($data);               
-            // }else{
-                $data['status'] = 0;
-                $this->ajaxreturn($data);
-            // }
+            $data  = I('post.');
+            if($data['IsNew']==1){
+                // $find  = D('User')->where(array('CustomerID'=>$data['EnrollerID']))->find();
+                // if(!$find){
+                //     $tmpe['status'] = 2;
+                //     $this->ajaxreturn($tmpe);           
+                // }else{
+                    if(!empty($data['JustIdcard'])){
+                        $img_body1 = substr(strstr($data['JustIdcard'],','),1);
+                        $JustIdcard = time().'_'.mt_rand().'.jpg';
+                        $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
+                        $where['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
+                    }
+                    if(!empty($data['BackIdcard'])){
+                        $img_body2 = substr(strstr($data['BackIdcard'],','),1);
+                        $BackIdcard = time().'_'.mt_rand().'.jpg';
+                        $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
+                        $where['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
+                    }
+                    //查询原先最大CustomerID，新添+1
+                    $keyword= 'HPL';
+                    $custid = D('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
+                    
+                    if(empty($custid)){
+                        $CustomerID = 'HPL00000001';
+                    }else{
+                        $num   = substr($custid,3);
+                        $nums  = $num+1;
+                        $count = strlen($nums);
+                        switch ($count) {
+                            case '1':
+                                $CustomerID = 'HPL0000000'.$nums;
+                                break;
+                            case '2':
+                                $CustomerID = 'HPL000000'.$nums;
+                                break;
+                            case '3':
+                                $CustomerID = 'HPL00000'.$nums;
+                                break;
+                            case '4':
+                                $CustomerID = 'HPL0000'.$nums;
+                                break;
+                            case '5':
+                                $CustomerID = 'HPL000'.$nums;
+                                break;
+                            case '6':
+                                $CustomerID = 'HPL00'.$nums;
+                                break;
+                            case '7':
+                                $CustomerID = 'HPL0'.$nums;
+                                break;
+                            default:
+                                $CustomerID = 'HPL'.$nums;
+                                break;
+                         } 
+                    }
+                    $where  = array(
+                        'CustomerID'         => $CustomerID,
+                        'IsNew'              => 1,
+                        'Placement'          => 'Right',
+                        'CustomerStatus'     => 'Active',
+                        'LastName'           => $data['LastName'],
+                        'FirstName'          => $data['FirstName'],
+                        'EnrollerID'         => $data['EnrollerID'],
+                        'JoinedOn'           => date("m/d/Y h:i:s A"),
+                        'HighestAchievedRank'=> 'Director',
+                        'Email'              => $data['Email'],
+                        'WeeklyVolume'       => 0,
+                        'PassWord'           => md5($data['PassWord']),
+                        'Phone'              => $data['Phone'],
+                        'Sex'                => $data['Sex'],
+                        'IsCheck'            => 0,
+                        'ShopAddress1'       => $data['ShopAddress1'],
+                        'ShopAddress2'       => $data['ShopAddress2'],
+                        'Idcard'             => $data['Idcard']
+                    );
+                    $add   = D('User')->add($where);
+                    if($add){
+                        $tmpe  = D('User')->where(array('CustomerID'=>$CustomerID))->find();
+                        $tmpe['CustomerID'] = $CustomerID;
+                        $tmpe['pass']       = $data['PassWord'];
+                        $tmpe['status']     = 1;
+                        $this->ajaxreturn($tmpe);               
+                    }else{
+                        $tmpe['status'] = 0;
+                        $this->ajaxreturn($tmpe);
+                    }
+                // }
+            }else{
+                // //正反面身份证
+                // if(!empty($data['JustIdcard'])){
+                //     $img_body1 = substr(strstr($data['JustIdcard'],','),1);
+                //     $JustIdcard = time().'_'.mt_rand().'.jpg';
+                //     $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
+                //     $tmpe['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
+                // }
+                // if(!empty($data['BackIdcard'])){
+                //     $img_body2 = substr(strstr($data['BackIdcard'],','),1);
+                //     $BackIdcard = time().'_'.mt_rand().'.jpg';
+                //     $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
+                //     $tmpe['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
+                // }
+                // $tmpe  = array(
+                //     'Email'              => $data['Email'],
+                //     'PassWord'           => md5($data['PassWord']),
+                //     'Phone'              => $data['Phone'],
+                //     'Sex'                => $data['Sex'],
+                //     'ShopAddress1'       => $data['ShopAddress1'],
+                //     'ShopAddress2'       => $data['ShopAddress2'],
+                //     'Idcard'             => $data['Idcard'],
+                //     'OrderDate'          => '3/16/2018 12:00:00 AM',
+                //     'Number'             => '1',
+                //     'DistributorType'    => 'Platinum'
+                // );
+                // $data['CustomerID']= $data['EnrollerID'];
+                // $data['pass']      = $data['PassWord'];
+                // $where= array(
+                //     'CustomerID'   =>$data['EnrollerID']
+                // );
+                // $find = D('User')->where($where)->find();
+                // if($find){
+                //     if($find['password']){
+                //         $data['status'] = 3;
+                //         $this->ajaxreturn($data);
+                //     }else{
+                //         // echo 2;die;
+                //         $arr= array(
+                //             'LastName'     =>$data['LastName'],
+                //             'FirstName'    =>$data['FirstName'],
+                //             'CustomerID'   =>$data['EnrollerID']
+                //         );
+                //         $user = D('User')->where($arr)->find();
+                //         if($user){
+                //             $mape  = array('CustomerID'=>$data['EnrollerID']);
+                //             $data['iuid'] = $find['iuid'];
+                //             $save = D('User')->where($mape)->save($tmpe);
+                //         }
+                //     }
+                // }else{
+                //     $strlen = strlen($data['EnrollerID']);
+                //     if($strlen==8){
+                //         $tmpe['CustomerID']=$data['EnrollerID'];
+                //         $tmpe['LastName']  =$data['LastName'];
+                //         $tmpe['FirstName'] =$data['FirstName'];
+                //         $tmpe['Placement']      ='Right';
+                //         $save = D('User')->add($tmpe);
+                //         $data['iuid'] = D('User')->where(array('CustomerID'=>$data['EnrollerID']))->getfield('iuid');
+                //     }
+                // }
+                // // $array= array(
+                // //     array('iuid'=>$find['iuid'],'datetime'=>'2018-03','hatime'=>'2018年03月23日','endtime'=>'2018年04月15日','is_tick'=>1),
+                // //     array('iuid'=>$find['iuid'],'datetime'=>'2018-04','hatime'=>'2018年04月16日','endtime'=>'2018年05月15日','is_tick'=>1),
+                // //     array('iuid'=>$find['iuid'],'datetime'=>'2018-05','hatime'=>'2018年05月16日','endtime'=>'2018年06月15日','is_tick'=>1)
+                // // );
+                // if($save){
+                //     // foreach ($array as $key => $value) {
+                //     //     D('Activation')->add($value);
+                //     // }
+                //     $data['status'] = 1;
+                //     $this->ajaxreturn($data);               
+                // }else{
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data);
+                // }
+            }
         }
-		
 	}
 
 	/**
@@ -549,6 +554,7 @@ class HapylifeApiController extends HomeBaseController{
             $order['msg']    = '请先填写个人信息的地区和详细地址';
             $this->ajaxreturn($order);
         }
+        $ia_name = $userinfo['lastname'].$userinfo['firstname'];
         $order = array(
             //订单编号
             'ir_receiptnum' =>$order_num,
@@ -561,7 +567,7 @@ class HapylifeApiController extends HomeBaseController{
             //下单用户
             'CustomerID'=>$userinfo['customerid'],
             //收货人
-            'ia_name'=>$userinfo['firstname'],
+            'ia_name'=>$ia_name,
             //收货人电话
             'ia_phone'=>$userinfo['phone'],
             //收货地址
@@ -768,8 +774,12 @@ class HapylifeApiController extends HomeBaseController{
             }
             $tmpe['Number']   =$find['number']+1;
             $update           =D('User')->save($tmpe);
+            $status = array(
+                    'ir_status'=>2,
+                    'ir_paytime'=>time()
+                );
             //做订单的处理
-            $receipt = M('Receipt')->where(array('ir_receiptnum'=>$_GET['orderId']))->setField('ir_status',2);
+            $receipt = M('Receipt')->where(array('ir_receiptnum'=>$_GET['orderId']))->save($status);
             if($receipt){
                 //通知快钱商户收到的结果
                 echo '<result>1</result><redirecturl>http://success.html</redirecturl>';

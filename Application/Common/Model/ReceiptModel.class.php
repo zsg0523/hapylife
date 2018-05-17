@@ -23,8 +23,8 @@ class ReceiptModel extends BaseModel{
 				}else{
 					$count=$model
 					->alias('r')
-			        ->join('left join hapylife_user u on r.iuid = u.iuid')
-		            ->where(array('r.CustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),'ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))
+			        ->join('hapylife_user u on r.riuid = u.iuid')
+		            ->where(array('r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),'ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))
 		            ->count();
 				}
 		        $page=new_page($count,$limit);
@@ -33,7 +33,7 @@ class ReceiptModel extends BaseModel{
 		        	if (empty($field)) {
 			            $list=$model
 			            	->alias('r')
-			            	->join('left join hapylife_user u on r.iuid = u.iuid')
+			            	->join('hapylife_user u on r.riuid = u.iuid')
 			            	->where(array('ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
@@ -41,7 +41,7 @@ class ReceiptModel extends BaseModel{
 			        }else{
 			            $list=$model
 			            	->alias('r')
-			            	->join('left join hapylife_user u on r.iuid = u.iuid')
+			            	->join('hapylife_user u on r.riuid = u.iuid')
 			            	->where(array('ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->field($field)
 			                ->order($order)
@@ -53,17 +53,17 @@ class ReceiptModel extends BaseModel{
 		        	if (empty($field)) {
 			            $list=$model
 			            	->alias('r')
-			            	->join('left join hapylife_user u on r.iuid = u.iuid')
-			                ->where(array('r.CustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),'ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))
+			            	->join('hapylife_user u on r.riuid = u.iuid')
+			                ->where(array('r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),'ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
 			                ->select();         
 			        }else{
 			            $list=$model
 			            	->alias('r')
-			            	->join('left join hapylife_user u on r.iuid = u.iuid')
+			            	->join('hapylife_user u on r.riuid = u.iuid')
 			                ->field($field)
-			                ->where(array('r.CustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),'ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))
+			                ->where(array('r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),'ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
 			                ->select();         
@@ -78,8 +78,8 @@ class ReceiptModel extends BaseModel{
 				}else{
 					$count=$model
 					->alias('r')
-			        ->join('left join hapylife_user u on r.iuid = u.iuid')
-		            ->where(array('ir_status'=>$status,'r.CustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),'ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))
+			        ->join('hapylife_user u on r.riuid = u.iuid')
+		            ->where(array('ir_status'=>$status,'r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),'ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))
 		            ->count();
 				}
 		        $page=new_page($count,$limit);
@@ -88,7 +88,7 @@ class ReceiptModel extends BaseModel{
 		        	if (empty($field)) {
 			            $list=$model
 			            	->alias('r')
-			            	->join('left join hapylife_user u on r.iuid = u.iuid')
+			            	->join('hapylife_user u on r.riuid = u.iuid')
 			            	->where(array('ir_status'=>$status,'ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
@@ -96,7 +96,7 @@ class ReceiptModel extends BaseModel{
 			        }else{
 			            $list=$model
 			            	->alias('r')
-			            	->join('left join hapylife_user u on r.iuid = u.iuid')
+			            	->join('hapylife_user u on r.riuid = u.iuid')
 			            	->where(array('ir_status'=>$status,'ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->field($field)
 			                ->order($order)
@@ -107,17 +107,17 @@ class ReceiptModel extends BaseModel{
 		        	if (empty($field)) {
 			            $list=$model
 			            	->alias('r')
-			            	->join('left join hapylife_user u on r.iuid = u.iuid')
-			                ->where(array('ir_status'=>$status,'r.CustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),'ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))
+			            	->join('hapylife_user u on r.riuid = u.iuid')
+			                ->where(array('ir_status'=>$status,'r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),'ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
 			                ->select();         
 			        }else{
 			            $list=$model
 			            	->alias('r')
-			            	->join('left join hapylife_user u on r.iuid = u.iuid')
+			            	->join('hapylife_user u on r.riuid = u.iuid')
 			                ->field($field)
-			                ->where(array('ir_status'=>$status,'r.CustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),'ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))
+			                ->where(array('ir_status'=>$status,'r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),'ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
 			                ->select();         
@@ -137,7 +137,7 @@ class ReceiptModel extends BaseModel{
     public function export_excel($data){
 		$title   = array('用户ID','订单号','畅捷订单号','畅捷订单状态','订单状态','订单总积分','订单总价','收货人','联系电话','收货地址','创建日期','创建时间');
 		foreach ($data as $k => $v) {
-			$content[$k]['customerid']     = $v['customerid'];
+			$content[$k]['rcustomerid']     = $v['rcustomerid'];
 			$content[$k]['ir_receiptnum']  = $v['ir_receiptnum'];
 			$content[$k]['inner_trade_no'] = $v['inner_trade_no'];
 			$content[$k]['trade_status']   = $v['trade_status'];

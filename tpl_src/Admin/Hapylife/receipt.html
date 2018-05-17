@@ -46,7 +46,7 @@
 	                        <th >订单备注</th>
 	                        <th >订单状态</th>
 	                        <th >送货地址</th>
-	                        <th >是否送货</th>
+	                        <!-- <th >是否送货</th> -->
 	                        <th >创建日期</th>
 						</tr>
 					<else />
@@ -60,9 +60,12 @@
 	                        <th >订单总金额</th>
 	                        <th >订单备注</th>
 	                        <th >订单状态</th>
-	                        <th >送货地址</th>
-	                        <th >是否送货</th>
+	                        <th >收货人</th>
+	                        <th >收货电话</th>
+	                        <th >收货地址</th>
+	                        <!-- <th >是否送货</th> -->
 	                        <th >创建日期</th>
+	                        <th >支付日期</th>
 							<th>操作</th>
 						</tr>
 					</if>
@@ -83,18 +86,25 @@
                                 <else />已评价
                                 </if>
 							</td>
+							<td>{$v['ia_name']}</td>
+							<td>{$v['ia_phone']}</td>
 							<td>{$v['ia_address']}</td>
-							<td>
+							<!-- <td>
 								<if 	condition="$v['is_delivery'] eq 0">不送货
                                 <elseif condition="$v['is_delivery'] eq 1"/>送货
                                 </if>
+							</td> -->
+							<td>{:date('Y-m-d H:i:s',$v['ir_date'])}</td>
+							<td>
+								<if condition="$v['ir_paytime'] eq 0">
+								<else/>{:date('Y-m-d H:i:s',$v['ir_paytime'])}
+								</if>
 							</td>
-							<td>{:date('Y-m-d h:i:s',$v['ir_date'])}</td>
 							<if condition="$_SESSION['user']['username'] eq mary || $_SESSION['user']['username'] eq admin2">
 							<else />
 								<td>
-									<a href="javascript:;" receiptId="{$v['irid']}" receiptNum="{$v['ir_receiptnum']}" receiptDate="{$v['ir_date']}" receiptPrice="{$v[ir_price]}" receiptUser="{$v['customerid']}" receiptPhone="{$v[ia_phone]}" receiptAddress="{$v['ia_address']}" receiptPoint="{$v[ir_point]}" receiptBanknumber="{$v['ir_banknumber']}" receiptBankreceipt="{$v['ir_bankreceipt']}" receiptStatus="{$v[ir_status]}" receiptDesc="{$v['ir_desc']}" onclick="edit(this)">查看</a> |
-									<a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Hapylife/delete_receipt',array('id'=>$v['irid']))}'">删除</a> 
+									<!-- <a href="javascript:;" receiptId="{$v['irid']}" receiptNum="{$v['ir_receiptnum']}" receiptDate="{$v['ir_date']}" receiptPrice="{$v[ir_price]}" receiptUser="{$v['customerid']}" receiptPhone="{$v[ia_phone]}" receiptAddress="{$v['ia_address']}" receiptPoint="{$v[ir_point]}" receiptBanknumber="{$v['ir_banknumber']}" receiptBankreceipt="{$v['ir_bankreceipt']}" receiptStatus="{$v[ir_status]}" receiptDesc="{$v['ir_desc']}" onclick="edit(this)">查看</a> | -->
+									<a href="javascript:if(confirm('确定删除{$v['customerid']}的订单？'))location='{:U('Admin/Hapylife/delete_receipt',array('id'=>$v['irid']))}'">删除</a> 
 								</td>
 							</if>
 						</tr>
