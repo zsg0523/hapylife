@@ -139,57 +139,6 @@ class UserModel extends BaseModel{
      * @param  integer  $field  $field
      * @return array            分页数据
      */
-   //  public function getPage($model,$word,$order='',$starttime,$endtime,$limit=20){
-   //  		if(empty($word)){
-			// 	$count=$model
-			// 		->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-			// 		->count();
-			// }else{
-			// 	$count=$model
-	  //           ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-	  //           ->count();
-			// }
-	  //       $page=new_page($count,$limit);
-	  //       // 获取分页数据
-	  //       if(empty($word)){
-	  //       	if (empty($field)) {
-		 //            $list=$model
-		 //            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-		 //                ->order($order)
-		 //                ->limit($page->firstRow.','.$page->listRows)
-		 //                ->select();         
-		 //        }else{
-		 //            $list=$model
-		 //            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-		 //                ->field($field)
-		 //                ->order($order)
-		 //                ->limit($page->firstRow.','.$page->listRows)
-		 //                ->select();         
-		 //        }
-	  //       }else{
-	  //       	if (empty($field)) {
-		 //            $list=$model
-		 //                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-		 //                ->order($order)
-		 //                ->limit($page->firstRow.','.$page->listRows)
-		 //                ->select();         
-		 //        }else{
-		 //            $list=$model
-		 //                ->field($field)
-		 //                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-		 //                ->order($order)
-		 //                ->limit($page->firstRow.','.$page->listRows)
-		 //                ->select();         
-		 //        }
-	  //       }
-    		
-   //      $data=array(
-   //          'data'=>$list,
-   //          'page'=>$page->show()
-   //          );
-   //      return $data;
-   //  }
-
     public function getPage($model,$word,$order='',$status,$starttime,$endtime,$limit=20){
         switch ($status) {
         	case '-1':
@@ -198,7 +147,8 @@ class UserModel extends BaseModel{
 				}else{
 					$count=$model
 					->alias('u')
-			        ->join('left join hapylife_receipt c on u.iuid = c.iuid')
+			        ->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			        ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 		            ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 		            ->count();
 				}
@@ -208,7 +158,8 @@ class UserModel extends BaseModel{
 		        	if (empty($field)) {
 			            $list=$model
 			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.iuid')
+			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
@@ -216,19 +167,20 @@ class UserModel extends BaseModel{
 			        }else{
 			            $list=$model
 			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.iuid')
+			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->field($field)
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
 			                ->select();
-			                p($list);die;        
 			        }
 		        }else{
-		        	if (empty($field)) {
+		        	if(empty($field)) {
 			            $list=$model
 			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.iuid')
+			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
@@ -236,7 +188,8 @@ class UserModel extends BaseModel{
 			        }else{
 			            $list=$model
 			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.iuid')
+			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			                ->field($field)
 			                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
@@ -249,13 +202,15 @@ class UserModel extends BaseModel{
         		if(empty($word)){
 					$count=$model
 						->alias('u')
-						->join('left join hapylife_receipt c on u.iuid = c.iuid')
+						->join('left join hapylife_receipt c on u.iuid = c.riuid')
+						->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 						->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 						->count();
 				}else{
 					$count=$model
 					->alias('u')
-			        ->join('left join hapylife_receipt c on u.iuid = c.iuid')
+			        ->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			        ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 		            ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 		            ->count();
 				}
@@ -265,7 +220,8 @@ class UserModel extends BaseModel{
 		        	if (empty($field)) {
 			            $list=$model
 			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.iuid')
+			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			            	->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
@@ -273,7 +229,8 @@ class UserModel extends BaseModel{
 			        }else{
 			            $list=$model
 			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.iuid')
+			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			            	->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->field($field)
 			                ->order($order)
@@ -284,7 +241,8 @@ class UserModel extends BaseModel{
 		        	if (empty($field)) {
 			            $list=$model
 			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.iuid')
+			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			                ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
@@ -292,7 +250,8 @@ class UserModel extends BaseModel{
 			        }else{
 			            $list=$model
 			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.iuid')
+			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			                ->field($field)
 			                ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)

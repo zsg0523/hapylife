@@ -99,10 +99,11 @@
 								<td>{:date('Y-m-d',$v['joinedon'])}</td>
 								<td>{$v.customerid}</td>
 								<td>{$v.paymentreceived}</td>
-								<td>{$v.ir_paytime}</td>
+								<td>{:date('Y-m-d',$v['ir_paytime'])}</td>
+								<!-- <td>{$v.ir_paytime}</td> -->
 								<td>{$v.isNew}</td>
 								<td>{$v.enrollerid}</td>
-								<td>{$v.product}</td>
+								<td>{$v.product_name}</td>
 								<if condition="$v['sex'] eq 1">
 									<td>男</td>
 									<else />
