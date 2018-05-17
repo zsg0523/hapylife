@@ -51,11 +51,11 @@ class IndexController extends HomeBaseController{
                 if (empty($data)) {
                     $this->error('账号或密码错误');
                 }else{
-                    if(substr($data['CustomerID'],0,2) == 'HK'){
+                    if(substr($data['customerid'],0,3) == 'HPL'){
                         $_SESSION['user']=array(
                                             'id'       =>$data['iuid'],
                                             'username' =>$data['customerid'],
-                                            'status'   =>0,
+                                            'status'   =>1,
                                             );
                     }else{
                         $_SESSION['user']=array(
@@ -63,7 +63,7 @@ class IndexController extends HomeBaseController{
                             'username' =>$data['customerid'],
                             );
                     }
-
+                   
                     $this->redirect('Home/Purchase/main');
                 }
             }
