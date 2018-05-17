@@ -158,7 +158,7 @@ class PurchaseController extends HomeBaseController{
 		$iuid = $_SESSION['user']['id'];
         $data['status'] = $_SESSION['user']['status'];
 		$map  = array(
-				'iuid'=>$iuid
+				'riuid'=>$iuid
 			);
 		$data = M('Receipt')
 				->alias('r')
@@ -239,7 +239,7 @@ class PurchaseController extends HomeBaseController{
         $order_num = date('YmdHis').rand(10000, 99999);
         switch ($product['ip_type']) {
             case '1':
-                $list= D('Receipt')->where(array('ir_ordertype'=>$product['ip_type'],'iuid'=>$iuid,'is_delete'=>0))->select();
+                $list= D('Receipt')->where(array('ir_ordertype'=>$product['ip_type'],'riuid'=>$iuid,'is_delete'=>0))->select();
                 if($list){
                     $this->error('请付款或删除重新下单');
                 }else{
@@ -265,9 +265,9 @@ class PurchaseController extends HomeBaseController{
             //订单的状态(0待生成订单，1待支付订单，2已付款订单)
             'ir_status'     =>0,
             //下单用户id
-            'iuid'          =>$iuid,
+            'riuid'         =>$iuid,
             //下单用户
-            'CustomerID'    =>$userinfo['customerid'],
+            'rcustomerID'    =>$userinfo['customerid'],
             //收货人
             'ia_name'       =>$ia_name,
             //收货人电话
@@ -324,6 +324,7 @@ class PurchaseController extends HomeBaseController{
         //订单号
 		$order_num                     = I('get.ir_receiptnum');
 		$order = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->find();
+        // p($order);die;
 		$postData                      = array();	
 		// 基本参数
 		$postData['Service']           = 'nmg_quick_onekeypay';
@@ -340,7 +341,7 @@ class PurchaseController extends HomeBaseController{
 		$postData['SellerId']          = '200001380239'; //商户编号，调用畅捷子账户开通接口获取的子账户编号;该字段可以传入平台id或者平台id下的子账户号;作为收款方使用；与鉴权请求接口中MerchantNo保持一致
 		$postData['SubMerchantNo']     = '200001380239'; //子商户，在畅捷商户自助平台申请开通的子商户，用于自动结算
 		$postData['ExpiredTime']       = '48h'; //订单有效期，取值范围：1m～48h。单位为分，如1.5h，可转换为90m。用来标识本次鉴权订单有效时间，超过该期限则该笔订单作废
-		$postData['MerUserId']         = $order['iuid']; //用户标识
+		$postData['MerUserId']         = $order['riuid']; //用户标识
 		$postData['BkAcctTp']          = ''; //卡类型（00 –银行贷记账户;01 –银行借记账户;）
 		// $postData['BkAcctNo']       =   rsaEncrypt('XXXXX'); //卡号
 		$postData['BkAcctNo']          = ''; //卡号
