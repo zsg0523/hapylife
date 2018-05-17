@@ -30,10 +30,7 @@
 				    	<input type="text" name='endtime'   value="{$endtime}" placeholder="结束时间,年-月-日">
                         <input name="word" type="text" placeholder="关键词" value="{$word}" size="20" />
                         <input class='btn btn-sm' type="submit" value="筛选" />
-                        <if condition="$_SESSION['user']['username'] eq mary || $_SESSION['user']['username'] eq admin2">
-                        <else />
-                        	<input class='btn btn-sm' type="submit" name='excel' value="excel" />
-                    	</if>
+                        <input class='btn btn-sm' type="submit" name='excel' value="excel" />
                 	</form>
 			    </li>
 			    <li>

@@ -311,7 +311,7 @@ class UserModel extends BaseModel{
     }
 
 	public function export_excel($data){
-		$title   = array('UREGTIME','Happy Life ID','Payment Received','Payment Date Time (Dallas time)','User Type','Sponsor ID W & H','Product','Gender','Last Name','First Name','En Last Name','En First Name','email address','password','phone1','mailing address1','mailing address2','mailing city','mailing postal code','mailing province','mailing country','Identification Card (upload)','Terms and Conditions','Device Geolocation','Device Type','Browser','Browser Version','Payment type');
+		$title   = array('UREGTIME','Happy Life ID','Payment Received','Payment Date Time (Dallas time)','User Type','Sponsor ID W & H','Product','Gender','Last Name','First Name','En Last Name','En First Name','email address','password','phone1','mailing address1','mailing address2','mailing city','mailing postal code','mailing province','mailing country','Identification Card (upload)','Terms and Conditions','Device Geolocation','Device Type','Browser','Browser Version','Payment type','Account Type');
 		foreach ($data as $k => $v) {
 			$content[$k]['joinedon']     	= date('Y-m-d',$v['joinedon']);
 			$content[$k]['customerid']  	= $v['customerid'];
@@ -341,6 +341,7 @@ class UserModel extends BaseModel{
 			$content[$k]['browser']     = $v['browser'];
 			$content[$k]['browserversion']     = $v['browserversion'];
 			$content[$k]['paymenttype']     = $v['paymenttype'];
+			$content[$k]['accounttype']     = $v['accounttype'];
 		}
     	create_csv($content,$title);
 		return;
