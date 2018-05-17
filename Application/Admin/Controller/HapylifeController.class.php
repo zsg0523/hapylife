@@ -555,7 +555,8 @@ class HapylifeController extends AdminBaseController{
 				'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%')
 			);
 		}
-		$assign=D('User')->getAllData(D('User'),$map,$word,$order="iuid desc");
+		$assign=D('User')->getAllData(D('User'),$map,$word,$order="CustomerID desc");
+		// p($assign);die;
 		$this->assign('count',$count);
 		$this->assign($assign);
 		$this->display();
@@ -576,7 +577,7 @@ class HapylifeController extends AdminBaseController{
 		}
 		$result = D('User')->editData($map,$data);
 		if($result){
-			$this->redirect('Admin/Hapylife/user');
+			redirect($_SERVER['HTTP_REFERER']);
 		}else{
 			$this->error('修改失败');
 		}
@@ -592,7 +593,7 @@ class HapylifeController extends AdminBaseController{
 			);
 		$result=D('User')->editData($map,$data);
 		if($result){
-			$this->redirect('Admin/Hapylife/user');
+			redirect($_SERVER['HTTP_REFERER']);
 		}else{
 			$this->error('编辑失败');
 		}
@@ -608,7 +609,7 @@ class HapylifeController extends AdminBaseController{
 			);
 		$result=D('User')->deleteData($map);
 		if($result){
-			$this->redirect('Admin/Hapylife/user');
+			redirect($_SERVER['HTTP_REFERER']);
 		}else{
 			$this->error('删除失败');
 		}
@@ -636,7 +637,7 @@ class HapylifeController extends AdminBaseController{
 		$data=I('post.');
 		$result=D('Room')->addData($data);
 		if($result){
-			$this->redirect('Admin/Hapylife/room');
+			redirect($_SERVER['HTTP_REFERER']);
 		}else{
 			$this->error('添加失败');
 		}
@@ -652,7 +653,7 @@ class HapylifeController extends AdminBaseController{
 			);
 		$result=D('Room')->editData($map,$data);
 		if($result){
-			$this->redirect('Admin/Hapylife/room');
+			redirect($_SERVER['HTTP_REFERER']);
 		}else{
 			$this->error('编辑失败');
 		}
@@ -668,7 +669,7 @@ class HapylifeController extends AdminBaseController{
 			);
 		$result=D('Room')->deleteData($map);
 		if($result){
-			$this->redirect('Admin/Hapylife/room');
+			redirect($_SERVER['HTTP_REFERER']);
 		}else{
 			$this->error('删除失败');
 		}
