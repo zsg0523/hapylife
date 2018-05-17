@@ -5,6 +5,26 @@ use Common\Controller\HomeBaseController;
 * hapylife控制器
 **/
 class PurchaseController extends HomeBaseController{
+    /**
+    * 
+    **/
+    public function test(){
+        $order = M('Receipt')
+                ->alias('r')
+                ->join('hapylife_user u on r.iuid = u.iuid')
+                ->select();
+        // p($order);die;
+        foreach ($order as $key => $value) {
+            if($value['ir_status'] == 2){
+                //添加支付时间
+                $ir_paytime = $value['ir_date']+600;
+                $map = array(
+                    'ir_paytime'=>$ir_paytime
+                );
+                $save = M('Receipt')->where(array('ir_receiptnum'=>$value['ir_receiptnum']))->save($map);
+            }
+        }
+    }
 	
 	/**
 	* 主界面
@@ -236,35 +256,36 @@ class PurchaseController extends HomeBaseController{
         if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
             $this->error('请先填写个人信息的地区和详细地址');
         }
+        $ia_name  = $userinfo['lastname'].$userinfo['firstname'];
         $order = array(
             //订单编号
             'ir_receiptnum' =>$order_num,
             //订单创建日期
-            'ir_date'=>time(),
+            'ir_date'       =>time(),
             //订单的状态(0待生成订单，1待支付订单，2已付款订单)
-            'ir_status'=>0,
+            'ir_status'     =>0,
             //下单用户id
-            'iuid'=>$iuid,
+            'iuid'          =>$iuid,
             //下单用户
-            'CustomerID'=>$userinfo['customerid'],
+            'CustomerID'    =>$userinfo['customerid'],
             //收货人
-            'ia_name'=>$userinfo['firstname'],
+            'ia_name'       =>$ia_name,
             //收货人电话
-            'ia_phone'=>$userinfo['phone'],
+            'ia_phone'      =>$userinfo['phone'],
             //收货地址
-            'ia_address'=>$userinfo['shopaddress1'].' '.$userinfo['shopaddress2'],
+            'ia_address'    =>$userinfo['shopaddress1'],
             //订单总商品数量
-            'ir_productnum'=>1,
+            'ir_productnum' =>1,
             //订单总金额
-            'ir_price'=>$product['ip_price_rmb'],
+            'ir_price'      =>$product['ip_price_rmb'],
             //订单总积分
-            'ir_point'=>$product['ip_point'],
+            'ir_point'      =>$product['ip_point'],
             //订单备注
-            'ir_desc'=>$con,
+            'ir_desc'       =>$con,
             //订单类型
-            'ir_ordertype' => $product['ip_type'],
+            'ir_ordertype'  => $product['ip_type'],
             //产品id
-            'ipid'         => $product['ipid']
+            'ipid'          => $product['ipid']
         );
         $receipt = M('Receipt')->add($order);
         if($receipt){
@@ -389,6 +410,7 @@ class PurchaseController extends HomeBaseController{
 			$status  = array(
 				'ir_status'  =>2,
 				'ir_paytype' =>1,
+                'ir_paytime' =>time()
 			);
 			$activaDate = D('Activation')->where(array('iuid'=>$receipt['iuid'],'is_tick'=>1))->order('datetime desc')->getfield('datetime');
 			if(empty($activaDate)){
@@ -418,7 +440,7 @@ class PurchaseController extends HomeBaseController{
 				$save  = D('Activation')->add($where);
             // }   
         	$upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($status);
-            $update  =D('User')->save($tmpe);
+            $update    = D('User')->save($tmpe);
         	if($upreceipt){
         		//通知畅捷完成支付
 				echo "success";
