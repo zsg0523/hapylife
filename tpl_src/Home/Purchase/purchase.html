@@ -27,17 +27,20 @@
 </head>
 <body class="wrap container-fluid">
 	<div class="main row">
-		<volist id='v' name='product'>
-			<div class="giftPackage col-xs-12 col-sm-12 col-md-12" id="giftPackage">
-				<div class="icon"><img src="{$v.ip_picture_zh}"></div>
-				<div class="intro">
-				<span>名称：{$v.ip_name_zh}</span>
-				<p>售价：￥{$v.ip_price_rmb}</p>
-				<a href="{:U('Home/Purchase/purchaseInfo',array('ipid'=>$v['ipid']))}">查看详情</a>
+		<if condition="$Think.session.user.status eq 1">
+			<volist id='v' name='product'>
+				<div class="giftPackage col-xs-12 col-sm-12 col-md-12" id="giftPackage">
+					<div class="icon"><img src="{$v.ip_picture_zh}"></div>
+					<div class="intro">
+					<span>名称：{$v.ip_name_zh}</span>
+					<p>售价：￥{$v.ip_price_rmb}</p>
+					<a href="{:U('Home/Purchase/purchaseInfo',array('ipid'=>$v['ipid']))}">查看详情</a>
+					</div>
+					
 				</div>
-				
-			</div>
-	    </volist>
+		    </volist>
+		<else />
+		</if>
 	</div>
 	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
