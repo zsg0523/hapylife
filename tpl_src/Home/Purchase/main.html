@@ -81,12 +81,12 @@
   						<span>{$Think.session.user.username},您好!</span>
   						<a href="{:U('Home/index/log_out')}">退出登录&nbsp;&nbsp;</a>
   					</div>
-  					<ul id="setting">
+  					<!--<ul id="setting">
   						<li><a href="addressList.html">地址管理</a></li>
   						<li><a href="bankList.html">银行管理</a></li>
   						<li><a href="recommenderList.html">推荐人</a></li>
   						<li><a href="myPoint.html">我的积分</a></li>
-  					</ul>
+  					</ul>-->
   				</div>
   					
   				
@@ -118,7 +118,7 @@
     function change_bg(obj){
     	var links=document.getElementsByTagName('a');
 //  	alert(links.length);
-    	for(var i=4;i<9;i++){
+    	for(var i=1;i<4;i++){
     		links[i].style.background='#fff';
     	}
 			obj.style.background="#d1e7fe";
