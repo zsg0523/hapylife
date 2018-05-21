@@ -17,55 +17,53 @@
       .wrap .row{margin: 0px;}
       .main{height: auto;width: 100%}
     	header{width: 100%;height: 100px;background:#2491ee;color: #fff;}
-	    .head{height: 100px;margin: 0 auto;position: relative;z-index: 1;}
+	    .head{height: 100px;margin: 0 auto;/*position: relative;z-index: 1;*/}
 	    .head>span{height: 60px;width: 60%;line-height: 60px;font-size: 40px;display: block;float: left;margin-left: 5%;}
 	    .head>span:hover{cursor:pointer;}
 	    .head>span>sup{font-size:12px;top: -1.7em;}
-	    .head>p{height: 30px;width: auto;line-height: 30px;font-weight:bold;display: block;float: right;text-align: right;color: #fff;margin-top: 15px;}
-      .head>p:hover{cursor: pointer;}
-      
-      .head>ul{width:50%;height:auto;position: absolute;z-index: 3;background-color: #FFF;color: #000;left: 50%;top: 45px;display: none;}
-      .head>ul>li{width: 100%;height: 30px;font-size: 14px;text-align: center;border-bottom: 1px #dedede solid;line-height: 30px;}
       
       .head>div{width: 100%;height: 40px;float: left;}
       .head>div>span{width:60%;height: 40px;float: left;font-size: 14px;line-height: 40px;margin-left: 5%;}
-			.head>div>a{width: 35%;height: 40px;line-height:40px;float: right;font-size: 14px;display:inline-block;color: #fff;text-align: right;}
-    		
-    	nav{width: 100%;height:40px;background: #fff;margin: auto;}
-    	nav .col-md-4{height: 40px;line-height: 40px;padding:0px;text-align: center;font-size:16px;color: #2491ee;border-bottom:1px #dedede solid;}
-      .active{background-color: #d1e7fe;}
+			.head>div>a{width: 35%;height: 40px;line-height:40px;float: right;font-size: 14px;display:inline-block;color: #fff;text-align: right;}	
       
+      .active{background-color: #d1e7fe;}
       .content{width: 100%;height: 40px;}
-      .content .container-fluid{padding: 0;}
-
-      iframe{border: none;height:800px;}
+      .navig{height: 40px;margin: auto;position: relative;z-index: 1;border-bottom:1px solid #DEDEDE;}
+      .navig>span{width: 40px;height: 38px;color: #2491ee;font-size: 25px;line-height: 38px;text-align:center;}
+      .navig>span:hover{cursor: pointer;}
+      .navig>ul{width:40%;height:auto;position: absolute;z-index: 3;background-color: #FFF;color: #000;left: 0;top: 40px;display: none;border:1px solid #DEDEDE;}
+      .navig>ul>li{width: 100%;height: 30px;}
+      .navig>ul>li>a{width: 100%;height: 30px;font-size: 14px;color: #2491ee;text-align: center;line-height: 30px; border-bottom: 1px #dedede solid;display:inline-block;}
+			#title{width: 100px; height: 38px;font-size: 16px; line-height:38px;text-align: center;top: 0;left: 50%;margin-left: -50px;color: #2491ee;position: absolute;font-weight: bold;}
+	
+      iframe{border: none;height:2000px;}
  				.head{width: 100%;}
       /*手机*/
       @media screen and (max-width: 768px){
      
-         .head{width: 100%;}
-       .content>div{width: 100%;}
+        .head{width: 100%;}
+       .navig{width: 100%;}
         iframe{width:100%;}
       }
       /*平板*/
       @media screen and (min-width: 768px){
        
         .head{width: 100%;}
-       .content>div{width: 100%;}
+       .navig{width: 100%;}
         iframe{width:100%;}
       }
         /*中等屏幕*/
       @media screen and (min-width: 992px){
         
          .head{width: 100%;}
-        .content>div{width: 100%;}
+        .navig{width: 100%;}
         iframe{width:100%}
 
       }
       /*大屏幕*/
       @media screen and (min-width: 1200px){
         .head{ width: 1200px;}
-        .content>div{width: 1200px;}
+        .navig{width: 1200px;}
         iframe{width:1200px;margin-left: -600px;position: absolute;left: 50%;}
         
         }
@@ -76,33 +74,27 @@
   			<header>
   				<div class="head">
   					<span onclick="location='main.html'">HAPYLIFE<sup>TM</sup></span>
-  					<!--<p id="design" onclick="showSetting(this);">&nbsp;&nbsp;账户中心&nbsp;&nbsp;</p>-->
   					<div>
   						<span>{$Think.session.user.username},您好!</span>
   						<a href="{:U('Home/index/log_out')}">退出登录&nbsp;&nbsp;</a>
   					</div>
-  					<!--<ul id="setting">
-  						<li><a href="addressList.html">地址管理</a></li>
-  						<li><a href="bankList.html">银行管理</a></li>
-  						<li><a href="recommenderList.html">推荐人</a></li>
-  						<li><a href="myPoint.html">我的积分</a></li>
-  					</ul>-->
   				</div>
-  					
-  				
-						
+	
   			</header>
         <div class="content">
-          <div class="container-fluid">
-            <nav class="row" id="menu">
-    				
-     					<a class="col-xs-12	 col-sm-4  col-md-4 active" target="content" href="purchase.html" onclick="change_bg(this);" >购买礼包</a>
-     					<!--<a class="col-xs-12	 col-sm-6  col-md-3" target="content" href="{:U('Home/Purchase/activaction')}" onclick="change_bg(this);" >会籍激活</a>-->
-     					<a class="col-xs-12	 col-sm-4  col-md-4" target="content" href="{:U('Home/Purchase/myOrder')}" onclick="change_bg(this);" >我的订单</a>
-     					<a class="col-xs-12	 col-sm-4  col-md-4" target="content" href="{:U('Home/Purchase/myProfile')}" onclick="change_bg(this);" >个人资料</a>
-     				<!--	<a class="col-xs-12	 col-sm-3  col-md-3" target="content" href="new_register.html" onclick="change_bg(this)">推荐人注册</a> -->
-     				<!--<div class="col-xs-0	 col-sm-0  col-md-1"></div>-->
-    			  </nav>
+          <div class="navig">
+            	<span class="glyphicon glyphicon-align-justify" id="design" onclick="showSetting(this);"></span>
+            	<div id="title">购买礼包</div>
+            	<ul id="setting">
+            	<li><a  target="content" href="{:U('Home/Purchase/myProfile')}" onclick="change_bg(this);" >个人资料</a></li>
+  						<li><a class="active"  target="content" href="purchase.html" onclick="change_bg(this);" >购买礼包</a></li>
+     					<li><a  target="content" href="{:U('Home/Purchase/myOrder')}" onclick="change_bg(this);" >我的订单</a></li>
+     					<li><a  target="content" href="new_register.html" onclick="change_bg(this)">新代理注册</a> </li>
+  						<li><a target="content" href="addressList.html" onclick="change_bg(this)">地址管理</a></li>
+  						<li><a target="content" href="bankList.html" onclick="change_bg(this)">银行管理</a></li>
+  						<li><a target="content" href="recommenderList.html" onclick="change_bg(this)">我的推荐人</a></li>
+  						<!--<li><a  target="content"href="myPoint.html" onclick="change_bg(this)">我的积分</a></li>-->
+  					</ul>
           </div>
         </div>
   			<div class="main">
@@ -115,29 +107,30 @@
   <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
   <script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
   <script type="text/javascript" >
+   var i=1;
     function change_bg(obj){
     	var links=document.getElementsByTagName('a');
-//  	alert(links.length);
-    	for(var i=1;i<4;i++){
+    	var title=document.getElementById("title");
+			title.innerHTML=obj.innerText;
+    	for(var i=1;i<8;i++){
     		links[i].style.background='#fff';
     	}
 			obj.style.background="#d1e7fe";
+			showSetting(obj);
     }
-    var i=1;
+   
     function showSetting(obj){
     	var setting=document.getElementById('setting');
 	  	var des=document.getElementById('design');
 			if(i==1){
 				setting.style.display="block";
-				des.style.color="#000";
-			  des.style.backgroundColor="#fff";
-			  des.style.borderBottom="#dedede 1px solid";
+				des.style.color="#2491ee";
+			  des.style.backgroundColor="#d1e7fe";
 			  i=0;
 			}else{
 				setting.style.display="none";
-				des.style.color="#fff";
-			  des.style.backgroundColor="#2491ee";
-			  des.style.borderBottom="none";
+				des.style.color="#2491ee";
+			  des.style.backgroundColor="#fff";
 			  i=1;
 			}
     }

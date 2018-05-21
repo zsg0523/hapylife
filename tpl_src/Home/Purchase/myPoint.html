@@ -11,67 +11,19 @@
       *{margin: 0;padding: 0;}
     	ul,li{list-style: none;display: block;}
     	a{text-decoration: none;color: #000;font-weight: bold;}
-        a:hover{text-decoration: none;cursor: pointer;}
+      a:hover{text-decoration: none;cursor: pointer;}
     	
     	.wrap{width: 100%;}
-      	.wrap .row{margin: 0px;}
-      	.main{height: auto;margin: auto;}
-    	header{width: 100%;height: 100px;background:#2491ee;color: #fff;}
-	    .head{height: 100px;margin: 0 auto;position: relative;z-index: 1;}
-	    .head>span{height: 60px;width: 60%;line-height: 60px;font-size: 40px;display: block;float: left;margin-left: 5%;}
-	    .head>span:hover{cursor:pointer;}
-	    .head>span>sup{font-size:12px;top: -1.7em;}
-	    .head>p{height: 30px;width: auto;line-height: 30px;font-weight:bold;display: block;float: right;text-align: right;color: #fff;margin-top: 15px;}
-	    
-      	
-      	.head>ul{width:50%;height:auto;position: absolute;z-index: 3;background-color: #FFF;color: #000;left: 50%;top: 45px;display: none;}
-      	.head>ul>li{width: 100%;height: 30px;font-size: 14px;text-align: center;border-bottom: 1px #dedede solid;line-height: 30px;}
-      	.head>div{width: 100%;height: 40px;float: left;}
-       	.head>div>span{width:60%;height: 40px;float: left;font-size: 14px;line-height: 40px;margin-left: 5%;}
-		.head>div>a{width: 35%;height: 40px;line-height:40px;float: right;font-size: 14px;display:inline-block;color: #fff;text-align: right;}
-			
-		.main{}
+      .wrap .row{margin: 0px;}
+      .main{height: auto;margin: auto;}
+      
       /*手机*/
       @media screen and (max-width: 768px){
-		.head{ width: 100%;}
-		.main{width: 100%;}
-      }
-      /*平板*/
-      @media screen and (min-width: 768px){
-		.head{ width: 100%;}
-		.main{width: 100%;}
-       
-      }
-        /*中等屏幕*/
-      @media screen and (min-width: 992px){      
-		.head{ width: 100%;}
-		.main{width: 100%;}
-      }
-      /*大屏幕*/
-      @media screen and (min-width: 1200px){
-        .head{ width: 1200px;}
-        .main{width: 1200px;}
-        }
+		  .head{ width: 100%;}
     </style>
   </head>
   <body>
   		<div class="wrap">
-  			<header>
-  				<div class="head">
-  					<span onclick="location='main.html'">HAPYLIFE<sup>TM</sup></span>
-  					<p id="design" onclick="showSetting(this);">&nbsp;&nbsp;账户中心&nbsp;&nbsp;</p>
-  					<div>
-  						<span>{$Think.session.user.username},您好!</span>
-  						<a href="{:U('Home/index/log_out')}">退出登录&nbsp;&nbsp;</a>
-  					</div>
-  					<ul id="setting">
-  						<li><a href="addressList.html">地址管理</a></li>
-  						<li><a href="bankList.html">银行管理</a></li>
-  						<li><a href="recommenderList.html">推荐人</a></li>
-  						<li><a href="myPoint.html">我的积分</a></li>
-  					</ul>
-  				</div>			
-  			</header>
   			<div class="main">
   				<h1>可用积分:668</h1>
   				<h1>过期积分:68</h1>

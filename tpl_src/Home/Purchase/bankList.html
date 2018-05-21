@@ -15,21 +15,6 @@
       button{outline:none;border: none;background: #fff;}
     	
     	.wrap{width: 100%;}
-      .wrap .row{margin: 0px;}
-    	header{width: 100%;height: 100px;background:#2491ee;color: #fff;}
-	    .head{height: 100px;margin: 0 auto;position: relative;z-index: 1;}
-	    .head>span{height: 60px;width: 60%;line-height: 60px;font-size: 40px;display: block;float: left;margin-left: 5%;}
-	    .head>span:hover{cursor:pointer;}
-	    .head>span>sup{font-size:12px;top: -1.7em;}
-	    .head>p{height: 30px;width: auto;line-height: 30px;font-weight:bold;display: block;float: right;text-align: right;color: #fff;margin-top: 15px;}	    
-      
-      .head>ul{width:50%;height:auto;position: absolute;z-index: 3;background-color: #FFF;color: #000;left: 50%;top: 45px;display: none;}
-      .head>ul>li{width: 100%;height: 30px;font-size: 14px;text-align: center;border-bottom: 1px #dedede solid;line-height: 30px;}
-      
-      .head>div{width: 100%;height: 40px;float: left;}
-      .head>div>span{width:60%;height: 40px;float: left;font-size: 14px;line-height: 40px;margin-left: 5%;}
-			.head>div>a{width: 35%;height: 40px;line-height:40px;float: right;font-size: 14px;display:inline-block;color: #fff;text-align: right;}
-			
 			.main{height: auto;margin: auto;color: #000;}
 			.main>button{width: 100px;height: 40px;line-height:40px;text-align: center; border-radius: 8px;margin-left: 10%;}
 			.addressInfo{width: 100%;height: 182px;border: 1px solid #DEDEDE;margin-bottom: 5px;}
@@ -44,50 +29,12 @@
 			.addressInfo>div>button{width:60px;height: 29px;float: left;background: #fff;border-radius: 5px;margin-left: 5%;}
 			.dele{width: 60px;height: 29px;display: block;float: left;color:red;border-radius: 5px;margin-left: 5%;}
 			
-			#myModal1{top: 100px;}
-			#myModal2{top: 100px;}
-		
-      /*手机*/
-      @media screen and (max-width: 768px){
-				.head{ width: 100%;}
-				.main{width: 100%;}
-      }
-      /*平板*/
-      @media screen and (min-width: 768px){
-		    .head{ width: 100%;}
-				.main{width: 100%;}
-       
-      }
-        /*中等屏幕*/
-      @media screen and (min-width: 992px){      
-				.head{ width: 100%;}
-				.main{width: 100%;}
-      }
-      /*大屏幕*/
-      @media screen and (min-width: 1200px){
-        .head{ width: 1200px;}
-        .main{width: 1200px;}
-      }
+			#save{width: 100%;}
+			
     </style>
   </head>
   <body>
   		<div class="wrap">
-  			<header>
-  				<div class="head">
-  					<span onclick="location='main.html'">HAPYLIFE<sup>TM</sup></span>
-  					<p id="design" onclick="showSetting(this);">&nbsp;&nbsp;账户中心&nbsp;&nbsp;</p>
-  					<div>
-  						<span>{$Think.session.user.username},您好!</span>
-  						<a href="{:U('Home/index/log_out')}">退出登录&nbsp;&nbsp;</a>
-  					</div>
-  					<ul id="setting">
-  						<li><a href="addressList.html">地址管理</a></li>
-  						<li><a href="bankList.html">银行管理</a></li>
-  						<li><a href="recommenderList.html">推荐人</a></li>
-  						<li><a href="myPoint.html">我的积分</a></li>
-  					</ul>
-  				</div>			
-  			</header>
   			<div class="main">
   				<button type="button" data-toggle="modal" data-target="#myModal1">添加银行卡</button> 				
 	  			<!-- Modal -->
@@ -102,19 +49,15 @@
 										<form method="post" action="bankList.html">									  
 										  <div class="form-group">
 									    	<label for=""><sup style="color: red;">*</sup>开户人:</label>
-									    	<input type="text" class="form-control" id="" placeholder="开户人">
-										  </div>
-										  <div class="form-group">
-										    <label for=""><sup style="color: red;">*</sup>卡号:</label>
-										    <input type="text" class="form-control" id="" placeholder="卡号">
+									    	<input type="text" class="form-control" id="" placeholder="开户人" disabled="disabled">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>银行名称:</label>
 										    <input type="text" class="form-control" id="" placeholder="银行名称">
 										  </div>
 										  <div class="form-group">
-										    <label for=""><sup style="color: red;">*</sup>银行开户行:</label>
-										    <input type="text" class="form-control" id="" placeholder="银行开户行">
+										    <label for=""><sup style="color: red;">*</sup>银行账号:</label>
+										    <input type="text" class="form-control" id="" placeholder="银行账号">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>银行省:</label>
@@ -124,13 +67,16 @@
 										    <label for=""><sup style="color: red;">*</sup>银行市:</label>
 										    <input type="text" class="form-control" id="" placeholder="银行所在市">
 										  </div>
-										  <button type="submit" class="btn btn-default" >保存</button>
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>银行开户支行:</label>
+										    <input type="text" class="form-control" id="" placeholder="银行开户支行">
+										  </div>
+										  <div class="form-group">
+										  <button type="submit" class="btn btn-info" id="save">保存</button>
+										  </div>
 										</from>
 										
 					      </div>
-					      <!--<div class="modal-footer">
-					        <button type="button" class="btn btn-primary">Save changes</button>
-					      </div>-->
 					    </div>
 					  </div>
 					</div>
@@ -165,19 +111,15 @@
 									<form method="get" action="bankList.html">
 									  <div class="form-group">
 									    <label for=""><sup style="color: red;">*</sup>开户人:</label>
-									    <input type="text" class="form-control" id="" placeholder="开户人">
-									  </div>
-									  <div class="form-group">
-									    <label for=""><sup style="color: red;">*</sup>卡号:</label>
-									    <input type="text" class="form-control" id="" placeholder="卡号">
+									    <input type="text" class="form-control" id="" placeholder="开户人" disabled="disabled">
 									  </div>
 									  <div class="form-group">
 									    <label for=""><sup style="color: red;">*</sup>银行名称:</label>
 									    <input type="text" class="form-control" id="" placeholder="银行名称">
 									  </div>
 									  <div class="form-group">
-									    <label for=""><sup style="color: red;">*</sup>银行开户行:</label>
-									    <input type="text" class="form-control" id="" placeholder="银行开户行">
+									    <label for=""><sup style="color: red;">*</sup>银行账号:</label>
+									    <input type="text" class="form-control" id="" placeholder="银行账号">
 									  </div>
 									  <div class="form-group">
 									    <label for=""><sup style="color: red;">*</sup>银行省:</label>
@@ -187,7 +129,13 @@
 									    <label for=""><sup style="color: red;">*</sup>银行市:</label>
 									    <input type="text" class="form-control" id="" placeholder="银行所在市">
 									  </div>
-									  <button type="submit" class="btn btn-default">保存</button>
+									  <div class="form-group">
+									    <label for=""><sup style="color: red;">*</sup>支行名称:</label>
+									    <input type="text" class="form-control" id="" placeholder="支行名称">
+									  </div>
+									  <div class="form-group">
+										  <button type="submit" class="btn btn-info" id="save">保存</button>
+										</div>
 									</form>
 				      </div>
 				      <!--<div class="modal-footer">
