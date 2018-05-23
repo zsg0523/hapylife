@@ -50,6 +50,7 @@
 			border-bottom: 1px solid #DDDDDD;
 			margin-bottom: 10px;
 		}
+		.err{color:#FF0000;font-size: 14px;text-align:center;}
 	</style>
 	<body>
 		<div class="container">
@@ -63,39 +64,41 @@
 						<div class="col-lg-10 col-md-10 col-xs-8">
 							<input type="text" class="form-control" id="" name="LastName" placeholder="" value="{$data['LastName']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['LastName']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['LastName']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>中文名:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
 							<input type="text" class="form-control" id="" name="FirstName" placeholder="" value="{$data['FirstName']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['FirstName']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['FirstName']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>英文姓:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
 							<input type="text" class="form-control" id="" name="EnLastName" placeholder="" value="{$data['EnLastName']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['EnLastName']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnLastName']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>英文名:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
 							<input type="text" class="form-control" id="" name="EnFirstName" placeholder="" value="{$data['EnFirstName']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['EnFirstName']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnFirstName']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>密码:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
-							<input type="password" class="form-control" id="" name="PassWord" placeholder="必须填写七位以上的密码">
+							<input type="password" class="form-control" id="passWord1" name="PassWord" placeholder="必须填写七位以上的密码" onblur="valiPassword();">
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err" id="judgePassword1">{$error['PassWord']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>确认密码:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
-							<input type="password" class="form-control" id="" name="ConfirmPassWord" placeholder="必须和上面密码一致">
+							<input type="password" class="form-control" id="passWord2" name="ConfirmPassWord" placeholder="必须和上面密码一致"  onkeyup="validate();">
+							<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8" id="judgePassword2"></div>
 						</div>
 					</div>
 					<div class="form-group">
@@ -103,7 +106,7 @@
 						<div class="col-lg-10 col-md-10 col-xs-8">
 							<input type="text" class="form-control" id="" name="EnrollerID" placeholder="HPL开头或六位数的号码" value="{$data['EnrollerID']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['EnrollerID']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnrollerID']}</div>
 					</div>
 					
 					<div class="form-group">
@@ -132,21 +135,21 @@
 								<input type="radio" name="Sex" id="woman" value="女">女
 							</div>
 						</if>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['Sex']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['Sex']}</div>
 					</div>					
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>电子邮箱:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
 							<input type="text" class="form-control" id="" name="Email" placeholder="" value="{$data['Email']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['Email']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['Email']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>电话号码:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="Phone" placeholder="请填写中国国内电话号码" value="{$data['Phone']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['Phone']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['Phone']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>销售类型:</label>
@@ -174,7 +177,7 @@
 								<input type="radio" name="AccountType" id="company" value="公司">公司
 							</div>
 						</if>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['AccountType']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['AccountType']}</div>
 					</div>	
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>语言选择:</label>
@@ -197,14 +200,14 @@
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="ShopCountry" placeholder="" value="中国" readonly="readonly" value="{$data['ShopCountry']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['ShopCountry']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopCountry']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>省:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="ShopProvince" placeholder="" value="{$data['ShopProvince']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['ShopProvince']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopProvince']}</div>
 					</div>
 					
 					<div class="form-group">
@@ -212,21 +215,21 @@
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="ShopCity" placeholder="" value="{$data['ShopCity']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['ShopCity']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopCity']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>区:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="ShopArea" placeholder="" value="{$data['ShopArea']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['ShopArea']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopArea']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>详细地址:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="ShopAddress1" placeholder="街道-巷-小区-栋-层-室" value="{$data['ShopAddress1']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['ShopAddress1']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopAddress1']}</div>
 					</div>
 					<hr />
 					<div class="form-group">
@@ -241,21 +244,21 @@
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="BankName" placeholder="" value="{$data['BankName']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['BankName']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['BankName']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>银行账号:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="BankAccount" placeholder="" value="{$data['BankAccount']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['BankAccount']}</div>
+						<div  class="col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['BankAccount']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>省:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="BankProvince" placeholder="" value="{$data['BankProvince']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['BankProvince']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['BankProvince']}</div>
 					</div>
 					
 					<div class="form-group">
@@ -263,21 +266,21 @@
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="BankCity" placeholder="" value="{$data['BankCity']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['BankCity']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['BankCity']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>区:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="BankArea" placeholder="" value="{$data['BankArea']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['BankArea']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['BankArea']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>支行名称:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="SubName" placeholder="" value="{$data['SubName']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['SubName']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['SubName']}</div>
 					</div>
 					<hr />
 					<div class="form-group">
@@ -285,7 +288,7 @@
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="Idcard" placeholder="" value="{$data['Idcard']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['Idcard']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['Idcard']}</div>
 					</div>
 					
 					<div class="form-group">
@@ -324,7 +327,7 @@
 							</div>
 						</div>
 					</div>
-					<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['img']}</div>
+					<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['img']}</div>
 					<!--<div class="form-group">
 						<div class="col-md-offset-2 col-md-1 col-xs-offset-4 col-xs-4">
 							<input type="radio"  id="" name="clause" value="1">
@@ -346,4 +349,33 @@
 	</body>
 	<!--<script type="text/javascript" src="js/index.js"></script>-->
 	<script type="text/javascript" src="__PUBLIC_JS__/index.js"></script>
+	<script type="text/javascript">
+		function valiPassword(){
+			 var pwd1 = document.getElementById("passWord1").value;
+			 if(pwd1.length<7){
+			 	document.getElementById("judgePassword1").innerHTML="<span style='color: red;'>密码长度至少7位以上！</span>";
+			 }else{
+			 	document.getElementById("judgePassword1").innerHTML="";
+			 }
+		}
+		function validate() {
+              var pwd1 = document.getElementById("passWord1").value;
+              var pwd2 = document.getElementById("passWord2").value;
+		<!-- 对比两次输入的密码 -->
+              if(pwd1 == pwd2) {
+                  document.getElementById("judgePassword2").innerHTML="<span style='color: #449D44;'>两次密码一致</span>";
+              }
+              else {
+                  document.getElementById("judgePassword2").innerHTML="<span style='color: red;'>两次密码不一致</span>";
+              }
+         }
+		function changeInput(){
+			var err=document.getElementsByClassName('err');
+			for (var i=0;i<err.length;i++) {
+				if(err[i].innerText!=''){
+					err.innerText='';
+				}
+			}
+		}
+	</script>
 </html>

@@ -15,8 +15,8 @@
     	
     	.wrap{width: 100%;}
       .wrap .row{margin: 0px;}
-      .main{height: auto;width: 100%}
-    	header{width: 100%;height: 100px;background:#2491ee;color: #fff;}
+      .main{height: auto;width: 100%;position: absolute;top: 140px;z-index: 1;}
+    	header{width: 100%;height: 100px;background:#2491ee;color: #fff;position: fixed;top: 0;left: 0;z-index: 5;}
 	    .head{height: 100px;margin: 0 auto;/*position: relative;z-index: 1;*/}
 	    .head>span{height: 60px;width: 60%;line-height: 60px;font-size: 40px;display: block;float: left;margin-left: 5%;}
 	    .head>span:hover{cursor:pointer;}
@@ -27,7 +27,7 @@
 			.head>div>a{width: 35%;height: 40px;line-height:40px;float: right;font-size: 14px;display:inline-block;color: #fff;text-align: right;}	
       
       .active{background-color: #d1e7fe;}
-      .content{width: 100%;height: 40px;}
+      .content{width: 100%;height: 40px;background: #fff; position: fixed;top: 100px;left: 0;z-index: 5;}
       .navig{height: 40px;margin: auto;position: relative;z-index: 1;border-bottom:1px solid #DEDEDE;}
       .navig>span{width: 40px;height: 38px;color: #2491ee;font-size: 25px;line-height: 38px;text-align:center;}
       .navig>span:hover{cursor: pointer;}
@@ -36,7 +36,7 @@
       .navig>ul>li>a{width: 100%;height: 30px;font-size: 14px;color: #2491ee;text-align: center;line-height: 30px; border-bottom: 1px #dedede solid;display:inline-block;}
 			#title{width: 100px; height: 38px;font-size: 16px; line-height:38px;text-align: center;top: 0;left: 50%;margin-left: -50px;color: #2491ee;position: absolute;font-weight: bold;}
 	
-      iframe{border: none;height:2000px;}
+      iframe{border: none;}
  				.head{width: 100%;}
       /*手机*/
       @media screen and (max-width: 768px){
@@ -73,7 +73,7 @@
   		<div class="wrap">
   			<header>
   				<div class="head">
-  					<span onclick="location='main.html'">HAPYLIFE<sup>TM</sup></span>
+  					<span>HAPYLIFE<sup>TM</sup></span>
   					<div>
   						<span>{$Think.session.user.username},您好!</span>
   						<a href="{:U('Home/index/log_out')}">退出登录&nbsp;&nbsp;</a>
@@ -81,7 +81,7 @@
   				</div>
 	
   			</header>
-        <div class="content">
+        <div class="content" >
           <div class="navig">
             	<span class="glyphicon glyphicon-align-justify" id="design" onclick="showSetting(this);"></span>
             	<div id="title">购买礼包</div>
@@ -98,8 +98,8 @@
           </div>
         </div>
   			<div class="main">
-  				<iframe name="content" src="purchase.html" frameborder="0" scrolling="yes">
-  						
+  				<iframe name="content" id="iframe" src="purchase.html" frameborder="0" scrolling="yes" onload="iframeLoad();">
+  			
   				</iframe>
   			</div>
   		</div>
@@ -133,7 +133,18 @@
 			  des.style.backgroundColor="#fff";
 			  i=1;
 			}
-    }
+   }
+    
+    function iframeLoad()  
+		{    
+			if((document.getElementById("iframe").contentWindow.document.body.scrollHeight+140)<document.documentElement.clientHeight){
+				document.getElementById("iframe").height=document.documentElement.clientHeight-145;
+			}else{
+				document.getElementById("iframe").height=document.getElementById("iframe").contentWindow.document.body.scrollHeight+100;
+			}
+//	  	alert(document.getElementById("iframe").height);
+		}  
+    
     
        
     </script>
