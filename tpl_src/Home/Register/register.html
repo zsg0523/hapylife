@@ -54,8 +54,8 @@
 	</style>
 	<body>
 		<div class="container">
-			<div class="rg-name">
-				<span>HAPYLIFE 新用户注册</span>
+			<div class="rg-name" onclick="hiden(this);">
+				<span >HAPYLIFE 新用户注册</span>
 			</div>
 			<div class="rg-div">				
 				<form class="form-horizontal"  id="forms" method="post" action="{:U('Home/Register/register')}" enctype="multipart/form-data">
@@ -90,16 +90,17 @@
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>密码:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
-							<input type="password" class="form-control" id="passWord1" name="PassWord" placeholder="必须填写七位以上的密码" onblur="valiPassword();">
+							<input type="password" class="form-control" id="passWord1" name="PassWord" placeholder="必须填写七位以上的密码" oninput="valiPassword();"/>
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err" id="judgePassword1">{$error['PassWord']}</div>
+
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>确认密码:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
-							<input type="password" class="form-control" id="passWord2" name="ConfirmPassWord" placeholder="必须和上面密码一致"  onkeyup="validate();">
-							<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8" id="judgePassword2"></div>
+							<input type="password" class="form-control" id="passWord2" name="ConfirmPassWord" placeholder="必须和上面密码一致"  onkeyup="validate();" onfocusout="document.getElementById("judgePassword2").innerHTML="";"/>
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err" id="judgePassword2">{$error['ConfirmPassWord']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>推荐人ID:</label>
@@ -159,7 +160,7 @@
 								    <input type="radio" name="AccountType" id="person" value="个人" checked="checked">个人
 								</div>
 								<div class="col-lg-5 col-md-5 col-xs-4">
-									<input type="radio" name="AccountType" id="company" value="公司">公司
+									<input type="radio" name="AccountType" id="company" value="公司")>公司
 								</div>
 							<else />
 								<div class="col-lg-5 col-md-5 col-xs-4">
@@ -251,7 +252,7 @@
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control" id="" name="BankAccount" placeholder="" value="{$data['BankAccount']}">
 						</div>
-						<div  class="col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8">{$error['BankAccount']}</div>
+						<div  class="col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['BankAccount']}</div>
 					</div>
 					<div class="form-group">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>省:</label>
@@ -292,7 +293,7 @@
 					</div>
 					
 					<div class="form-group">
-						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>身份证正面:</label>
+						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><!--<span style="color: red;">*</span>-->身份证正面:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<div class="content">
 								<div class="img-area">					
@@ -310,7 +311,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>身份证反面:</label>
+						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><!--<span style="color: red;">*</span>-->身份证反面:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<div class="content">
 								<div class="img-area">					
@@ -362,20 +363,21 @@
               var pwd1 = document.getElementById("passWord1").value;
               var pwd2 = document.getElementById("passWord2").value;
 		<!-- 对比两次输入的密码 -->
-              if(pwd1 == pwd2) {
-                  document.getElementById("judgePassword2").innerHTML="<span style='color: #449D44;'>两次密码一致</span>";
+              if(pwd1 == pwd2&&pwd1!="") {
+                  document.getElementById("judgePassword2").innerHTML="两次密码一致";
+                   document.getElementById("judgePassword2").style.color="#3E8F3E";
               }
-              else {
-                  document.getElementById("judgePassword2").innerHTML="<span style='color: red;'>两次密码不一致</span>";
+              else if(pwd1==""){
+                  document.getElementById("judgePassword2").innerHTML="";
+              }else{
+              	  document.getElementById("judgePassword2").innerHTML="两次密码不一致";
+              	  document.getElementById("judgePassword2").style.color="red";
               }
-         }
-		function changeInput(){
-			var err=document.getElementsByClassName('err');
-			for (var i=0;i<err.length;i++) {
-				if(err[i].innerText!=''){
-					err.innerText='';
-				}
-			}
+        }
+		function hiden(val){
+			alert(val.innerText);
+			var a=val.getElementsByClassName('err').innerText;
+			alert(a);
 		}
 	</script>
 </html>
