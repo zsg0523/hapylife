@@ -11,7 +11,7 @@ class PurchaseController extends HomeBaseController{
     public function test(){
         $order = M('Receipt')
                 ->alias('r')
-                ->join('hapylife_user u on r.iuid = u.iuid')
+                ->join('hapylife_user u on r.riuid = u.iuid')
                 ->select();
         // p($order);die;
         foreach ($order as $key => $value) {
@@ -158,7 +158,7 @@ class PurchaseController extends HomeBaseController{
 		$iuid = $_SESSION['user']['id'];
         $data['status'] = $_SESSION['user']['status'];
 		$map  = array(
-				'iuid'=>$iuid
+				'riuid'=>$iuid
 			);
 		$data = M('Receipt')
 				->alias('r')
@@ -239,7 +239,7 @@ class PurchaseController extends HomeBaseController{
         $order_num = date('YmdHis').rand(10000, 99999);
         switch ($product['ip_type']) {
             case '1':
-                $list= D('Receipt')->where(array('ir_ordertype'=>$product['ip_type'],'iuid'=>$iuid,'is_delete'=>0))->select();
+                $list= D('Receipt')->where(array('ir_ordertype'=>$product['ip_type'],'riuid'=>$iuid,'is_delete'=>0))->select();
                 if($list){
                     $this->error('请付款或删除重新下单');
                 }else{
@@ -265,9 +265,9 @@ class PurchaseController extends HomeBaseController{
             //订单的状态(0待生成订单，1待支付订单，2已付款订单)
             'ir_status'     =>0,
             //下单用户id
-            'iuid'          =>$iuid,
+            'riuid'          =>$iuid,
             //下单用户
-            'CustomerID'    =>$userinfo['customerid'],
+            'rCustomerID'    =>$userinfo['customerid'],
             //收货人
             'ia_name'       =>$ia_name,
             //收货人电话
