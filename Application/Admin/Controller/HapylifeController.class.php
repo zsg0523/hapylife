@@ -559,7 +559,7 @@ class HapylifeController extends AdminBaseController{
 		$excel     = I('get.excel');
 		$status    = I('get.status')-1;
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
-		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime')):time();
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
 		$assign    = D('User')->getPage(D('User'),$word,$order='joinedon desc',$status,$starttime,$endtime);
 		// p($assign);
 		// die;

@@ -272,30 +272,30 @@ class UserModel extends BaseModel{
 	public function export_excel($data){
 		$title   = array('UREGTIME','Happy Life ID','Payment Date Time (Dallas time)','Sponsor ID W & H','Product','Gender','Last Name','First Name','En Last Name','En First Name','email address','password','phone1','mailing address1','mailing city','mailing province','mailing country','Identification Card (upload)','Account Type');
 		foreach ($data as $k => $v) {
-			$content[$k]['joinedon']     	= date('Y-m-d',$v['joinedon']);
-			$content[$k]['customerid']  	= $v['customerid'];
+			$content[$k]['joinedon']   = date('Y-m-d H:i:s',$v['joinedon']);
+			$content[$k]['customerid'] = $v['customerid'];
 			if($v['ir_paytime'] == 0){
 				$content[$k]['paymentdateTime'] = '';
 			}else{
-				$content[$k]['paymentdateTime'] = date('Y-m-d',$v['ir_paytime']);
+				$content[$k]['paymentdateTime'] = date('Y-m-d H:i:s',$v['ir_paytime']-13*3600);
 			}
-			$content[$k]['enrollerid']      = $v['enrollerid'];
-			$content[$k]['product']        = $v['product_name'];
-			$content[$k]['sex']       = $v['sex'];
-			$content[$k]['lastname']     = $v['lastname'];
-			$content[$k]['firstname']     = $v['firstname'];
-			$content[$k]['enlastname']     = $v['enlastname'];
-			$content[$k]['enfirstname']     = $v['enfirstname'];
-			$content[$k]['email']     = $v['email'];
-			$content[$k]['password']     = $v['password'];
-			$content[$k]['phone']     = $v['phone'];
-			$content[$k]['shopaddress1']     = $v['shopaddress1'];
-			$content[$k]['shopcity']     = $v['shopcity'];
-			$content[$k]['shopprovince']     = $v['shopprovince'];
-			$content[$k]['shopcountry']     = $v['shopcountry'];
-			$content[$k]['idcard']     = $v['idcard'];
-			$content[$k]['termsandconditions']     = $v['termsandconditions'];
-			$content[$k]['accounttype']     = $v['accounttype'];
+			$content[$k]['enrollerid']         = $v['enrollerid'];
+			$content[$k]['product']            = $v['product_name'];
+			$content[$k]['sex']                = $v['sex'];
+			$content[$k]['lastname']           = $v['lastname'];
+			$content[$k]['firstname']          = $v['firstname'];
+			$content[$k]['enlastname']         = $v['enlastname'];
+			$content[$k]['enfirstname']        = $v['enfirstname'];
+			$content[$k]['email']              = $v['email'];
+			$content[$k]['password']           = $v['password'];
+			$content[$k]['phone']              = $v['phone'];
+			$content[$k]['shopaddress1']       = $v['shopaddress1'];
+			$content[$k]['shopcity']           = $v['shopcity'];
+			$content[$k]['shopprovince']       = $v['shopprovince'];
+			$content[$k]['shopcountry']        = $v['shopcountry'];
+			$content[$k]['idcard']             = $v['idcard'];
+			$content[$k]['termsandconditions'] = $v['termsandconditions'];
+			$content[$k]['accounttype']        = $v['accounttype'];
 		}
     	create_csv($content,$title);
 		return;
