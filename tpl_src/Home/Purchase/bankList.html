@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title>HAPYLIFE</title>
+    <title>银行管理</title>
     <link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
     <style type="text/css">
       *{margin: 0;padding: 0;font-size: 14px;}
@@ -13,30 +13,151 @@
     	a{text-decoration: none;color: #000;font-weight: bold;}
       a:hover{text-decoration: none;cursor: pointer;}
       button{outline:none;border: none;background: #fff;}
+      input[type="radio"], input[type="checkbox"] {margin: 7px 5px 0 5px;}
     	
-    	.wrap{width: 100%;}
+    	.wrap{width: 100%;height: 100%;position: relative;}
 			.main{height: auto;margin: auto;color: #000;}
-			.main>button{width: 100px;height: 40px;line-height:40px;text-align: center; border-radius: 8px;margin-left: 10%;}
-			.addressInfo{width: 100%;height: 182px;border: 1px solid #DEDEDE;margin-bottom: 5px;}
+			#addCard{width: 100%;height: 40px;line-height:40px;text-align: center; border-radius: 5px;position: fixed;z-index: 10;
+			font-size: 16px;bottom: 0;  color: #FFFFFF; background-color: #2491EE;}
+			.addressInfo{width: 100%;height: 180px;border: 1px solid #DEDEDE;margin-top: 5px;}
 			.addressInfo>ul{width: 100%;height: 150px;border-bottom: 1px #DEDEDE solid;}
 			.addressInfo>ul>li{width: 100%;height: 25px;}
-			.addressInfo>ul>li>span{width: 30%;height: 25px;line-height: 25px;text-align: right;display: block;float: left;}
-			.addressInfo>ul>li>div{width: 60%;height: 25px;line-height: 25px;text-align: left;float: left;margin-left: 10%;}
-			.addressInfo>ul>li>div>span{width: 60px;height: 25px;margin-right: 5px; line-height: 25px;text-align: center;display: block;float: right;
-			border-radius: 5px;background: #FF6600;color: #fff;}
+			.addressInfo>ul>li>span{width: 30%;height: 25px;line-height: 25px;text-align: left;display: block;float: left;margin-left: 5px;}
+			.addressInfo>ul>li>div{width: 60%;height: 25px;line-height: 25px;text-align: right;float: right;margin-right: 5px; }
 			.addressInfo>div{text-align: center;line-height: 29px;background: #fff;color: #000;}
-			.defa{width: 100px;height: 29px;display: block;float: left;border-radius: 5px;margin-left: 5%;}
-			.addressInfo>div>button{width:60px;height: 29px;float: left;background: #fff;border-radius: 5px;margin-left: 5%;}
-			.dele{width: 60px;height: 29px;display: block;float: left;color:red;border-radius: 5px;margin-left: 5%;}
+			.defa{width: 120px;height: 29px;display: block;float: left;text-align: left;}
+			.sel{width: 15px;height: 15px;display: block;float: left;}
+			.addressInfo>div>button{width:60px;height: 28px;float: right;background: #fff;margin-left: 5%;}
+			.dele{width: 60px;height: 29px;display: block;float: right;color:red;margin-left: 5%;}
 			
 			#save{width: 100%;}
+			      /*手机*/
+      @media screen and (max-width: 768px){
+     .main{width: 100%;}
+      }
+      /*平板*/
+      @media screen and (min-width: 768px){
+       .main{width: 100%;}
+      }
+        /*中等屏幕*/
+      @media screen and (min-width: 992px){
+         .main{width: 100%;}   
+      }
+      /*大屏幕*/
+      @media screen and (min-width: 1200px){
+        .main{width: 100%;}
+      }
 			
     </style>
   </head>
   <body>
   		<div class="wrap">
   			<div class="main">
-  				<button type="button" data-toggle="modal" data-target="#myModal1">添加银行卡</button> 				
+  				
+  				<div class="addressInfo">
+  					<ul>
+  						<li><span>开户人:</span><div>qiuxiny</div></li>
+  						<li><span>卡号:</span><div>111111100101</div></li>
+  						<li><span>银行名称:</span><div>建设银行</div></li>
+  						<li><span>银行开户行:</span><div>广东省深圳市龙岗区支行</div></li>
+  						<li><span>银行省:</span><div>广东省</div></li>
+  						<li><span>银行市:</span><div>深圳市</div></li>
+  					</ul>
+  					<div>
+  						<input class="sel" type="checkbox" name="defa" checked="true" onclick="changeCheck(this);" /><span class="defa">设为默认银行</span>
+  						<a class="dele" href="#">删除</a>
+  						<button type="button" data-toggle="modal" data-target="#myModal2">编辑</button>
+  						
+  					</div>
+  				</div>
+  				
+  				<div class="addressInfo">
+  					<ul>
+  						<li><span>开户人:</span><div>qiuxiny</div></li>
+  						<li><span>卡号:</span><div>111111100101</div></li>
+  						<li><span>银行名称:</span><div>建设银行</div></li>
+  						<li><span>银行开户行:</span><div>广东省深圳市龙岗区支行</div></li>
+  						<li><span>银行省:</span><div>广东省</div></li>
+  						<li><span>银行市:</span><div>深圳市</div></li>
+  					</ul>
+  					<div>
+  						<input class="sel" type="checkbox" name="defa"  onclick="changeCheck(this);" /><span class="defa">设为默认银行</span>
+  						<a class="dele" href="#">删除</a>
+  						<button type="button" data-toggle="modal" data-target="#myModal2">编辑</button>
+  						
+  						
+  					</div>
+  				</div>
+  				
+  				<div class="addressInfo">
+  					<ul>
+  						<li><span>开户人:</span><div>qiuxiny</div></li>
+  						<li><span>卡号:</span><div>111111100101</div></li>
+  						<li><span>银行名称:</span><div>建设银行</div></li>
+  						<li><span>银行开户行:</span><div>广东省深圳市龙岗区支行</div></li>
+  						<li><span>银行省:</span><div>广东省</div></li>
+  						<li><span>银行市:</span><div>深圳市</div></li>
+  					</ul>
+  					<div>
+  						<input class="sel" type="checkbox" name="defa"  onclick="changeCheck(this);" /><span class="defa">设为默认银行</span>
+  						<a class="dele" href="#">删除</a>
+  						<button type="button" data-toggle="modal" data-target="#myModal2">编辑</button>
+  						
+  						
+  					</div>
+  				</div>
+  				
+  				<div style="height:50px;width: 100%;"></div>
+  		
+  				
+  				
+  				<!-- Modal -->
+					<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+					  <div class="modal-dialog" role="document">
+					    <div class="modal-content">
+					      <div class="modal-header">
+					      	<span>编辑银行:</span>
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					      </div>
+					      <div class="modal-body daimabiji-container">
+										<form method="get" action="bankList.html">
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>开户人:</label>
+										    <input type="text" class="form-control" id="" placeholder="开户人" disabled="disabled">
+										  </div>
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>银行名称:</label>
+										    <input type="text" class="form-control" id="" placeholder="银行名称">
+										  </div>
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>银行账号:</label>
+										    <input type="text" class="form-control" id="" placeholder="银行账号">
+										  </div>
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>银行省:</label>
+										    <input type="text" class="form-control" id="" placeholder="银行所在省">
+										  </div>
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>银行市:</label>
+										    <input type="text" class="form-control" id="" placeholder="银行所在市">
+										  </div>
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>支行名称:</label>
+										    <input type="text" class="form-control" id="" placeholder="支行名称">
+										  </div>
+										  <div class="form-group">
+											  <button type="submit" class="btn btn-info" id="save">保存</button>
+											</div>
+										</form>
+					      </div>
+					      <!--<div class="modal-footer">
+					        <button type="button" class="btn btn-primary">Save changes</button>
+					      </div>-->
+					    </div>
+					  </div>
+					</div>
+					
+					<button type="button" id="addCard" data-toggle="modal" data-target="#myModal1">添加银行卡</button> 				
 	  			<!-- Modal -->
 					<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 					  <div class="modal-dialog" role="document">
@@ -81,71 +202,9 @@
 					  </div>
 					</div>
 					
-  				<div class="addressInfo">
-  					<ul>
-  						<li><span>开户人:</span><div>qiuxiny<span>默认银行</span></div></li>
-  						<li><span>卡号:</span><div>111111100101</div></li>
-  						<li><span>银行名称:</span><div>建设银行</div></li>
-  						<li><span>银行开户行:</span><div>广东省深圳市龙岗区支行</div></li>
-  						<li><span>银行省:</span><div>广东省</div></li>
-  						<li><span>银行市:</span><div>深圳市</div></li>
-  					</ul>
-  					<div>
-  						<div style="width: 10%;height: 29px;float: left;"></div>
-  						<a class="defa">设为默认地址</a>
-  						<button type="button" data-toggle="modal" data-target="#myModal2">编辑</button>
-  						<a class="dele" href="#">删除</a>
-  					</div>
-  				</div>
-  				
-  				
-  				<!-- Modal -->
-				<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-				  <div class="modal-dialog" role="document">
-				    <div class="modal-content">
-				      <div class="modal-header">
-				      	<span>编辑银行:</span>
-				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				      </div>
-				      <div class="modal-body daimabiji-container">
-									<form method="get" action="bankList.html">
-									  <div class="form-group">
-									    <label for=""><sup style="color: red;">*</sup>开户人:</label>
-									    <input type="text" class="form-control" id="" placeholder="开户人" disabled="disabled">
-									  </div>
-									  <div class="form-group">
-									    <label for=""><sup style="color: red;">*</sup>银行名称:</label>
-									    <input type="text" class="form-control" id="" placeholder="银行名称">
-									  </div>
-									  <div class="form-group">
-									    <label for=""><sup style="color: red;">*</sup>银行账号:</label>
-									    <input type="text" class="form-control" id="" placeholder="银行账号">
-									  </div>
-									  <div class="form-group">
-									    <label for=""><sup style="color: red;">*</sup>银行省:</label>
-									    <input type="text" class="form-control" id="" placeholder="银行所在省">
-									  </div>
-									  <div class="form-group">
-									    <label for=""><sup style="color: red;">*</sup>银行市:</label>
-									    <input type="text" class="form-control" id="" placeholder="银行所在市">
-									  </div>
-									  <div class="form-group">
-									    <label for=""><sup style="color: red;">*</sup>支行名称:</label>
-									    <input type="text" class="form-control" id="" placeholder="支行名称">
-									  </div>
-									  <div class="form-group">
-										  <button type="submit" class="btn btn-info" id="save">保存</button>
-										</div>
-									</form>
-				      </div>
-				      <!--<div class="modal-footer">
-				        <button type="button" class="btn btn-primary">Save changes</button>
-				      </div>-->
-				    </div>
-				  </div>
-				</div>			
-  				
   			</div>
+  			
+  			
   		</div>
 
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
@@ -168,7 +227,20 @@
 			  des.style.borderBottom="none";
 			  i=1;
 			}
+   }
+    
+    function changeCheck(obj){
+    	var checkBoxs=document.getElementsByClassName("sel");
+    	for (var i=0;i<checkBoxs.length;i++) {
+    		checkBoxs[i].checked=false;
+    	}
+    	obj.checked=true;
+    
+    	
     }
+      
+		
+		
     </script>
 
   </body>
