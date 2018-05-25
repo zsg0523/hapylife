@@ -75,8 +75,8 @@
 							<td>{$v['inner_trade_no']}</td>
 							<td>{$v['trade_status']}</td>
 							<td>{$v['customerid']}</td>
-							<td>{$v['firstname']}</td>
 							<td>{$v['lastname']}</td>
+							<td>{$v['firstname']}</td>
 							<td>{$v['ir_price']}</td>
 							<td>{$v['ir_desc']}</td>
 							<td>
@@ -88,7 +88,7 @@
 							</td>
 							<td>{$v['ia_name']}</td>
 							<td>{$v['ia_phone']}</td>
-							<td>{$v['ia_address']}</td>
+							<td>{$v.shopprovince}{$v.shopcity}{$v['ia_address']}</td>
 							<!-- <td>
 								<if 	condition="$v['is_delivery'] eq 0">不送货
                                 <elseif condition="$v['is_delivery'] eq 1"/>送货
