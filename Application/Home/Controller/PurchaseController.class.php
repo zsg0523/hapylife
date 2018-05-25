@@ -9,20 +9,30 @@ class PurchaseController extends HomeBaseController{
     * 
     **/
     public function test(){
-        $order = M('Receipt')
-                ->alias('r')
-                ->join('hapylife_user u on r.iuid = u.iuid')
-                ->select();
-        // p($order);die;
-        foreach ($order as $key => $value) {
-            if($value['ir_status'] == 2){
-                //添加支付时间
-                $ir_paytime = $value['ir_date']+600;
-                $map = array(
-                    'ir_paytime'=>$ir_paytime
-                );
-                $save = M('Receipt')->where(array('ir_receiptnum'=>$value['ir_receiptnum']))->save($map);
-            }
+        // $order = M('Receipt')
+        //         ->alias('r')
+        //         ->join('hapylife_user u on r.iuid = u.iuid')
+        //         ->select();
+        // // p($order);die;
+        // foreach ($order as $key => $value) {
+        //     if($value['ir_status'] == 2){
+        //         //添加支付时间
+        //         $ir_paytime = $value['ir_date']+600;
+        //         $map = array(
+        //             'ir_paytime'=>$ir_paytime
+        //         );
+        //         $save = M('Receipt')->where(array('ir_receiptnum'=>$value['ir_receiptnum']))->save($map);
+        //     }
+        // }
+        $ir_receiptnum = trim(I('post.ir_receiptnum'));
+        $status  = array(
+                'ir_status'  =>2,
+                'ir_paytype' =>1,
+                'ir_paytime' =>time()
+            );
+        $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->save($status);
+        if($upreceipt){
+            echo 'seccess';
         }
     }
 	
@@ -239,7 +249,7 @@ class PurchaseController extends HomeBaseController{
         $order_num = date('YmdHis').rand(10000, 99999);
         switch ($product['ip_type']) {
             case '1':
-                $list= D('Receipt')->where(array('ir_ordertype'=>$product['ip_type'],'iuid'=>$iuid,'is_delete'=>0))->select();
+                $list= D('Receipt')->where(array('ir_ordertype'=>$product['ip_type'],'riuid'=>$iuid,'is_delete'=>0))->select();
                 if($list){
                     $this->error('请付款或删除重新下单');
                 }else{
@@ -265,9 +275,9 @@ class PurchaseController extends HomeBaseController{
             //订单的状态(0待生成订单，1待支付订单，2已付款订单)
             'ir_status'     =>0,
             //下单用户id
-            'iuid'          =>$iuid,
+            'riuid'          =>$iuid,
             //下单用户
-            'CustomerID'    =>$userinfo['customerid'],
+            'rCustomerID'    =>$userinfo['customerid'],
             //收货人
             'ia_name'       =>$ia_name,
             //收货人电话
@@ -340,7 +350,7 @@ class PurchaseController extends HomeBaseController{
 		$postData['SellerId']          = '200001380239'; //商户编号，调用畅捷子账户开通接口获取的子账户编号;该字段可以传入平台id或者平台id下的子账户号;作为收款方使用；与鉴权请求接口中MerchantNo保持一致
 		$postData['SubMerchantNo']     = '200001380239'; //子商户，在畅捷商户自助平台申请开通的子商户，用于自动结算
 		$postData['ExpiredTime']       = '48h'; //订单有效期，取值范围：1m～48h。单位为分，如1.5h，可转换为90m。用来标识本次鉴权订单有效时间，超过该期限则该笔订单作废
-		$postData['MerUserId']         = $order['iuid']; //用户标识
+		$postData['MerUserId']         = $order['riuid']; //用户标识
 		$postData['BkAcctTp']          = ''; //卡类型（00 –银行贷记账户;01 –银行借记账户;）
 		// $postData['BkAcctNo']       =   rsaEncrypt('XXXXX'); //卡号
 		$postData['BkAcctNo']          = ''; //卡号
@@ -389,57 +399,69 @@ class PurchaseController extends HomeBaseController{
 		//更改订单状态
 		if($return == "true" && $map['trade_status'] == 'TRADE_SUCCESS'){
 			//修改用户最近订单日期/是否通过/等级/数量
-            $tmpe['iuid']     =$receipt['iuid'];
-            $find             =D('User')->where(array('iuid'=>$receipt['iuid']))->find();
-            if($find['number']==0){
-            	$tmpe['OrderDate']= date("m/d/Y h:i:s A");
-            	$OrderDate        = date("Y-m-d",strtotime("-1 month",time()));
-                if($find['isnew']==0){
-                    if($find['number']==0){
+            $tmpe['iuid'] = $receipt['riuid'];
+            $userinfo     = D('User')->where(array('iuid'=>$receipt['riuid']))->find();
+            //number 购买产品的次数
+            if($userinfo['number']==0){
+                //支付日期
+            	$tmpe['OrderDate'] = date("m/d/Y h:i:s A");
+            	$OrderDate         = date("Y-m-d",strtotime("-1 month",time()));
+                //如果是旧用户
+                if($userinfo['isnew'] == 0){
+                    if($userinfo['number']==0){
+                        //isCheck 是否审核
                         $tmpe['IsCheck'] = 1;   
                     }
                 }else{
                     $tmpe['IsCheck'] = 2;
                 }
             }else{
-            	$OrderDate       = $find['orderdate'];
+                //
+            	$OrderDate       = $userinfo['orderdate'];
                 $tmpe['IsCheck'] = 2;
             }
+            //产品等级
             $tmpe['DistributorType'] = D('Product')->where(array('ipid'=>$receipt['ipid']))->getfield('ip_after_grade');
-            $tmpe['Number']   =$find['number']+1;
-			$status  = array(
-				'ir_status'  =>2,
-				'ir_paytype' =>1,
-                'ir_paytime' =>time()
-			);
-			$activaDate = D('Activation')->where(array('iuid'=>$receipt['iuid'],'is_tick'=>1))->order('datetime desc')->getfield('datetime');
-			if(empty($activaDate)){
-				$activa = $OrderDate;
-			}else{
-				$activa = $activaDate;
-			}
-			$day = date('d',strtotime($OrderDate));
+            //购买产品次数+1
+            $tmpe['Number']          = $find['number']+1;
+            //用户的激活记录
+            $activaDate = D('Activation')->where(array('iuid'=>$receipt['riuid'],'is_tick'=>1))->order('datetime desc')->getfield('datetime');
+
+            if(empty($activaDate)){
+                $activa = $OrderDate;
+            }else{
+                $activa = $activaDate;
+            }
+            $day = date('d',strtotime($OrderDate));
             if($day>=28){
                 $allday = 28;
             }else{
                 $allday = $day;
             }
-            $ddd    = $allday-1;
+            $ddd = $allday-1;
             if($ddd>=10){
                 $oneday = $ddd;
             }else{
                 $oneday = '0'.$ddd;
             }
             // for($i=0;$i<$receipt['ir_productnum'];$i++) {
-            	//删除原先未激活，添加激活
-            	$time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
-            	$year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
-    			$endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
-				$delete= D('Activation')->where(array('iuid'=>$receipt['iuid'],'datetime'=>$time))->delete();
-				$where =array('iuid'=>$receipt['iuid'],'ir_receiptnum'=>$map['outer_trade_no'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
-				$save  = D('Activation')->add($where);
-            // }   
+                //删除原先未激活，添加激活
+                $time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
+                $year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
+                $endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
+                $delete= D('Activation')->where(array('iuid'=>$receipt['riuid'],'datetime'=>$time))->delete();
+                $where =array('iuid'=>$receipt['riuid'],'ir_receiptnum'=>$map['outer_trade_no'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
+                $save  = D('Activation')->add($where);
+            // }
+
+			$status  = array(
+				'ir_status'  =>2,
+				'ir_paytype' =>1,
+                'ir_paytime' =>time()
+			);
+            //更新订单信息
         	$upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($status);
+            //修改用户信息
             $update    = D('User')->save($tmpe);
         	if($upreceipt){
         		//通知畅捷完成支付
