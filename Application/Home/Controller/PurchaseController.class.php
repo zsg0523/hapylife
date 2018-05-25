@@ -9,30 +9,20 @@ class PurchaseController extends HomeBaseController{
     * 
     **/
     public function test(){
-        // $order = M('Receipt')
-        //         ->alias('r')
-        //         ->join('hapylife_user u on r.iuid = u.iuid')
-        //         ->select();
-        // // p($order);die;
-        // foreach ($order as $key => $value) {
-        //     if($value['ir_status'] == 2){
-        //         //添加支付时间
-        //         $ir_paytime = $value['ir_date']+600;
-        //         $map = array(
-        //             'ir_paytime'=>$ir_paytime
-        //         );
-        //         $save = M('Receipt')->where(array('ir_receiptnum'=>$value['ir_receiptnum']))->save($map);
-        //     }
-        // }
-        $ir_receiptnum = trim(I('post.ir_receiptnum'));
-        $status  = array(
-                'ir_status'  =>2,
-                'ir_paytype' =>1,
-                'ir_paytime' =>time()
-            );
-        $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->save($status);
-        if($upreceipt){
-            echo 'seccess';
+        $order = M('Receipt')
+                ->alias('r')
+                ->join('hapylife_user u on r.riuid = u.iuid')
+                ->select();
+        // p($order);die;
+        foreach ($order as $key => $value) {
+            if($value['ir_status'] == 2){
+                //添加支付时间
+                $ir_paytime = $value['ir_date']+600;
+                $map = array(
+                    'ir_paytime'=>$ir_paytime
+                );
+                $save = M('Receipt')->where(array('ir_receiptnum'=>$value['ir_receiptnum']))->save($map);
+            }
         }
     }
 	

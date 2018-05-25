@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>我的积分</title>
+    <link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      *{margin: 0;padding: 0;}
+    	ul,li{list-style: none;display: block;}
+    	a{text-decoration: none;color: #000;font-weight: bold;}
+      a:hover{text-decoration: none;cursor: pointer;}
+    	
+    	.wrap{width: 100%;}
+      .wrap .row{margin: 0px;}
+      .main{height: auto;margin: auto;}
+      
+      /*手机*/
+      @media screen and (max-width: 768px){
+		  .head{ width: 100%;}
+    </style>
+  </head>
+  <body>
+  		<div class="wrap">
+  			<div class="main">
+  				<h1>可用积分:668</h1>
+  				<h1>过期积分:68</h1>
+  			</div>
+  		</div>
+
+  <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
+  <script type="text/javascript" >
+  var i=1;
+	function showSetting(obj){
+    	var setting=document.getElementById('setting');
+	  	var des=document.getElementById('design');
+			if(i==1){
+				setting.style.display="block";
+				des.style.color="#000";
+			  des.style.backgroundColor="#fff";
+			  des.style.borderBottom="#dedede 1px solid";
+			  i=0;
+			}else{
+				setting.style.display="none";
+				des.style.color="#fff";
+			  des.style.backgroundColor="#2491ee";
+			  des.style.borderBottom="none";
+			  i=1;
+			}
+    }
+       
+    </script>
+
+  </body>
+</html>

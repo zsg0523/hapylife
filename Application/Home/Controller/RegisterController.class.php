@@ -9,8 +9,10 @@ class RegisterController extends HomeBaseController{
 	public function register(){
 		$data = I('post.');
 
+
 		$upload = several_upload();
 		if(IS_POST){
+
 			if($data['Sex']){
 				$User = D("User1"); // 实例化User对象
 				if (!$User->create($data)){
