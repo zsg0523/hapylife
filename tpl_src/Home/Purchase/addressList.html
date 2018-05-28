@@ -68,10 +68,10 @@
 	  						<li><span>详细地址:</span><div>{$v['ia_road']}</div></li>
 	  					</ul>
 	  					<form name="form" action="#" method="post">
-	  						
-	  						<button type="button" class="defa" onclick="form.action='main.html';form.submit();changeCheck(this);"><input class="sel" type="checkbox" name="defa"  <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />设为默认地址</button>
-	  						<button type="button" class="dele" onclick="form.action='main.html';form.submit();">删除</button>
-	  						<button type="button" class="edit" onclick="form.action='main.html';form.submit();" data-toggle="modal" data-target="#myModal2">编辑</button>
+	  						<input type="hidden" name="iaid" value="{$v['iaid']}">
+	  						<button type="button" class="defa" onclick='form.action="{:U('Home/Purchase/addressAdd')}";form.submit();changeCheck(this);'><input class="sel" type="checkbox" <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />设为默认地址</button>
+	  						<button type="button" class="dele" onclick='form.action="{:U('Home/Purchase/addressDelect')}";form.submit();'>删除</button>
+	  						<button type="button" class="edit" data-toggle="modal" data-target="#myModal2">编辑</button>
 	  					</form>
 	  				</div>
 	  			</foreach>
@@ -82,13 +82,13 @@
   				<!-- Modal -->
 				<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 				  <div class="modal-dialog" role="document">
-				    <div class="modal-content">
+				    <div class="modal-content"> 
 				      <div class="modal-header">
 				      	<span>编辑收货地址:</span>
 				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				      </div>
 				      <div class="modal-body daimabiji-container">
-									<form >
+									<form action="{:U('Home/Purchase/addressEdit')}">
 									  <div class="form-group">
 									    <label for=""><sup style="color: red;">*</sup>收货人:</label>
 									    <input type="text" class="form-control" id=""  placeholder="收货人姓名">
@@ -162,7 +162,7 @@
 										    <input name="ia_road" type="text" class="form-control" id="" placeholder="详细地址">
 										  </div>
 										  <div class="form-group">
-										  <button type="submit" class="btn btn-info" id="save">保存</button>
+										  <button type="submit" class="btn btn-info" id="save">添加</button>
 										  </div>
 										</form>
 					      </div>
