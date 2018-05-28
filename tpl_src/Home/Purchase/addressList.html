@@ -60,7 +60,7 @@
   		<div class="wrap">
   			<div class="main">
   				
-  				<div class="addressInfo">
+  				<form class="addressInfo" action="#" method="post">
   					<ul>
   						<li><span>收货人:</span><div>qiuxiny</div></li>
   						<li><span>联系电话:</span><div>111111100101</div></li>
@@ -68,27 +68,12 @@
   						<li><span>详细地址:</span><div>坂田街道五和地铁站</div></li>
   					</ul>
   					<div>
-  						<input class="sel" type="checkbox" name="defa" checked="true" onclick="changeCheck(this);" />
+  						<input class="sel" type="checkbox" name="defa" checked="true" onclick="javascript:form.submit();changeCheck(this);" />
   						<a class="defa">设为默认地址</a>
-  						<a class="dele" href="#">删除</a>
+  						<a class="dele" href="javascript:form.submit();">删除</a>
   						<button type="button" data-toggle="modal" data-target="#myModal2">编辑</button>
   					</div>
-  				</div>
-  				
-  				<div class="addressInfo">
-  					<ul>
-  						<li><span>收货人:</span><div>qiuxiny</div></li>
-  						<li><span>联系电话:</span><div>111111100101</div></li>
-  						<li><span>所在地区:</span><div>广东省深圳市龙岗区</div></li>
-  						<li><span>详细地址:</span><div>坂田街道五和地铁站</div></li>
-  					</ul>
-  					<div>
-  						<input class="sel" type="checkbox" name="defa" onclick="changeCheck(this);" />
-  						<a class="defa">设为默认地址</a>  						
-  						<a class="dele" href="#">删除</a>
-  						<button type="button" data-toggle="modal" data-target="#myModal2">编辑</button>
-  					</div>
-  				</div>
+  				</form>
   				
   				<div style="height:50px;width: 100%;"></div>
   			
@@ -114,13 +99,6 @@
 									  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>所在省:</label>
 										    <input type="text" class="form-control" id="" placeholder="所在省">
-										   	<!--<form class="form-inline">
-									        <div class="row" data-toggle="distpicker"> 
-									          <select class="form-control col-xs-3  col-sm-4  col-md-3" id="province1"></select>
-									          <select class="form-control col-xs-3  col-sm-4  col-md-" id="city1"></select>
-									          <select class="form-control col-xs-3  col-sm-4  col-md-3" id="district1"></select>
-									        </div>
-									     </form>-->
 										</div>
 										<div class="form-group">
 										  <label for=""><sup style="color: red;">*</sup>所在市:</label>
