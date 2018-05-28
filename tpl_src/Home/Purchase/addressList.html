@@ -68,8 +68,8 @@
 	  						<li><span>详细地址:</span><div>{$v['ia_road']}</div></li>
 	  					</ul>
 	  					<form name="form" action="#" method="post">
-	  						<input class="sel" type="checkbox" name="defa"  <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />
-	  						<button type="button" class="defa" onclick="form.action="{:U('Home/Purchase/addressAdd')}";form.submit();changeCheck(this);">设为默认地址</a>
+	  						
+	  						<button type="button" class="defa" onclick="form.action='main.html';form.submit();changeCheck(this);"><input class="sel" type="checkbox" name="defa"  <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />设为默认地址</button>
 	  						<button type="button" class="dele" onclick="form.action='main.html';form.submit();">删除</button>
 	  						<button type="button" class="edit" onclick="form.action='main.html';form.submit();" data-toggle="modal" data-target="#myModal2">编辑</button>
 	  					</form>
@@ -195,7 +195,7 @@
 			  i=1;
 			}
     }
-     function changeCheck(obj){
+    function changeCheck(obj){
     	var checkBoxs=document.getElementsByClassName("sel");
     	for (var i=0;i<checkBoxs.length;i++) {
     		checkBoxs[i].checked=false;
