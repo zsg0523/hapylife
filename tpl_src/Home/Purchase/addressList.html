@@ -29,10 +29,10 @@
 			.addressInfo>ul>li{width: 100%;height: 25px;}
 			.addressInfo>ul>li>span{width: 30%;height: 25px;line-height: 25px;text-align: left;display: block;float: left;margin-left: 5px;}
 			.addressInfo>ul>li>div{width: 60%;height: 25px;line-height: 25px;text-align: right;float: right;margin-right: 5px; }
-			.addressInfo>div{text-align: center;line-height: 29px;background: #fff;color: #000;}
+			.addressInfo>form{text-align: center;line-height: 29px;background: #fff;color: #000;}
 			.defa{width: 120px;height: 29px;display: block;float: left;text-align: left;}
 			.sel{width: 15px;height: 15px;display: block;float: left;}
-			.addressInfo>div>button{width:60px;height: 28px;float: right;background: #fff;margin-left: 5%;}
+			.edit{width:60px;height: 28px;float: right;background: #fff;margin-left: 5%;}
 			.dele{width: 60px;height: 29px;display: block;float: right;color:red;margin-left: 5%;}
 			
 			#save{width: 100%;}
@@ -67,12 +67,12 @@
 	  						<li><span>所在地区:</span><div>{$v['ia_address']}</div></li>
 	  						<li><span>详细地址:</span><div>{$v['ia_road']}</div></li>
 	  					</ul>
-	  					<div>
-	  						<input class="sel" type="checkbox" name="defa" <?php if($v['is_address_show'] == 1)echo "checked=true;"?> onclick="changeCheck(this);" />
-	  						<a class="defa">设为默认地址</a>
-	  						<a class="dele" href="#">删除</a>
-	  						<button type="button" data-toggle="modal" data-target="#myModal2">编辑</button>
-	  					</div>
+	  					<form name="form" action="#" method="post">
+	  						<input class="sel" type="checkbox" name="defa"  <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />
+	  						<button type="button" class="defa" onclick="form.action='main.html';form.submit();changeCheck(this);">设为默认地址</a>
+	  						<button type="button" class="dele" onclick="form.action='main.html';form.submit();">删除</button>
+	  						<button type="button" class="edit" onclick="form.action='main.html';form.submit();" data-toggle="modal" data-target="#myModal2">编辑</button>
+	  					</form>
 	  				</div>
 	  			</foreach>
   				
@@ -200,11 +200,9 @@
     	for (var i=0;i<checkBoxs.length;i++) {
     		checkBoxs[i].checked=false;
     	}
-    	obj.checked=true;
-    
-    	
-    }
+			obj.parentElement.getElementsByClassName('sel')[0].checked='true';
  
+    }
     </script>
 
   </body>
