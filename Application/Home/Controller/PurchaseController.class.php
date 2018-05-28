@@ -599,6 +599,7 @@ class PurchaseController extends HomeBaseController{
         $this->display();
     } 
 
+
     /**
     * 添加收货地址
     **/ 

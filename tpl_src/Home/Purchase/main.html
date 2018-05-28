@@ -85,7 +85,7 @@
   			<header>
   				<div class="head">
   					<span>HAPYLIFE<sup>TM</sup></span>
-  					<p class="glyphicon glyphicon-menu-hamburger" id="design" onclick="showSetting(this);"></p>
+  					<p class="glyphicon glyphicon-menu-hamburger" id="design" onclick="showSetting();"></p>
   					<ul id="setting">
             	<li><a  target="content" href="{:U('Home/Purchase/myProfile')}" onclick="change_bg(this);" >个人资料</a></li>
   						<li><a class="active"  target="content" href="purchase.html" onclick="change_bg(this);" >购买礼包</a></li>
@@ -121,6 +121,18 @@
   <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
   <script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
   <script type="text/javascript" >
+//	$(document).ready(function(){ 
+//	    $("#design").click(function (e){ 
+//	        $("#setting").toggle(); 
+//	        e.stopPropagation();
+//	    }); 
+//	    $("#setting").click(function(e){
+//	　　        e.stopPropagation();
+//	    });
+//		}).click(function(){ 
+// 		$('#setting').hide(); 
+//		});
+
    var i=1;
     function change_bg(obj){
     	var links=document.getElementsByTagName('a');
@@ -133,22 +145,18 @@
 			showSetting(obj);
 			//document.body.scrollTop = document.documentElement.scrollTop = 0;
     }
-   
-    function showSetting(obj){
+    function showSetting(){
     	var setting=document.getElementById('setting');
 	  	var des=document.getElementById('design');
 			if(i==1){
 				setting.style.display="block";
-				des.style.color="#fff";
-		
 			  i=0;
 			}else{
 				setting.style.display="none";
-				des.style.color="#fff";
 			  i=1;
 			}
    }
-    
+ 
     function iframeLoad()  
 		{    
 			if((document.getElementById("iframe").contentWindow.document.body.scrollHeight+140)<document.documentElement.clientHeight){
@@ -161,8 +169,7 @@
 		function topTo(){
 　　		document.getElementById("iframe").scrollIntoView();
 		}
-		
-      
+
     </script>
 
   </body>
