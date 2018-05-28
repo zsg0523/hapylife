@@ -19,7 +19,7 @@
 			.main{height: auto;margin: auto;color: #000;}
 			#addCard{width: 100%;height: 40px;line-height:40px;text-align: center; border-radius: 5px;position: fixed;z-index: 10;
 			font-size: 16px;bottom: 0;  color: #FFFFFF; background-color: #2491EE;}
-			.addressInfo{width: 100%;height: 180px;border: 1px solid #DEDEDE;margin-top: 5px;}
+			.addressInfo{width: 100%;height: 182px;border: 1px solid #DEDEDE;margin-top: 5px;}
 			.addressInfo>ul{width: 100%;height: 150px;border-bottom: 1px #DEDEDE solid;}
 			.addressInfo>ul>li{width: 100%;height: 25px;}
 			.addressInfo>ul>li>span{width: 30%;height: 25px;line-height: 25px;text-align: left;display: block;float: left;margin-left: 5px;}
@@ -193,14 +193,14 @@
 			}
    }
     
-   function changeCheck(obj){
+  function changeCheck(obj){
     	var checkBoxs=document.getElementsByClassName("sel");
     	for (var i=0;i<checkBoxs.length;i++) {
     		checkBoxs[i].checked=false;
     	}
 			obj.parentElement.getElementsByClassName('sel')[0].checked='true';
  
-    }
+   }	 
       
 		
 		
