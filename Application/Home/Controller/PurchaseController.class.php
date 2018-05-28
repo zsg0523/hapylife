@@ -496,6 +496,9 @@ class PurchaseController extends HomeBaseController{
     } 
 
     public function addressAdd(){
+        $data = I('post.');
+        p($data);
+        die;
         $data = array(
                 'iuid' => I('post.iuid'),
                 'ia_name' => I('post.ia_name'),
