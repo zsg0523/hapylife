@@ -473,6 +473,32 @@ class PurchaseController extends HomeBaseController{
     }
 
 
+    public function addressList(){
+        $iuid = $_SESSION['user']['id'];
+        $data = M('Address')->where(array('iuid'=>$iuid))->select();
+        $assign = array(
+                    'data' => $data
+                );
+        $this->assign($assign);
+        $this->display();
+    } 
+
+    public function addressAdd(){
+        $data = array(
+                'iuid' => I('post.iuid'),
+                'ia_name' => I('post.ia_name'),
+                'ia_phone' => I('post.ia_phone'),
+                'ia_address' => I('post.ia_pro').I('post.ia_town').I('post.ia_dis'),
+                'ia_road' => I('post.ia_road'),
+                );
+      
+        $result = M('Address')->add($data);
+        if($result){
+            $this->redirect('Home/Purchase/addressList');
+        }else{
+            $this->error('添加失败');
+        }
+    }
 
 
 

@@ -59,23 +59,24 @@
   <body>
   		<div class="wrap">
   			<div class="main">
+  				<foreach name="data" item="v">
+	  				<div class="addressInfo">
+	  					<ul>
+	  						<li><span>收货人:</span><div>{$v['ia_name']}</div></li>
+	  						<li><span>联系电话:</span><div>{$v['ia_phone']}</div></li>
+	  						<li><span>所在地区:</span><div>{$v['ia_address']}</div></li>
+	  						<li><span>详细地址:</span><div>{$v['ia_road']}</div></li>
+	  					</ul>
+	  					<div>
+	  						<input class="sel" type="checkbox" name="defa" <?php if($v['is_address_show'] == 1)echo "checked=true;"?> onclick="changeCheck(this);" />
+	  						<a class="defa">设为默认地址</a>
+	  						<a class="dele" href="#">删除</a>
+	  						<button type="button" data-toggle="modal" data-target="#myModal2">编辑</button>
+	  					</div>
+	  				</div>
+	  			</foreach>
   				
-  				<div class="addressInfo">
-  					<ul>
-  						<li><span>收货人:</span><div>qiuxiny</div></li>
-  						<li><span>联系电话:</span><div>111111100101</div></li>
-  						<li><span>所在地区:</span><div>广东省深圳市龙岗区</div></li>
-  						<li><span>详细地址:</span><div>坂田街道五和地铁站</div></li>
-  					</ul>
-  					<div>
-  						<input class="sel" type="checkbox" name="defa" checked="true" onclick="changeCheck(this);" />
-  						<a class="defa">设为默认地址</a>
-  						<a class="dele" href="#">删除</a>
-  						<button type="button" data-toggle="modal" data-target="#myModal2">编辑</button>
-  					</div>
-  				</div>
-  				
-  				<div class="addressInfo">
+  				<!-- <div class="addressInfo">
   					<ul>
   						<li><span>收货人:</span><div>qiuxiny</div></li>
   						<li><span>联系电话:</span><div>111111100101</div></li>
@@ -84,11 +85,11 @@
   					</ul>
   					<div>
   						<input class="sel" type="checkbox" name="defa" onclick="changeCheck(this);" />
-  						<a class="defa">设为默认地址</a>  						
+  						<a class="defa" href="123">设为默认地址</a>  						
   						<a class="dele" href="#">删除</a>
   						<button type="button" data-toggle="modal" data-target="#myModal2">编辑</button>
   					</div>
-  				</div>
+  				</div> -->
   				
   				<div style="height:50px;width: 100%;"></div>
   			
@@ -102,7 +103,7 @@
 				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				      </div>
 				      <div class="modal-body daimabiji-container">
-									<form>
+									<form >
 									  <div class="form-group">
 									    <label for=""><sup style="color: red;">*</sup>收货人:</label>
 									    <input type="text" class="form-control" id=""  placeholder="收货人姓名">
@@ -155,31 +156,32 @@
 					        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 					      </div>
 					      <div class="modal-body daimabiji-container">
-										<form>
+										<form action="{:U('Home/Purchase/addressAdd')}" method="post">
+											<input type="hidden" name="iuid" value="{$Think.session.user.id}">
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>收货人:</label>
-										    <input type="text" class="form-control" id="" placeholder="收货人姓名">
+										    <input name="ia_name" type="text" class="form-control" id="" placeholder="收货人姓名">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>联系电话:</label>
-										    <input type="tel" class="form-control" id="" placeholder="联系电话">
+										    <input name="ia_phone" type="tel" class="form-control" id="" placeholder="联系电话">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>所在省:</label>
-										    <input type="text" class="form-control" id="" placeholder="所在省">
+										    <input name="ia_pro" type="text" class="form-control" id="" placeholder="所在省">
 										   	
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>所在市:</label>
-										    <input type="text" class="form-control" id="" placeholder="所在市">
+										    <input name="ia_town" type="text" class="form-control" id="" placeholder="所在市">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>所在区/县:</label>
-										    <input type="text" class="form-control" id="" placeholder="所在区/县">
+										    <input name="ia_dis" type="text" class="form-control" id="" placeholder="所在区/县">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>详细地址:</label>
-										    <input type="text" class="form-control" id="" placeholder="详细地址">
+										    <input name="ia_road" type="text" class="form-control" id="" placeholder="详细地址">
 										  </div>
 										  <div class="form-group">
 										  <button type="submit" class="btn btn-info" id="save">保存</button>
