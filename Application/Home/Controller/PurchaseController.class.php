@@ -596,57 +596,6 @@ class PurchaseController extends HomeBaseController{
         $this->display();
     } 
 
-    /**
-    * 添加收货地址
-    **/ 
-    public function addressAdd(){
-        $data = I('post.');
-        $data = array(
-                'iuid' => I('post.iuid'),
-                'ia_name' => I('post.ia_name'),
-                'ia_phone' => I('post.ia_phone'),
-                'ia_address' => I('post.ia_pro').I('post.ia_town').I('post.ia_dis'),
-                'ia_road' => I('post.ia_road'),
-                );
-      
-        $result = M('Address')->add($data);
-        if($result){
-            $this->redirect('Home/Purchase/addressList');
-        }else{
-            $this->error('添加失败');
-        }
-    }
-
-    /**
-    * 编辑收货地址
-    **/ 
-    public function addressEdit(){
-        $iaid = I('post.iaid');
-        $data = array(
-
-                    );
-        $result = M('Address')->where(array('iaid'=>$iaid))->edit($data);
-        
-        if($result){
-            $this->redirect('Home/Purchase/addressList');
-        }else{
-            $this->error('修改失败');
-        }
-    }
-
-    /**
-    * 删除收货地址
-    **/ 
-    public function addressDelect(){
-        $iaid = I('post.iaid');
-        $result = M('Address')->where(array('iaid'=>$iaid))->delete();
-        
-        if($result){
-            $this->redirect('Home/Purchase/addressList');
-        }else{
-            $this->error('删除失败');
-        }
-    }
 
 
 
