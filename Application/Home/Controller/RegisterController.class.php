@@ -8,7 +8,7 @@ class RegisterController extends HomeBaseController{
 	/**
     *注册手机区号 is_show值为1
     **/
-    public function registerCode(){
+    public function regCode(){
         $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
         foreach ($mape as $key => $value) {
             $data[$key]         = $value;
