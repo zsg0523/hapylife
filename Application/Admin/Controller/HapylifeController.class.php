@@ -492,7 +492,7 @@ class HapylifeController extends AdminBaseController{
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime')):time();
 		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$order='ir_date desc',$status,$starttime,$endtime);
-		
+		// p($assign);die;
 		//导出excel
 		if($excel == 'excel'){
 			$export_excel = D('Receipt')->export_excel($assign['data']);
