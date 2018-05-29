@@ -71,10 +71,10 @@
 	  						<li><span>详细地址:</span><div>{$v['ia_road']}</div></li>
 	  					</ul>
 	  					<form name="form" action="#" method="post">
-	  						<input type="hidden" name="iaid" value="{$v['iaid']}">
+	  						<!--<input type="hidden" name="iaid" value="{$v['iaid']}">-->
 	  						<button type="button" class="defa" onclick='form.action="{:U('Home/Purchase/addressAdd')}";form.submit();changeCheck(this);'><input class="sel" type="checkbox" <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />设为默认地址</button>
 	  						<button type="button" class="dele"  data-toggle="modal" data-target="#myModal3">删除</button>
-	  						<button type="button" class="edit" data-toggle="modal" data-target="#myModal2">编辑</button>
+	  						<button data-iaid='{$v['iaid']}' type="button" class="edit" data-toggle="modal" data-target="#myModal2" >编辑</button>
 	  					</form>
 	  				</div>
 	  			</foreach>
@@ -93,8 +93,7 @@
 									<form name="form" action="#" method="post">
 										<div class="form-group" style="font-size: 18px;">是否删除地址？</div>
 										<div class="form-group">
-										  <button type="submit" class="btn btn-danger" onclick='form.action="{:U('Home/Purchase/addressDelect')}";form.submit();'
->删除</button>
+										  <button type="submit" class="btn btn-danger" onclick='form.action="{:U('Home/Purchase/addressDelect')}";form.submit();'>删除</button>
 										  <button type="submit" class="btn btn-info" style="float: right;">取消</button>
 										</div>
 									  
@@ -232,11 +231,12 @@
 			obj.parentElement.getElementsByClassName('sel')[0].checked='true';
  
     }
-    $('#myModal2').on('shown.bs.modal', function () {
-//		$('#myInput').focus()
-			alert('点击了2');
+		$('#myModal2').on('show.bs.modal', function (event) {
+		  var button=$(event.relatedTarget);
+ 			var Iaid=button.data('iaid');
+		  alert(Iaid);
 		});
-		$('#myModal3').on('shown.bs.modal', function () {
+		$('#myModal3').on('shown.bs.modal', function (event) {
 //		$('#myInput').focus()
 			alert('点击了3');
 		});
