@@ -14,6 +14,7 @@
 			.input-group{width: 96%;margin: auto;margin-top: 10px;}
 			
 			.getCode{background-color: #5bc0de;color:#fff;}
+		    .getCode:hover{cursor: pointer;}
 			
 			    /*手机*/
       		@media screen and (max-width: 768px){
@@ -38,12 +39,21 @@
 			<div class="main row">
 				<div class="content">
 					<form method="get" action="bankList.html">
+						
 			 			<div class="input-group">
-						  <input type="text" id="phone" class="form-control" placeholder="请输入手机号码" aria-describedby="basic-addon1">
+			 				<span class="input-group-btn" style="width: 30%;">
+						    	<select name="c1" style="width: 100%;height: 30px;color:#DDDDDD;background: #008000;">
+						    		<option value="c1">c1</option>
+						    		<option value="c2">c2</option>
+						    		<option value="c3">c3</option>
+						    		<option value="c4">c4</option>	
+						    	</select>
+						    </span>
+						  	<input type="text" id="phone" class="form-control" placeholder="请输入手机号码" aria-describedby="basic-addon1">
 						</div>
 						<div class="input-group"> 
-						  <input type="text" class="form-control" placeholder="请输入验证码" aria-describedby="basic-addon1">
-						  <span class="input-group-addon getCode" style="width: 30%;" id="basic-addon1" onclick="sendPhone(this);">获取验证码</span>
+						  	<input type="text" class="form-control" placeholder="请输入验证码" aria-describedby="basic-addon1">
+						  	<span class="input-group-addon getCode" style="width: 30%;" id="basic-addon1" onclick="sendPhone(this);">获取验证码</span>
 						</div>
 						<div class="input-group">
 							<button type="button" class="btn btn-info" style="width: 100%;" onclick="window.location.href='new_register.htmll';parent.scrollTo(0,0);">确认</button>
@@ -80,6 +90,20 @@
 		}
 	}
 	// 发短信验证码
+//	function sendPhone(){
+//		$.ajax({
+//			type:"post",
+//			url:"",
+//			async:false,
+//			dataType:'json',
+//			data{
+//				
+//			},
+//			success:function(ret){
+//				alert(ret);
+//			}
+//		});
+//	}
     </script>
 	</body>
 </html>
