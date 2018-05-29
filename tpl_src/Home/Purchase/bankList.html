@@ -19,15 +19,15 @@
 			.main{height: auto;margin: auto;color: #000;}
 			#addCard{width: 100%;height: 40px;line-height:40px;text-align: center; border-radius: 5px;position: fixed;z-index: 10;
 			font-size: 16px;bottom: 0;  color: #FFFFFF; background-color: #2491EE;}
-			.addressInfo{width: 100%;height: 180px;border: 1px solid #DEDEDE;margin-top: 5px;}
+			.addressInfo{width: 100%;height: 182px;border: 1px solid #DEDEDE;margin-top: 5px;}
 			.addressInfo>ul{width: 100%;height: 150px;border-bottom: 1px #DEDEDE solid;}
 			.addressInfo>ul>li{width: 100%;height: 25px;}
 			.addressInfo>ul>li>span{width: 30%;height: 25px;line-height: 25px;text-align: left;display: block;float: left;margin-left: 5px;}
 			.addressInfo>ul>li>div{width: 60%;height: 25px;line-height: 25px;text-align: right;float: right;margin-right: 5px; }
-			.addressInfo>div{text-align: center;line-height: 29px;background: #fff;color: #000;}
+			.addressInfo>form{text-align: center;line-height: 29px;background: #fff;color: #000;}
 			.defa{width: 120px;height: 29px;display: block;float: left;text-align: left;}
 			.sel{width: 15px;height: 15px;display: block;float: left;}
-			.addressInfo>div>button{width:60px;height: 28px;float: right;background: #fff;margin-left: 5%;}
+			.edit{width:60px;height: 28px;float: right;background: #fff;margin-left: 5%;}
 			.dele{width: 60px;height: 29px;display: block;float: right;color:red;margin-left: 5%;}
 			
 			#save{width: 100%;}
@@ -53,59 +53,24 @@
   <body>
   		<div class="wrap">
   			<div class="main">
+  				<foreach name="data" item="v">
+	  				<div class="addressInfo">
+	  					<ul>
+	  						<li><span>开户人:</span><div>{$v['iu_name']}</div></li>
+	  						<li><span>卡号:</span><div>{$v['']}</div></li>
+	  						<li><span>银行名称:</span><div>{$v['bankname']}</div></li>
+	  						<li><span>银行开户行:</span><div>{$v['bankbranch']}</div></li>
+	  						<li><span>银行省:</span><div>广东省</div></li>
+	  						<li><span>银行市:</span><div>深圳市</div></li>
+	  					</ul>
+							<form name="form" action="#" method="post">
+		  					<button type="button" class="defa" onclick="form.action='main.html';form.submit();changeCheck(this);"><input class="sel" type="checkbox" name="defa"  <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />设为默认地址</button>
+		  					<button type="button" class="dele" onclick="form.action='main.html';form.submit();">删除</button>
+		  					<button type="button" class="edit" onclick="form.action='main.html';form.submit();" data-toggle="modal" data-target="#myModal2">编辑</button>
+		  				</form>
+	  				</div>
+	  			</foreach>
   				
-  				<div class="addressInfo">
-  					<ul>
-  						<li><span>开户人:</span><div>qiuxiny</div></li>
-  						<li><span>卡号:</span><div>111111100101</div></li>
-  						<li><span>银行名称:</span><div>建设银行</div></li>
-  						<li><span>银行开户行:</span><div>广东省深圳市龙岗区支行</div></li>
-  						<li><span>银行省:</span><div>广东省</div></li>
-  						<li><span>银行市:</span><div>深圳市</div></li>
-  					</ul>
-  					<div>
-  						<input class="sel" type="checkbox" name="defa" checked="true" onclick="changeCheck(this);" /><span class="defa">设为默认银行</span>
-  						<a class="dele" href="#">删除</a>
-  						<button type="button" data-toggle="modal" data-target="#myModal2">编辑</button>
-  						
-  					</div>
-  				</div>
-  				
-  				<div class="addressInfo">
-  					<ul>
-  						<li><span>开户人:</span><div>qiuxiny</div></li>
-  						<li><span>卡号:</span><div>111111100101</div></li>
-  						<li><span>银行名称:</span><div>建设银行</div></li>
-  						<li><span>银行开户行:</span><div>广东省深圳市龙岗区支行</div></li>
-  						<li><span>银行省:</span><div>广东省</div></li>
-  						<li><span>银行市:</span><div>深圳市</div></li>
-  					</ul>
-  					<div>
-  						<input class="sel" type="checkbox" name="defa"  onclick="changeCheck(this);" /><span class="defa">设为默认银行</span>
-  						<a class="dele" href="#">删除</a>
-  						<button type="button" data-toggle="modal" data-target="#myModal2">编辑</button>
-  						
-  						
-  					</div>
-  				</div>
-  				
-  				<div class="addressInfo">
-  					<ul>
-  						<li><span>开户人:</span><div>qiuxiny</div></li>
-  						<li><span>卡号:</span><div>111111100101</div></li>
-  						<li><span>银行名称:</span><div>建设银行</div></li>
-  						<li><span>银行开户行:</span><div>广东省深圳市龙岗区支行</div></li>
-  						<li><span>银行省:</span><div>广东省</div></li>
-  						<li><span>银行市:</span><div>深圳市</div></li>
-  					</ul>
-  					<div>
-  						<input class="sel" type="checkbox" name="defa"  onclick="changeCheck(this);" /><span class="defa">设为默认银行</span>
-  						<a class="dele" href="#">删除</a>
-  						<button type="button" data-toggle="modal" data-target="#myModal2">编辑</button>
-  						
-  						
-  					</div>
-  				</div>
   				
   				<div style="height:50px;width: 100%;"></div>
   		
@@ -229,15 +194,14 @@
 			}
    }
     
-    function changeCheck(obj){
+  function changeCheck(obj){
     	var checkBoxs=document.getElementsByClassName("sel");
     	for (var i=0;i<checkBoxs.length;i++) {
     		checkBoxs[i].checked=false;
     	}
-    	obj.checked=true;
-    
-    	
-    }
+			obj.parentElement.getElementsByClassName('sel')[0].checked='true';
+ 
+   }	 
       
 		
 		

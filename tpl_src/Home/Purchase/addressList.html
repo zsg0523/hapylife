@@ -29,12 +29,15 @@
 			.addressInfo>ul>li{width: 100%;height: 25px;}
 			.addressInfo>ul>li>span{width: 30%;height: 25px;line-height: 25px;text-align: left;display: block;float: left;margin-left: 5px;}
 			.addressInfo>ul>li>div{width: 60%;height: 25px;line-height: 25px;text-align: right;float: right;margin-right: 5px; }
-			.addressInfo>div{text-align: center;line-height: 29px;background: #fff;color: #000;}
+			.addressInfo>form{text-align: center;line-height: 29px;background: #fff;color: #000;}
 			.defa{width: 120px;height: 29px;display: block;float: left;text-align: left;}
 			.sel{width: 15px;height: 15px;display: block;float: left;}
-			.addressInfo>div>button{width:60px;height: 28px;float: right;background: #fff;margin-left: 5%;}
+			.edit{width:60px;height: 28px;float: right;background: #fff;margin-left: 5%;border: none;outline: none;}
 			.dele{width: 60px;height: 29px;display: block;float: right;color:red;margin-left: 5%;}
-			
+			.w_50{width: 50%;}
+			.fl{float: left;}
+			.fr{float: right;}
+						
 			#save{width: 100%;}
 			
 			      /*手机*/
@@ -59,50 +62,59 @@
   <body>
   		<div class="wrap">
   			<div class="main">
-  				
-  				<div class="addressInfo">
-  					<ul>
-  						<li><span>收货人:</span><div>qiuxiny</div></li>
-  						<li><span>联系电话:</span><div>111111100101</div></li>
-  						<li><span>所在地区:</span><div>广东省深圳市龙岗区</div></li>
-  						<li><span>详细地址:</span><div>坂田街道五和地铁站</div></li>
-  					</ul>
-  					<div>
-  						<input class="sel" type="checkbox" name="defa" checked="true" onclick="changeCheck(this);" />
-  						<a class="defa">设为默认地址</a>
-  						<a class="dele" href="#">删除</a>
-  						<button type="button" data-toggle="modal" data-target="#myModal2">编辑</button>
-  					</div>
-  				</div>
-  				
-  				<div class="addressInfo">
-  					<ul>
-  						<li><span>收货人:</span><div>qiuxiny</div></li>
-  						<li><span>联系电话:</span><div>111111100101</div></li>
-  						<li><span>所在地区:</span><div>广东省深圳市龙岗区</div></li>
-  						<li><span>详细地址:</span><div>坂田街道五和地铁站</div></li>
-  					</ul>
-  					<div>
-  						<input class="sel" type="checkbox" name="defa" onclick="changeCheck(this);" />
-  						<a class="defa">设为默认地址</a>  						
-  						<a class="dele" href="#">删除</a>
-  						<button type="button" data-toggle="modal" data-target="#myModal2">编辑</button>
-  					</div>
-  				</div>
+  				<foreach name="data" item="v">
+	  				<div class="addressInfo">
+	  					<ul>
+	  						<li><span>收货人:</span><div>{$v['ia_name']}</div></li>
+	  						<li><span>联系电话:</span><div>{$v['ia_phone']}</div></li>
+	  						<li><span>所在地区:</span><div>{$v['ia_address']}</div></li>
+	  						<li><span>详细地址:</span><div>{$v['ia_road']}</div></li>
+	  					</ul>
+	  					<form name="form" action="#" method="post">
+	  						<!--<input type="hidden" name="iaid" value="{$v['iaid']}">-->
+	  						<button type="button" class="defa" onclick='form.action="{:U('Home/Purchase/addressAdd')}";form.submit();changeCheck(this);'><input class="sel" type="checkbox" <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />设为默认地址</button>
+	  						<button type="button" class="dele"  data-toggle="modal" data-target="#myModal3">删除</button>
+	  						<button data-iaid='{$v['iaid']}' type="button" class="edit" data-toggle="modal" data-target="#myModal2" >编辑</button>
+	  					</form>
+	  				</div>
+	  			</foreach>
   				
   				<div style="height:50px;width: 100%;"></div>
+  				
+  			<!-- Modal -->
+				<div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				  <div class="modal-dialog" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				      	<span>删除收货地址:</span>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				      </div>
+				      <div class="modal-body daimabiji-container">
+									<form name="form" action="#" method="post">
+										<div class="form-group" style="font-size: 18px;">是否删除地址？</div>
+										<div class="form-group">
+										  <button type="submit" class="btn btn-danger" onclick='form.action="{:U('Home/Purchase/addressDelect')}";form.submit();'>删除</button>
+										  <button type="submit" class="btn btn-info" style="float: right;">取消</button>
+										</div>
+									  
+									</form>
+				      </div>
+				    
+				    </div>
+				  </div>
+				</div>
   			
   				
   				<!-- Modal -->
 				<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 				  <div class="modal-dialog" role="document">
-				    <div class="modal-content">
+				    <div class="modal-content"> 
 				      <div class="modal-header">
 				      	<span>编辑收货地址:</span>
 				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				      </div>
 				      <div class="modal-body daimabiji-container">
-									<form>
+									<form action="{:U('Home/Purchase/addressEdit')}">
 									  <div class="form-group">
 									    <label for=""><sup style="color: red;">*</sup>收货人:</label>
 									    <input type="text" class="form-control" id=""  placeholder="收货人姓名">
@@ -113,27 +125,21 @@
 									  </div>
 									  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>所在省:</label>
-										    <input type="text" class="form-control" id="" placeholder="所在省">
-										   	<!--<form class="form-inline">
-									        <div class="row" data-toggle="distpicker"> 
-									          <select class="form-control col-xs-3  col-sm-4  col-md-3" id="province1"></select>
-									          <select class="form-control col-xs-3  col-sm-4  col-md-" id="city1"></select>
-									          <select class="form-control col-xs-3  col-sm-4  col-md-3" id="district1"></select>
-									        </div>
-									     </form>-->
-										</div>
-										<div class="form-group">
-										  <label for=""><sup style="color: red;">*</sup>所在市:</label>
-										  <input type="text" class="form-control" id="" placeholder="所在市">
-										</div>
-										<div class="form-group">
-										  <label for=""><sup style="color: red;">*</sup>所在区/县:</label>
-										  <input type="text" class="form-control" id="" placeholder="所在区/县">
-										</div>
-									  <div class="form-group">
-									    <label for=""><sup style="color: red;">*</sup>详细地址:</label>
-									    <input type="text" class="form-control" id="" placeholder="详细地址">
-									  </div>
+										    <input name="ia_pro" type="text" class="form-control"  placeholder="所在省">
+										   	
+										  </div>
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>所在市:</label>
+										    <input name="ia_town" type="text" class="form-control"  placeholder="所在市">
+										  </div>
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>所在区/县:</label>
+										    <input name="ia_dis" type="text" class="form-control"  placeholder="所在区/县">
+										  </div>
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>详细地址:</label>
+										    <input name="ia_road" type="text" class="form-control"  placeholder="详细地址">
+										  </div>
 									  <div class="form-group">
 										  <button type="submit" class="btn btn-info" id="save">保存</button>
 										</div>
@@ -143,6 +149,7 @@
 				    </div>
 				  </div>
 				</div>
+				
   		</div>
   			
   		<button type="button" id="addAddress" data-toggle="modal" data-target="#myModal1">添加新收货地址</button> 				
@@ -155,34 +162,35 @@
 					        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 					      </div>
 					      <div class="modal-body daimabiji-container">
-										<form>
+										<form action="{:U('Home/Purchase/addressAdd')}" method="post">
+											<input type="hidden" name="iuid" value="{$Think.session.user.id}">
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>收货人:</label>
-										    <input type="text" class="form-control" id="" placeholder="收货人姓名">
+										    <input name="ia_name" type="text" class="form-control"  placeholder="收货人姓名">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>联系电话:</label>
-										    <input type="tel" class="form-control" id="" placeholder="联系电话">
+										    <input name="ia_phone" type="tel" class="form-control"  placeholder="联系电话">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>所在省:</label>
-										    <input type="text" class="form-control" id="" placeholder="所在省">
+										    <input name="ia_pro" type="text" class="form-control"  placeholder="所在省">
 										   	
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>所在市:</label>
-										    <input type="text" class="form-control" id="" placeholder="所在市">
+										    <input name="ia_town" type="text" class="form-control" placeholder="所在市">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>所在区/县:</label>
-										    <input type="text" class="form-control" id="" placeholder="所在区/县">
+										    <input name="ia_dis" type="text" class="form-control"  placeholder="所在区/县">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>详细地址:</label>
-										    <input type="text" class="form-control" id="" placeholder="详细地址">
+										    <input name="ia_road" type="text" class="form-control"  placeholder="详细地址">
 										  </div>
 										  <div class="form-group">
-										  <button type="submit" class="btn btn-info" id="save">保存</button>
+										  <button type="submit" class="btn btn-info" id="save">添加</button>
 										  </div>
 										</form>
 					      </div>
@@ -215,16 +223,24 @@
 			  i=1;
 			}
     }
-     function changeCheck(obj){
+    function changeCheck(obj){
     	var checkBoxs=document.getElementsByClassName("sel");
     	for (var i=0;i<checkBoxs.length;i++) {
     		checkBoxs[i].checked=false;
     	}
-    	obj.checked=true;
-    
-    	
-    }
+			obj.parentElement.getElementsByClassName('sel')[0].checked='true';
  
+    }
+		$('#myModal2').on('show.bs.modal', function (event) {
+		  var button=$(event.relatedTarget);
+ 			var Iaid=button.data('iaid');
+		  alert(Iaid);
+		});
+		$('#myModal3').on('shown.bs.modal', function (event) {
+//		$('#myInput').focus()
+			alert('点击了3');
+		});
+    
     </script>
 
   </body>

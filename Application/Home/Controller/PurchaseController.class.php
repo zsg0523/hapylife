@@ -484,6 +484,174 @@ class PurchaseController extends HomeBaseController{
         }
     }
 
+// *****************收货地址********************
+    /**
+    * 收货地址列表
+    **/ 
+    public function addressList(){
+        $iuid = $_SESSION['user']['id'];
+        // 查询注册信息
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
+        // 查询地址表信息
+        $ia_road = M('Address')->where(array('iuid'=>$iuid))->getField('ia_road',true); 
+        
+        if(!in_array($userinfo['shopaddress1'], $ia_road)){
+           $message = array(
+                    'iuid' => $userinfo['iuid'],
+                    'ia_name' => $userinfo['lastname'].$userinfo['firstname'],
+                    'ia_phone' => $userinfo['phone'],
+                    'ia_address' => $userinfo['shopprovince'].$userinfo['shopcity'].$userinfo['shoparea'],
+                    'ia_road' => $userinfo['shopaddress1']
+                );
+            $result = M('Address')->add($message);
+        }
+        
+        $data = M('Address')->where(array('iuid'=>$iuid))->select();
+        $assign = array(
+                    'data' => $data
+                );
+        $this->assign($assign);
+        $this->display();
+    } 
+
+    /**
+    * 添加收货地址
+    **/ 
+    public function addressAdd(){
+        $data = I('post.');
+        $data = array(
+                'iuid' => I('post.iuid'),
+                'ia_name' => I('post.ia_name'),
+                'ia_phone' => I('post.ia_phone'),
+                'ia_address' => I('post.ia_pro').I('post.ia_town').I('post.ia_dis'),
+                'ia_road' => I('post.ia_road'),
+                );
+      
+        $result = M('Address')->add($data);
+        if($result){
+            $this->redirect('Home/Purchase/addressList');
+        }else{
+            $this->error('添加失败');
+        }
+    }
+
+    /**
+    * 编辑收货地址
+    **/ 
+    public function addressEdit(){
+        $iaid = I('post.iaid');
+        $data = array(
+
+                    );
+        $result = M('Address')->where(array('iaid'=>$iaid))->edit($data);
+        
+        if($result){
+            $this->redirect('Home/Purchase/addressList');
+        }else{
+            $this->error('修改失败');
+        }
+    }
+
+    /**
+    * 删除收货地址
+    **/ 
+    public function addressDelect(){
+        $iaid = I('post.iaid');
+        $result = M('Address')->where(array('iaid'=>$iaid))->delete();
+        
+        if($result){
+            $this->redirect('Home/Purchase/addressList');
+        }else{
+            $this->error('删除失败');
+        }
+    }
+
+// *****************收货地址********************
+    /**
+    * 收货地址列表
+    **/ 
+    public function bankList(){
+        $iuid = $_SESSION['user']['id'];
+        // 查询注册信息
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
+        // p($userinfo);
+        // 查询银行表信息
+        $bankaccount = M('Bank')->where(array('iuid'=>$iuid))->getField('bankaccount',true); 
+        
+        if(!in_array($userinfo['bankaccount'], $bankaccount)){
+           $message = array(
+                    'iuid' => $userinfo['iuid'],
+                    'iu_name' => $userinfo['lastname'].$userinfo['firstname'],
+                    'bankname' => $userinfo['bankname'],
+                    'bankaccount' => $userinfo['bankaccount'],
+                    'bankbranch' => $userinfo['bankprovince'].$userinfo['bankcity'].$userinfo['bankarea'].$userinfo['subname'],
+                    'createtime' => time(),
+                );
+            $result = M('Bank')->add($message);
+        }
+        
+        $data = M('Bank')->where(array('iuid'=>$iuid))->select();
+
+        $assign = array(
+                    'data' => $data
+                );
+        $this->assign($assign);
+        $this->display();
+    } 
+
+
+    /**
+    * 添加收货地址
+    **/ 
+    public function bankAdd(){
+        $data = I('post.');
+        $data = array(
+                'iuid' => I('post.iuid'),
+                'ia_name' => I('post.ia_name'),
+                'ia_phone' => I('post.ia_phone'),
+                'ia_address' => I('post.ia_pro').I('post.ia_town').I('post.ia_dis'),
+                'ia_road' => I('post.ia_road'),
+                );
+      
+        $result = M('Address')->add($data);
+        if($result){
+            $this->redirect('Home/Purchase/addressList');
+        }else{
+            $this->error('添加失败');
+        }
+    }
+
+    /**
+    * 编辑收货地址
+    **/ 
+    public function bankEdit(){
+        $iaid = I('post.iaid');
+        $data = array(
+
+                    );
+        $result = M('Address')->where(array('iaid'=>$iaid))->edit($data);
+        
+        if($result){
+            $this->redirect('Home/Purchase/addressList');
+        }else{
+            $this->error('修改失败');
+        }
+    }
+
+    /**
+    * 删除收货地址
+    **/ 
+    public function bankDelect(){
+        $iaid = I('post.iaid');
+        $result = M('Address')->where(array('iaid'=>$iaid))->delete();
+        
+        if($result){
+            $this->redirect('Home/Purchase/addressList');
+        }else{
+            $this->error('删除失败');
+        }
+    }
+
 
 
 
