@@ -72,7 +72,7 @@
 	  					</ul>
 	  					<form name="form" action="#" method="post">
 	  						<!--<input type="hidden" name="iaid" value="{$v['iaid']}">-->
-	  						<button type="submit" class="defa" onclick='form.action="{:U('Home/Purchase/addressAdd')}";form.submit();changeCheck(this);'><input class="sel" type="checkbox" <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />设为默认地址</button>
+	  						<button type="submit" class="defa" onclick='changeCheck(this);'><input class="sel" type="checkbox" <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />设为默认地址</button>
 	  						<button type="button" class="dele" data-iaid='{$v['iaid']}' data-toggle="modal" data-target="#myModal3">删除</button>
 	  						<button data-iaid='{$v['iaid']}' data-name='{$v['ia_name']}' data-province='{$v['ia_province']}' data-town='{$v['ia_town']}' data-region='{$v['ia_region']}' data-road='{$v['ia_road']}' data-phone='{$v['ia_phone']}' type="button" class="edit" data-toggle="modal" data-target="#myModal2" >编辑</button>
 	  					</form>
