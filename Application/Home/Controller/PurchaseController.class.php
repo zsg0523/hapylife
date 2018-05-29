@@ -543,11 +543,26 @@ class PurchaseController extends HomeBaseController{
     * 编辑收货地址
     **/ 
     public function addressEdit(){
-        $data = I('post.');
+        $iuid = $_SESSION['user']['id'];
+        $iaid = M('Address')->where(array('iuid'=>$iuid,'is_address_show'=>1))->getfield('iaid');
 
-        $result = M('Address')->where(array('iaid'=>$data['iaid']))->save($data);
+        $data = I('post.');
+        // p($iaid);
+        // p($data);
+        // die;
+        if($data['is_address_show']){
+            $result = M('Address')->where(array('iaid'=>$data['iaid']))->save($data);
+            if($result){
+                $message = array(
+                             'is_address_show' => 0,
+                        );
+                $res = M('Address')->where(array('iaid'=>$iaid))->save($message);
+            }
+        }else{
+            $result = M('Address')->where(array('iaid'=>$data['iaid']))->save($data);
+        }
         
-        if($result){
+        if($result || $res){
             $this->redirect('Home/Purchase/addressList');
         }else{
             $this->error('修改失败');
@@ -559,7 +574,7 @@ class PurchaseController extends HomeBaseController{
     **/ 
     public function addressDelect(){
         $iaid = I('post.iaid');
-        
+
         $result = M('Address')->where(array('iaid'=>$iaid))->delete();
         
         if($result){
