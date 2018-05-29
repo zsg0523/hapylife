@@ -500,7 +500,9 @@ class PurchaseController extends HomeBaseController{
                     'iuid' => $userinfo['iuid'],
                     'ia_name' => $userinfo['lastname'].$userinfo['firstname'],
                     'ia_phone' => $userinfo['phone'],
-                    'ia_address' => $userinfo['shopprovince'].$userinfo['shopcity'].$userinfo['shoparea'],
+                    'ia_province' => $userinfo['shopprovince'],
+                    'ia_town' => $userinfo['shopcity'],
+                    'ia_region' => $userinfo['shoparea'],
                     'ia_road' => $userinfo['shopaddress1']
                 );
             $result = M('Address')->add($message);
@@ -523,7 +525,9 @@ class PurchaseController extends HomeBaseController{
                 'iuid' => I('post.iuid'),
                 'ia_name' => I('post.ia_name'),
                 'ia_phone' => I('post.ia_phone'),
-                'ia_address' => I('post.ia_pro').I('post.ia_town').I('post.ia_dis'),
+                'ia_province' => I('post.ia_province'),
+                'ia_town' => I('post.ia_town'),
+                'ia_region' => I('post.ia_region'),
                 'ia_road' => I('post.ia_road'),
                 );
       
@@ -539,11 +543,9 @@ class PurchaseController extends HomeBaseController{
     * 编辑收货地址
     **/ 
     public function addressEdit(){
-        $iaid = I('post.iaid');
-        $data = array(
+        $data = I('post.');
 
-                    );
-        $result = M('Address')->where(array('iaid'=>$iaid))->edit($data);
+        $result = M('Address')->where(array('iaid'=>$data['iaid']))->save($data);
         
         if($result){
             $this->redirect('Home/Purchase/addressList');
@@ -557,6 +559,7 @@ class PurchaseController extends HomeBaseController{
     **/ 
     public function addressDelect(){
         $iaid = I('post.iaid');
+        
         $result = M('Address')->where(array('iaid'=>$iaid))->delete();
         
         if($result){
