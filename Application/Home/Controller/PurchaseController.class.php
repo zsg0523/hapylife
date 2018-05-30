@@ -159,7 +159,8 @@ class PurchaseController extends HomeBaseController{
 		$iuid = $_SESSION['user']['id'];
         $data['status'] = $_SESSION['user']['status'];
 		$map  = array(
-				'riuid'=>$iuid
+				'riuid'=>$iuid,
+                'ir_status'=>2
 			);
 		$data = M('Receipt')
 				->alias('r')
@@ -236,86 +237,91 @@ class PurchaseController extends HomeBaseController{
         $product = M('Product')->where(array('ipid'=>$ipid))->find();
         //用户信息
         $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
-        //生成唯一订单号
-        $order_num = date('YmdHis').rand(10000, 99999);
-        switch ($product['ip_type']) {
-            case '1':
-                $list= D('Receipt')->where(array('ir_ordertype'=>$product['ip_type'],'riuid'=>$iuid,'is_delete'=>0))->select();
-                if($list){
-                    $this->error('请付款或删除重新下单');
-                }else{
-                    $con = '首购单';
-                }
-                break;
-            case '2':
-                $con = '升级单';
-                break;
-            case '3':
-                $con = '月费单';
-                break;
-        }
-        if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
-            $this->error('请先填写个人信息的地区和详细地址');
-        }
-        $ia_name  = $userinfo['lastname'].$userinfo['firstname'];
-        $order = array(
-            //订单编号
-            'ir_receiptnum' =>$order_num,
-            //订单创建日期
-            'ir_date'       =>time(),
-            //订单的状态(0待生成订单，1待支付订单，2已付款订单)
-            'ir_status'     =>0,
-            //下单用户id
-            'riuid'          =>$iuid,
-            //下单用户
-            'rCustomerID'    =>$userinfo['customerid'],
-            //收货人
-            'ia_name'       =>$ia_name,
-            //收货人电话
-            'ia_phone'      =>$userinfo['phone'],
-            //收货地址
-            'ia_address'    =>$userinfo['shopaddress1'],
-            //订单总商品数量
-            'ir_productnum' =>1,
-            //订单总金额
-            'ir_price'      =>$product['ip_price_rmb'],
-            //订单总积分
-            'ir_point'      =>$product['ip_point'],
-            //订单备注
-            'ir_desc'       =>$con,
-            //订单类型
-            'ir_ordertype'  => $product['ip_type'],
-            //产品id
-            'ipid'          => $product['ipid']
-        );
-        $receipt = M('Receipt')->add($order);
-        if($receipt){
-            $map = array(
-                'ir_receiptnum'     =>  $order_num,
-                'ipid'              =>  $product['ipid'],
-                'product_num'       =>  1,
-                'product_point'     =>  $product['ip_point'],
-                'product_price'     =>  $product['ip_price_rmb'],
-                'product_name'      =>  $product['ip_name_zh'],
-                'product_picture'   =>  $product['ip_picture_zh']
+        // 查询是否存在未支付的订单
+        $ir_receiptnum = M('Receipt')->where(array('riuid'=>$iuid,'ir_ordertype'=>$product['ip_type'],'ir_status'=>0))->getfield('ir_receiptnum');
+        
+        if(!empty($ir_receiptnum)){
+            $result = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->delete();
+            if($result){
+                $res = M('Receiptlist')->where(array('ir_receiptnum'=>$ir_receiptnum))->delete();
+            }
+            //生成唯一订单号
+            $order_num = date('YmdHis').rand(10000, 99999);
+            switch ($product['ip_type']){
+                case '1':
+                        $con = '首购单';
+                    break;
+                case '2':
+                    $con = '升级单';
+                    break;
+                case '3':
+                    $con = '月费单';
+                    break;
+            }
+            if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
+                $this->error('请先填写个人信息的地区和详细地址');
+            }
+            $ia_name  = $userinfo['lastname'].$userinfo['firstname'];
+            $order = array(
+                //订单编号
+                'ir_receiptnum' =>$order_num,
+                //订单创建日期
+                'ir_date'       =>time(),
+                //订单的状态(0待生成订单，1待支付订单，2已付款订单)
+                'ir_status'     =>0,
+                //下单用户id
+                'riuid'          =>$iuid,
+                //下单用户
+                'rCustomerID'    =>$userinfo['customerid'],
+                //收货人
+                'ia_name'       =>$ia_name,
+                //收货人电话
+                'ia_phone'      =>$userinfo['phone'],
+                //收货地址
+                'ia_address'    =>$userinfo['shopaddress1'],
+                //订单总商品数量
+                'ir_productnum' =>1,
+                //订单总金额
+                'ir_price'      =>$product['ip_price_rmb'],
+                //订单总积分
+                'ir_point'      =>$product['ip_point'],
+                //订单备注
+                'ir_desc'       =>$con,
+                //订单类型
+                'ir_ordertype'  => $product['ip_type'],
+                //产品id
+                'ipid'          => $product['ipid']
             );
-            $addReceiptlist = M('Receiptlist')->add($map);
-        }
-         //生成日志记录
-        $content = '您的'.$con.'订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
-        $log = array(
-            'from_iuid' =>$iuid,
-            'content'   =>$content,
-            'action'    =>0,
-            'type'      =>2,
-            'date'      =>date('Y-m-d H:i:s')          
-        );
-        $addlog = M('Log')->add($log);
-        if($addlog){
-            // $this->success('下单成功,前往支付页面',U('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num)));
-            $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num));
-        }else{
-            $this->error('订单生成失败');
+            $receipt = M('Receipt')->add($order);
+            if($receipt){
+                $map = array(
+                    'ir_receiptnum'     =>  $order_num,
+                    'ipid'              =>  $product['ipid'],
+                    'product_num'       =>  1,
+                    'product_point'     =>  $product['ip_point'],
+                    'product_price'     =>  $product['ip_price_rmb'],
+                    'product_name'      =>  $product['ip_name_zh'],
+                    'product_picture'   =>  $product['ip_picture_zh']
+                );
+                $addReceiptlist = M('Receiptlist')->add($map);
+            }
+             //生成日志记录
+            $content = '您的'.$con.'订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
+            $log = array(
+                'from_iuid' =>$iuid,
+                'content'   =>$content,
+                'action'    =>0,
+                'type'      =>2,
+                'date'      =>date('Y-m-d H:i:s')          
+            );
+            $addlog = M('Log')->add($log);
+            // 设置session时间
+            if($addlog){
+                // $this->success('下单成功,前往支付页面',U('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num)));
+                $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num));
+            }else{
+                $this->error('订单生成失败');
+            }
         }
 	}
 
@@ -457,8 +463,11 @@ class PurchaseController extends HomeBaseController{
             $update    = D('User')->save($tmpe);
         	if($upreceipt){
         		//通知畅捷完成支付
-				echo "success";
-				$this->seccess('支付成功，跳转',U('Home/Purchase/myOrder'));
+                // 清除session
+				unset($_SESSION['user']['time']);
+                // echo "success";
+				$this->redirect('Home/Purchase/myOrder');
+
         	}
 		}
     }
