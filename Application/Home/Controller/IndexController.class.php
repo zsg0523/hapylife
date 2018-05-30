@@ -55,12 +55,14 @@ class IndexController extends HomeBaseController{
                         $_SESSION['user']=array(
                                             'id'       =>$data['iuid'],
                                             'username' =>$data['customerid'],
+                                            'name_cn'  =>$data['lastname'].$data['firstname'],
                                             'status'   =>1,
                                             );
                     }else{
                         $_SESSION['user']=array(
                             'id'       =>$data['iuid'],
                             'username' =>$data['customerid'],
+                            'name_cn'  =>$data['lastname'].$data['firstname'],
                             );
                     }
                    

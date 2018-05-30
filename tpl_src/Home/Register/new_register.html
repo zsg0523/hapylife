@@ -58,7 +58,7 @@
 			<!--<div class="rg-name" >
 				<span >HAPYLIFE 新用户注册</span>
 			</div>-->
-			<div class="rg-div">				
+			<div class="rg-div">
 				<form class="form-horizontal"  id="forms" method="post" action="{:U('Home/Register/register')}" enctype="multipart/form-data">
 					<div class="form-group" onclick="hiden(this);" style="margin-top: 10px;">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>中文姓:</label>
@@ -106,7 +106,7 @@
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>推荐人姓名:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
-							<input type="text" class="form-control"   name="EnrollerID" placeholder="HPL开头或六位数的号码" value="{$Think.session.user.username}">
+							<input type="text" class="form-control"   name="" placeholder="HPL开头或六位数的号码" value="{$Think.session.user.name_cn}">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnrollerID']}</div>
 					</div>
