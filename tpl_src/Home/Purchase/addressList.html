@@ -30,13 +30,15 @@
 			.addressInfo>ul>li>span{width: 30%;height: 25px;line-height: 25px;text-align: left;display: block;float: left;margin-left: 5px;}
 			.addressInfo>ul>li>div{width: 60%;height: 25px;line-height: 25px;text-align: right;float: right;margin-right: 5px; }
 			.addressInfo>form{text-align: center;line-height: 29px;background: #fff;color: #000;}
-			.defa{width: 120px;height: 29px;display: block;float: left;text-align: left;}
+			.defa{width: 120px;height: 29px;display: block;float: left;text-align: left;color: #fff;background: #439DFE;border-radius: 5px;}
 			.sel{width: 15px;height: 15px;display: block;float: left;}
-			.edit{width:60px;height: 28px;float: right;background: #fff;margin-left: 5%;border: none;outline: none;}
-			.dele{width: 60px;height: 29px;display: block;float: right;color:red;margin-left: 5%;}
+			.edit{width:60px;height: 29px;float: right;margin-left: 5%;color: #fff;background: #439DFE;border-radius: 5px;}
+			.dele{width: 60px;height: 29px;display: block;float: right;background:#439DFE ; color:#fff;margin-left: 5%;border-radius: 5px;}
+			
 			.w_50{width: 50%;}
 			.fl{float: left;}
 			.fr{float: right;}
+			.btn-info{background-color: #439DFE;}
 						
 			#save{width: 100%;}
 			
@@ -257,6 +259,14 @@
 			var button=$(event.relatedTarget);
 	 		var iaid=button.data('iaid');
 	 		$("input[name='iaid']").val(iaid);
+		});
+		$('#myModal1').on('shown.bs.modal', function (event) {
+		  	$("input[name='ia_name']").val('');
+		  	$("input[name='ia_phone']").val('');
+		  	$("input[name='ia_province']").val('');
+		  	$("input[name='ia_town']").val('');
+		  	$("input[name='ia_region']").val('');
+		  	$("input[name='ia_road']").val('');
 		});
     
     </script>
