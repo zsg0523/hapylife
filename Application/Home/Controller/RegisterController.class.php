@@ -109,7 +109,7 @@ class RegisterController extends HomeBaseController{
     /**
     * 保存用户资料
     **/ 
-    public function news_registerInfo(){
+    public function new_registerInfo(){
         if(!IS_POST){
             $msg['status'] = 200;
             $msg['message']= '未提交任何数据';
@@ -123,7 +123,7 @@ class RegisterController extends HomeBaseController{
 			}
             $add = D('Tempuser')->add($data);
             if($add){
-		        $this->assign('userinfo',$data);
+		        $this->assign('data',$data);
 		        $this->display();
             }else{
 				$this->error('数据有误，请确认信息');
@@ -133,7 +133,7 @@ class RegisterController extends HomeBaseController{
     /**
     * 获取首购产品
     **/ 
-    public function product(){
+    public function new_purchase(){
     	$data = D('product')->where(array('ip_type'=>1,'is_pull'=>1))->select();
     	$this->assign('data',$data);
         $this->display();
@@ -142,7 +142,7 @@ class RegisterController extends HomeBaseController{
     /**
     * 获取产品详情
     **/ 
-    public function productInfo(){
+    public function new_purchaseInfo(){
     	$ipid =I('post.ipid');
     	$data = D('product')->where(array('ipid'=>$ipid))->find();
     	$this->assign('data',$data);
@@ -167,8 +167,8 @@ class RegisterController extends HomeBaseController{
             'ir_receiptnum' =>$order_num,
             //订单创建日期
             'ir_date'=>time(),
-            //订单的状态(0待生成订单，1待支付订单，2已付款订单)
-            'ir_status'=>0,
+            //订单的状态(0待生成订单，1待支付订单，2已付款订单,3待注册)
+            'ir_status'=>3,
             //下单用户id
             'riuid'=>$iuid,
             //下单用户
