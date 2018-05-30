@@ -85,6 +85,7 @@ class RegisterController extends HomeBaseController{
 
         }
     }
+    /********************************************************************新代理注册--需要购买产品********************************************************************************/
     /**
     *检查注册验证码是否正确
     *参数：phoneNumber(手机号),acnumber(区号),code(验证码)
@@ -104,7 +105,129 @@ class RegisterController extends HomeBaseController{
                 $this->error('验证码错误');
             }
         }
-    }  
+    }
+    /**
+    * 保存用户资料
+    **/ 
+    public function new_registerInfo(){
+        if(!IS_POST){
+            $msg['status'] = 200;
+            $msg['message']= '未提交任何数据';
+            $this->ajaxreturn($msg);
+        }else{
+        	$data        = I('post.');
+            $data['iuid']= $_SESSION['user']['id'];
+			if(isset($upload['name'])){
+				$data['JustIdcard']=C('WEB_URL').$upload['name'][0];
+				$data['BackIdcard']=C('WEB_URL').$upload['name'][1];
+			}
+            $add = D('Tempuser')->add($data);
+            if($add){
+		        $this->assign('data',$data);
+		        $this->display();
+            }else{
+				$this->error('数据有误，请确认信息');
+            }
+        }
+    }
+    /**
+    * 获取首购产品
+    **/ 
+    public function new_purchase(){
+    	$data = D('product')->where(array('ip_type'=>1,'is_pull'=>1))->select();
+    	$this->assign('data',$data);
+        $this->display();
+
+    }
+    /**
+    * 获取产品详情
+    **/ 
+    public function new_purchaseInfo(){
+    	$ipid =I('post.ipid');
+    	$data = D('product')->where(array('ipid'=>$ipid))->find();
+    	$this->assign('data',$data);
+        $this->display();
+    }
+   	/**
+	* 首购订单
+	**/
+	public function registerOrder(){
+		$iuid = $_SESSION['user']['id'];
+        $ipid = I('post.ipid');
+        $htid = D('Tempuser')->order('htid desc')->getfield('htid');
+        //商品信息
+        $product = M('Product')->where(array('ipid'=>$ipid))->find();
+        //用户信息
+        $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
+        //生成唯一订单号
+        $order_num = date('YmdHis').rand(10000, 99999);
+        $con = '首购单';
+        $order = array(
+            //订单编号
+            'ir_receiptnum' =>$order_num,
+            //订单创建日期
+            'ir_date'=>time(),
+            //订单的状态(0待生成订单，1待支付订单，2已付款订单,3待注册)
+            'ir_status'=>3,
+            //下单用户id
+            'riuid'=>$iuid,
+            //下单用户
+            'CustomerID'=>$userinfo['customerid'],
+            //收货人
+            'ia_name'=>$userinfo['firstname'],
+            //收货人电话
+            'ia_phone'=>$userinfo['phone'],
+            //收货地址
+            'ia_address'=>$userinfo['shopaddress1'].' '.$userinfo['shopaddress2'],
+            //订单总商品数量
+            'ir_productnum'=>1,
+            //订单总金额
+            'ir_price'=>$product['ip_price_rmb'],
+            //订单总积分
+            'ir_point'=>$product['ip_point'],
+            //订单备注
+            'ir_desc'=>$con,
+            //订单类型
+            'ir_ordertype' => $product['ip_type'],
+            //产品id
+            'ipid'         => $product['ipid'],
+            //待注册用户id
+            '$htid'        => $htid
+        );
+        $receipt = M('Receipt')->add($order);
+        if($receipt){
+            $map = array(
+                'ir_receiptnum'     =>  $order_num,
+                'ipid'              =>  $product['ipid'],
+                'product_num'       =>  1,
+                'product_point'     =>  $product['ip_point'],
+                'product_price'     =>  $product['ip_price_rmb'],
+                'product_name'      =>  $product['ip_name_zh'],
+                'product_picture'   =>  $product['ip_picture_zh']
+            );
+            $addReceiptlist = M('Receiptlist')->add($map);
+        }
+        //生成日志记录
+        $content = '您帮代理进行的'.$con.'订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
+        $log = array(
+            'from_iuid' =>$iuid,
+            'content'   =>$content,
+            'action'    =>0,
+            'type'      =>2,
+            'date'      =>date('Y-m-d H:i:s')          
+        );
+        $addlog = M('Log')->add($log);
+        if($addlog){
+            $order['status'] = 1;
+            $order['msg']    = '订单已生成';
+            $this->ajaxreturn($order);
+        }else{
+            $order['status'] = 0;
+            $order['msg']    = '订单生成失败';
+            $this->ajaxreturn($order);
+        }
+	}
+    /*********************************************************************普通注册********************************************************************************************/  
     /**
     *检查旧注册验证码是否正确
     *参数：phoneNumber(手机号),acnumber(区号),code(验证码)
@@ -125,7 +248,7 @@ class RegisterController extends HomeBaseController{
             }
         }
     }
-	// 用户注册
+	// 普通用户注册
 	public function register(){
 		$data = I('post.');
 
