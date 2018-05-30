@@ -42,10 +42,10 @@
   		<div class="wrap">
   			<div class="main">
   				<ul class="recommender">
-  					<li>&nbsp;推荐人ID:<span>HPL00000034&nbsp;</span></li>
-  					<li>&nbsp;推荐人名字:<span>周生&nbsp;</span></li>
-  					<li>&nbsp;会员状态:<span>PC&nbsp;</span></li>
-  					<li>&nbsp;推荐日期:<span>2018-05-21&nbsp;</span></li>
+  					<li>&nbsp;推荐人ID:<span>{$data['enrollerid']}&nbsp;</span></li>
+  					<li>&nbsp;推荐人名字:<span>&nbsp;</span></li>
+  					<li>&nbsp;会员状态:<span>{$data['distributortype']}&nbsp;</span></li>
+  					<li>&nbsp;推荐日期:<span>{:date('Y-m-d',$data['joinedon'])}&nbsp;</span></li>
   				</ul>
   			</div>
   		</div>
