@@ -491,7 +491,6 @@ class PurchaseController extends HomeBaseController{
     **/ 
     public function addressList(){
         $iuid = $_SESSION['user']['id'];
-
         // 查询注册信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
         // 查询地址表信息
@@ -513,7 +512,7 @@ class PurchaseController extends HomeBaseController{
             }
         }
         
-        $data = M('Address')->where(array('iuid'=>$iuid))->select();
+        $data = M('Address')->where(array('iuid'=>$iuid))->order('is_address_show DESC')->select();
         $assign = array(
                     'data' => $data
                 );
@@ -587,20 +586,18 @@ class PurchaseController extends HomeBaseController{
         }
     }
 
-// *****************收货地址********************
+// *****************银行地址********************
     /**
-    * 收货地址列表
+    * 银行地址列表
     **/ 
     public function bankList(){
         $iuid = $_SESSION['user']['id'];
         // 查询注册信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
-        // p($userinfo);
-        // die;
         // 查询银行表信息
         $bankaccount = M('Bank')->where(array('iuid'=>$iuid))->getField('bankaccount',true); 
         
-        if(!in_array($userinfo['bankaccount'], $bankaccount) && $this->i == 0){
+        if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['i'] == 0){
            $message = array(
                     'iuid' => $userinfo['iuid'],
                     'iu_name' => $userinfo['lastname'].$userinfo['firstname'],
@@ -613,10 +610,12 @@ class PurchaseController extends HomeBaseController{
                     'createtime' => time(),
                 );
             $result = M('Bank')->add($message);
-            $i = 1;
+            if($result){
+                $_SESSION['user']['i'] = $_SESSION['user']['i'] + 1;
+            }
         }
         
-        $data = M('Bank')->where(array('iuid'=>$iuid))->select();
+        $data = M('Bank')->where(array('iuid'=>$iuid))->order('isshow DESC')->select();
 
         $assign = array(
                     'data' => $data,
@@ -628,7 +627,7 @@ class PurchaseController extends HomeBaseController{
 
 
     /**
-    * 添加收货地址
+    * 添加银行地址
     **/ 
     public function bankAdd(){
         $iuid = $_SESSION['user']['id'];
@@ -657,7 +656,7 @@ class PurchaseController extends HomeBaseController{
     }
 
     /**
-    * 编辑收货地址
+    * 编辑银行地址
     **/ 
     public function bankEdit(){
         $iuid = $_SESSION['user']['id'];
@@ -685,7 +684,7 @@ class PurchaseController extends HomeBaseController{
     }
 
     /**
-    * 删除收货地址
+    * 删除银行地址
     **/ 
     public function bankDelect(){
         $bid = I('post.bid');
@@ -699,8 +698,17 @@ class PurchaseController extends HomeBaseController{
         }
     }
 
+// **************我的推荐人*****************
+    public function recommenderList(){
+        $iuid = $_SESSION['user']['id'];
+        $data = M('User')->where(array('iuid'=>$iuid))->find();
 
-
+        $assign = array(
+                    'data' => $data,
+                );
+        $this->assign($assign);
+        $this->display();
+    }
 
 
 
