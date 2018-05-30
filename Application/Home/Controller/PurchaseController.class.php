@@ -5,6 +5,7 @@ use Common\Controller\HomeBaseController;
 * hapylife控制器
 **/
 class PurchaseController extends HomeBaseController{
+    private $i = 0; // 定义全局变量：最少需要答对题目条数
     /**
     * 
     **/
@@ -543,11 +544,24 @@ class PurchaseController extends HomeBaseController{
     * 编辑收货地址
     **/ 
     public function addressEdit(){
-        $data = I('post.');
+        $iuid = $_SESSION['user']['id'];
+        $iaid = M('Address')->where(array('iuid'=>$iuid,'is_address_show'=>1))->getfield('iaid');
 
-        $result = M('Address')->where(array('iaid'=>$data['iaid']))->save($data);
+        $data = I('post.');
         
-        if($result){
+        if($data['is_address_show']){
+            $result = M('Address')->where(array('iaid'=>$data['iaid']))->save($data);
+            if($result){
+                $message = array(
+                             'is_address_show' => 0,
+                        );
+                $res = M('Address')->where(array('iaid'=>$iaid))->save($message);
+            }
+        }else{
+            $result = M('Address')->where(array('iaid'=>$data['iaid']))->save($data);
+        }
+        
+        if($result || $res){
             $this->redirect('Home/Purchase/addressList');
         }else{
             $this->error('修改失败');
@@ -559,7 +573,7 @@ class PurchaseController extends HomeBaseController{
     **/ 
     public function addressDelect(){
         $iaid = I('post.iaid');
-        
+
         $result = M('Address')->where(array('iaid'=>$iaid))->delete();
         
         if($result){
@@ -578,25 +592,31 @@ class PurchaseController extends HomeBaseController{
         // 查询注册信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
         // p($userinfo);
+        // die;
         // 查询银行表信息
         $bankaccount = M('Bank')->where(array('iuid'=>$iuid))->getField('bankaccount',true); 
         
-        if(!in_array($userinfo['bankaccount'], $bankaccount)){
+        if(!in_array($userinfo['bankaccount'], $bankaccount) && $this->i == 0){
            $message = array(
                     'iuid' => $userinfo['iuid'],
                     'iu_name' => $userinfo['lastname'].$userinfo['firstname'],
-                    'bankname' => $userinfo['bankname'],
                     'bankaccount' => $userinfo['bankaccount'],
-                    'bankbranch' => $userinfo['bankprovince'].$userinfo['bankcity'].$userinfo['bankarea'].$userinfo['subname'],
+                    'bankprovince' => $userinfo['bankprovince'],
+                    'banktown' => $userinfo['bankcity'],
+                    'bankregion' => $userinfo['bankarea'],
+                    'bankname' => $userinfo['bankname'],
+                    'bankbranch' => $userinfo['subname'],
                     'createtime' => time(),
                 );
             $result = M('Bank')->add($message);
+            $i = 1;
         }
         
         $data = M('Bank')->where(array('iuid'=>$iuid))->select();
 
         $assign = array(
-                    'data' => $data
+                    'data' => $data,
+                    'userinfo' => $userinfo
                 );
         $this->assign($assign);
         $this->display();
@@ -607,18 +627,26 @@ class PurchaseController extends HomeBaseController{
     * 添加收货地址
     **/ 
     public function bankAdd(){
+        $iuid = $_SESSION['user']['id'];
+        // 查询注册信息
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
+
         $data = I('post.');
         $data = array(
                 'iuid' => I('post.iuid'),
-                'ia_name' => I('post.ia_name'),
-                'ia_phone' => I('post.ia_phone'),
-                'ia_address' => I('post.ia_pro').I('post.ia_town').I('post.ia_dis'),
-                'ia_road' => I('post.ia_road'),
+                'iu_name' => $userinfo['lastname'].$userinfo['firstname'],
+                'bankaccount' => I('post.bankaccount'),
+                'bankprovince' => I('post.bankprovince'),
+                'banktown' => I('post.banktown'),
+                'bankregion' => I('post.bankregion'),
+                'bankname' => I('post.bankname'),
+                'bankbranch' => I('post.bankbranch'),
+                'createtime' => time(),
                 );
       
-        $result = M('Address')->add($data);
+        $result = M('Bank')->add($data);
         if($result){
-            $this->redirect('Home/Purchase/addressList');
+            $this->redirect('Home/Purchase/bankList');
         }else{
             $this->error('添加失败');
         }
@@ -628,14 +656,25 @@ class PurchaseController extends HomeBaseController{
     * 编辑收货地址
     **/ 
     public function bankEdit(){
-        $iaid = I('post.iaid');
-        $data = array(
+        $iuid = $_SESSION['user']['id'];
+        $bid = M('Bank')->where(array('iuid'=>$iuid,'isshow'=>1))->getfield('bid');
 
-                    );
-        $result = M('Address')->where(array('iaid'=>$iaid))->edit($data);
+        $data = I('post.');
+
+        if($data['isshow']){
+            $result = M('Bank')->where(array('bid'=>$data['bid']))->save($data);
+            if($result){
+                $message = array(
+                             'isshow' => 0,
+                        );
+                $res = M('Bank')->where(array('bid'=>$bid))->save($message);
+            }
+        }else{
+            $result = M('Bank')->where(array('bid'=>$data['bid']))->save($data);
+        }
         
-        if($result){
-            $this->redirect('Home/Purchase/addressList');
+        if($result || $res){
+            $this->redirect('Home/Purchase/bankList');
         }else{
             $this->error('修改失败');
         }
@@ -645,11 +684,12 @@ class PurchaseController extends HomeBaseController{
     * 删除收货地址
     **/ 
     public function bankDelect(){
-        $iaid = I('post.iaid');
-        $result = M('Address')->where(array('iaid'=>$iaid))->delete();
+        $bid = I('post.bid');
+
+        $result = M('Bank')->where(array('bid'=>$bid))->delete();
         
         if($result){
-            $this->redirect('Home/Purchase/addressList');
+            $this->redirect('Home/Purchase/bankList');
         }else{
             $this->error('删除失败');
         }
