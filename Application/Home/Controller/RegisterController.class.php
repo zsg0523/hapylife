@@ -105,6 +105,26 @@ class RegisterController extends HomeBaseController{
             }
         }
     }  
+    /**
+    *检查旧注册验证码是否正确
+    *参数：phoneNumber(手机号),acnumber(区号),code(验证码)
+    **/
+    public function oldInCode(){
+        $phoneNumber =I('post.phoneNumber');
+        $code        =I('post.code');
+        $acnumber    =I('post.acnumber');
+        $data        =D('Smscode')->where(array('phone'=>$phoneNumber,'acnumber'=>$acnumber))->order('nsid desc')->find();
+        $time        =time()-strtotime($data['date']);
+        if($time>60){
+            $this->error('验证码失效,请重新发送');
+        }else{
+            if($data && $data['code']==$code){
+                $this->success('验证码正确',U('Home/Register/register'));
+            }else{
+                $this->error('验证码错误');
+            }
+        }
+    }
 	// 用户注册
 	public function register(){
 		$data = I('post.');
