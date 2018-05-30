@@ -99,7 +99,7 @@ class RegisterController extends HomeBaseController{
             $this->error('验证码失效,请重新发送');
         }else{
             if($data && $data['code']==$code){
-                $this->success('验证码正确',U('Home/Register/register'));
+                $this->success('验证码正确',U('Home/Register/new_register'));
             }else{
                 $this->error('验证码错误');
             }
