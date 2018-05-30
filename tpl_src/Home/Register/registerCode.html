@@ -41,8 +41,8 @@
 		<div class="wrap container-fluid">
 			<div class="main row">
 				<div class="content">
-					<form method="get" action="bankList.html">
-						<div class="input-group"> 
+					<form method="post" action="{:U('Home/Register/inCode')}">
+						<div class="input-group">
 						    <select class="form-control" name="acnumber" id="acnumber">
 						    	<foreach name="data" item="v">
 						    		<option  class="opt" value="{$v['acnumber']}">{$v['name']}</option>						    			
@@ -53,11 +53,11 @@
 						  	<input type="text" name="phoneNumber" id="phoneNumber" class="form-control" placeholder="请输入手机号码" aria-describedby="basic-addon1">
 						</div>
 						<div class="input-group"> 
-						  	<input type="text" class="form-control" name="smsCode" placeholder="请输入验证码" aria-describedby="basic-addon1">
+						  	<input type="text" class="form-control" name="code" placeholder="请输入验证码" aria-describedby="basic-addon1">
 						  	<span class="input-group-addon getCode" style="width: 30%;" id="basic-addon1" onclick="sendPhone(this);">获取验证码</span>
 						</div>
 						<div class="input-group">
-							<button type="submit" class="btn btn-info" style="width: 100%;" onclick="window.location.href='new_register.htmll';parent.scrollTo(0,0);">确认</button>
+							<button type="button" class="btn btn-info" style="width: 100%;" onclick="window.location.href='new_register.html';parent.scrollTo(0,0);">确认</button>
 						</div>
 		 			</form>
 				</div>
@@ -69,12 +69,12 @@
 	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
     <script type="text/javascript">
-    	var countdown=59;
+    	var countdown=60;
 	function settime(val) {	
 		if (countdown == 0) { 
 			val.style.backgroundColor='#5bc0de';
 			val.innerHTML ="获取验证码";
-			countdown=59;
+			countdown=60;
 		} else { 
 			 val.style.backgroundColor ='#999';
 			val.innerHTML ="重新发送(" + countdown + ")"; 
@@ -86,11 +86,11 @@
 	function sendPhone(obj){
 		var phoneNumber=document.getElementById('phoneNumber').value;
 		var acnumber=document.getElementById('acnumber').value;
-		alert(phoneNumber);alert(acnumber);
-		if(countdown==59){
+//		alert(phoneNumber);alert(acnumber);
+		if(countdown==60){
 			$.ajax({
 			type:"post",
-			url:"",
+			url:"smsCode",
 			async:false,
 			dataType:'json',
 			data:{
@@ -98,10 +98,16 @@
 				phoneNumber:phoneNumber
 			},
 			success:function(ret){
+				if(ret.status=='101'){
+				
+					setTimeout(function() { settime(obj) },1000);
+				}else{
+					alert(ret.msg);
+				}
 				
 			}
 		});
-			setTimeout(function() { settime(obj) },1000);
+			
 		}
 	}
 	// 发短信验证码
