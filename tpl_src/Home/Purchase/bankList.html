@@ -57,24 +57,47 @@
 	  				<div class="addressInfo">
 	  					<ul>
 	  						<li><span>开户人:</span><div>{$v['iu_name']}</div></li>
-	  						<li><span>卡号:</span><div>{$v['']}</div></li>
+	  						<li><span>卡号:</span><div>{$v['bankaccount']}</div></li>
 	  						<li><span>银行名称:</span><div>{$v['bankname']}</div></li>
 	  						<li><span>银行开户行:</span><div>{$v['bankbranch']}</div></li>
-	  						<li><span>银行省:</span><div>广东省</div></li>
-	  						<li><span>银行市:</span><div>深圳市</div></li>
+	  						<li><span>银行省:</span><div>{$v['bankprovince']}</div></li>
+	  						<li><span>银行市:</span><div>{$v['banktown']}</div></li>
 	  					</ul>
-							<form name="form" action="#" method="post">
-		  					<button type="button" class="defa" onclick="form.action='main.html';form.submit();changeCheck(this);"><input class="sel" type="checkbox" name="defa"  <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />设为默认地址</button>
-		  					<button type="button" class="dele" onclick="form.action='main.html';form.submit();">删除</button>
-		  					<button type="button" class="edit" onclick="form.action='main.html';form.submit();" data-toggle="modal" data-target="#myModal2">编辑</button>
+							<form name="form" action="{:U('Home/Purchase/bankEdit')}" method="post">
+								<input type="hidden" name="bid" value="{$v['bid']}">
+		  						<!-- <button name="isshow" value="1" type="submit" class="defa" onclick='changeCheck(this);'><input class="sel" type="checkbox" <?php if($v['isshow'] == 1)echo "checked=true;"?> />设为默认地址</button> -->
+		  						<button name="isshow" value="1" type="submit" class="defa" onclick='changeCheck(this);' <?php if($v['isshow'] == 1)echo "disabled='disabled';"?> ><input class="sel" type="checkbox" <?php if($v['isshow'] == 1)echo "checked=true;"?> />设为默认地址</button>
+	  						<button type="button" class="dele" data-bid='{$v['bid']}' data-toggle="modal" data-target="#myModal3">删除</button>
+	  						<button data-bid='{$v['bid']}' data-name='{$v['iu_name']}' data-bankaccount='{$v['bankaccount']}' data-bankname='{$v['bankname']}' data-bankbranch='{$v['bankbranch']}' data-bankprovince='{$v['bankprovince']}' data-banktown='{$v['banktown']}' type="button" class="edit" data-toggle="modal" data-target="#myModal2" >编辑</button>
 		  				</form>
 	  				</div>
 	  			</foreach>
-  				
+  					
   				
   				<div style="height:50px;width: 100%;"></div>
-  		
-  				
+  				<!-- Modal -->
+					<div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+					  <div class="modal-dialog" role="document">
+					    <div class="modal-content">
+					      <div class="modal-header">
+					      	<span>删除银行信息:</span>
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					      </div>
+					      <div class="modal-body daimabiji-container">
+										<form name="form" action="#" method="post">
+											<input type="hidden" name="bid">
+											<div class="form-group" style="font-size: 18px;">是否删除？</div>
+											<div class="form-group">
+											  <button type="button" class="btn btn-danger" onclick='form.action="{:U('Home/Purchase/bankDelect')}";form.submit();'>删除</button>
+											  <button type="submit" class="btn btn-info" style="float: right;">取消</button>
+											</div>
+										  
+										</form>
+					      </div>
+					    
+					    </div>
+					  </div>
+					</div>
   				
   				<!-- Modal -->
 					<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -85,30 +108,31 @@
 					        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 					      </div>
 					      <div class="modal-body daimabiji-container">
-										<form method="get" action="bankList.html">
+										<form method="post" action="{:U('Home/Purchase/bankEdit')}">
+											<input type="hidden" name="bid">
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>开户人:</label>
-										    <input type="text" class="form-control" id="" placeholder="开户人" disabled="disabled">
+										    <input name="iu_name" type="text" class="form-control" placeholder="{$userinfo['lastname']}{$userinfo['firstname']}" disabled="disabled">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>银行名称:</label>
-										    <input type="text" class="form-control" id="" placeholder="银行名称">
+										    <input name="bankname" type="text" class="form-control" placeholder="银行名称">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>银行账号:</label>
-										    <input type="text" class="form-control" id="" placeholder="银行账号">
+										    <input name="bankaccount" type="text" class="form-control" placeholder="银行账号">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>银行省:</label>
-										    <input type="text" class="form-control" id="" placeholder="银行所在省">
+										    <input name="bankprovince" type="text" class="form-control" placeholder="银行所在省">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>银行市:</label>
-										    <input type="text" class="form-control" id="" placeholder="银行所在市">
+										    <input name="banktown" type="text" class="form-control" placeholder="银行所在市">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>支行名称:</label>
-										    <input type="text" class="form-control" id="" placeholder="支行名称">
+										    <input name="bankbranch" type="text" class="form-control" placeholder="支行名称">
 										  </div>
 										  <div class="form-group">
 											  <button type="submit" class="btn btn-info" id="save">保存</button>
@@ -135,27 +159,27 @@
 										<form method="post" action="bankList.html">									  
 										  <div class="form-group">
 									    	<label for=""><sup style="color: red;">*</sup>开户人:</label>
-									    	<input name="" type="text" class="form-control" id="" placeholder="开户人" disabled="disabled">
+									    	<input name="iu_name" type="text" class="form-control" placeholder="开户人" disabled="disabled">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>银行名称:</label>
-										    <input type="text" class="form-control" id="" placeholder="银行名称">
+										    <input name="bankname" type="text" class="form-control" placeholder="银行名称">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>银行账号:</label>
-										    <input type="text" class="form-control" id="" placeholder="银行账号">
+										    <input name="bankaccount" type="text" class="form-control" placeholder="银行账号">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>银行省:</label>
-										    <input type="text" class="form-control" id="" placeholder="银行所在省">
+										    <input name="bankprovince" type="text" class="form-control" placeholder="银行所在省">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>银行市:</label>
-										    <input type="text" class="form-control" id="" placeholder="银行所在市">
+										    <input name="banktown" type="text" class="form-control" placeholder="银行所在市">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>银行开户支行:</label>
-										    <input type="text" class="form-control" id="" placeholder="银行开户支行">
+										    <input name="bankbranch" type="text" class="form-control" placeholder="银行开户支行">
 										  </div>
 										  <div class="form-group">
 										  <button type="submit" class="btn btn-info" id="save">保存</button>
@@ -201,8 +225,30 @@
     	}
 			obj.parentElement.getElementsByClassName('sel')[0].checked='true';
  
-   }	 
-      
+    }
+  $('#myModal2').on('show.bs.modal', function (event) {
+		  var button=$(event.relatedTarget);
+ 			var bid=button.data('bid');
+ 			var bankaccount=button.data('bankaccount');
+ 			var bankname=button.data('bankname');
+ 			var bankbranch=button.data('bankbranch');
+ 			var bankprovince=button.data('bankprovince');
+ 			var banktown=button.data('banktown');
+  	
+		  	$("input[name='bid']").val(bid);
+		  	$("input[name='bankaccount']").val(bankaccount);
+		  	$("input[name='bankname']").val(bankname);
+		  	$("input[name='bankbranch']").val(bankbranch);
+		  	$("input[name='bankprovince']").val(bankprovince);
+		  	$("input[name='banktown']").val(banktown);
+		});
+		$('#myModal3').on('shown.bs.modal', function (event) {
+//		$('#myInput').focus()
+			var button=$(event.relatedTarget);
+	 		var bid=button.data('bid');
+	 		$("input[name='bid']").val(bid);
+		});
+        
 		
 		
     </script>

@@ -70,6 +70,7 @@
 	  						<li><span>所在地区:</span><div>{$v['ia_province']}{$v['ia_town']}{$v['ia_region']}</div></li>
 	  						<li><span>详细地址:</span><div>{$v['ia_road']}</div></li>
 	  					</ul>
+
 	  					<form name="form" action="{:U('Home/Purchase/addressEdit')}" method="post">
 	  						<input type="hidden" name="iaid" value="{$v['iaid']}">
 	  						<button name="is_address_show" value="1" type="submit" class="defa" onclick='changeCheck(this);' <?php if($v['is_address_show'] == 1)echo "disabled='disabled';"?> ><input class="sel" type="checkbox" <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />设为默认地址</button>
@@ -249,14 +250,13 @@
 		  	$("input[name='ia_province']").val(province);
 		  	$("input[name='ia_town']").val(town);
 		  	$("input[name='ia_region']").val(region);
-		  	$("input[name='ia_name']").val(name);
 		  	$("input[name='ia_road']").val(road);
 		});
 		$('#myModal3').on('shown.bs.modal', function (event) {
 //		$('#myInput').focus()
 			var button=$(event.relatedTarget);
-	 			var iaid=button.data('iaid');
-	 			$("input[name='iaid']").val(iaid);
+	 		var iaid=button.data('iaid');
+	 		$("input[name='iaid']").val(iaid);
 		});
     
     </script>
