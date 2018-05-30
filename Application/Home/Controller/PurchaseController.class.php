@@ -491,12 +491,13 @@ class PurchaseController extends HomeBaseController{
     **/ 
     public function addressList(){
         $iuid = $_SESSION['user']['id'];
+
         // 查询注册信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
         // 查询地址表信息
         $ia_road = M('Address')->where(array('iuid'=>$iuid))->getField('ia_road',true); 
         
-        if(!in_array($userinfo['shopaddress1'], $ia_road)){
+        if(!in_array($userinfo['shopaddress1'], $ia_road) && $_SESSION['user']['i'] == 0){
            $message = array(
                     'iuid' => $userinfo['iuid'],
                     'ia_name' => $userinfo['lastname'].$userinfo['firstname'],
@@ -507,6 +508,9 @@ class PurchaseController extends HomeBaseController{
                     'ia_road' => $userinfo['shopaddress1']
                 );
             $result = M('Address')->add($message);
+            if($result){
+                $_SESSION['user']['i'] = $_SESSION['user']['i'] + 1;
+            }
         }
         
         $data = M('Address')->where(array('iuid'=>$iuid))->select();
