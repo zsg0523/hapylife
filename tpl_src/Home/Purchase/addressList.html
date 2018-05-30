@@ -67,14 +67,14 @@
 	  					<ul>
 	  						<li><span>收货人:</span><div>{$v['ia_name']}</div></li>
 	  						<li><span>联系电话:</span><div>{$v['ia_phone']}</div></li>
-	  						<li><span>所在地区:</span><div>{$v['ia_address']}</div></li>
+	  						<li><span>所在地区:</span><div>{$v['ia_province']}{$v['ia_town']}{$v['ia_region']}</div></li>
 	  						<li><span>详细地址:</span><div>{$v['ia_road']}</div></li>
 	  					</ul>
 	  					<form name="form" action="#" method="post">
 	  						<!--<input type="hidden" name="iaid" value="{$v['iaid']}">-->
-	  						<button type="button" class="defa" onclick='form.action="{:U('Home/Purchase/addressAdd')}";form.submit();changeCheck(this);'><input class="sel" type="checkbox" <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />设为默认地址</button>
-	  						<button type="button" class="dele"  data-toggle="modal" data-target="#myModal3">删除</button>
-	  						<button data-iaid='{$v['iaid']}' type="button" class="edit" data-toggle="modal" data-target="#myModal2" >编辑</button>
+	  						<button type="submit" class="defa" onclick='changeCheck(this);'><input class="sel" type="checkbox" <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />设为默认地址</button>
+	  						<button type="button" class="dele" data-iaid='{$v['iaid']}' data-toggle="modal" data-target="#myModal3">删除</button>
+	  						<button data-iaid='{$v['iaid']}' data-name='{$v['ia_name']}' data-province='{$v['ia_province']}' data-town='{$v['ia_town']}' data-region='{$v['ia_region']}' data-road='{$v['ia_road']}' data-phone='{$v['ia_phone']}' type="button" class="edit" data-toggle="modal" data-target="#myModal2" >编辑</button>
 	  					</form>
 	  				</div>
 	  			</foreach>
@@ -91,9 +91,10 @@
 				      </div>
 				      <div class="modal-body daimabiji-container">
 									<form name="form" action="#" method="post">
+										<input type="hidden" name="iaid">
 										<div class="form-group" style="font-size: 18px;">是否删除地址？</div>
 										<div class="form-group">
-										  <button type="submit" class="btn btn-danger" onclick='form.action="{:U('Home/Purchase/addressDelect')}";form.submit();'>删除</button>
+										  <button type="button" class="btn btn-danger" onclick='form.action="{:U('Home/Purchase/addressDelect')}";form.submit();'>删除</button>
 										  <button type="submit" class="btn btn-info" style="float: right;">取消</button>
 										</div>
 									  
@@ -114,18 +115,19 @@
 				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				      </div>
 				      <div class="modal-body daimabiji-container">
-									<form action="{:U('Home/Purchase/addressEdit')}">
+									<form action="{:U('Home/Purchase/addressEdit')}" method="post">
+										<input type="hidden" name="iaid">
 									  <div class="form-group">
 									    <label for=""><sup style="color: red;">*</sup>收货人:</label>
-									    <input type="text" class="form-control" id=""  placeholder="收货人姓名">
+									    <input name="ia_name" type="text" class="form-control" id=""  placeholder="收货人姓名">
 									  </div>
 									  <div class="form-group">
 									    <label for=""><sup style="color: red;">*</sup>联系电话:</label>
-									    <input type="tel" class="form-control" id=""  placeholder="联系电话">
+									    <input name="ia_phone" type="tel" class="form-control" id=""  placeholder="联系电话">
 									  </div>
 									  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>所在省:</label>
-										    <input name="ia_pro" type="text" class="form-control"  placeholder="所在省">
+										    <input name="ia_province" type="text" class="form-control"  placeholder="所在省">
 										   	
 										  </div>
 										  <div class="form-group">
@@ -134,7 +136,7 @@
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>所在区/县:</label>
-										    <input name="ia_dis" type="text" class="form-control"  placeholder="所在区/县">
+										    <input name="ia_region" type="text" class="form-control"  placeholder="所在区/县">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>详细地址:</label>
@@ -174,7 +176,7 @@
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>所在省:</label>
-										    <input name="ia_pro" type="text" class="form-control"  placeholder="所在省">
+										    <input name="ia_province" type="text" class="form-control"  placeholder="所在省">
 										   	
 										  </div>
 										  <div class="form-group">
@@ -183,7 +185,7 @@
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>所在区/县:</label>
-										    <input name="ia_dis" type="text" class="form-control"  placeholder="所在区/县">
+										    <input name="ia_region" type="text" class="form-control"  placeholder="所在区/县">
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>详细地址:</label>
@@ -233,12 +235,28 @@
     }
 		$('#myModal2').on('show.bs.modal', function (event) {
 		  var button=$(event.relatedTarget);
- 			var Iaid=button.data('iaid');
-		  alert(Iaid);
+ 			var iaid=button.data('iaid');
+ 			var name=button.data('name');
+ 			var phone=button.data('phone');
+ 			var province=button.data('province');
+ 			var town=button.data('town');
+ 			var region=button.data('region');
+ 			var road=button.data('road');
+		  	
+		  	$("input[name='iaid']").val(iaid);
+		  	$("input[name='ia_name']").val(name);
+		  	$("input[name='ia_phone']").val(phone);
+		  	$("input[name='ia_province']").val(province);
+		  	$("input[name='ia_town']").val(town);
+		  	$("input[name='ia_region']").val(region);
+		  	$("input[name='ia_name']").val(name);
+		  	$("input[name='ia_road']").val(road);
 		});
 		$('#myModal3').on('shown.bs.modal', function (event) {
 //		$('#myInput').focus()
-			alert('点击了3');
+			var button=$(event.relatedTarget);
+	 		var iaid=button.data('iaid');
+	 		$("input[name='iaid']").val(iaid);
 		});
     
     </script>
