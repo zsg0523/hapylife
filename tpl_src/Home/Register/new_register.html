@@ -61,6 +61,9 @@
 			</div>-->
 			<div class="rg-div">
 				<form class="form-horizontal" method="post" action="{:U('Home/Register/new_registerInfo')}" enctype="multipart/form-data">
+					<input type="hidden" name="acnumber" value="{:I('get.acnumber')}" />
+					<input type="hidden" name="Phone"  value="{:I('get.phoneNumber')}" />
+					<input type="hidden" name="acid" value="{:I('get.acid')}" />
 					<div class="form-group" onclick="hiden(this);" style="margin-top: 10px;">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>中文姓:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
@@ -78,7 +81,7 @@
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>英文姓:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
-							<input type="text" class="form-control"   name="EnLast " placeholder="英文姓" >
+							<input type="text" class="form-control"   name="EnLastName" placeholder="英文姓" >
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnLastName']}</div>
 					</div>
@@ -153,13 +156,6 @@
 							<input type="text" class="form-control"   name="Email" placeholder="">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['Email']}</div>
-					</div>
-					<div class="form-group" onclick="hiden(this);">
-						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>电话号码:</label>
-						<div class="col-lg-10  col-md-10 col-xs-8">
-							<input type="" class="form-control"   name="Phone" placeholder="请填写中国国内电话号码" >
-						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['Phone']}</div>
 					</div>
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>销售类型:</label>
