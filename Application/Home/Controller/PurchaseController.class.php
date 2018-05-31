@@ -249,7 +249,7 @@ class PurchaseController extends HomeBaseController{
             $order_num = date('YmdHis').rand(10000, 99999);
             switch ($product['ip_type']){
                 case '1':
-                        $con = '首购单';
+                    $con = '首购单';
                     break;
                 case '2':
                     $con = '升级单';
@@ -307,8 +307,9 @@ class PurchaseController extends HomeBaseController{
             }
              //生成日志记录
             $content = '您的'.$con.'订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
+            // echo 2;
             $log = array(
-                'from_iuid' =>$iuid,
+                'iuid' =>$iuid,
                 'content'   =>$content,
                 'action'    =>0,
                 'type'      =>2,
