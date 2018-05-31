@@ -290,6 +290,7 @@ class RegisterController extends HomeBaseController{
             $map[$temp[0]]=urldecode(trim($temp[1]));
         }
         $receipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->find();
+        $cjPayStatus = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($map);
         //验签
         $return = rsaVerify($map);
         //更改订单状态
