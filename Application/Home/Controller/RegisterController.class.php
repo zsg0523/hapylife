@@ -94,18 +94,17 @@ class RegisterController extends HomeBaseController{
         $phoneNumber =I('post.phoneNumber');
         $code        =I('post.code');
         $acnumber    =I('post.acnumber');
-        $acid        =I('post.acid');
         $data        =D('Smscode')->where(array('phone'=>$phoneNumber,'acnumber'=>$acnumber))->order('nsid desc')->find();
         $time        =time()-strtotime($data['date']);
-//      if($time>60){
-//          $this->error('验证码失效,请重新发送');
-//      }else{
+        if($time>60){
+            $this->error('验证码失效,请重新发送');
+        }else{
             if($data && $data['code']==$code){
-                $this->success('验证码正确',U('Home/Register/new_register',array('phoneNumber'=>$phoneNumber,'acnumber'=>$acnumber,'acid'=>$acid)));
+                $this->success('验证码正确',U('Home/Register/new_register'));
             }else{
                 $this->error('验证码错误');
             }
-//      }
+        }
     }
     /**
     * 保存用户资料
@@ -124,7 +123,7 @@ class RegisterController extends HomeBaseController{
 			}
             $add = D('Tempuser')->add($data);
             if($add){
-		        $this->assign('userinfo',$data);
+		        $this->assign('data',$data);
 		        $this->display();
             }else{
 				$this->error('数据有误，请确认信息');
@@ -144,7 +143,7 @@ class RegisterController extends HomeBaseController{
     * 获取产品详情
     **/ 
     public function new_purchaseInfo(){
-    	$ipid =I('get.ipid');
+    	$ipid =I('post.ipid');
     	$data = D('product')->where(array('ipid'=>$ipid))->find();
     	$this->assign('data',$data);
         $this->display();
@@ -154,8 +153,8 @@ class RegisterController extends HomeBaseController{
 	**/
 	public function registerOrder(){
 		$iuid = $_SESSION['user']['id'];
-        $ipid = I('get.ipid');
-        $htid = D('Tempuser')->where(array('iuid'=>$iuid))->order('htid desc')->getfield('htid');
+        $ipid = I('post.ipid');
+        $htid = D('Tempuser')->order('htid desc')->getfield('htid');
         //商品信息
         $product = M('Product')->where(array('ipid'=>$ipid))->find();
         //用户信息
@@ -219,9 +218,13 @@ class RegisterController extends HomeBaseController{
         );
         $addlog = M('Log')->add($log);
         if($addlog){
-			$this->redirect('Home/Register/new_cjPayment',array('ir_receiptnum'=>$order_num));
+            $order['status'] = 1;
+            $order['msg']    = '订单已生成';
+            $this->ajaxreturn($order);
         }else{
-            $this->error('订单生成失败');
+            $order['status'] = 0;
+            $order['msg']    = '订单生成失败';
+            $this->ajaxreturn($order);
         }
 	}
     /**
@@ -333,7 +336,6 @@ class RegisterController extends HomeBaseController{
                  } 
             }
             $tmpe['CustomerID'] = $CustomerID;
-            $tmpe['EnrollerID'] = $receipt['EnrollerID'];
             //支付日期
             $tmpe['OrderDate'] = date("m/d/Y h:i:s A");
             $OrderDate         = date("Y-m-d",strtotime("-1 month",time()));
@@ -380,7 +382,7 @@ class RegisterController extends HomeBaseController{
                 //修改用户信息
                 if($upreceipt){
                     //通知畅捷完成支付
-                    $this->seccess('支付成功，跳转',U('Home/Register/new_regsuccess',array('CustomerID'=>$CustomerID,'ir_receiptnum'=>$map['outer_trade_no'],'EnrollerID'=>$receipt['EnrollerID'])));
+                    $this->seccess('支付成功，跳转',U('Home/Register/new_regsuccess'));
                 }
             }else{
                 $this->error('创建用户失败');
