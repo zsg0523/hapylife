@@ -123,7 +123,7 @@ class RegisterController extends HomeBaseController{
 			}
             $add = D('Tempuser')->add($data);
             if($add){
-		        $this->assign('data',$data);
+		        $this->assign('userinfo',$data);
 		        $this->display();
             }else{
 				$this->error('数据有误，请确认信息');
@@ -143,7 +143,7 @@ class RegisterController extends HomeBaseController{
     * 获取产品详情
     **/ 
     public function new_purchaseInfo(){
-    	$ipid =I('post.ipid');
+    	$ipid =I('get.ipid');
     	$data = D('product')->where(array('ipid'=>$ipid))->find();
     	$this->assign('data',$data);
         $this->display();
@@ -153,7 +153,7 @@ class RegisterController extends HomeBaseController{
 	**/
 	public function registerOrder(){
 		$iuid = $_SESSION['user']['id'];
-        $ipid = I('post.ipid');
+        $ipid = I('get.ipid');
         $htid = D('Tempuser')->order('htid desc')->getfield('htid');
         //商品信息
         $product = M('Product')->where(array('ipid'=>$ipid))->find();
@@ -218,13 +218,9 @@ class RegisterController extends HomeBaseController{
         );
         $addlog = M('Log')->add($log);
         if($addlog){
-            $order['status'] = 1;
-            $order['msg']    = '订单已生成';
-            $this->ajaxreturn($order);
+            $this->success('生成订单成功',U('Home/Register/new_cjPayment',array('ir_receiptnum'=>$order_num)));
         }else{
-            $order['status'] = 0;
-            $order['msg']    = '订单生成失败';
-            $this->ajaxreturn($order);
+            $this->error('生成订单失败');
         }
 	}
     /**
@@ -336,6 +332,7 @@ class RegisterController extends HomeBaseController{
                  } 
             }
             $tmpe['CustomerID'] = $CustomerID;
+            $tmpe['EnrollerID'] = $receipt['EnrollerID'];
             //支付日期
             $tmpe['OrderDate'] = date("m/d/Y h:i:s A");
             $OrderDate         = date("Y-m-d",strtotime("-1 month",time()));
@@ -382,7 +379,7 @@ class RegisterController extends HomeBaseController{
                 //修改用户信息
                 if($upreceipt){
                     //通知畅捷完成支付
-                    $this->seccess('支付成功，跳转',U('Home/Register/new_regsuccess'));
+                    $this->success('支付成功，跳转',U('Home/Register/new_regsuccess',array('ir_receiptnum'=>$map['outer_trade_no'],'EnrollerID'=>$receipt['EnrollerID'],'CustomerID'=>$CustomerID)));
                 }
             }else{
                 $this->error('创建用户失败');
@@ -397,7 +394,7 @@ class RegisterController extends HomeBaseController{
     * @param ir_receiptnum 订单编号
     **/
     public function checkreceipt(){
-        $ir_receiptnum = I('post.ir_receiptnum');
+        $ir_receiptnum = I('get.ir_receiptnum');
         //订单状态查询
         $receipt       = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
         if($receipt['ir_status'] == 2){
