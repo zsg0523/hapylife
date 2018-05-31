@@ -172,13 +172,13 @@ class RegisterController extends HomeBaseController{
             //下单用户id
             'riuid'=>$iuid,
             //下单用户
-            'CustomerID'=>$userinfo['customerid'],
+            'rCustomerID'=>$userinfo['customerid'],
             //收货人
             'ia_name'=>$userinfo['firstname'],
             //收货人电话
             'ia_phone'=>$userinfo['phone'],
             //收货地址
-            'ia_address'=>$userinfo['shopaddress1'].' '.$userinfo['shopaddress2'],
+            'ia_address'=>$userinfo['shopaddress1'],
             //订单总商品数量
             'ir_productnum'=>1,
             //订单总金额
@@ -367,18 +367,21 @@ class RegisterController extends HomeBaseController{
                 $save  = D('Activation')->add($where);
                 $status  = array(
                     'ir_status'  =>2,
-                    'CustomerID' =>$CustomerID,
+                    'rCustomerID'=>$CustomerID,
                     'riuid'      =>$userinfo['iuid'],
                     'ir_paytype' =>1,
-                    'ir_paytime' =>time()
+                    'ir_paytime' =>time(),
+                    'ia_name'    =>$userinfo['lastname'].$userinfo['firstname'],
+                    'ia_name_en' =>$userinfo['enlastname'].$userinfo['enfirstname'],
+                    'ia_phone'   =>$userinfo['phone'],
+                    'ia_address' =>$userinfo['shopaddress1'],
                 );
                 //更新订单信息
                 $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($status);
                 //修改用户信息
                 if($upreceipt){
                     //通知畅捷完成支付
-                    echo "success";
-                    $this->seccess('支付成功，跳转',U('Home/Purchase/recommenderList'));
+                    $this->seccess('支付成功，跳转',U('Home/Register/new_regsuccess'));
                 }
             }else{
                 $this->error('创建用户失败');
@@ -398,10 +401,9 @@ class RegisterController extends HomeBaseController{
         $receipt       = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
         if($receipt['ir_status'] == 2){
             //支付成功
-            $data['ir_price'] = $receipt['ir_price'];
-            $data['status'] = 1;
-            $data['msg'] = '支付成功，请跳转...';
-            $this->ajaxreturn($data);
+            $receipt['status'] = 1;
+            $receipt['msg'] = '支付成功，请跳转...';
+            $this->ajaxreturn($receipt);
         }else{
             $data['status'] = 0;
             $data['msg'] = '正在支付，请等待...';
