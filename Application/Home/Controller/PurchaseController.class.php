@@ -711,8 +711,8 @@ class PurchaseController extends HomeBaseController{
 
 // **************我的推荐人*****************
     public function recommenderList(){
-        $iuid = $_SESSION['user']['id'];
-        $data = M('User')->where(array('iuid'=>$iuid))->find();
+        $customerid = $_SESSION['user']['username'];
+        $data = M('User')->where(array('enrollerid'=>$customerid))->select();
 
         $assign = array(
                     'data' => $data,

@@ -384,6 +384,7 @@ class RegisterController extends HomeBaseController{
                     'DeviceGeolocation'  =>$tmpeArr['devicegeolocation'],
                     'BrowserVersion'     =>$tmpeArr['browserversion'],
                     'DistributorType'    =>D('Product')->where(array('ipid'=>$receipt['ipid']))->getfield('ip_after_grade'),
+                    'JoinedOn'    => time(),
                 );
                 $OrderDate         = date("Y-m-d",strtotime("-1 month",time()));
                 $activa = $OrderDate;
