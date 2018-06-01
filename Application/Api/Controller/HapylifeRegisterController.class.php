@@ -134,6 +134,22 @@ class HapylifeRegisterController extends HomeBaseController{
         }
     }
     /**
+    * 确认信息
+    **/ 
+    public function confirmationMessage(){
+        $iuid = $_SESSION['user']['id'];
+        $id = max(D('Tempuser')->where(array('iuid'=>$iuid))->getField('htid',true));
+        $data = D('Tempuser')->where(array('htid'=>$id))->find();
+        if($data){
+            $data['status'] = 1;
+            $this->ajaxreturn($data);
+        }else{
+            $sample['status'] = 0;
+            $this->ajaxreturn($sample);
+        }
+    }
+
+    /**
     * 获取首购产品
     **/ 
     public function new_purchase(){
