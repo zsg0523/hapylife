@@ -239,7 +239,7 @@ class RegisterController extends HomeBaseController{
         $postData['InputCharset']      = 'UTF-8';
         $postData['TradeDate']         = date('Ymd').'';
         $postData['TradeTime']         = date('His').'';
-        $postData['ReturnUrl']         = 'http://apps.hapy-life.com/hapylife';// 前台跳转url
+        $postData['ReturnUrl']         = '';// 前台跳转url
         $postData['Memo']              = '备注';
         // 4.4.2.8. 直接支付请求接口（畅捷前台） 业务参数++++++++++++++++++
         $postData['TrxId']             = $order_num; //外部流水号
@@ -379,7 +379,7 @@ class RegisterController extends HomeBaseController{
                 //修改用户信息
                 if($upreceipt){
                     //通知畅捷完成支付
-                    $this->success('支付成功，跳转',U('Home/Register/new_regsuccess',array('ir_receiptnum'=>$map['outer_trade_no'],'EnrollerID'=>$receipt['EnrollerID'],'CustomerID'=>$CustomerID)));
+                    $this->redirect('Home/Register/new_regsuccess',array('ir_receiptnum'=>$map['outer_trade_no'],'EnrollerID'=>$receipt['EnrollerID'],'CustomerID'=>$CustomerID));
                 }
             }else{
                 $this->error('创建用户失败');
