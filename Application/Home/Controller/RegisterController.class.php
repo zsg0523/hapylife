@@ -117,18 +117,28 @@ class RegisterController extends HomeBaseController{
             $msg['message']= '未提交任何数据';
             $this->ajaxreturn($msg);
         }else{
-        	$data        = I('post.');
-            $data['iuid']= $_SESSION['user']['id'];
-			if(isset($upload['name'])){
-				$data['JustIdcard']=C('WEB_URL').$upload['name'][0];
-				$data['BackIdcard']=C('WEB_URL').$upload['name'][1];
-			}
-            $add = D('Tempuser')->add($data);
-            if($add){
-		        $this->assign('userinfo',$data);
-		        $this->display();
+            $data = I('post.');
+            $User = D("User1"); // 实例化User对象
+            if(!$User->create($data)){
+                 // 如果创建失败 表示验证没有通过 输出错误提示信息
+                $error = $User->getError();
+                $assign = array(
+                            'error' => $error,
+                            'data' => $data
+                            );
+                $this->assign($assign);
+                $this->display('Register/new_register');
             }else{
-				$this->error('数据有误，请确认信息');
+                $data['iuid']= $_SESSION['user']['id'];
+    			if(isset($upload['name'])){
+    				$data['JustIdcard']=C('WEB_URL').$upload['name'][0];
+    				$data['BackIdcard']=C('WEB_URL').$upload['name'][1];
+    			}
+                $add = D('Tempuser')->add($data);
+                if($add){
+    		        $this->assign('userinfo',$data);
+    		        $this->display();
+                }
             }
         }
     }
