@@ -95,18 +95,15 @@ class HapylifeRegisterController extends HomeBaseController{
         $phoneNumber =I('post.phoneNumber');
         $code        =I('post.code');
         $acnumber    =I('post.acnumber');
+        $acid        =I('post.acid');
         $data        =D('Smscode')->where(array('phone'=>$phoneNumber,'acnumber'=>$acnumber))->order('nsid desc')->find();
         $time        =time()-strtotime($data['date']);
-        if($time>60){
-            $this->error('验证码失效,请重新发送');
+        if($data && $data['code']==$code){
+            $sample['status'] = 1;
+            $this->ajaxreturn($sample);
         }else{
-            if($data && $data['code']==$code){
-                $sample['status'] = 1;
-                $this->ajaxreturn($sample);
-            }else{
-                $sample['status'] = 0;
-                $this->ajaxreturn($sample);
-            }
+            $sample['status'] = 0;
+            $this->ajaxreturn($sample);
         }
     }
     /**
@@ -162,7 +159,7 @@ class HapylifeRegisterController extends HomeBaseController{
     public function registerOrder(){
         $iuid = $_SESSION['user']['id'];
         $ipid = I('post.ipid');
-        $htid = D('Tempuser')->order('htid desc')->getfield('htid');
+        $htid = D('Tempuser')->where(array('iuid'=>$iuid))->order('htid desc')->getfield('htid');
         //商品信息
         $product = M('Product')->where(array('ipid'=>$ipid))->find();
         //用户信息
@@ -218,7 +215,7 @@ class HapylifeRegisterController extends HomeBaseController{
         //生成日志记录
         $content = '您帮代理进行的'.$con.'订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
         $log = array(
-            'from_iuid' =>$iuid,
+            'iuid' =>$iuid,
             'content'   =>$content,
             'action'    =>0,
             'type'      =>2,
@@ -227,12 +224,10 @@ class HapylifeRegisterController extends HomeBaseController{
         $addlog = M('Log')->add($log);
         if($addlog){
             $order['status'] = 1;
-            $order['msg']    = '订单已生成';
             $this->ajaxreturn($order);
         }else{
-            $order['status'] = 0;
-            $order['msg']    = '订单生成失败';
-            $this->ajaxreturn($order);
+            $data['status'] = 0;
+            $this->ajaxreturn($data);
         }
     }
     /**
@@ -240,7 +235,7 @@ class HapylifeRegisterController extends HomeBaseController{
     **/
     public function new_cjPayment(){
         //订单号
-        $order_num                     = I('get.ir_receiptnum');
+        $order_num                     = I('post.ir_receiptnum');
         $order = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->find();
         $postData                      = array();   
         // 基本参数
@@ -285,7 +280,7 @@ class HapylifeRegisterController extends HomeBaseController{
         $query                         = http_build_query($postData);
         $url                           = 'https://pay.chanpay.com/mag-unify/gateway/receiveOrder.do?'. $query; //该url为生产环境url
         $data['url']                   = $url;
-        header("Location:".$url);
+        $this->ajaxreturn($data);
     }
 
     //购买产品畅捷返回结果
@@ -389,14 +384,8 @@ class HapylifeRegisterController extends HomeBaseController{
                 //修改用户信息
                 if($upreceipt){
                     //通知畅捷完成支付
-                    // $this->seccess('支付成功，跳转',U('Home/Register/new_regsuccess'));
-                    $sample['status'] = 1;
-                    $this->ajaxreturn($sample);
+                    echo "success";
                 }
-            }else{
-                // $this->error('创建用户失败');
-                $sample['status'] = 0;
-                $this->ajaxreturn($sample);
             }
         }
     }
