@@ -62,7 +62,7 @@
 	  						<li><span>银行名称:</span><div>{$v['bankname']}</div></li>
 	  						<li><span>银行省:</span><div>{$v['bankprovince']}</div></li>
 	  						<li><span>银行市:</span><div>{$v['banktown']}</div></li>
-	  						<li><span>银行区/县:</span><div>{$v['banktown']}</div></li>
+	  						<li><span>银行区/县:</span><div>{$v['bankregion']}</div></li>
 	  						<li><span>支行名称:</span><div>{$v['bankbranch']}</div></li>
 	  					</ul>
 							<form name="form" action="{:U('Home/Purchase/bankEdit')}" method="post">
@@ -70,7 +70,7 @@
 		  						<!-- <button name="isshow" value="1" type="submit" class="defa" onclick='changeCheck(this);'><input class="sel" type="checkbox" <?php if($v['isshow'] == 1)echo "checked=true;"?> />设为默认地址</button> -->
 		  						<button name="isshow" value="1" type="submit" class="defa" onclick='changeCheck(this);' <?php if($v['isshow'] == 1)echo "disabled='disabled';"?> ><input class="sel" type="checkbox" <?php if($v['isshow'] == 1)echo "checked=true;"?> />设为默认地址</button>
 	  						<button type="button" class="dele" data-bid='{$v['bid']}' data-toggle="modal" data-target="#myModal3">删除</button>
-	  						<button data-bid='{$v['bid']}' data-name='{$v['iu_name']}' data-bankaccount='{$v['bankaccount']}' data-bankname='{$v['bankname']}' data-bankbranch='{$v['bankbranch']}' data-bankprovince='{$v['bankprovince']}' data-banktown='{$v['banktown']}' type="button" class="edit" data-toggle="modal" data-target="#myModal2" >编辑</button>
+	  						<button data-bid='{$v['bid']}' data-name='{$v['iu_name']}' data-bankaccount='{$v['bankaccount']}' data-bankname='{$v['bankname']}' data-bankbranch='{$v['bankbranch']}' data-bankprovince='{$v['bankprovince']}' data-banktown='{$v['banktown']}' data-bankregion='{$v['bankregion']}' type="button" class="edit" data-toggle="modal" data-target="#myModal2" >编辑</button>
 		  				</form>
 	  				</div>
 	  			</foreach>
@@ -245,6 +245,7 @@
  			var bankbranch=button.data('bankbranch');
  			var bankprovince=button.data('bankprovince');
  			var banktown=button.data('banktown');
+ 			var bankregion=button.data('bankregion');
   	
 		  	$("input[name='bid']").val(bid);
 		  	$("input[name='bankaccount']").val(bankaccount);
@@ -252,6 +253,7 @@
 		  	$("input[name='bankbranch']").val(bankbranch);
 		  	$("input[name='bankprovince']").val(bankprovince);
 		  	$("input[name='banktown']").val(banktown);
+		  	$("input[name='bankregion']").val(bankregion);
 		});
 		$('#myModal3').on('shown.bs.modal', function (event) {
 //		$('#myInput').focus()
@@ -267,6 +269,7 @@
 		  	$("input[name='bankbranch']").val('');
 		  	$("input[name='bankprovince']").val('');
 		  	$("input[name='banktown']").val('');
+		  	$("input[name='bankregion']").val('');
 		});
         
 		
