@@ -115,16 +115,13 @@ class RegisterController extends HomeBaseController{
     public function checkName(){
         $customerid = I('post.EnrollerID');
         if($customerid){
-        	$data = M('User')->where(array('CustomerID'=>$customerid))->find();  
-        	$this->ajaxreturn($data);
-        	      	
+            $data = M('User')->where(array('CustomerID'=>$customerid))->find();  
+            $this->ajaxreturn($data);
+                    
         }else{
-        	$data['status'] = 0;
-        	$this->ajaxreturn($data);        	
+            $data['status'] = 0;
+            $this->ajaxreturn($data);           
         }
-        
-
-        
     }
     /**
     * 保存用户资料

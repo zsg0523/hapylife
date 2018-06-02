@@ -472,7 +472,7 @@
 		function validate() {
               var pwd1 = document.getElementById("passWord1").value;
               var pwd2 = document.getElementById("passWord2").value;
-		<!-- 对比两次输入的密码 -->
+		// 对比两次输入的密码
               if(pwd1 == pwd2&&pwd1!="") {
                   document.getElementById("judgePassword2").innerHTML="两次密码一致";
                    document.getElementById("judgePassword2").style.color="#3E8F3E";
@@ -531,7 +531,11 @@
 					$("input[name='EnrollerNameCn']").val("请输入正确的推荐人ID！");
 				}
 				
-			}
+			},
+			error:function(){
+				alert('ajax请求错误~！');
+				
+			},
 			});
 		});
 		
