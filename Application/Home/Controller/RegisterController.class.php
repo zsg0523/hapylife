@@ -354,7 +354,7 @@ class RegisterController extends HomeBaseController{
                     'acid'        =>$tmpeArr['acid'],
                     'acnumber'    =>$tmpeArr['acnumber'],
                     'Phone'       =>$tmpeArr['phone'],
-                    'ShopAddress1'=>$tmpeArr['shopsddress1'],
+                    'ShopAddress1'=>$tmpeArr['shopaddress1'],
                     'ShopArea'    =>$tmpeArr['shoparea'],
                     'ShopCity'    =>$tmpeArr['shopcity'],
                     'ShopProvince'=>$tmpeArr['shopprovince'],
