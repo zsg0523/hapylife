@@ -108,6 +108,15 @@ class RegisterController extends HomeBaseController{
             }
         }
     }
+
+    /**
+    * 返回推荐人姓名
+    **/ 
+    public function checkName(){
+        $customerid = I('post.');
+        $data = M('User')->where(array('CustomerID'=>$customerid))->find();
+        $this->ajaxreturn($data);
+    }
     /**
     * 保存用户资料
     **/ 

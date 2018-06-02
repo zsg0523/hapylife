@@ -515,7 +515,8 @@ class PurchaseController extends HomeBaseController{
                     'ia_province' => $userinfo['shopprovince'],
                     'ia_town' => $userinfo['shopcity'],
                     'ia_region' => $userinfo['shoparea'],
-                    'ia_road' => $userinfo['shopaddress1']
+                    'ia_road' => $userinfo['shopaddress1'],
+                    'is_address_show' => 1
                 );
             $result = M('Address')->add($message);
             if($result){
@@ -619,6 +620,7 @@ class PurchaseController extends HomeBaseController{
                     'bankname' => $userinfo['bankname'],
                     'bankbranch' => $userinfo['subname'],
                     'createtime' => time(),
+                    'isshow' => 1,
                 );
             $result = M('Bank')->add($message);
             if($result){
