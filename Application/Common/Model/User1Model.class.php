@@ -13,7 +13,7 @@ class User1Model extends BaseModel{
         array('FirstName','require','请填写中文名'), 
         array('EnLastName','require','请填写英文姓'), 
         array('EnFirstName','require','请填写英文名'), 
-        array('PassWord','/^[0-9]{8}/','密码最少8位数'), 
+        array('PassWord','/^[a-zA-Z0-9]{7,}/','密码最少7位数'), 
         array('ConfirmPassWord','PassWord','两次输入密码不一致',0,'confirm'), 
         array('EnrollerID','require','推荐人不能为空！'), 
         array('Email','/^\w+([.]\w+)?[@]\w+[.]\w+([.]\w+)?$/','请输入正确的电子邮箱'),
