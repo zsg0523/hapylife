@@ -113,9 +113,18 @@ class RegisterController extends HomeBaseController{
     * 返回推荐人姓名
     **/ 
     public function checkName(){
-        $customerid = I('post.');
-        $data = M('User')->where(array('CustomerID'=>$customerid))->find();
-        $this->ajaxreturn($data);
+        $customerid = I('post.EnrollerID');
+        if($customerid){
+        	$data = M('User')->where(array('CustomerID'=>$customerid))->find();  
+        	$this->ajaxreturn($data);
+        	      	
+        }else{
+        	$data['status'] = 0;
+        	$this->ajaxreturn($data);        	
+        }
+        
+
+        
     }
     /**
     * 保存用户资料
@@ -473,6 +482,23 @@ class RegisterController extends HomeBaseController{
         }
     }
     /*********************************************************************普通注册********************************************************************************************/  
+    /**
+    *注册手机区号 is_show值为1
+    **/
+    public function oldRegisterCode(){
+        $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
+        foreach ($mape as $key => $value) {
+            $data[$key]         = $value;
+            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
+            	$data[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+            }else{
+            	$data[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+            }
+        }
+        $this->assign('data',$data);
+        $this->display();
+    }
+    
     /**
     *检查旧注册验证码是否正确
     *参数：phoneNumber(手机号),acnumber(区号),code(验证码)
