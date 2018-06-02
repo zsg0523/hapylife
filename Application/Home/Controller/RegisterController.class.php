@@ -118,6 +118,7 @@ class RegisterController extends HomeBaseController{
             $this->ajaxreturn($msg);
         }else{
             $data = I('post.');
+            $upload = several_upload();
             $User = D("User1"); // 实例化User对象
             if(!$User->create($data)){
                  // 如果创建失败 表示验证没有通过 输出错误提示信息

@@ -68,13 +68,13 @@ class IndexController extends HomeBaseController{
                             );
                     }
                    
-                    $this->redirect('Home/Purchase/main');
+                    $this->redirect('Home/Purchase/purchase');
                 }
             }
         }else{
             $data=check_login();
             if($data){
-                $this->redirect('Home/Purchase/main');
+                $this->redirect('Home/Purchase/purchase');
             }else{
                 $this->display('Login/login');
             }

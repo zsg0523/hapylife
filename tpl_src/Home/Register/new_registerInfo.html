@@ -17,10 +17,38 @@
 		.row>div:nth-child(2){text-align: right;}
 		.container-fluid>a{width: 100%;height: 30px;line-height:30px;text-align: center; border-radius: 5px;
 		font-size: 14px;color: #FFFFFF; background-color: #439DFE;;margin-bottom: 5px;display: block;}
-		
+		.main{height: auto;margin: auto;}
+      	.commonHead{width: 100%;height: auto;}
+      	.title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
+      		/*手机*/
+      @media screen and (max-width: 768px){
+     .main,.title{width:100%;}
+    
+      }
+      /*平板*/
+      @media screen and (min-width: 768px){
+       .main,.title{width:100%;}
+      
+      }
+        /*中等屏幕*/
+      @media screen and (min-width: 992px){
+         .main,.title{width:100%;} 
+        
+      }
+      /*大屏幕*/
+      @media screen and (min-width: 1200px){
+        .main,.title{width:1200px;margin: auto;}
+        
+      }
 	</style>
 	<body>
-		<div class="container-fluid">
+		<div class="commonHead">
+  					
+		</div>
+		<div class="title">
+			确认资料
+		</div>
+		<div class="main container-fluid">
 			<div class="row">
 				<div class="col-md-2 col-xs-4">
 					<span>推荐人ID:</span>
@@ -238,8 +266,12 @@
 				</div>	
 			</div>
 			<a class="col-md-12" href="new_purchase.html">确认注册</a>
-			
-			
+		<script src="https://cdn.bootcss.com/jquery/2.2.2/jquery.js"></script>	
+		<script type="text/javascript">
+			$(document).ready(function(){
+	   			$(".commonHead").load("../Purchase/commonHead.html");
+			});		
+		</script>
 		</div>
 	</body>
 

@@ -12,21 +12,50 @@
 		body,html{margin: 0;padding: 0;}
 		a{text-decoration: none;color: #fff;}
 		a:hover{cursor: pointer;text-decoration: none;color: #fff;}
-		.main{width:100%;height: auto;margin: auto;}
-		.order_list{width: 100%;}
-		.order_list>ul{padding: 0px;margin-top: 5px;}
+		.main{height: auto;margin: auto;}
+      	.commonHead{width: 100%;height: auto;}
+  	
+      	.title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
+		
+		.order_list{width: 100%;height: auto;margin: auto;}
+		.order_list>ul{margin: 0px;padding: 0px;margin-top: 5px;}
 		.order_list>ul>li{height: 30px;font-size: 14px;text-align: left;line-height: 30px;}
 		.order_list>ul>li:first-child{height: 60px;}
 		.order_list>ul>li>span{width: auto;height: 30px;display: block;float: right;margin-right: 5px;line-height: 30px;}
 		#pay{width:60px;height:28px;line-height:28px;font-size: 14px;border-radius: 5px;float: left;text-align:center;display: block;background: #439DFE;color:#fff;}
 		.order_list>ul>li img{width: 60px;height: 60px;}
 		.del{width: 60px;height: 28px;line-height: 28px;text-align:center;border-radius: 5px;display: block;background: #439DFE;color:#FFF;float: right;}
-		.panel{margin-bottom: 5px;}
-		
+
+		/*手机*/
+      @media screen and (max-width: 768px){
+     .main,.title{width:100%;}
+    
+      }
+      /*平板*/
+      @media screen and (min-width: 768px){
+       .main,.title{width:100%;}
+      
+      }
+        /*中等屏幕*/
+      @media screen and (min-width: 992px){
+         .main,.title{width:100%;} 
+        
+      }
+      /*大屏幕*/
+      @media screen and (min-width: 1200px){
+        .main,.title{width:1200px;margin: auto;}
+        
+      }
 	</style>
 </head>
 	<body class="">
-		<div class="main container-fluid ">
+		<div class="commonHead">
+  					
+		</div>
+		<div class="title">
+			我的订单
+		</div>
+		<div class="main container">
 			<div class="order_list">
 				<if condition="$Think.session.user.status eq 1">
 					<volist name='data' id='v'>
@@ -80,11 +109,13 @@
 			</div>
 		</div>
 
-		<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script src="https://cdn.bootcss.com/jquery/2.2.2/jquery.js"></script>
 		<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
 		
 		<script type="text/javascript">
-			
+		$(document).ready(function(){
+	   		$(".commonHead").load("commonHead.html");
+		});
 		</script>
 	    
 	</body>

@@ -7,7 +7,7 @@
 		<title>新用户注册</title>		
 
 	<!--<link rel="stylesheet" href="css/bootstrap.min.css" />-->
-	<link rel="stylesheet" href="__PUBLIC_CSS__/bootstrap.min.css" />
+		<link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
 	<style>
 		/*上传身份证css*/
 		.content {
@@ -39,26 +39,106 @@
 			font-size: 0.9rem;
 			color: #999
 		}
-		/*注册*/
-		/*.rg-name{
-			margin-top: 10px;
-			color: #2491ee;
-			font-size:20px;
-			text-align: center;
-			line-height: 40px;
-			height:40px;
-			border-bottom: 1px solid #DDDDDD;
-			margin-bottom: 10px;
-		}*/
+		*{margin: 0;padding: 0;}
+    	ul,li{list-style: none;display: block;}
+    	a{text-decoration: none;color: #000;font-weight: bold;}
+      	a:hover{text-decoration: none;cursor: pointer;}
+	    p{margin: 0;padding: 0;}
+    	
+    
+    	header{width: 100%;height: 100px;background:#2491ee;color: #fff;}
+	    .head{height: 100px;margin: 0 auto;position: relative;z-index: 1;}
+	    .head>span{height: 60px;width: 60%;line-height: 60px;font-size: 40px;display: block;float: left;margin-left: 5%;}
+	    .head>span:hover{cursor:pointer;}
+	    .head>span>sup{font-size:12px;top: -1.7em;}
+	    
+	    .head>p{width: 40px;height: 40px;color: #fff;font-size: 28px;line-height: 40px;text-align:center;
+	    display: block;float: right;margin-right: 10px;margin-top: 10px;}
+      .head>p:hover{cursor: pointer;}
+      
+      .head>ul{height:auto;position: absolute;z-index: 5;background-color: #FFF;color: #000;right: 0;top: 100px;display: none;border:1px solid #DEDEDE;}
+      .head>ul>li{width: 100%;height: 35px;}
+     	.head>ul>li>a{width: 100%;height: 35px;font-size: 16px;color: #2491ee;text-align: center;line-height: 35px; border-bottom: 1px #dedede solid;display:inline-block;}
+      
+      .head>div{width: 100%;height: 40px;float: left;}
+      .head>div>span{width:60%;height: 40px;float: left;font-size: 14px;line-height: 40px;margin-left: 5%;}
+			.head>div>a{width: 35%;height: 40px;line-height:40px;float: right;font-size: 14px;display:inline-block;color: #fff;text-align: right;}	
+      
+      	
+      .navig{height: 40px;margin: auto;border-bottom:1px solid #DEDEDE;}
+      .navig>span{width: 40px;height: 38px;color: #2491ee;font-size: 28px;line-height: 38px;text-align:center;margin-left: 10px;background: #EEEEEE;border-radius: 3px;}
+      .navig>span:hover{cursor: pointer;}
+     
+		
+		.main{height: auto;margin: auto;}
+      	.commonHead{width: 100%;height: auto;}
+      	.title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
+      
 		.err{color:#FF0000;font-size: 14px;text-align:center;}
 		.btn-info{background-color: #439DFE;}
+		
+		.form-horizontal .form-group{margin-left: 15px;margin-right: 15px;}
+		.form-horizontal .control-label{text-align: left;}
+		
+      /*手机*/
+      @media screen and (max-width: 768px){
+     .main,.title{width:100%;}
+        .head{width: 100%;}
+        .head>ul{width: 100%;}
+       .navig{width: 100%;}
+      }
+      /*平板*/
+      @media screen and (min-width: 768px){
+       .main,.title{width:100%;}
+        .head{width: 100%;}
+        .head>ul{width: 100%;}
+       .navig{width: 100%;}
+   
+      }
+        /*中等屏幕*/
+      @media screen and (min-width: 992px){
+        .main,.title{width:100%;}
+         .head{width: 100%;}
+         .head>ul{width: 40%;}
+        .navig{width: 100%;}
+
+
+      }
+      /*大屏幕*/
+      @media screen and (min-width: 1200px){
+      	.head>ul{width: 40%;}
+        .head{ width: 1200px;}
+        .navig{width: 1200px;}
+		.main,.title{width:1200px;}
+        
+      }
+	</style>
 	</style>
 	</head>
-	<body>
-		<div class="container">
-			<!--<div class="rg-name" >
-				<span >HAPYLIFE 新用户注册</span>
-			</div>-->
+	<body class="container-fluid">
+		<header>
+			<div class="head">
+				<span>HAPYLIFE<sup>TM</sup></span>
+				<p class="glyphicon glyphicon-menu-hamburger" id="design" onclick="showSetting();"></p>
+				<ul id="setting">
+        			<li><a  href="{:U('Home/Purchase/myProfile')}"  >个人资料</a></li>
+					<li><a  href="{:U('Home/Purchase/purchase')}" >购买礼包</a></li>
+ 					<li><a  href="{:U('Home/Purchase/myOrder')}"  >我的订单</a></li>
+ 					<li><a  href="{:U('Home/Register/registerCode')}" >新代理注册</a> </li>
+					<li><a  href="{:U('Home/Purchase/addressList')}" >地址管理</a></li>
+					<li><a  href="{:U('Home/Purchase/bankList')}" >银行管理</a></li>
+					<li><a  href="{:U('Home/Purchase/recommenderList')}" >我的推荐</a></li>
+					<li><a  href="{:U('Home/index/log_out')}" >退出登录</a></li>
+				</ul>
+				<div>
+					<span>{$Think.session.user.username},您好!</span>
+				</div>
+			</div>
+		</header>
+		<div class="title">
+			填写资料
+		</div>
+		<div class="main">
 			<div class="rg-div">
 				<form class="form-horizontal" method="post" action="{:U('Home/Register/new_registerInfo')}" enctype="multipart/form-data">
 					<input type="hidden" name="acnumber" value="{:I('get.acnumber')}" />
@@ -337,7 +417,7 @@
 					</div>
 
 					<div class="form-group">
-						<div class="col-md-offset-2 col-md-10 col-xs-12">
+						<div class=" col-md-12 col-xs-12">
 							<button type="submit" class="btn  btn-block  btn-info">注册</button>
 						</div>
 					</div>
@@ -346,8 +426,41 @@
 		</div>
 	</body>
 	<!--<script type="text/javascript" src="js/index.js"></script>-->
+	<script src="https://cdn.bootcss.com/jquery/2.2.2/jquery.js"></script>
 	<script type="text/javascript" src="__PUBLIC_JS__/index.js"></script>
 	<script type="text/javascript">
+	$(document).ready(function(){
+	
+	   $(".commonHead").load("../Purchase/commonHead.html");
+	   $.ajax({
+			type:"post",
+			url:"inCode",
+			async:false,
+			dataType:'json',
+			data:{
+				
+			},
+			success:function(ret){
+				window.onload.href="ret.callback";
+				$("input[name='Phone']").val(ret.phoneNumber);
+		  		$("input[name='acnumber']").val(ret.acnumber);
+		  		$("input[name='acid']").val(ret.acid);	
+			}
+		});
+	});
+	var i=1;
+    function showSetting(){
+    	var setting=document.getElementById('setting');
+	  	var des=document.getElementById('design');
+			if(i==1){
+				setting.style.display="block";
+			  i=0;
+			}else{
+				setting.style.display="none";
+			  i=1;
+			}
+    }
+		
 		function valiPassword(){
 			 var pwd1 = document.getElementById("passWord1").value;
 			 if(pwd1.length<7){

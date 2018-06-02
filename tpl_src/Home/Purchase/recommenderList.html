@@ -11,8 +11,7 @@
       *{margin: 0;padding: 0;}
       .wrap{width: 100%;position: relative;}
     	
-    	#addRec{width: 100%;height: 40px;line-height:40px;text-align: center; border-radius: 5px;position: fixed;z-index: 10;
-			font-size: 16px;bottom: 0;left: 0;  color: #FFFFFF; background-color: #2491EE;margin: 0;border: none;}
+    	
 			
     	ul,li{list-style: none;display: block;}
     	a{text-decoration: none;color: #000;font-weight: bold;}
@@ -20,31 +19,46 @@
    
     	.wrap{width: 100%;}
       .main{height: auto;margin: auto;}
+      .commonHead{width: 100%;height: auto;}
+      .title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
+      
       .recommender{width: 100%;height:120px;border: 1px solid #DEDEDE;margin-top: 5px;}
       .recommender>li{width: 100%;height: 30px;text-align: left;line-height: 30px;}
       .recommender>li>span{width: auto;display: block;float: right;}
       
-            /*手机*/
+      #addRec{height: 40px;line-height:40px;text-align: center; border-radius: 5px;position: fixed;z-index: 10;
+			font-size: 16px;bottom: 0;left: 0;  color: #FFFFFF; background-color: #2491EE;margin: 0;border: none;}
+      /*手机*/
       @media screen and (max-width: 768px){
-     .main{width: 100%;}
+     .main,.title{width:100%;}
+     #addRec{width: 100%;}
       }
       /*平板*/
       @media screen and (min-width: 768px){
-       .main{width: 100%;}
+       .main,.title{width:100%;}
+       #addRec{width: 100%;}
       }
         /*中等屏幕*/
       @media screen and (min-width: 992px){
-         .main{width: 100%;}   
+         .main,.title{width:100%;} 
+         #addRec{width: 100%;} 
       }
       /*大屏幕*/
       @media screen and (min-width: 1200px){
-        .main{width:100%;}
+        .main,.title{width:1200px;}
+        #addRec{width: 1200px;left: 50%;margin-left: -600px;}
       }
       
     </style>
   </head>
   <body>
   		<div class="wrap">
+  			<div class="commonHead">
+  					
+  			</div>
+  			<div class="title">
+  				我的推荐
+  			</div>
   			<div class="main">
           <foreach name="data" item="v">
     				<ul class="recommender">
@@ -56,14 +70,36 @@
           </foreach>
   				
   				<div style="height:50px;width: 100%;"></div>
+  				<button type="button" id="addRec" onclick="window.location.href='../Register/registerCode.html';">新代理注册</button>
   			</div>
-  			<button type="button" id="addRec" onclick="window.location.href='../Register/registerCode.html';">新代理注册</button>
+  			
   		</div>
 
-  <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.2/jquery.js"></script>
   <script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
   <script type="text/javascript" >
-       
+		$(document).ready(function(){
+	
+	   $(".commonHead").load("commonHead.html");
+		});
+//var i=1;
+//	function showSetting(obj){
+//  	var setting=document.getElementById('setting');
+//	  	var des=document.getElementById('design');
+//			if(i==1){
+//				setting.style.display="block";
+//				des.style.color="#000";
+//			  des.style.backgroundColor="#fff";
+//			  des.style.borderBottom="#dedede 1px solid";
+//			  i=0;
+//			}else{
+//				setting.style.display="none";
+//				des.style.color="#fff";
+//			  des.style.backgroundColor="#2491ee";
+//			  des.style.borderBottom="none";
+//			  i=1;
+//			}
+//  }  
   </script>
 
   </body>

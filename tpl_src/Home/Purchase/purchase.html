@@ -12,7 +12,10 @@
 		a{text-decoration: none;color: #fff;}
 		a:hover{cursor: pointer;text-decoration: none;color: #fff;}
 		.wrap{width: 100%;height: auto;}
-		.main{width: 100%;height:auto;}
+		.main{height: auto;margin: auto;}
+      	.commonHead{width: 100%;height: auto;}
+      	.title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
+      
 		.giftPackage{height: 120px; margin-top: 10px;border: 1px #ddd solid;}
 		.icon{width: 35%;height: 120px;float: left;position: relative;}
 		.icon>img{width:120px;height:118px;position: absolute;left: 0;}
@@ -22,10 +25,36 @@
 		.intro{width: 60%;height: 120px;font-size: 16px;line-height: 40px;float: right;margin-right: 8px;}
 		.intro span{width: 100%;height: 40px;display: block;text-align: right;}
 		.intro>p{width: 100%;height: 40px;display: block;text-align: right;margin: 0;}
-		.intro>a{width:50%;height: 35px;background: #439DFE;margin-bottom:2px;line-height: 35px;display:block;font-size: 16px;float:right;border-radius: 10px;text-align: center;}
+		.intro>a{width:50%;height: 35px;background: #439DFE;color: #fff; margin-bottom:2px;line-height: 35px;display:block;font-size: 16px;float:right;border-radius: 10px;text-align: center;}
+		/*手机*/
+      @media screen and (max-width: 768px){
+     .main,.title{width:100%;}
+    
+      }
+      /*平板*/
+      @media screen and (min-width: 768px){
+       .main,.title{width:100%;}
+      
+      }
+        /*中等屏幕*/
+      @media screen and (min-width: 992px){
+         .main,.title{width:100%;} 
+        
+      }
+      /*大屏幕*/
+      @media screen and (min-width: 1200px){
+        .main,.title{width:1200px;}
+        
+      }
 	</style>
 </head>
 <body class="wrap container-fluid">
+	<div class="commonHead">
+  					
+	</div>
+	<div class="title">
+		购买礼包
+	</div>
 	<div class="main row">
 		<if condition="$Think.session.user.status eq 1">
 			<volist id='v' name='product'>
@@ -42,8 +71,14 @@
 		<else />
 		</if>
 	</div>
-	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="https://cdn.bootcss.com/jquery/2.2.2/jquery.js"></script>
     <script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+	
+	   $(".commonHead").load("commonHead.html");
+	});
+    </script>
     
 </body>
 </html>
