@@ -11,8 +11,8 @@ class User1Model extends BaseModel{
     protected $_validate = array(
         array('LastName','require','请填写中文姓'), 
         array('FirstName','require','请填写中文名'), 
-        array('EnLastName','require','请填写英文姓'), 
-        array('EnFirstName','require','请填写英文名'), 
+        array('EnLastName','require','请填写英文姓，如果没有英文姓请填写中文拼音'), 
+        array('EnFirstName','require','请填写英文名，如果没有英文名请填写中文拼音'), 
         array('PassWord','/^[a-zA-Z0-9]{7,}/','密码最少7位数'), 
         array('ConfirmPassWord','PassWord','两次输入密码不一致',0,'confirm'), 
         array('EnrollerID','require','推荐人不能为空！'), 

@@ -116,11 +116,20 @@ class HapylifeRegisterController extends HomeBaseController{
             $this->ajaxreturn($msg);
         }else{
             $data        = I('post.');
-            $data['iuid']= $_SESSION['user']['id'];
-            if(isset($upload['name'])){
-                $data['JustIdcard']=C('WEB_URL').$upload['name'][0];
-                $data['BackIdcard']=C('WEB_URL').$upload['name'][1];
+            // $data['iuid']= $_SESSION['user']['id'];
+            if(!empty($data['JustIdcard'])){
+                $img_body1 = substr(strstr($data['JustIdcard'],','),1);
+                $JustIdcard = time().'_'.mt_rand().'.jpg';
+                $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
+                $data['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
             }
+            if(!empty($data['BackIdcard'])){
+                $img_body2 = substr(strstr($data['BackIdcard'],','),1);
+                $BackIdcard = time().'_'.mt_rand().'.jpg';
+                $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
+                $data['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
+            }
+            $data['EnrollerID'] = strtoupper(I('post.EnrollerID'));
             $add = D('Tempuser')->add($data);
             if($add){
                 // $this->assign('data',$data);
@@ -137,7 +146,8 @@ class HapylifeRegisterController extends HomeBaseController{
     * 确认信息
     **/ 
     public function confirmationMessage(){
-        $iuid = $_SESSION['user']['id'];
+        $iuid = I('post.iuid');
+        // $iuid = $_SESSION['user']['id'];
         $id = max(D('Tempuser')->where(array('iuid'=>$iuid))->getField('htid',true));
         $data = D('Tempuser')->where(array('htid'=>$id))->find();
         if($data){
@@ -173,7 +183,8 @@ class HapylifeRegisterController extends HomeBaseController{
     * 首购订单
     **/
     public function registerOrder(){
-        $iuid = $_SESSION['user']['id'];
+        // $iuid = $_SESSION['user']['id'];
+        $iuid = I('post.iuid');
         $ipid = I('post.ipid');
         $htid = D('Tempuser')->where(array('iuid'=>$iuid))->order('htid desc')->getfield('htid');
         //商品信息
