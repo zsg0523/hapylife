@@ -150,6 +150,7 @@ class RegisterController extends HomeBaseController{
     				$data['JustIdcard']=C('WEB_URL').$upload['name'][0];
     				$data['BackIdcard']=C('WEB_URL').$upload['name'][1];
     			}
+                $data['EnrollerID'] = strtoupper(I('post.EnrollerID'));
                 $add = D('Tempuser')->add($data);
                 if($add){
     		        $this->assign('userinfo',$data);
