@@ -509,13 +509,13 @@ class PurchaseController extends HomeBaseController{
         
         if(!in_array($userinfo['shopaddress1'], $ia_road) && $_SESSION['user']['address'] == 0){
            $message = array(
-                    'iuid' => $userinfo['iuid'],
-                    'ia_name' => $userinfo['lastname'].$userinfo['firstname'],
-                    'ia_phone' => $userinfo['phone'],
-                    'ia_province' => $userinfo['shopprovince'],
-                    'ia_town' => $userinfo['shopcity'],
-                    'ia_region' => $userinfo['shoparea'],
-                    'ia_road' => $userinfo['shopaddress1'],
+                    'iuid'            => $userinfo['iuid'],
+                    'ia_name'         => $userinfo['lastname'].$userinfo['firstname'],
+                    'ia_phone'        => $userinfo['phone'],
+                    'ia_province'     => $userinfo['shopprovince'],
+                    'ia_town'         => $userinfo['shopcity'],
+                    'ia_region'       => $userinfo['shoparea'],
+                    'ia_road'         => $userinfo['shopaddress1'],
                     'is_address_show' => 1
                 );
             $result = M('Address')->add($message);
@@ -537,13 +537,13 @@ class PurchaseController extends HomeBaseController{
     **/ 
     public function addressAdd(){
         $data = array(
-                'iuid' => I('post.iuid'),
-                'ia_name' => I('post.ia_name'),
-                'ia_phone' => I('post.ia_phone'),
+                'iuid'        => I('post.iuid'),
+                'ia_name'     => I('post.ia_name'),
+                'ia_phone'    => I('post.ia_phone'),
                 'ia_province' => I('post.ia_province'),
-                'ia_town' => I('post.ia_town'),
-                'ia_region' => I('post.ia_region'),
-                'ia_road' => I('post.ia_road'),
+                'ia_town'     => I('post.ia_town'),
+                'ia_region'   => I('post.ia_region'),
+                'ia_road'     => I('post.ia_road'),
                 );
       
         $result = M('Address')->add($data);
@@ -597,6 +597,7 @@ class PurchaseController extends HomeBaseController{
         }
     }
 
+
 // *****************银行地址********************
     /**
     * 银行地址列表
@@ -610,16 +611,16 @@ class PurchaseController extends HomeBaseController{
         
         if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0){
            $message = array(
-                    'iuid' => $userinfo['iuid'],
-                    'iu_name' => $userinfo['lastname'].$userinfo['firstname'],
-                    'bankaccount' => $userinfo['bankaccount'],
+                    'iuid'         => $userinfo['iuid'],
+                    'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
+                    'bankaccount'  => $userinfo['bankaccount'],
                     'bankprovince' => $userinfo['bankprovince'],
-                    'banktown' => $userinfo['bankcity'],
-                    'bankregion' => $userinfo['bankarea'],
-                    'bankname' => $userinfo['bankname'],
-                    'bankbranch' => $userinfo['subname'],
-                    'createtime' => time(),
-                    'isshow' => 1,
+                    'banktown'     => $userinfo['bankcity'],
+                    'bankregion'   => $userinfo['bankarea'],
+                    'bankname'     => $userinfo['bankname'],
+                    'bankbranch'   => $userinfo['subname'],
+                    'createtime'   => time(),
+                    'isshow'       => 1,
                 );
             $result = M('Bank')->add($message);
             if($result){
@@ -646,16 +647,17 @@ class PurchaseController extends HomeBaseController{
         // 查询注册信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
 
+        $data = I('post.');
         $data = array(
-                'iuid' => I('post.iuid'),
-                'iu_name' => $userinfo['lastname'].$userinfo['firstname'],
-                'bankaccount' => I('post.bankaccount'),
+                'iuid'         => I('post.iuid'),
+                'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
+                'bankaccount'  => I('post.bankaccount'),
                 'bankprovince' => I('post.bankprovince'),
-                'banktown' => I('post.banktown'),
-                'bankregion' => I('post.bankregion'),
-                'bankname' => I('post.bankname'),
-                'bankbranch' => I('post.bankbranch'),
-                'createtime' => time(),
+                'banktown'     => I('post.banktown'),
+                'bankregion'   => I('post.bankregion'),
+                'bankname'     => I('post.bankname'),
+                'bankbranch'   => I('post.bankbranch'),
+                'createtime'   => time(),
                 );
       
         $result = M('Bank')->add($data);
