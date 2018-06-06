@@ -18,6 +18,7 @@
 			
 			#basic-addon1{background-color: #439DFE;color:#fff;}
 		    .getCode:hover{cursor: pointer;}
+		    .btn-info{background-color: #439DFE;}
 		    
 		    /*.opt{width: auto;height: 40px;color: #000;background: #fff;font-size: 14px;}*/
 		    
@@ -83,12 +84,14 @@
 	
 	   $(".commonHead").load("../Purchase/commonHead.html");
 		});
-    	var countdown=60;
+    var countdown=60;
+    var canClick=true;
 	function settime(val) {	
 		if (countdown == 0) { 
 			val.style.backgroundColor='#439DFE';
 			val.innerHTML ="获取验证码";
 			countdown=60;
+			canClick=true;
 		} else { 
 			 val.style.backgroundColor ='#999';
 			val.innerHTML ="重新发送(" + countdown + ")"; 
@@ -104,26 +107,28 @@
 		var phoneNumber=document.getElementById('phoneNumber').value;
 		var acnumber=document.getElementById('acnumber').value;
 //		alert(phoneNumber);alert(acnumber);
-		if(countdown==60){
+		if(canClick){
+			canClick=false;
 			$.ajax({
-			type:"post",
-			url:"http://apps.hapy-life.com/hapylife/index.php/Home/Register/smsCode",
-			async:false,
-			dataType:'json',
-			data:{
-				acnumber:acnumber,
-				phoneNumber:phoneNumber
-			},
-			success:function(ret){
-				if(ret.status=='101'){
-				
-					setTimeout(function() { settime(obj) },1000);
-				}else{
-					alert(ret.msg);
+				type:"post",
+				url:"smsCode",
+				async:false,
+				dataType:'json',
+				data:{
+					acnumber:acnumber,
+					phoneNumber:phoneNumber
+				},
+				success:function(ret){
+					if(ret.status=='101'){
+						setTimeout(function() { settime(obj) },1000);
+						canClick=false;
+					}else{
+						canClick=true;
+						alert(ret.msg);
+					}
+					
 				}
-				
-			}
-		});
+			});
 			
 		}
 	}
