@@ -507,7 +507,7 @@ class PurchaseController extends HomeBaseController{
         // 查询地址表信息
         $ia_road = M('Address')->where(array('iuid'=>$iuid))->getField('ia_road',true); 
         
-        if(!in_array($userinfo['shopaddress1'], $ia_road) && $_SESSION['user']['address'] == 0){
+        if(!in_array($userinfo['shopaddress1'], $ia_road) && $_SESSION['user']['address'] == 0 && !empty($ia_road)){
            $message = array(
                     'iuid'            => $userinfo['iuid'],
                     'ia_name'         => $userinfo['lastname'].$userinfo['firstname'],
@@ -536,7 +536,6 @@ class PurchaseController extends HomeBaseController{
     * 添加收货地址
     **/ 
     public function addressAdd(){
-        $data = I('post.');
         $data = array(
                 'iuid'        => I('post.iuid'),
                 'ia_name'     => I('post.ia_name'),
@@ -610,7 +609,7 @@ class PurchaseController extends HomeBaseController{
         // 查询银行表信息
         $bankaccount = M('Bank')->where(array('iuid'=>$iuid))->getField('bankaccount',true); 
         
-        if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0){
+        if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0 && !empty($bankaccount)){
            $message = array(
                     'iuid'         => $userinfo['iuid'],
                     'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
@@ -647,7 +646,7 @@ class PurchaseController extends HomeBaseController{
         $iuid = $_SESSION['user']['id'];
         // 查询注册信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
-        
+
         $data = I('post.');
         $data = array(
                 'iuid'         => I('post.iuid'),
