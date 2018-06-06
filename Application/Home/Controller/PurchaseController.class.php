@@ -5,6 +5,7 @@ use Common\Controller\HomeBaseController;
 * hapylife控制器
 **/
 class PurchaseController extends HomeBaseController{
+    private $i = 0; // 定义全局变量：最少需要答对题目条数
     /**
     * 
     **/
@@ -158,7 +159,8 @@ class PurchaseController extends HomeBaseController{
 		$iuid = $_SESSION['user']['id'];
         $data['status'] = $_SESSION['user']['status'];
 		$map  = array(
-				'riuid'=>$iuid
+				'riuid'=>$iuid,
+                'ir_status'=>2
 			);
 		$data = M('Receipt')
 				->alias('r')
@@ -235,16 +237,20 @@ class PurchaseController extends HomeBaseController{
         $product = M('Product')->where(array('ipid'=>$ipid))->find();
         //用户信息
         $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
+        // 查询是否存在未支付的订单
+        $ir_receiptnum = M('Receipt')->where(array('riuid'=>$iuid,'ir_ordertype'=>$product['ip_type'],'ir_status'=>0))->getfield('ir_receiptnum');
+        
+        if(!empty($ir_receiptnum)){
+            $result = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->delete();
+            if($result){
+                $res = M('Receiptlist')->where(array('ir_receiptnum'=>$ir_receiptnum))->delete();
+            }
+        }
         //生成唯一订单号
         $order_num = date('YmdHis').rand(10000, 99999);
-        switch ($product['ip_type']) {
+        switch ($product['ip_type']){
             case '1':
-                $list= D('Receipt')->where(array('ir_ordertype'=>$product['ip_type'],'riuid'=>$iuid,'is_delete'=>0))->select();
-                if($list){
-                    $this->error('请付款或删除重新下单',U('Home/Purchase/main'));
-                }else{
-                    $con = '首购单';
-                }
+                $con = '首购单';
                 break;
             case '2':
                 $con = '升级单';
@@ -302,16 +308,19 @@ class PurchaseController extends HomeBaseController{
         }
          //生成日志记录
         $content = '您的'.$con.'订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
+        // echo 2;
         $log = array(
-            'from_iuid' =>$iuid,
+            'iuid' =>$iuid,
             'content'   =>$content,
             'action'    =>0,
             'type'      =>2,
             'date'      =>date('Y-m-d H:i:s')          
         );
         $addlog = M('Log')->add($log);
+        // 设置session时间
         if($addlog){
-            $this->success('下单成功,前往支付页面',U('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num)));
+            // $this->success('下单成功,前往支付页面',U('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num)));
+            $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num));
         }else{
             $this->error('订单生成失败');
         }
@@ -455,8 +464,11 @@ class PurchaseController extends HomeBaseController{
             $update    = D('User')->save($tmpe);
         	if($upreceipt){
         		//通知畅捷完成支付
-				echo "success";
-				$this->seccess('支付成功，跳转',U('Home/Purchase/myOrder'));
+                // 清除session
+				unset($_SESSION['user']['time']);
+                // echo "success";
+				$this->redirect('Home/Purchase/myOrder');
+
         	}
 		}
     }
@@ -495,20 +507,24 @@ class PurchaseController extends HomeBaseController{
         // 查询地址表信息
         $ia_road = M('Address')->where(array('iuid'=>$iuid))->getField('ia_road',true); 
         
-        if(!in_array($userinfo['shopaddress1'], $ia_road)){
+        if(!in_array($userinfo['shopaddress1'], $ia_road) && $_SESSION['user']['address'] == 0){
            $message = array(
-                    'iuid'        => $userinfo['iuid'],
-                    'ia_name'     => $userinfo['lastname'].$userinfo['firstname'],
-                    'ia_phone'    => $userinfo['phone'],
-                    'ia_province' => $userinfo['shopprovince'],
-                    'ia_town'     => $userinfo['shopcity'],
-                    'ia_region'   => $userinfo['shoparea'],
-                    'ia_road'     => $userinfo['shopaddress1']
+                    'iuid'            => $userinfo['iuid'],
+                    'ia_name'         => $userinfo['lastname'].$userinfo['firstname'],
+                    'ia_phone'        => $userinfo['phone'],
+                    'ia_province'     => $userinfo['shopprovince'],
+                    'ia_town'         => $userinfo['shopcity'],
+                    'ia_region'       => $userinfo['shoparea'],
+                    'ia_road'         => $userinfo['shopaddress1'],
+                    'is_address_show' => 1
                 );
             $result = M('Address')->add($message);
+            if($result){
+                $_SESSION['user']['address'] = $_SESSION['user']['address'] + 1;
+            }
         }
         
-        $data = M('Address')->where(array('iuid'=>$iuid))->select();
+        $data = M('Address')->where(array('iuid'=>$iuid))->order('is_address_show DESC')->select();
         $assign = array(
                     'data' => $data
                 );
@@ -543,11 +559,24 @@ class PurchaseController extends HomeBaseController{
     * 编辑收货地址
     **/ 
     public function addressEdit(){
-        $data = I('post.');
+        $iuid = $_SESSION['user']['id'];
+        $iaid = M('Address')->where(array('iuid'=>$iuid,'is_address_show'=>1))->getfield('iaid');
 
-        $result = M('Address')->where(array('iaid'=>$data['iaid']))->save($data);
+        $data = I('post.');
         
-        if($result){
+        if($data['is_address_show']){
+            $result = M('Address')->where(array('iaid'=>$data['iaid']))->save($data);
+            if($result){
+                $message = array(
+                             'is_address_show' => 0,
+                        );
+                $res = M('Address')->where(array('iaid'=>$iaid))->save($message);
+            }
+        }else{
+            $result = M('Address')->where(array('iaid'=>$data['iaid']))->save($data);
+        }
+        
+        if($result || $res){
             $this->redirect('Home/Purchase/addressList');
         }else{
             $this->error('修改失败');
@@ -569,34 +598,42 @@ class PurchaseController extends HomeBaseController{
         }
     }
 
-// *****************银行列表********************
+
+// *****************银行地址********************
     /**
-    * 收货地址列表
+    * 银行地址列表
     **/ 
     public function bankList(){
         $iuid = $_SESSION['user']['id'];
         // 查询注册信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
-        // p($userinfo);
         // 查询银行表信息
         $bankaccount = M('Bank')->where(array('iuid'=>$iuid))->getField('bankaccount',true); 
         
-        if(!in_array($userinfo['bankaccount'], $bankaccount)){
+        if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0){
            $message = array(
-                    'iuid'        => $userinfo['iuid'],
-                    'iu_name'     => $userinfo['lastname'].$userinfo['firstname'],
-                    'bankname'    => $userinfo['bankname'],
-                    'bankaccount' => $userinfo['bankaccount'],
-                    'bankbranch'  => $userinfo['bankprovince'].$userinfo['bankcity'].$userinfo['bankarea'].$userinfo['subname'],
-                    'createtime'  => time(),
+                    'iuid'         => $userinfo['iuid'],
+                    'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
+                    'bankaccount'  => $userinfo['bankaccount'],
+                    'bankprovince' => $userinfo['bankprovince'],
+                    'banktown'     => $userinfo['bankcity'],
+                    'bankregion'   => $userinfo['bankarea'],
+                    'bankname'     => $userinfo['bankname'],
+                    'bankbranch'   => $userinfo['subname'],
+                    'createtime'   => time(),
+                    'isshow'       => 1,
                 );
             $result = M('Bank')->add($message);
+            if($result){
+                $_SESSION['user']['bank'] = $_SESSION['user']['bank'] + 1;
+            }
         }
         
-        $data = M('Bank')->where(array('iuid'=>$iuid))->select();
+        $data = M('Bank')->where(array('iuid'=>$iuid))->order('isshow DESC')->select();
 
         $assign = array(
-                    'data' => $data
+                    'data' => $data,
+                    'userinfo' => $userinfo
                 );
         $this->assign($assign);
         $this->display();
@@ -607,18 +644,26 @@ class PurchaseController extends HomeBaseController{
     * 添加银行地址
     **/ 
     public function bankAdd(){
+        $iuid = $_SESSION['user']['id'];
+        // 查询注册信息
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
+        
         $data = I('post.');
         $data = array(
-                    'iuid'       => I('post.iuid'),
-                    'ia_name'    => I('post.ia_name'),
-                    'ia_phone'   => I('post.ia_phone'),
-                    'ia_address' => I('post.ia_pro').I('post.ia_town').I('post.ia_dis'),
-                    'ia_road'    => I('post.ia_road'),
+                'iuid'         => I('post.iuid'),
+                'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
+                'bankaccount'  => I('post.bankaccount'),
+                'bankprovince' => I('post.bankprovince'),
+                'banktown'     => I('post.banktown'),
+                'bankregion'   => I('post.bankregion'),
+                'bankname'     => I('post.bankname'),
+                'bankbranch'   => I('post.bankbranch'),
+                'createtime'   => time(),
                 );
       
-        $result = M('Address')->add($data);
+        $result = M('Bank')->add($data);
         if($result){
-            $this->redirect('Home/Purchase/addressList');
+            $this->redirect('Home/Purchase/bankList');
         }else{
             $this->error('添加失败');
         }
@@ -628,14 +673,25 @@ class PurchaseController extends HomeBaseController{
     * 编辑银行地址
     **/ 
     public function bankEdit(){
-        $iaid = I('post.iaid');
-        $data = array(
+        $iuid = $_SESSION['user']['id'];
+        $bid = M('Bank')->where(array('iuid'=>$iuid,'isshow'=>1))->getfield('bid');
 
-                    );
-        $result = M('Address')->where(array('iaid'=>$iaid))->edit($data);
+        $data = I('post.');
+
+        if($data['isshow']){
+            $result = M('Bank')->where(array('bid'=>$data['bid']))->save($data);
+            if($result){
+                $message = array(
+                             'isshow' => 0,
+                        );
+                $res = M('Bank')->where(array('bid'=>$bid))->save($message);
+            }
+        }else{
+            $result = M('Bank')->where(array('bid'=>$data['bid']))->save($data);
+        }
         
-        if($result){
-            $this->redirect('Home/Purchase/addressList');
+        if($result || $res){
+            $this->redirect('Home/Purchase/bankList');
         }else{
             $this->error('修改失败');
         }
@@ -645,18 +701,28 @@ class PurchaseController extends HomeBaseController{
     * 删除银行地址
     **/ 
     public function bankDelect(){
-        $iaid = I('post.iaid');
-        $result = M('Address')->where(array('iaid'=>$iaid))->delete();
+        $bid = I('post.bid');
+
+        $result = M('Bank')->where(array('bid'=>$bid))->delete();
         
         if($result){
-            $this->redirect('Home/Purchase/addressList');
+            $this->redirect('Home/Purchase/bankList');
         }else{
             $this->error('删除失败');
         }
     }
 
+// **************我的推荐人*****************
+    public function recommenderList(){
+        $customerid = $_SESSION['user']['username'];
+        $data = M('User')->where(array('enrollerid'=>$customerid))->select();
 
-
+        $assign = array(
+                    'data' => $data,
+                );
+        $this->assign($assign);
+        $this->display();
+    }
 
 
 

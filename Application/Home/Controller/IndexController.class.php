@@ -55,22 +55,26 @@ class IndexController extends HomeBaseController{
                         $_SESSION['user']=array(
                                             'id'       =>$data['iuid'],
                                             'username' =>$data['customerid'],
+                                            'name_cn'  =>$data['lastname'].$data['firstname'],
                                             'status'   =>1,
-                                            );
+                                            'address'  =>0,
+                                            'bank'  =>0,
+                                        );
                     }else{
                         $_SESSION['user']=array(
                             'id'       =>$data['iuid'],
                             'username' =>$data['customerid'],
+                            'name_cn'  =>$data['lastname'].$data['firstname'],
                             );
                     }
                    
-                    $this->redirect('Home/Purchase/main');
+                    $this->redirect('Home/Purchase/purchase');
                 }
             }
         }else{
             $data=check_login();
             if($data){
-                $this->redirect('Home/Purchase/main');
+                $this->redirect('Home/Purchase/purchase');
             }else{
                 $this->display('Login/login');
             }

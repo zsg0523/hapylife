@@ -1,12 +1,11 @@
 <?php 
-namespace Home\Controller;
+namespace Api\Controller;
 use Common\Controller\HomeBaseController;
 /**
  * 用户注册Controller
  **/
-class RegisterController extends HomeBaseController{
-
-	/**
+class HapylifeRegisterController extends HomeBaseController{
+    /**
     *注册手机区号 is_show值为1
     **/
     public function registerCode(){
@@ -14,13 +13,14 @@ class RegisterController extends HomeBaseController{
         foreach ($mape as $key => $value) {
             $data[$key]         = $value;
             if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
-            	$data[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+                $data[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
             }else{
-            	$data[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+                $data[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
             }
         }
-        $this->assign('data',$data);
-        $this->display();
+        // $this->assign('data',$data);
+        // $this->display();
+        $this->ajaxreturn($data);
     }
     /**
     *腾讯云发送短信(注册)
@@ -98,29 +98,12 @@ class RegisterController extends HomeBaseController{
         $acid        =I('post.acid');
         $data        =D('Smscode')->where(array('phone'=>$phoneNumber,'acnumber'=>$acnumber))->order('nsid desc')->find();
         $time        =time()-strtotime($data['date']);
-        if($time>60){
-            $this->error('验证码失效,请重新发送');
+        if($data && $data['code']==$code){
+            $sample['status'] = 1;
+            $this->ajaxreturn($sample);
         }else{
-            if($data && $data['code']==$code){
-                $this->success('验证码正确',U('Home/Register/new_register',array('phoneNumber'=>$phoneNumber,'acnumber'=>$acnumber,'acid'=>$acid)));
-            }else{
-                $this->error('验证码错误');
-            }
-        }
-    }
-
-    /**
-    * 返回推荐人姓名
-    **/ 
-    public function checkName(){
-        $customerid = I('post.EnrollerID');
-        if($customerid){
-            $data = M('User')->where(array('CustomerID'=>$customerid))->find();  
-            $this->ajaxreturn($data);
-                    
-        }else{
-            $data['status'] = 0;
-            $this->ajaxreturn($data);           
+            $sample['status'] = 0;
+            $this->ajaxreturn($sample);
         }
     }
     /**
@@ -132,58 +115,79 @@ class RegisterController extends HomeBaseController{
             $msg['message']= '未提交任何数据';
             $this->ajaxreturn($msg);
         }else{
-            $data = I('post.');
-            $upload = several_upload();
-            $User = D("User1"); // 实例化User对象
-            if(!$User->create($data)){
-                 // 如果创建失败 表示验证没有通过 输出错误提示信息
-                $error = $User->getError();
-                $assign = array(
-                            'error' => $error,
-                            'data' => $data
-                            );
-                $this->assign($assign);
-                $this->display('Register/new_register');
+            $data        = I('post.');
+            // $data['iuid']= $_SESSION['user']['id'];
+            $data['iuid'] = I('post.iuid');
+            if(!empty($data['JustIdcard'])){
+                $img_body1 = substr(strstr($data['JustIdcard'],','),1);
+                $JustIdcard = time().'_'.mt_rand().'.jpg';
+                $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
+                $data['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
+            }
+            if(!empty($data['BackIdcard'])){
+                $img_body2 = substr(strstr($data['BackIdcard'],','),1);
+                $BackIdcard = time().'_'.mt_rand().'.jpg';
+                $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
+                $data['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
+            }
+            $data['EnrollerID'] = strtoupper(I('post.EnrollerID'));
+            $add = D('Tempuser')->add($data);
+            if($add){
+                // $this->assign('data',$data);
+                // $this->display();
+                $data['status'] = 1;
+                $this->ajaxreturn($data);
             }else{
-                $data['iuid']= $_SESSION['user']['id'];
-    			if(isset($upload['name'])){
-    				$data['JustIdcard']=C('WEB_URL').$upload['name'][0];
-    				$data['BackIdcard']=C('WEB_URL').$upload['name'][1];
-    			}
-                $data['EnrollerID'] = strtoupper(I('post.EnrollerID'));
-                $add = D('Tempuser')->add($data);
-                if($add){
-    		        $this->assign('userinfo',$data);
-    		        $this->display();
-                }
+                $sample['status'] = 0;
+                $this->ajaxreturn($sample);
             }
         }
     }
     /**
+    * 确认信息
+    **/ 
+    public function confirmationMessage(){
+        $iuid = I('post.iuid');
+        // $iuid = $_SESSION['user']['id'];
+        $id = max(D('Tempuser')->where(array('iuid'=>$iuid))->getField('htid',true));
+        $data = D('Tempuser')->where(array('htid'=>$id))->find();
+        if($data){
+            $data['status'] = 1;
+            $this->ajaxreturn($data);
+        }else{
+            $sample['status'] = 0;
+            $this->ajaxreturn($sample);
+        }
+    }
+
+    /**
     * 获取首购产品
     **/ 
     public function new_purchase(){
-    	$data = D('product')->where(array('ip_type'=>1,'is_pull'=>1))->select();
-    	$this->assign('data',$data);
-        $this->display();
+        $data = D('product')->where(array('ip_type'=>1,'is_pull'=>1))->select();
+        // $this->assign('data',$data);
+        // $this->display();
+        $this->ajaxreturn($data);
 
     }
     /**
     * 获取产品详情
     **/ 
     public function new_purchaseInfo(){
-    	$ipid =I('get.ipid');
-    	$data = D('product')->where(array('ipid'=>$ipid))->find();
-    	$this->assign('data',$data);
-        $this->display();
+        $ipid =I('post.ipid');
+        $data = D('product')->where(array('ipid'=>$ipid))->find();
+        // $this->assign('data',$data);
+        // $this->display();
+        $this->ajaxreturn($data);
     }
-   	/**
-	* 首购订单
-	**/
-	public function registerOrder(){
-		$iuid = $_SESSION['user']['id'];
-        $ipid = I('get.ipid');
-        $htid = D('Tempuser')->order('htid desc')->getfield('htid');
+    /**
+    * 首购订单
+    **/
+    public function registerOrder(){
+        // $iuid = $_SESSION['user']['id'];
+        $iuid = I('post.iuid');
+        $ipid = I('post.ipid');
+        $htid = D('Tempuser')->where(array('iuid'=>$iuid))->order('htid desc')->getfield('htid');
         //商品信息
         $product = M('Product')->where(array('ipid'=>$ipid))->find();
         //用户信息
@@ -239,7 +243,7 @@ class RegisterController extends HomeBaseController{
         //生成日志记录
         $content = '您帮代理进行的'.$con.'订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
         $log = array(
-            'from_iuid' =>$iuid,
+            'iuid' =>$iuid,
             'content'   =>$content,
             'action'    =>0,
             'type'      =>2,
@@ -247,17 +251,19 @@ class RegisterController extends HomeBaseController{
         );
         $addlog = M('Log')->add($log);
         if($addlog){
-            $this->success('生成订单成功',U('Home/Register/new_cjPayment',array('ir_receiptnum'=>$order_num)));
+            $order['status'] = 1;
+            $this->ajaxreturn($order);
         }else{
-            $this->error('生成订单失败');
+            $data['status'] = 0;
+            $this->ajaxreturn($data);
         }
-	}
+    }
     /**
     * 首购产品畅捷支付
     **/
     public function new_cjPayment(){
         //订单号
-        $order_num                     = I('get.ir_receiptnum');
+        $order_num                     = I('post.ir_receiptnum');
         $order = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->find();
         $postData                      = array();   
         // 基本参数
@@ -268,7 +274,7 @@ class RegisterController extends HomeBaseController{
         $postData['InputCharset']      = 'UTF-8';
         $postData['TradeDate']         = date('Ymd').'';
         $postData['TradeTime']         = date('His').'';
-        $postData['ReturnUrl']         = 'http://apps.hapy-life.com/hapylife/index.php/Home/Register/new_regsuccess?ir_receiptnum='.$order_num;// 前台跳转url
+        $postData['ReturnUrl']         = '';// 前台跳转url
         $postData['Memo']              = '备注';
         // 4.4.2.8. 直接支付请求接口（畅捷前台） 业务参数++++++++++++++++++
         $postData['TrxId']             = $order_num; //外部流水号
@@ -294,7 +300,7 @@ class RegisterController extends HomeBaseController{
         $postData['OrdrName']          = '商品名称'; //商品名称
         $postData['OrdrDesc']          = ''; //商品详情
         $postData['RoyaltyParameters'] = '';      //"[{'userId':'13890009900','PID':'2','account_type':'101','amount':'100.00'},{'userId':'13890009900','PID':'2','account_type':'101','amount':'100.00'}]"; //退款分润账号集
-        $postData['NotifyUrl']         = 'http://apps.hapy-life.com/hapylife/index.php/Home/Register/new_notifyVerify';//异步通知地址
+        $postData['NotifyUrl']         = 'http://apps.hapy-life.com/hapylife/index.php/Api/HapylifeRegister/new_notifyVerify';//异步通知地址
         $postData['AccessChannel']     = 'wap';//用户终端类型；web,wap
         $postData['Extension']         = '';//扩展字段
         $postData['Sign']              = rsaSign($postData);
@@ -302,8 +308,10 @@ class RegisterController extends HomeBaseController{
         $query                         = http_build_query($postData);
         $url                           = 'https://pay.chanpay.com/mag-unify/gateway/receiveOrder.do?'. $query; //该url为生产环境url
         $data['url']                   = $url;
-        header("Location:".$url);
+        $this->ajaxreturn($data);
     }
+
+    //购买产品畅捷返回结果
     //购买产品畅捷返回结果
     public function new_notifyVerify(){
         //I('post')，$_POST 无法获取API post过来的字符串数据
@@ -439,33 +447,27 @@ class RegisterController extends HomeBaseController{
                     );
                     //更新订单信息
                     $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($status);
+                    if($upreceipt){
+                        //通知畅捷完成支付
+                        $sample['status'] = 1;
+                        $this->ajaxreturn($sample);
+                    }else{
+                        $sample['status'] = 0;
+                        $this->ajaxreturn($sample);
+                    }
                 }
             }
         }
     }
 
-    /**
-    *代理成功注册页面
-    **/
-    public function new_regsuccess(){
-        $ir_receiptnum = I('get.ir_receiptnum');
-        $receipt = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
-        if($receipt['ir_status'] == 2){
-            $data                  = M('User')->where(array('CustomerID'=>$receipt['rcustomerid']))->find();
-            $data['ir_receiptnum'] = $ir_receiptnum;
-            $this->assign('data',$data);
-            $this->display();
-        }else{
-            $this->error('失败');
-        }
-    }
+
     /**
     * 购买产品订单状态查询
     * @param ir_status 0待付款 1待审核 2已支付待发货 3已发货待收货 4已收货待评价 5已评价完成 6审核未通过
     * @param ir_receiptnum 订单编号
     **/
     public function checkreceipt(){
-        $ir_receiptnum = I('get.ir_receiptnum');
+        $ir_receiptnum = I('post.ir_receiptnum');
         //订单状态查询
         $receipt       = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
         if($receipt['ir_status'] == 2){
@@ -479,24 +481,16 @@ class RegisterController extends HomeBaseController{
             $this->ajaxreturn($data);
         }
     }
-    /*********************************************************************普通注册********************************************************************************************/  
+
     /**
-    *注册手机区号 is_show值为1
-    **/
-    public function oldRegisterCode(){
-        $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
-        foreach ($mape as $key => $value) {
-            $data[$key]         = $value;
-            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
-            	$data[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
-            }else{
-            	$data[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
-            }
-        }
-        $this->assign('data',$data);
-        $this->display();
+    * 注册成功显示页面
+    **/ 
+    public function registerSuccess(){
+        $ir_receiptnum = I('post.ir_receiptnum');
+        $data = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum,'ir_status'=>2))->find();
+        $this->ajaxreturn($data);
     }
-    
+    /*********************************************************************普通注册********************************************************************************************/  
     /**
     *检查旧注册验证码是否正确
     *参数：phoneNumber(手机号),acnumber(区号),code(验证码)
@@ -517,154 +511,154 @@ class RegisterController extends HomeBaseController{
             }
         }
     }
-	// 普通用户注册
-	public function register(){
-		$data = I('post.');
+    // 普通用户注册
+    public function register(){
+        $data = I('post.');
 
-		$upload = several_upload();
-		if(IS_POST){
-			if($data['Sex']){
-				$User = D("User1"); // 实例化User对象
-				if (!$User->create($data)){
-				     // 如果创建失败 表示验证没有通过 输出错误提示信息
-				    $error = $User->getError();
-				}else{
-				     // 验证通过 可以进行其他数据操作
-					if($User->create($data)){
-						if(isset($upload['name'])){
-							$data['JustIdcard']=C('WEB_URL').$upload['name'][0];
-							$data['BackIdcard']=C('WEB_URL').$upload['name'][1];
-						}
-						$data['PassWord'] = md5($data['PassWord']);
-						$data['JoinedOn'] = time();
-						$data['CustomerID'] = strtoupper($data['CustomerID']);
-						$keyword= 'HPL';
-                		$custid = D('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
-						if(empty($custid)){
-	                    	$CustomerID = 'HPL00000001';
-		                }else{
-		                    $num   = substr($custid,3);
-		                    $nums  = $num+1;
-		                    $count = strlen($nums);
-		                    switch ($count) {
-		                        case '1':
-		                            $CustomerID = 'HPL0000000'.$nums;
-		                            break;
-		                        case '2':
-		                            $CustomerID = 'HPL000000'.$nums;
-		                            break;
-		                        case '3':
-		                            $CustomerID = 'HPL00000'.$nums;
-		                            break;
-		                        case '4':
-		                            $CustomerID = 'HPL0000'.$nums;
-		                            break;
-		                        case '5':
-		                            $CustomerID = 'HPL000'.$nums;
-		                            break;
-		                        case '6':
-		                            $CustomerID = 'HPL00'.$nums;
-		                            break;
-		                        case '7':
-		                            $CustomerID = 'HPL0'.$nums;
-		                            break;
-		                        default:
-		                            $CustomerID = 'HPL'.$nums;
-		                            break;
-		                     } 
-		                }
-		                $data['CustomerID'] = $CustomerID;
-						$result	= D('User')->add($data);
-						if($result){
-							$this->redirect('Home/Register/regsuccess');
-						}
-					}
-				}
-			}else{
-				$error['Sex'] = '请选择性别';
-			}
+        $upload = several_upload();
+        if(IS_POST){
+            if($data['Sex']){
+                $User = D("User1"); // 实例化User对象
+                if (!$User->create($data)){
+                     // 如果创建失败 表示验证没有通过 输出错误提示信息
+                    $error = $User->getError();
+                }else{
+                     // 验证通过 可以进行其他数据操作
+                    if($User->create($data)){
+                        if(isset($upload['name'])){
+                            $data['JustIdcard']=C('WEB_URL').$upload['name'][0];
+                            $data['BackIdcard']=C('WEB_URL').$upload['name'][1];
+                        }
+                        $data['PassWord'] = md5($data['PassWord']);
+                        $data['JoinedOn'] = time();
+                        $data['CustomerID'] = strtoupper($data['CustomerID']);
+                        $keyword= 'HPL';
+                        $custid = D('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
+                        if(empty($custid)){
+                            $CustomerID = 'HPL00000001';
+                        }else{
+                            $num   = substr($custid,3);
+                            $nums  = $num+1;
+                            $count = strlen($nums);
+                            switch ($count) {
+                                case '1':
+                                    $CustomerID = 'HPL0000000'.$nums;
+                                    break;
+                                case '2':
+                                    $CustomerID = 'HPL000000'.$nums;
+                                    break;
+                                case '3':
+                                    $CustomerID = 'HPL00000'.$nums;
+                                    break;
+                                case '4':
+                                    $CustomerID = 'HPL0000'.$nums;
+                                    break;
+                                case '5':
+                                    $CustomerID = 'HPL000'.$nums;
+                                    break;
+                                case '6':
+                                    $CustomerID = 'HPL00'.$nums;
+                                    break;
+                                case '7':
+                                    $CustomerID = 'HPL0'.$nums;
+                                    break;
+                                default:
+                                    $CustomerID = 'HPL'.$nums;
+                                    break;
+                             } 
+                        }
+                        $data['CustomerID'] = $CustomerID;
+                        $result = D('User')->add($data);
+                        if($result){
+                            $this->redirect('Home/Register/regsuccess');
+                        }
+                    }
+                }
+            }else{
+                $error['Sex'] = '请选择性别';
+            }
 
-			if($data['AccountType']){
-				$User = D("User1"); // 实例化User对象
-				if (!$User->create($data)){
-				     // 如果创建失败 表示验证没有通过 输出错误提示信息
-				    $error = $User->getError();
-				}else{
-				     // 验证通过 可以进行其他数据操作
-					if($User->create($data)){
-						if(isset($upload['name'])){
-							$data['JustIdcard']=C('WEB_URL').$upload['name'][0];
-							$data['BackIdcard']=C('WEB_URL').$upload['name'][1];
-						}
-						$data['PassWord'] = md5($data['PassWord']);
-						$data['JoinedOn'] = time();
-						$data['CustomerID'] = strtoupper($data['CustomerID']);
-						$keyword= 'HPL';
-                		$custid = D('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
-						if(empty($custid)){
-	                    	$CustomerID = 'HPL00000001';
-		                }else{
-		                    $num   = substr($custid,3);
-		                    $nums  = $num+1;
-		                    $count = strlen($nums);
-		                    switch ($count) {
-		                        case '1':
-		                            $CustomerID = 'HPL0000000'.$nums;
-		                            break;
-		                        case '2':
-		                            $CustomerID = 'HPL000000'.$nums;
-		                            break;
-		                        case '3':
-		                            $CustomerID = 'HPL00000'.$nums;
-		                            break;
-		                        case '4':
-		                            $CustomerID = 'HPL0000'.$nums;
-		                            break;
-		                        case '5':
-		                            $CustomerID = 'HPL000'.$nums;
-		                            break;
-		                        case '6':
-		                            $CustomerID = 'HPL00'.$nums;
-		                            break;
-		                        case '7':
-		                            $CustomerID = 'HPL0'.$nums;
-		                            break;
-		                        default:
-		                            $CustomerID = 'HPL'.$nums;
-		                            break;
-		                     } 
-		                }
-		                $data['CustomerID'] = $CustomerID;
-						$result	= D('User')->add($data);
-						if($result){
-							$this->redirect('Home/Register/regsuccess');
-						}
-					}
-				}
-			}else{
-				$error['AccountType'] = '请选择销售类型';
-			}
-		}
+            if($data['AccountType']){
+                $User = D("User1"); // 实例化User对象
+                if (!$User->create($data)){
+                     // 如果创建失败 表示验证没有通过 输出错误提示信息
+                    $error = $User->getError();
+                }else{
+                     // 验证通过 可以进行其他数据操作
+                    if($User->create($data)){
+                        if(isset($upload['name'])){
+                            $data['JustIdcard']=C('WEB_URL').$upload['name'][0];
+                            $data['BackIdcard']=C('WEB_URL').$upload['name'][1];
+                        }
+                        $data['PassWord'] = md5($data['PassWord']);
+                        $data['JoinedOn'] = time();
+                        $data['CustomerID'] = strtoupper($data['CustomerID']);
+                        $keyword= 'HPL';
+                        $custid = D('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
+                        if(empty($custid)){
+                            $CustomerID = 'HPL00000001';
+                        }else{
+                            $num   = substr($custid,3);
+                            $nums  = $num+1;
+                            $count = strlen($nums);
+                            switch ($count) {
+                                case '1':
+                                    $CustomerID = 'HPL0000000'.$nums;
+                                    break;
+                                case '2':
+                                    $CustomerID = 'HPL000000'.$nums;
+                                    break;
+                                case '3':
+                                    $CustomerID = 'HPL00000'.$nums;
+                                    break;
+                                case '4':
+                                    $CustomerID = 'HPL0000'.$nums;
+                                    break;
+                                case '5':
+                                    $CustomerID = 'HPL000'.$nums;
+                                    break;
+                                case '6':
+                                    $CustomerID = 'HPL00'.$nums;
+                                    break;
+                                case '7':
+                                    $CustomerID = 'HPL0'.$nums;
+                                    break;
+                                default:
+                                    $CustomerID = 'HPL'.$nums;
+                                    break;
+                             } 
+                        }
+                        $data['CustomerID'] = $CustomerID;
+                        $result = D('User')->add($data);
+                        if($result){
+                            $this->redirect('Home/Register/regsuccess');
+                        }
+                    }
+                }
+            }else{
+                $error['AccountType'] = '请选择销售类型';
+            }
+        }
 
-		$assign = array(
-            		'error' => $error,
-            		'data' => $data
-            		);
+        $assign = array(
+                    'error' => $error,
+                    'data' => $data
+                    );
         $this->assign($assign);
-		$this->display();
-	}
+        $this->display();
+    }
 
-	// 注册成功显示页面
-	public function regsuccess(){
-		$data = max(D('User')->select());
-		$data = D('User')->where(array('iuid'=>$data['iuid']))->find();
-		
-		$assign = array(
-						'data' => $data,
-						);
+    // 注册成功显示页面
+    public function regsuccess(){
+        $data = max(D('User')->select());
+        $data = D('User')->where(array('iuid'=>$data['iuid']))->find();
+        
+        $assign = array(
+                        'data' => $data,
+                        );
         $this->assign($assign);
-		$this->display();
-	}
+        $this->display();
+    }
 
 
 

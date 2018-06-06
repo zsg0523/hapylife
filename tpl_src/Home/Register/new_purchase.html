@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-	<title>购买礼包</title>
+	<title>新代理购买礼包</title>
 	<link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
 	<style type="text/css">
 		body,html{margin: 0;padding: 0;width: 100%;}
@@ -25,7 +25,7 @@
 		.intro{width: 60%;height: 120px;font-size: 16px;line-height: 40px;float: right;margin-right: 8px;}
 		.intro span{width: 100%;height: 40px;display: block;text-align: right;}
 		.intro>p{width: 100%;height: 40px;display: block;text-align: right;margin: 0;}
-		.intro>a{width:50%;height: 35px;background: #439DFE;color: #fff; margin-bottom:2px;line-height: 35px;display:block;font-size: 16px;float:right;border-radius: 10px;text-align: center;}
+		.intro>a{width:50%;height: 35px;color: #fff; background: #439DFE;margin-bottom:2px;line-height: 40px;display:block;font-size: 16px;float:right;border-radius: 10px;text-align: center;}
 		/*手机*/
       @media screen and (max-width: 768px){
      .main,.title{width:100%;}
@@ -45,7 +45,7 @@
       @media screen and (min-width: 1200px){
         .main,.title{width:1200px;}
         
-      }
+      }	
 	</style>
 </head>
 <body class="wrap container-fluid">
@@ -53,30 +53,27 @@
   					
 	</div>
 	<div class="title">
-		购买礼包
+		新代理购买礼包
 	</div>
 	<div class="main row">
-		<if condition="$Think.session.user.status eq 1">
-			<volist id='v' name='product'>
-				<div class="giftPackage col-xs-12 col-sm-12 col-md-12" id="giftPackage">
-					<div class="icon"><img src="{$v.ip_picture_zh}"></div>
-					<div class="intro">
-					<span>名称：{$v.ip_name_zh}</span>
-					<p>售价：￥{$v.ip_price_rmb}</p>
-					<a href="{:U('Home/Purchase/purchaseInfo',array('ipid'=>$v['ipid']))}">查看详情</a>
-					</div>
-					
+		<volist id='v' name='data'>
+			<div class="giftPackage col-xs-12 col-sm-12 col-md-12" id="giftPackage">
+				<div class="icon"><img src="{$v.ip_picture_zh}"></div>
+				<div class="intro">
+				<span>名称：{$v.ip_name_zh}</span>
+				<p>售价：￥{$v.ip_price_rmb}</p>
+				<a href="{:U('Home/Register/new_purchaseInfo',array('ipid'=>$v['ipid']))}">查看详情</a>
 				</div>
-		    </volist>
-		<else />
-		</if>
+				
+			</div>
+		</volist>
 	</div>
 	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
     <script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
     <script type="text/javascript">
     $(document).ready(function(){
 	
-	   $(".commonHead").load("commonHead.html");
+	   $(".commonHead").load("../Purchase/commonHead.html");
 	});
     </script>
     

@@ -112,8 +112,8 @@
  					<li><a  href="{:U('Home/Register/registerCode')}" >新代理注册</a> </li>
 					<li><a  href="{:U('Home/Purchase/addressList')}" >地址管理</a></li>
 					<li><a  href="{:U('Home/Purchase/bankList')}" >银行管理</a></li>
-					<li><a  href="{:U('Home/Purchase/recommenderList')}">我的推荐</a></li>
-					<li><a  href="{:U('Home/index/log_out')}">退出登录</a></li>
+					<li><a  href="{:U('Home/Purchase/recommenderList')}" >我的推荐</a></li>
+					<li><a  href="{:U('Home/index/log_out')}" >退出登录</a></li>
 				</ul>
 				<div>
 					<span>{$Think.session.user.username},您好!</span>
@@ -121,23 +121,21 @@
 			</div>
 		</header>
 	<div class="title1">
-		礼包详情
+		新代理礼包详情
 	</div>
 	
-	<div class="main container-fluid ">
+	<div class="main container-fluid ">	
 			<div class="pageDetial">
 				<div class="icon">
 					<img class="" src="{$data.ip_picture_zh}">
 				</div>
-				
 				<div class="title">
 					<span class="">名称：{$data.ip_name_zh}</span>
 					<i class="">售价：￥{$data.ip_price_rmb}</i>
 				</div>
 				<div class="link">
-					<a href="{:U('Home/Purchase/order',array('ipid'=>$data['ipid']))}" target="_blank">去支付</a>
+					<a href="{:U('Home/Register/registerOrder',array('ipid'=>$data['ipid']))}" target="_blank">去支付</a>
 				</div>
-				
 			</div>		
 	</div>
 	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>

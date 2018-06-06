@@ -15,52 +15,124 @@
     	a{text-decoration: none;color: #000;font-weight: bold;}
       a:hover{text-decoration: none;cursor: pointer;}
       button{outline:none;border: none;background: #fff;}
-       input[type="radio"], input[type="checkbox"] {margin: 7px 5px 0 5px;}
+      input[type="radio"], input[type="checkbox"] {margin: 7px 5px 0 5px;}
+      p{margin: 0;padding: 0;}
+    	
+    
+    	header{width: 100%;height: 100px;background:#2491ee;color: #fff;}
+	    .head{height: 100px;margin: 0 auto;position: relative;z-index: 1;}
+	    .head>span{height: 60px;width: 60%;line-height: 60px;font-size: 40px;display: block;float: left;margin-left: 5%;}
+	    .head>span:hover{cursor:pointer;}
+	    .head>span>sup{font-size:12px;top: -1.7em;}
+	    
+	    .head>p{width: 40px;height: 40px;color: #fff;font-size: 28px;line-height: 40px;text-align:center;
+	    display: block;float: right;margin-right: 10px;margin-top: 10px;}
+      .head>p:hover{cursor: pointer;}
+      
+      .head>ul{height:auto;position: absolute;z-index: 5;background-color: #FFF;color: #000;right: 0;top: 100px;display: none;border:1px solid #DEDEDE;}
+      .head>ul>li{width: 100%;height: 35px;}
+     	.head>ul>li>a{width: 100%;height: 35px;font-size: 16px;color: #2491ee;text-align: center;line-height: 35px; border-bottom: 1px #dedede solid;display:inline-block;}
+      
+      .head>div{width: 100%;height: 40px;float: left;}
+      .head>div>span{width:60%;height: 40px;float: left;font-size: 14px;line-height: 40px;margin-left: 5%;}
+			.head>div>a{width: 35%;height: 40px;line-height:40px;float: right;font-size: 14px;display:inline-block;color: #fff;text-align: right;}	
+      
+      	
+      .navig{height: 40px;margin: auto;border-bottom:1px solid #DEDEDE;}
+      .navig>span{width: 40px;height: 38px;color: #2491ee;font-size: 28px;line-height: 38px;text-align:center;margin-left: 10px;background: #EEEEEE;border-radius: 3px;}
+      .navig>span:hover{cursor: pointer;}
     	
     	.wrap{width: 100%;position: relative;}
     	
     	#addAddress{width: 100%;height: 40px;line-height:40px;text-align: center; border-radius: 5px;position: fixed;z-index: 10;
 			font-size: 16px;bottom: 0;left: 0;  color: #FFFFFF; background-color: #2491EE;margin: 0;}
     	
-			.main{height: auto;margin: auto;color: #000;}
+			.main{height: auto;margin: auto;}
+      .commonHead{width: 100%;height: auto;}
+     	.title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
+      
 			.main>button{width: 100px;height: 40px;line-height:40px;text-align: center; border-radius: 8px;margin-left: 10%;}
-			.addressInfo{width: 100%;height: 132px;border: 1px solid #DEDEDE;margin-bottom: 5px;}
+			.addressInfo{width: 100%;height: 132px;border: 1px solid #DEDEDE;margin-top: 5px;}
 			.addressInfo>ul{width: 100%;height: 100px;border-bottom: 1px #DEDEDE solid;}
 			.addressInfo>ul>li{width: 100%;height: 25px;}
 			.addressInfo>ul>li>span{width: 30%;height: 25px;line-height: 25px;text-align: left;display: block;float: left;margin-left: 5px;}
 			.addressInfo>ul>li>div{width: 60%;height: 25px;line-height: 25px;text-align: right;float: right;margin-right: 5px; }
 			.addressInfo>form{text-align: center;line-height: 29px;background: #fff;color: #000;}
-			.defa{width: 120px;height: 29px;display: block;float: left;text-align: left;}
+			.defa{width: 120px;height: 29px;display: block;float: left;text-align: left;color: #fff;background: #439DFE;border-radius: 5px;}
 			.sel{width: 15px;height: 15px;display: block;float: left;}
-			.edit{width:60px;height: 28px;float: right;background: #fff;margin-left: 5%;border: none;outline: none;}
-			.dele{width: 60px;height: 29px;display: block;float: right;color:red;margin-left: 5%;}
+			.edit{width:60px;height: 29px;float: right;margin-left: 5%;color: #fff;background: #439DFE;border-radius: 5px;}
+			.dele{width: 60px;height: 29px;display: block;float: right;background:#439DFE ; color:#fff;margin-left: 5%;border-radius: 5px;}
+			
 			.w_50{width: 50%;}
 			.fl{float: left;}
 			.fr{float: right;}
+			.btn-info{background-color: #439DFE;}
 						
 			#save{width: 100%;}
-			
-			      /*手机*/
+      /*手机*/
       @media screen and (max-width: 768px){
-     .main{width: 100%;}
+     
+      .head{width: 100%;}
+      .head>ul{width: 100%;}
+      .navig{width: 100%;}
+      .main,.title{width:100%;}
+      #addAddress{width: 100%;}
       }
       /*平板*/
       @media screen and (min-width: 768px){
-       .main{width: 100%;}
+       
+      .head{width: 100%;}
+      .head>ul{width: 100%;}
+      .navig{width: 100%;}
+      .main,.title{width:100%;}
+      #addAddress{width: 100%;}
+   
       }
         /*中等屏幕*/
       @media screen and (min-width: 992px){
-         .main{width: 100%;}   
+        
+        .head{width: 100%;}
+        .head>ul{width: 40%;}
+        .navig{width: 100%;}
+        .main,.title{width:100%;}
+        #addAddress{width: 100%;}
+
+
       }
       /*大屏幕*/
       @media screen and (min-width: 1200px){
-        .main{width: 100%;}
+      	.head>ul{width: 40%;}
+        .head{ width: 1200px;}
+        .navig{width: 1200px;}
+        .main,.title{width:1200px;}
+        #addAddress{width: 1200px;left: 50%;margin-left:-600px;}
+
+        
       }
-			
     </style>
   </head>
-  <body>
+  <body onload="">
+  	<header>
+			<div class="head">
+				<span>HAPYLIFE<sup>TM</sup></span>
+				<p class="glyphicon glyphicon-menu-hamburger" id="design" onclick="showSetting();"></p>
+				<ul id="setting">
+        			<li><a  href="{:U('Home/Purchase/myProfile')}"  >个人资料</a></li>
+					<li><a  href="{:U('Home/Purchase/purchase')}" >购买礼包</a></li>
+ 					<li><a  href="{:U('Home/Purchase/myOrder')}"  >我的订单</a></li>
+ 					<li><a  href="{:U('Home/Register/registerCode')}" >新代理注册</a> </li>
+					<li><a  href="{:U('Home/Purchase/addressList')}" >地址管理</a></li>
+					<li><a  href="{:U('Home/Purchase/bankList')}" >银行管理</a></li>
+					<li><a  href="{:U('Home/Purchase/recommenderList')}" >我的推荐</a></li>
+					<li><a  href="{:U('Home/index/log_out')}" >退出登录</a></li>
+				</ul>
+				<div>
+					<span>{$Think.session.user.username},您好!</span>
+				</div>
+			</div>
+		</header>
   		<div class="wrap">
+			<div class="title">地址管理</div>
   			<div class="main">
   				<foreach name="data" item="v">
 	  				<div class="addressInfo">
@@ -70,9 +142,10 @@
 	  						<li><span>所在地区:</span><div>{$v['ia_province']}{$v['ia_town']}{$v['ia_region']}</div></li>
 	  						<li><span>详细地址:</span><div>{$v['ia_road']}</div></li>
 	  					</ul>
-	  					<form name="form" action="#" method="post">
-	  						<!--<input type="hidden" name="iaid" value="{$v['iaid']}">-->
-	  						<button type="submit" class="defa" onclick='changeCheck(this);'><input class="sel" type="checkbox" <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />设为默认地址</button>
+
+	  					<form name="form" action="{:U('Home/Purchase/addressEdit')}" method="post">
+	  						<input type="hidden" name="iaid" value="{$v['iaid']}">
+	  						<button name="is_address_show" value="1" type="submit" class="defa" onclick='changeCheck(this);' <?php if($v['is_address_show'] == 1)echo "disabled='disabled';"?> ><input class="sel" type="checkbox" <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />设为默认地址</button>
 	  						<button type="button" class="dele" data-iaid='{$v['iaid']}' data-toggle="modal" data-target="#myModal3">删除</button>
 	  						<button data-iaid='{$v['iaid']}' data-name='{$v['ia_name']}' data-province='{$v['ia_province']}' data-town='{$v['ia_town']}' data-region='{$v['ia_region']}' data-road='{$v['ia_road']}' data-phone='{$v['ia_phone']}' type="button" class="edit" data-toggle="modal" data-target="#myModal2" >编辑</button>
 	  					</form>
@@ -94,8 +167,8 @@
 										<input type="hidden" name="iaid">
 										<div class="form-group" style="font-size: 18px;">是否删除地址？</div>
 										<div class="form-group">
-										  <button type="button" class="btn btn-danger" onclick='form.action="{:U('Home/Purchase/addressDelect')}";form.submit();'>删除</button>
-										  <button type="submit" class="btn btn-info" style="float: right;">取消</button>
+										  <button type="submit" class="btn btn-danger" onclick='form.action="{:U('Home/Purchase/addressDelect')}";form.submit();'>删除</button>
+										  <button type="button" class="btn btn-info" style="float: right;">取消</button>
 										</div>
 									  
 									</form>
@@ -192,7 +265,7 @@
 										    <input name="ia_road" type="text" class="form-control"  placeholder="详细地址">
 										  </div>
 										  <div class="form-group">
-										  <button type="submit" class="btn btn-info" id="save">添加</button>
+										  	<button type="submit" class="btn btn-info" id="save">添加</button>
 										  </div>
 										</form>
 					      </div>
@@ -201,30 +274,25 @@
 					</div>
   		</div>
 
-  <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
 	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
 	<!--<script src="__PUBLIC_BOOTSTRAP__/js/distpicker.data.js"></script>
 	<script src="__PUBLIC_BOOTSTRAP__/js/distpicker.js"></script>-->
 	<!--<script src="__PUBLIC_BOOTSTRAP__/js/main.js"></script>-->
     <script type="text/javascript" >
+    
     var i=1;
-    function showSetting(obj){
+    function showSetting(){
     	var setting=document.getElementById('setting');
 	  	var des=document.getElementById('design');
 			if(i==1){
 				setting.style.display="block";
-				des.style.color="#000";
-			  des.style.backgroundColor="#fff";
-			  des.style.borderBottom="#dedede 1px solid";
 			  i=0;
 			}else{
 				setting.style.display="none";
-				des.style.color="#fff";
-			  des.style.backgroundColor="#2491ee";
-			  des.style.borderBottom="none";
 			  i=1;
 			}
-    }
+   }
     function changeCheck(obj){
     	var checkBoxs=document.getElementsByClassName("sel");
     	for (var i=0;i<checkBoxs.length;i++) {
@@ -249,7 +317,6 @@
 		  	$("input[name='ia_province']").val(province);
 		  	$("input[name='ia_town']").val(town);
 		  	$("input[name='ia_region']").val(region);
-		  	$("input[name='ia_name']").val(name);
 		  	$("input[name='ia_road']").val(road);
 		});
 		$('#myModal3').on('shown.bs.modal', function (event) {
@@ -258,7 +325,15 @@
 	 		var iaid=button.data('iaid');
 	 		$("input[name='iaid']").val(iaid);
 		});
-    
+		$('#myModal1').on('shown.bs.modal', function (event) {
+		  	$("input[name='ia_name']").val('');
+		  	$("input[name='ia_phone']").val('');
+		  	$("input[name='ia_province']").val('');
+		  	$("input[name='ia_town']").val('');
+		  	$("input[name='ia_region']").val('');
+		  	$("input[name='ia_road']").val('');
+		});
+
     </script>
 
   </body>

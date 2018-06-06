@@ -249,6 +249,21 @@ class HapylifeApiController extends HomeBaseController{
     		if($data){
     			// $time=strtotime($data['orderdate']);
     			// if($time>time()){
+                    if(substr($data['customerid'],0,3) == 'HPL'){
+                        $_SESSION['user']=array(
+                                            'id'       => $data['iuid'],
+                                            'username' => $data['customerid'],
+                                            'name_cn'  => $data['lastname'].$data['firstname'],
+                                            'status'   => 1,
+                                            'i'        => 0
+                                        );
+                    }else{
+                        $_SESSION['user']=array(
+                            'id'       =>$data['iuid'],
+                            'username' =>$data['customerid'],
+                            'name_cn'  =>$data['lastname'].$data['firstname'],
+                            );
+                    }
     				$data['status'] = 1;
     				$this->ajaxreturn($data);	
     			// }else{
