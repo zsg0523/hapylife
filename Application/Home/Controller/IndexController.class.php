@@ -80,7 +80,7 @@ class IndexController extends HomeBaseController{
             }
         }
     }
-
+    
     public function login(){
         if(IS_POST){
             $tmpe = I('post.');
