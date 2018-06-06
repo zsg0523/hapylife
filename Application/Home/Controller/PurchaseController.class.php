@@ -536,7 +536,6 @@ class PurchaseController extends HomeBaseController{
     * 添加收货地址
     **/ 
     public function addressAdd(){
-        $data = I('post.');
         $data = array(
                 'iuid' => I('post.iuid'),
                 'ia_name' => I('post.ia_name'),
@@ -647,7 +646,6 @@ class PurchaseController extends HomeBaseController{
         // 查询注册信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
 
-        $data = I('post.');
         $data = array(
                 'iuid' => I('post.iuid'),
                 'iu_name' => $userinfo['lastname'].$userinfo['firstname'],
