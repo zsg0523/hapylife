@@ -238,8 +238,56 @@ class HapylifeApiController extends HomeBaseController{
 	public function login(){
 		$tmpe = I('post.');
         if(strlen($tmpe['CustomerID'])==8){
-            $data['status'] = 0;
-            $this->ajaxreturn($data);    
+                //检查WV api用户信息
+                $key      = "Z131MZ8ZV29H5EQ9LGVH";
+                $url      = "https://signupapi.wvhservices.com/api/Account/ValidateHpl?customerId=".$tmpe['CustomerID']."&"."key=".$key;
+                $wv       = file_get_contents($url);
+                $userinfo = json_decode($wv,true);
+                //检查wv是否存在该账号 Y创建该账号  N登录失败
+                switch ($userinfo['isActive']) {
+                    case 'true':
+                    //检查系统是否存在该账号 Y无密码登录 N创建账号
+                    $checkAccount = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
+                        switch ($checkAccount) {
+                            case null:
+                                //创建该新账号在本系统
+                                $map      = array(
+                                        'CustomerID'  =>$tmpe['CustomerID'],
+                                        'PassWord'    =>md5($userinfo['password']),
+                                        'LastName'    =>$userinfo['lastName'],
+                                        'FirstName'   =>$userinfo['firstName'],
+                                        'isActive'    =>$userinfo['isActive']
+                                    );
+                                $createUser = D('User')->add($map);
+                                break;
+                            default:
+                                //更新相关信息在本系统
+                                $map      = array(
+                                        'PassWord'    =>md5($userinfo['password']),
+                                        'LastName'    =>$userinfo['lastName'],
+                                        'FirstName'   =>$userinfo['firstName'],
+                                        'isActive'    =>$userinfo['isActive']
+                                    );
+                                $createUser = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->save($map);
+                                break;
+                        }
+                        $data = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
+                        //登录后看不到产品
+                        $_SESSION['user']=array(
+                                'id'       =>$data['iuid'],
+                                'username' =>$data['customerid'],
+                                'name_cn'  =>$data['lastname'].$data['firstname'],
+                                'status'   =>2,
+                            );
+                        $data['status'] = 1;
+                        $this->ajaxreturn($data); 
+                        break;
+
+                    default:
+                        $data['status'] = 0;
+                        $this->ajaxreturn($data); 
+                        break;
+                }   
         }else{
     		$where= array(
     			'CustomerID'=>$tmpe['CustomerID'],
@@ -247,29 +295,24 @@ class HapylifeApiController extends HomeBaseController{
     		);
     		$data = D('User')->where($where)->find();
     		if($data){
-    			// $time=strtotime($data['orderdate']);
-    			// if($time>time()){
-                    if(substr($data['customerid'],0,3) == 'HPL'){
-                        $_SESSION['user']=array(
-                                            'id'       => $data['iuid'],
-                                            'username' => $data['customerid'],
-                                            'name_cn'  => $data['lastname'].$data['firstname'],
-                                            'status'   => 1,
-                                            'i'        => 0
-                                        );
-                    }else{
-                        $_SESSION['user']=array(
-                            'id'       =>$data['iuid'],
-                            'username' =>$data['customerid'],
-                            'name_cn'  =>$data['lastname'].$data['firstname'],
-                            );
-                    }
-    				$data['status'] = 1;
-    				$this->ajaxreturn($data);	
-    			// }else{
-    				// $data['status'] = 2;
-    				// $this->ajaxreturn($data);					
-    			// }
+                if(substr($data['customerid'],0,3) == 'HPL'){
+                    $_SESSION['user']=array(
+                                        'id'       => $data['iuid'],
+                                        'username' => $data['customerid'],
+                                        'name_cn'  => $data['lastname'].$data['firstname'],
+                                        'status'   => 1,
+                                        'i'        => 0
+                                    );
+                }else{
+                    $_SESSION['user']=array(
+                            'id'       => $data['iuid'],
+                            'username' => $data['customerid'],
+                            'name_cn'  => $data['lastname'].$data['firstname'],
+                            'status'   => 2,
+                        );
+                }
+				$data['status'] = 1;
+				$this->ajaxreturn($data);	
     		}else{
     			$data['status'] = 0;
     			$this->ajaxreturn($data);			

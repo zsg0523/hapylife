@@ -81,6 +81,9 @@ class IndexController extends HomeBaseController{
         }
     }
     
+    /**
+    * 前台登录
+    **/
     public function login(){
         if(IS_POST){
             $tmpe = I('post.');
