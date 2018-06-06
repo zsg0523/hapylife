@@ -507,15 +507,15 @@ class PurchaseController extends HomeBaseController{
         // 查询地址表信息
         $ia_road = M('Address')->where(array('iuid'=>$iuid))->getField('ia_road',true); 
         
-        if(!in_array($userinfo['shopaddress1'], $ia_road) && $_SESSION['user']['address'] == 0){
+        if(!in_array($userinfo['shopaddress1'], $ia_road) && $_SESSION['user']['address'] == 0 && !empty($ia_road)){
            $message = array(
-                    'iuid' => $userinfo['iuid'],
-                    'ia_name' => $userinfo['lastname'].$userinfo['firstname'],
-                    'ia_phone' => $userinfo['phone'],
-                    'ia_province' => $userinfo['shopprovince'],
-                    'ia_town' => $userinfo['shopcity'],
-                    'ia_region' => $userinfo['shoparea'],
-                    'ia_road' => $userinfo['shopaddress1'],
+                    'iuid'            => $userinfo['iuid'],
+                    'ia_name'         => $userinfo['lastname'].$userinfo['firstname'],
+                    'ia_phone'        => $userinfo['phone'],
+                    'ia_province'     => $userinfo['shopprovince'],
+                    'ia_town'         => $userinfo['shopcity'],
+                    'ia_region'       => $userinfo['shoparea'],
+                    'ia_road'         => $userinfo['shopaddress1'],
                     'is_address_show' => 1
                 );
             $result = M('Address')->add($message);
@@ -536,15 +536,14 @@ class PurchaseController extends HomeBaseController{
     * 添加收货地址
     **/ 
     public function addressAdd(){
-        $data = I('post.');
         $data = array(
-                'iuid' => I('post.iuid'),
-                'ia_name' => I('post.ia_name'),
-                'ia_phone' => I('post.ia_phone'),
+                'iuid'        => I('post.iuid'),
+                'ia_name'     => I('post.ia_name'),
+                'ia_phone'    => I('post.ia_phone'),
                 'ia_province' => I('post.ia_province'),
-                'ia_town' => I('post.ia_town'),
-                'ia_region' => I('post.ia_region'),
-                'ia_road' => I('post.ia_road'),
+                'ia_town'     => I('post.ia_town'),
+                'ia_region'   => I('post.ia_region'),
+                'ia_road'     => I('post.ia_road'),
                 );
       
         $result = M('Address')->add($data);
@@ -598,6 +597,7 @@ class PurchaseController extends HomeBaseController{
         }
     }
 
+
 // *****************银行地址********************
     /**
     * 银行地址列表
@@ -609,18 +609,18 @@ class PurchaseController extends HomeBaseController{
         // 查询银行表信息
         $bankaccount = M('Bank')->where(array('iuid'=>$iuid))->getField('bankaccount',true); 
         
-        if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0){
+        if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0 && !empty($bankaccount)){
            $message = array(
-                    'iuid' => $userinfo['iuid'],
-                    'iu_name' => $userinfo['lastname'].$userinfo['firstname'],
-                    'bankaccount' => $userinfo['bankaccount'],
+                    'iuid'         => $userinfo['iuid'],
+                    'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
+                    'bankaccount'  => $userinfo['bankaccount'],
                     'bankprovince' => $userinfo['bankprovince'],
-                    'banktown' => $userinfo['bankcity'],
-                    'bankregion' => $userinfo['bankarea'],
-                    'bankname' => $userinfo['bankname'],
-                    'bankbranch' => $userinfo['subname'],
-                    'createtime' => time(),
-                    'isshow' => 1,
+                    'banktown'     => $userinfo['bankcity'],
+                    'bankregion'   => $userinfo['bankarea'],
+                    'bankname'     => $userinfo['bankname'],
+                    'bankbranch'   => $userinfo['subname'],
+                    'createtime'   => time(),
+                    'isshow'       => 1,
                 );
             $result = M('Bank')->add($message);
             if($result){
@@ -649,15 +649,15 @@ class PurchaseController extends HomeBaseController{
 
         $data = I('post.');
         $data = array(
-                'iuid' => I('post.iuid'),
-                'iu_name' => $userinfo['lastname'].$userinfo['firstname'],
-                'bankaccount' => I('post.bankaccount'),
+                'iuid'         => I('post.iuid'),
+                'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
+                'bankaccount'  => I('post.bankaccount'),
                 'bankprovince' => I('post.bankprovince'),
-                'banktown' => I('post.banktown'),
-                'bankregion' => I('post.bankregion'),
-                'bankname' => I('post.bankname'),
-                'bankbranch' => I('post.bankbranch'),
-                'createtime' => time(),
+                'banktown'     => I('post.banktown'),
+                'bankregion'   => I('post.bankregion'),
+                'bankname'     => I('post.bankname'),
+                'bankbranch'   => I('post.bankbranch'),
+                'createtime'   => time(),
                 );
       
         $result = M('Bank')->add($data);
