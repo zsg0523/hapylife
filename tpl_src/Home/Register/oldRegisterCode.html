@@ -84,8 +84,8 @@
 	
 	   $(".commonHead").load("../Purchase/commonHead.html");
 		});
-    	var countdown=60;
-    	var canClick=true;
+    var countdown=60;
+    var canClick=true;
 	function settime(val) {	
 		if (countdown == 0) { 
 			val.style.backgroundColor='#439DFE';
@@ -107,27 +107,28 @@
 		var phoneNumber=document.getElementById('phoneNumber').value;
 		var acnumber=document.getElementById('acnumber').value;
 //		alert(phoneNumber);alert(acnumber);
-		if(countdown==60){
+		if(canClick){
+			canClick=false;
 			$.ajax({
-			type:"post",
-			url:"smsCode",
-			async:false,
-			dataType:'json',
-			data:{
-				acnumber:acnumber,
-				phoneNumber:phoneNumber
-			},
-			success:function(ret){
-				if(ret.status=='101'){
-					canClick=false;
-					setTimeout(function() { settime(obj) },1000);
-				}else{
-					canClick=true;
-					alert(ret.msg);
+				type:"post",
+				url:"http://apps.hapy-life.com/hapylife/index.php/Home/Register/smsCode",
+				async:false,
+				dataType:'json',
+				data:{
+					acnumber:acnumber,
+					phoneNumber:phoneNumber
+				},
+				success:function(ret){
+					if(ret.status=='101'){
+						setTimeout(function() { settime(obj) },1000);
+						canClick=false;
+					}else{
+						canClick=true;
+						alert(ret.msg);
+					}
+					
 				}
-				
-			}
-		});
+			});
 			
 		}
 	}
