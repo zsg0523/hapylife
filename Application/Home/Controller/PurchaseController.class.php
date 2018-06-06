@@ -241,7 +241,7 @@ class PurchaseController extends HomeBaseController{
             case '1':
                 $list= D('Receipt')->where(array('ir_ordertype'=>$product['ip_type'],'riuid'=>$iuid,'is_delete'=>0))->select();
                 if($list){
-                    $this->error('请付款或删除重新下单');
+                    $this->error('请付款或删除重新下单',U('Home/Purchase/main'));
                 }else{
                     $con = '首购单';
                 }
@@ -497,13 +497,13 @@ class PurchaseController extends HomeBaseController{
         
         if(!in_array($userinfo['shopaddress1'], $ia_road)){
            $message = array(
-                    'iuid' => $userinfo['iuid'],
-                    'ia_name' => $userinfo['lastname'].$userinfo['firstname'],
-                    'ia_phone' => $userinfo['phone'],
+                    'iuid'        => $userinfo['iuid'],
+                    'ia_name'     => $userinfo['lastname'].$userinfo['firstname'],
+                    'ia_phone'    => $userinfo['phone'],
                     'ia_province' => $userinfo['shopprovince'],
-                    'ia_town' => $userinfo['shopcity'],
-                    'ia_region' => $userinfo['shoparea'],
-                    'ia_road' => $userinfo['shopaddress1']
+                    'ia_town'     => $userinfo['shopcity'],
+                    'ia_region'   => $userinfo['shoparea'],
+                    'ia_road'     => $userinfo['shopaddress1']
                 );
             $result = M('Address')->add($message);
         }
@@ -522,13 +522,13 @@ class PurchaseController extends HomeBaseController{
     public function addressAdd(){
         $data = I('post.');
         $data = array(
-                'iuid' => I('post.iuid'),
-                'ia_name' => I('post.ia_name'),
-                'ia_phone' => I('post.ia_phone'),
+                'iuid'        => I('post.iuid'),
+                'ia_name'     => I('post.ia_name'),
+                'ia_phone'    => I('post.ia_phone'),
                 'ia_province' => I('post.ia_province'),
-                'ia_town' => I('post.ia_town'),
-                'ia_region' => I('post.ia_region'),
-                'ia_road' => I('post.ia_road'),
+                'ia_town'     => I('post.ia_town'),
+                'ia_region'   => I('post.ia_region'),
+                'ia_road'     => I('post.ia_road'),
                 );
       
         $result = M('Address')->add($data);
@@ -559,7 +559,7 @@ class PurchaseController extends HomeBaseController{
     **/ 
     public function addressDelect(){
         $iaid = I('post.iaid');
-        
+
         $result = M('Address')->where(array('iaid'=>$iaid))->delete();
         
         if($result){
@@ -569,7 +569,7 @@ class PurchaseController extends HomeBaseController{
         }
     }
 
-// *****************收货地址********************
+// *****************银行列表********************
     /**
     * 收货地址列表
     **/ 
@@ -583,12 +583,12 @@ class PurchaseController extends HomeBaseController{
         
         if(!in_array($userinfo['bankaccount'], $bankaccount)){
            $message = array(
-                    'iuid' => $userinfo['iuid'],
-                    'iu_name' => $userinfo['lastname'].$userinfo['firstname'],
-                    'bankname' => $userinfo['bankname'],
+                    'iuid'        => $userinfo['iuid'],
+                    'iu_name'     => $userinfo['lastname'].$userinfo['firstname'],
+                    'bankname'    => $userinfo['bankname'],
                     'bankaccount' => $userinfo['bankaccount'],
-                    'bankbranch' => $userinfo['bankprovince'].$userinfo['bankcity'].$userinfo['bankarea'].$userinfo['subname'],
-                    'createtime' => time(),
+                    'bankbranch'  => $userinfo['bankprovince'].$userinfo['bankcity'].$userinfo['bankarea'].$userinfo['subname'],
+                    'createtime'  => time(),
                 );
             $result = M('Bank')->add($message);
         }
@@ -604,16 +604,16 @@ class PurchaseController extends HomeBaseController{
 
 
     /**
-    * 添加收货地址
+    * 添加银行地址
     **/ 
     public function bankAdd(){
         $data = I('post.');
         $data = array(
-                'iuid' => I('post.iuid'),
-                'ia_name' => I('post.ia_name'),
-                'ia_phone' => I('post.ia_phone'),
-                'ia_address' => I('post.ia_pro').I('post.ia_town').I('post.ia_dis'),
-                'ia_road' => I('post.ia_road'),
+                    'iuid'       => I('post.iuid'),
+                    'ia_name'    => I('post.ia_name'),
+                    'ia_phone'   => I('post.ia_phone'),
+                    'ia_address' => I('post.ia_pro').I('post.ia_town').I('post.ia_dis'),
+                    'ia_road'    => I('post.ia_road'),
                 );
       
         $result = M('Address')->add($data);
@@ -625,7 +625,7 @@ class PurchaseController extends HomeBaseController{
     }
 
     /**
-    * 编辑收货地址
+    * 编辑银行地址
     **/ 
     public function bankEdit(){
         $iaid = I('post.iaid');
@@ -642,7 +642,7 @@ class PurchaseController extends HomeBaseController{
     }
 
     /**
-    * 删除收货地址
+    * 删除银行地址
     **/ 
     public function bankDelect(){
         $iaid = I('post.iaid');
