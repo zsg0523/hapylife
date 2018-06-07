@@ -9,18 +9,33 @@
 	<link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css" />
 	<!--<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />-->
 	<style>
+      	.title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
 		body{background: white;margin: 0;padding: 0;font-family: "微软雅黑";font-size: 14px;}
 		a{text-decoration: none;outline: none;}
-		.row{ height: 30px;}
+		.row{min-height: 30px;margin-top: 5px;}
 		.row span{width: 100%;height: 30px; line-height: 30px;display: block;}
 		.row>div:first-child{text-align: left;}
 		.row>div:nth-child(2){text-align: right;}
 		.container-fluid>a{width: 100%;height: 30px;line-height:30px;text-align: center; border-radius: 5px;
-		font-size: 14px;color: #FFFFFF; background-color: #439DFE;;margin-bottom: 5px;display: block;}
+		font-size: 14px;color: #FFFFFF; background-color: #439DFE;;margin-top: 5px;display: block;}
 		.main{height: auto;margin: auto;}
-      	.commonHead{width: 100%;height: auto;}
-      	.title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
       		/*手机*/
+      			/*注册*/
+		.rg-name{
+			margin-top: 10px;
+			color: #2491ee;
+			font-size:20px;
+			text-align: center;
+			line-height: 40px;
+			height:40px;
+			border-bottom: 1px solid #DDDDDD;
+			margin-bottom: 10px;
+		}
+		.btn-info{background-color: #439DFE;}
+		
+		.idcard_bg{height: 100px;}
+		.idcard_bg img{width: 200px;height: 100px;text-align: right;}	
+	/*手机*/
       @media screen and (max-width: 768px){
      .main,.title{width:100%;}
     
@@ -48,7 +63,7 @@
 		<div class="title">
 			确认资料
 		</div>
-		<div class="main container-fluid">=
+		<div class="main container-fluid">
 			<div class="row">
 				<div class="col-md-2 col-xs-4">
 					<span>推荐人ID:</span>
@@ -87,6 +102,22 @@
 				</div>
 				<div class="col-md-10 col-xs-8">
 					<span>{$userinfo.EnFirstName}</span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>手机区号:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span>{$userinfo.acnumber}</span>
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-md-2 col-xs-4">
+					<span>手机号码:</span>
+				</div>
+				<div class="col-md-10 col-xs-8">
+					<span>{$userinfo.Phone}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -253,19 +284,19 @@
 				<div class="col-md-2 col-xs-4">
 					<span>身份证正面:</span>
 				</div>
-				<div class="col-md-10 col-xs-8">
-					<span><img src="{$userinfo.JustIdcard}" alt="未上传正面图片"/></span>
+				<div class="col-md-10 col-xs-8 idcard_bg">
+					<span><img src="{$userinfo.JustIdcard}" alt="未上传反面图片"/></span>
 				</div>	
 			</div>
 			<div class="row">
 				<div class="col-md-2 col-xs-4">
 					<span>身份证反面:</span>
 				</div>
-				<div class="col-md-10 col-xs-8">
+				<div class="col-md-10 col-xs-8 idcard_bg">
 					<span><img src="{$userinfo.BackIdcard}" alt="未上传反面图片"/></span>
 				</div>	
 			</div>
-			<a class="col-md-12" href="new_purchase.html">确认注册</a>
+			<a class="col-md-12" href="{:U('Home/Register/new_purchase')}">确认注册</a>
 		<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>	
 		<script type="text/javascript">
 			$(document).ready(function(){

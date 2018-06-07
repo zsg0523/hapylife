@@ -22,6 +22,19 @@ class RegisterController extends HomeBaseController{
         $this->assign('data',$data);
         $this->display();
     }
+    public function new_register(){
+        $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
+        foreach ($mape as $key => $value) {
+            $data[$key]         = $value;
+            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
+            	$data[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+            }else{
+            	$data[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+            }
+        }
+        $this->assign('data',$data);
+        $this->display();
+    }
     /**
     *腾讯云发送短信(注册)
     *参数：phoneNumber(手机号),whichapp(指定app),acnumber(区号)
@@ -519,6 +532,16 @@ class RegisterController extends HomeBaseController{
     }
 	// 普通用户注册
 	public function register(){
+		$mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
+        foreach ($mape as $key => $value) {
+            $datas[$key]         = $value;
+            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
+            	$datas[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+            }else{
+            	$datas[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+            }
+        }
+        
 		$data = I('post.');
 
 		$upload = several_upload();
@@ -648,7 +671,8 @@ class RegisterController extends HomeBaseController{
 
 		$assign = array(
             		'error' => $error,
-            		'data' => $data
+            		'data' => $data,
+            		'datas' => $datas
             		);
         $this->assign($assign);
 		$this->display();
