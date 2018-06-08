@@ -208,11 +208,11 @@ class UserModel extends BaseModel{
 						->count();
 				}else{
 					$count=$model
-					->alias('u')
-			        ->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			        ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-		            ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-		            ->count();
+						->alias('u')
+				        ->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				        ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			            ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+			            ->count();
 				}
 		        $page=new_page($count,$limit);
 		        // 获取分页数据

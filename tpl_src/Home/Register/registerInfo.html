@@ -63,7 +63,7 @@
 					<span>推荐人ID:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.EnrollerID}</span>
+					<span>{$userinfo.enrollerid}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -71,7 +71,7 @@
 					<span>中文姓:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.LastName}</span>
+					<span>{$userinfo.lastname}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -79,7 +79,7 @@
 					<span>中文名:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.FirstName}</span>
+					<span>{$userinfo.firstname}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -87,7 +87,7 @@
 					<span>英文姓:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.EnLastName}</span>
+					<span>{$userinfo.enlastname}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -95,7 +95,7 @@
 					<span>英文名:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.EnFirstName}</span>
+					<span>{$userinfo.enfirstname}</span>
 				</div>	
 			</div>
 			
@@ -112,7 +112,7 @@
 					<span>手机号码:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.Phone}</span>
+					<span>{$userinfo.phone}</span>
 				</div>	
 			</div>
 			
@@ -122,7 +122,7 @@
 					<span>性别:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<if condition="$userinfo['Sex'] eq 男">
+					<if condition="$userinfo['sex'] eq 男">
 						<span>男</span>
 					<else />
 						<span>女</span>
@@ -134,7 +134,7 @@
 					<span>电话号码:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.Phone}</span>
+					<span>{$userinfo.phone}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -142,7 +142,7 @@
 					<span>我的邮箱:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.Email}</span>
+					<span>{$userinfo.email}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -150,7 +150,7 @@
 					<span>经营主体:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.AccountType}</span>
+					<span>{$userinfo.accounttype}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -158,7 +158,7 @@
 					<span>语言类型:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.Language}</span>
+					<span>{$userinfo.language}</span>
 				</div>	
 			</div>
 			<hr />
@@ -176,7 +176,7 @@
 					<span>国家:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.ShopCountry}</span>
+					<span>{$userinfo.shopcountry}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -184,7 +184,7 @@
 					<span>省:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.ShopProvince}</span>
+					<span>{$userinfo.shopprovince}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -192,7 +192,7 @@
 					<span>市:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.ShopCity}</span>
+					<span>{$userinfo.shopcity}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -200,7 +200,7 @@
 					<span>区:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.ShopArea}</span>
+					<span>{$userinfo.shoparea}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -208,7 +208,7 @@
 					<span>详细地址:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.ShopAddress1}</span>
+					<span>{$userinfo.shopaddress1}</span>
 				</div>	
 			</div>
 			<hr />
@@ -226,7 +226,7 @@
 					<span>银行名称:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.BankName}</span>
+					<span>{$userinfo.bankname}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -234,7 +234,7 @@
 					<span>银行账号:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.BankAccount}</span>
+					<span>{$userinfo.bankaccount}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -242,7 +242,7 @@
 					<span>省:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.BankProvince}</span>
+					<span>{$userinfo.bankprovince}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -250,7 +250,7 @@
 					<span>市:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.BankCity}</span>
+					<span>{$userinfo.bankcity}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -258,7 +258,7 @@
 					<span>区:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.BankArea}</span>
+					<span>{$userinfo.bankarea}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -266,7 +266,7 @@
 					<span>支行名称:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.SubName}</span>
+					<span>{$userinfo.subname}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -274,7 +274,7 @@
 					<span>身份证号码:</span>
 				</div>
 				<div class="col-md-10 col-xs-8">
-					<span>{$userinfo.Idcard}</span>
+					<span>{$userinfo.idcard}</span>
 				</div>	
 			</div>
 			<div class="row">
@@ -282,7 +282,7 @@
 					<span>身份证正面:</span>
 				</div>
 				<div class="col-md-10 col-xs-8 idcard_bg">
-					<span><img src="{$userinfo.JustIdcard}" alt="未上传反面图片"/></span>
+					<span><img src="{$userinfo.justidcard}" alt="未上传反面图片"/></span>
 				</div>	
 			</div>
 			<div class="row">
@@ -290,7 +290,7 @@
 					<span>身份证反面:</span>
 				</div>
 				<div class="col-md-10 col-xs-8 idcard_bg">
-					<span><img src="{$userinfo.BackIdcard}" alt="未上传反面图片"/></span>
+					<span><img src="{$userinfo.backidcard}" alt="未上传反面图片"/></span>
 				</div>	
 			</div>
 

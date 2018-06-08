@@ -622,6 +622,7 @@ class HapylifeController extends AdminBaseController{
 		$map=array(
 			'iuid'=>$id
 			);
+		
 		$result=D('User')->deleteData($map);
 		if($result){
 			redirect($_SERVER['HTTP_REFERER']);

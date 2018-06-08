@@ -129,6 +129,7 @@
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>推荐人姓名:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
+							<input type="hidden" name="teamCode" value="">
 							<input type="text" class="form-control" name="EnrollerNameCn" disabled="disabled"  placeholder="推荐人姓名" value="{$Think.session.user.name_cn}">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnrollerID']}</div>
@@ -388,7 +389,7 @@
 		function validate() {
               var pwd1 = document.getElementById("passWord1").value;
               var pwd2 = document.getElementById("passWord2").value;
-		<!-- 对比两次输入的密码 -->
+		
               if(pwd1 == pwd2&&pwd1!="") {
                   document.getElementById("judgePassword2").innerHTML="两次密码一致";
                    document.getElementById("judgePassword2").style.color="#3E8F3E";
@@ -428,6 +429,7 @@
 //				console.log(data);
 				if(data!==null){
 					$("input[name='EnrollerNameCn']").val(data.lastname+data.firstname);
+					$("input[name='teamCode']").val(data.teamcode);
 				}else{
 					$("input[name='EnrollerNameCn']").val("请输入正确的推荐人ID！");
 				}
