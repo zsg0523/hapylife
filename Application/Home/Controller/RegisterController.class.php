@@ -259,7 +259,8 @@ class RegisterController extends HomeBaseController{
         );
         $addlog = M('Log')->add($log);
         if($addlog){
-            $this->success('生成订单成功',U('Home/Register/Qrcode',array('ir_receiptnum'=>$order_num)));
+            // $this->success('生成订单成功',U('Home/Register/Qrcode',array('ir_receiptnum'=>$order_num)));
+            $this->success('生成订单成功',U('Home/Register/new_cjPayment',array('ir_receiptnum'=>$order_num)));
         }else{
             $this->error('生成订单失败');
         }
@@ -456,7 +457,6 @@ class RegisterController extends HomeBaseController{
             }
         }
     }
-
 
     /**
     * 二维码获取
