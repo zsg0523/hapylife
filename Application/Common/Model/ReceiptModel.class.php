@@ -20,6 +20,7 @@ class ReceiptModel extends BaseModel{
         	case '-1':
 		        if(empty($word)){
 					$count=$model->where(array('ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))->count();
+
 				}else{
 					$count=$model
 					->alias('r')

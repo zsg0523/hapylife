@@ -6,24 +6,24 @@ use Common\Controller\HomeBaseController;
 **/
 class HapylifeApiController extends HomeBaseController{
 
-	public function index(){
+    public function index(){
         
     }
-	/**
-	* 旧用户注册
-	**/
-	// public function oldregister(){
-	// 	$data  = I('post.');
+    /**
+    * 旧用户注册
+    **/
+    // public function oldregister(){
+    //  $data  = I('post.');
  //        //匹配姓、名和CustomerID
-	// 	$where= array(
-	// 		'LastName'     =>$data['LastName'],
-	// 		'FirstName'    =>$data['FirstName'],
-	// 		'CustomerID'   =>$data['CustomerID']
-	// 	);
-	// 	$find = D('User')->where($where)->find();
-	// 	if($find){
+    //  $where= array(
+    //      'LastName'     =>$data['LastName'],
+    //      'FirstName'    =>$data['FirstName'],
+    //      'CustomerID'   =>$data['CustomerID']
+    //  );
+    //  $find = D('User')->where($where)->find();
+    //  if($find){
  //            //正反面身份证
-	// 		if(!empty($data['JustIdcard'])){
+    //      if(!empty($data['JustIdcard'])){
  //                $img_body1 = substr(strstr($data['JustIdcard'],','),1);
  //                $JustIdcard = time().'_'.mt_rand().'.jpg';
  //                $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
@@ -35,30 +35,30 @@ class HapylifeApiController extends HomeBaseController{
  //                $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
  //                $tmpe['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
  //            }
-	// 		$tmpe = array(
-	// 			'Phone'     =>$data['Phone'],
-	// 			'PassWord'  =>md5($data['PassWord'])
-	// 		);
-	// 		$data['iuid'] = $find['iuid'];
-	// 		$save = D('User')->where($where)->save($tmpe);
-	// 		if($save){
-	// 			$data['status'] = 1;
-	// 			$this->ajaxreturn($data);				
-	// 		}else{
-	// 			$data['status'] = 0;
-	// 			$this->ajaxreturn($data);
-	// 		}
-	// 	}else{
-	// 		$data['status'] = 0;
-	// 		$this->ajaxreturn($data);
-	// 	}
-	// }
+    //      $tmpe = array(
+    //          'Phone'     =>$data['Phone'],
+    //          'PassWord'  =>md5($data['PassWord'])
+    //      );
+    //      $data['iuid'] = $find['iuid'];
+    //      $save = D('User')->where($where)->save($tmpe);
+    //      if($save){
+    //          $data['status'] = 1;
+    //          $this->ajaxreturn($data);               
+    //      }else{
+    //          $data['status'] = 0;
+    //          $this->ajaxreturn($data);
+    //      }
+    //  }else{
+    //      $data['status'] = 0;
+    //      $this->ajaxreturn($data);
+    //  }
+    // }
 
-	/**
-	* 用户注册LastName FirstName EnrollerID Email PassWord Phone JustIdcard BackIdcard Sex
+    /**
+    * 用户注册LastName FirstName EnrollerID Email PassWord Phone JustIdcard BackIdcard Sex
     * IsNew/1新 0旧
-	**/
-	public function newregister(){
+    **/
+    public function newregister(){
         if(IS_POST){
             $data['status'] = 0;
             $data['message']= 'app暂不允许注册，请前往web端';
@@ -230,13 +230,13 @@ class HapylifeApiController extends HomeBaseController{
                 // }
             }
         }
-	}
+    }
 
-	/**
-	* 登录
-	**/
-	public function login(){
-		$tmpe = I('post.');
+    /**
+    * 登录
+    **/
+    public function login(){
+        $tmpe = I('post.');
         if(strlen($tmpe['CustomerID'])==8){
                 //检查WV api用户信息
                 $key      = "Z131MZ8ZV29H5EQ9LGVH";
@@ -289,12 +289,12 @@ class HapylifeApiController extends HomeBaseController{
                         break;
                 }   
         }else{
-    		$where= array(
-    			'CustomerID'=>$tmpe['CustomerID'],
-    			'PassWord'  =>md5($tmpe['PassWord'])
-    		);
-    		$data = D('User')->where($where)->find();
-    		if($data){
+            $where= array(
+                'CustomerID'=>$tmpe['CustomerID'],
+                'PassWord'  =>md5($tmpe['PassWord'])
+            );
+            $data = D('User')->where($where)->find();
+            if($data){
                 if(substr($data['customerid'],0,3) == 'HPL'){
                     $_SESSION['user']=array(
                                         'id'       => $data['iuid'],
@@ -311,42 +311,42 @@ class HapylifeApiController extends HomeBaseController{
                             'status'   => 2,
                         );
                 }
-				$data['status'] = 1;
-				$this->ajaxreturn($data);	
-    		}else{
-    			$data['status'] = 0;
-    			$this->ajaxreturn($data);			
-    		}
+                $data['status'] = 1;
+                $this->ajaxreturn($data);   
+            }else{
+                $data['status'] = 0;
+                $this->ajaxreturn($data);           
+            }
         }
-	}
+    }
 
-	/**
-	* 获取用户信息
-	**/
-	public function userinfo(){
-		$iuid = I('post.iuid');
-		$data = D('User')->where(array('iuid'=>$iuid))->find();
-		$right= D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Right'))->select();
-		$left = D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Left'))->select();
+    /**
+    * 获取用户信息
+    **/
+    public function userinfo(){
+        $iuid = I('post.iuid');
+        $data = D('User')->where(array('iuid'=>$iuid))->find();
+        $right= D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Right'))->select();
+        $left = D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Left'))->select();
         //right右脚、left左脚
-		if($right){
-			$data['right'] = count($right);
-		}else{
-			$data['right'] = 0;
-		}
-		if($left){
-			$data['left'] = count($left);
-		}else{
-			$data['left'] = 0;
-		}
-		if($data){
-			$data['status'] = 1;
-			$this->ajaxreturn($data);	
-		}else{
-			$data['status'] = 0;
-			$this->ajaxreturn($data);			
-		}
-	}
+        if($right){
+            $data['right'] = count($right);
+        }else{
+            $data['right'] = 0;
+        }
+        if($left){
+            $data['left'] = count($left);
+        }else{
+            $data['left'] = 0;
+        }
+        if($data){
+            $data['status'] = 1;
+            $this->ajaxreturn($data);   
+        }else{
+            $data['status'] = 0;
+            $this->ajaxreturn($data);           
+        }
+    }
 
     /**
     * 编辑用户信息
@@ -500,50 +500,50 @@ class HapylifeApiController extends HomeBaseController{
             $this->ajaxreturn($data);
         }
     }
-	/**
-	* 新闻列表
-	**/	
-	public function newslist(){
-		$map  = array(
-			'is_show' =>1
-		);
-		$data = M('News')
-				->where($map)
-				->order('addtime desc')
-				->select();
-		if($data){
-			$this->ajaxreturn($data);
-		}else{
-			$data = array(
-				'status'=>0,
-				'msg'	=>'无法获取新闻列表'
-			);
-			$this->ajaxreturn($data);
-		}
-	}
+    /**
+    * 新闻列表
+    **/ 
+    public function newslist(){
+        $map  = array(
+            'is_show' =>1
+        );
+        $data = M('News')
+                ->where($map)
+                ->order('addtime desc')
+                ->select();
+        if($data){
+            $this->ajaxreturn($data);
+        }else{
+            $data = array(
+                'status'=>0,
+                'msg'   =>'无法获取新闻列表'
+            );
+            $this->ajaxreturn($data);
+        }
+    }
 
-	/**
-	* 新闻详情
-	**/
-	public function newscontent(){
-		$nid  = I('post.nid');
+    /**
+    * 新闻详情
+    **/
+    public function newscontent(){
+        $nid  = I('post.nid');
         $data = M('News')->where(array('nid'=>$nid))->find();
         if($data){
             $this->ajaxreturn($data);
         }else{
             $data = array(
-				'status'=>0,
-				'msg'	=>'获取新闻详情失败'
-			);
+                'status'=>0,
+                'msg'   =>'获取新闻详情失败'
+            );
             $this->ajaxreturn($data);
         }
-	}
+    }
 
-	/**
-	* 商品列表
-	**/
-	public function productlist(){
-		$map = array(
+    /**
+    * 商品列表
+    **/
+    public function productlist(){
+        $map = array(
             'ip_type'    =>2,
             'ip_name_zh '=>array('NEQ','Rbs'),
         );
@@ -552,36 +552,36 @@ class HapylifeApiController extends HomeBaseController{
             $this->ajaxreturn($data);
         }else{
             $data = array(
-				'status'=>0,
-				'msg'	=>'获取商品列表失败'
-			);
+                'status'=>0,
+                'msg'   =>'获取商品列表失败'
+            );
             $this->ajaxreturn($data);
         }
-	}
+    }
 
-	/**
-	* 商品详情
-	**/
-	public function product(){
-		$ipid = I('post.ipid');
+    /**
+    * 商品详情
+    **/
+    public function product(){
+        $ipid = I('post.ipid');
         $data = M('Product')
-			  ->where(array('ipid'=>$ipid))
-			  ->find();
+              ->where(array('ipid'=>$ipid))
+              ->find();
         if($data){
-       		$this->ajaxreturn($data);
-    	}else{
+            $this->ajaxreturn($data);
+        }else{
             $data = array(
-				'status'=>0,
-				'msg'	=>'获取商品详情失败'
-			);
+                'status'=>0,
+                'msg'   =>'获取商品详情失败'
+            );
             $this->ajaxreturn($data);
         }
-	}
-	/**
-	* 产品订单
-	**/
-	public function order(){
-		$iuid = trim(I('post.iuid'));
+    }
+    /**
+    * 产品订单
+    **/
+    public function order(){
+        $iuid = trim(I('post.iuid'));
         $ipid = trim(I('post.ipid'));
         //商品信息
         $product = M('Product')->where(array('ipid'=>$ipid))->find();
@@ -675,9 +675,9 @@ class HapylifeApiController extends HomeBaseController{
             $order['msg']    = '订单生成失败';
             $this->ajaxreturn($order);
         }
-	}
+    }
 
-	/**
+    /**
     * 购买产品快钱支付
     **/
     public function kqPayment(){
@@ -879,32 +879,32 @@ class HapylifeApiController extends HomeBaseController{
     }
 
     /**
-	* 旅游列表
-	**/	
-	public function travellist(){
-		$map    = array(
-			'is_show' =>1
-		);
-		$travel = M('Travel')
-				->where($map)
-				->order('addtime desc')
-				->select();
+    * 旅游列表
+    **/ 
+    public function travellist(){
+        $map    = array(
+            'is_show' =>1
+        );
+        $travel = M('Travel')
+                ->where($map)
+                ->order('addtime desc')
+                ->select();
         foreach ($travel as $key => $value) {
             $data[$key]                 = $value;
             $data[$key]['travel_price'] = sprintf("%.2f",$value['travel_price']);
         }
-		if($data){
-			$this->ajaxreturn($data);
-		}else{
-			$data = array(
-				'status'=>0,
-				'msg'	=>'无法获取旅游列表'
-			);
-			$this->ajaxreturn($data);
-		}
-	}
+        if($data){
+            $this->ajaxreturn($data);
+        }else{
+            $data = array(
+                'status'=>0,
+                'msg'   =>'无法获取旅游列表'
+            );
+            $this->ajaxreturn($data);
+        }
+    }
 
-	/**
+    /**
     * 旅游详情
     **/
     public function travelcontent(){
@@ -1040,10 +1040,10 @@ class HapylifeApiController extends HomeBaseController{
     }
 
     /**
-	* 产品 1收购 2升级 3月费
-	**/
-	public function upgrade(){
-		$iuid  = I('post.iuid');
+    * 产品 1收购 2升级 3月费
+    **/
+    public function upgrade(){
+        $iuid  = I('post.iuid');
         $find  = M('User')->where(array('iuid'=>$iuid))->find();
         $type  = trim($find['distributortype']);
         $mtype = trim($find['customertype']);
@@ -1067,12 +1067,12 @@ class HapylifeApiController extends HomeBaseController{
             $this->ajaxreturn($data);
         }else{
             $data = array(
-				'status'=>0,
-				'msg'	=>'获取失败'
-			);
+                'status'=>0,
+                'msg'   =>'获取失败'
+            );
             $this->ajaxreturn($data);
         }  
-	}
+    }
 
     /**
     * 获取房间
@@ -1767,4 +1767,248 @@ class HapylifeApiController extends HomeBaseController{
             $this->ajaxreturn($data);
         }
     }
+
+    // *****************收货地址********************
+    /**
+    * 收货地址列表
+    **/ 
+    public function addressList(){
+        $iuid = I('post.iuid');
+        // 查询注册信息
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
+        // 查询地址表信息
+        $ia_road = M('Address')->where(array('iuid'=>$iuid))->getField('ia_road',true); 
+        
+        if(!in_array($userinfo['shopaddress1'], $ia_road) && $_SESSION['user']['address'] == 0 && !empty($userinfo['shopaddress1'])){
+           $message = array(
+                    'iuid'            => $userinfo['iuid'],
+                    'ia_name'         => $userinfo['lastname'].$userinfo['firstname'],
+                    'ia_phone'        => $userinfo['phone'],
+                    'ia_province'     => $userinfo['shopprovince'],
+                    'ia_town'         => $userinfo['shopcity'],
+                    'ia_region'       => $userinfo['shoparea'],
+                    'ia_road'         => $userinfo['shopaddress1'],
+                    'is_address_show' => 1
+                );
+            $result = M('Address')->add($message);
+            if($result){
+                $_SESSION['user']['address'] = $_SESSION['user']['address'] + 1;
+            }
+        }
+        
+        $data = M('Address')->where(array('iuid'=>$iuid))->order('is_address_show DESC')->select();
+        
+        if($data){
+            $sample['status'] = 1;
+            $this->ajaxreturn($sample);
+        }else{
+            $sample['status'] = 0;
+            $this->ajaxreturn($sample);
+        }
+    } 
+
+    /**
+    * 添加收货地址
+    **/ 
+    public function addressAdd(){
+        $data = array(
+                'iuid'        => I('post.iuid'),
+                'ia_name'     => I('post.ia_name'),
+                'ia_phone'    => I('post.ia_phone'),
+                'ia_province' => I('post.ia_province'),
+                'ia_town'     => I('post.ia_town'),
+                'ia_region'   => I('post.ia_region'),
+                'ia_road'     => I('post.ia_road'),
+                );
+      
+        $result = M('Address')->add($data);
+        if($result){
+            $sample['status'] = 1;
+            $this->ajaxreturn($sample);
+        }else{
+            $sample['status'] = 0;
+            $this->ajaxreturn($sample);
+        }
+    }
+
+    /**
+    * 编辑收货地址
+    **/ 
+    public function addressEdit(){
+        $iuid = I('post.iuid');
+        $iaid = M('Address')->where(array('iuid'=>$iuid,'is_address_show'=>1))->getfield('iaid');
+
+        $data = I('post.');
+        
+        if($data['is_address_show']){
+            $result = M('Address')->where(array('iaid'=>$data['iaid']))->save($data);
+            if($result){
+                $message = array(
+                             'is_address_show' => 0,
+                        );
+                $res = M('Address')->where(array('iaid'=>$iaid))->save($message);
+            }
+        }else{
+            $result = M('Address')->where(array('iaid'=>$data['iaid']))->save($data);
+        }
+        
+        if($result || $res){
+            $sample['status'] = 1;
+            $this->ajaxreturn($sample);
+        }else{
+            $sample['status'] = 0;
+            $this->ajaxreturn($sample);
+        }
+    }
+
+    /**
+    * 删除收货地址
+    **/ 
+    public function addressDelect(){
+        $iaid = I('post.iaid');
+
+        $result = M('Address')->where(array('iaid'=>$iaid))->delete();
+        
+        if($result){
+            $sample['status'] = 1;
+            $this->ajaxreturn($sample);
+        }else{
+            $sample['status'] = 0;
+            $this->ajaxreturn($sample);
+        }
+    }
+
+
+// *****************银行地址********************
+    /**
+    * 银行地址列表
+    **/ 
+    public function bankList(){
+        $iuid = I('post.iuid');
+        // 查询注册信息
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
+        // 查询银行表信息
+        $bankaccount = M('Bank')->where(array('iuid'=>$iuid))->getField('bankaccount',true); 
+        
+        if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0 && !empty($userinfo['bankaccount'])){
+           $message = array(
+                    'iuid'         => $userinfo['iuid'],
+                    'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
+                    'bankaccount'  => $userinfo['bankaccount'],
+                    'bankprovince' => $userinfo['bankprovince'],
+                    'banktown'     => $userinfo['bankcity'],
+                    'bankregion'   => $userinfo['bankarea'],
+                    'bankname'     => $userinfo['bankname'],
+                    'bankbranch'   => $userinfo['subname'],
+                    'createtime'   => time(),
+                    'isshow'       => 1,
+                );
+            $result = M('Bank')->add($message);
+            if($result){
+                $_SESSION['user']['bank'] = $_SESSION['user']['bank'] + 1;
+            }
+        }
+        
+        $data = M('Bank')->where(array('iuid'=>$iuid))->order('isshow DESC')->select();
+
+        if($data){
+            $data['status'] = 1;
+            $this->ajaxreturn($data);
+        }else{
+            $sample['status'] = 0;
+            $this->ajaxreturn($sample);
+        }
+    } 
+
+
+    /**
+    * 添加银行地址
+    **/ 
+    public function bankAdd(){
+        $iuid = I('post.iuid');
+        // 查询注册信息
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
+
+        $data = I('post.');
+        $data = array(
+                'iuid'         => I('post.iuid'),
+                'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
+                'bankaccount'  => I('post.bankaccount'),
+                'bankprovince' => I('post.bankprovince'),
+                'banktown'     => I('post.banktown'),
+                'bankregion'   => I('post.bankregion'),
+                'bankname'     => I('post.bankname'),
+                'bankbranch'   => I('post.bankbranch'),
+                'createtime'   => time(),
+                );
+      
+        $result = M('Bank')->add($data);
+        if($result){
+            $sample['status'] = 1;
+            $this->ajaxreturn($sample);
+        }else{
+            $sample['status'] = 0;
+            $this->ajaxreturn($sample);
+        }
+    }
+
+    /**
+    * 编辑银行地址
+    **/ 
+    public function bankEdit(){
+        $iuid = I('post.iuid');
+        $bid = M('Bank')->where(array('iuid'=>$iuid,'isshow'=>1))->getfield('bid');
+
+        $data = I('post.');
+
+        if($data['isshow']){
+            $result = M('Bank')->where(array('bid'=>$data['bid']))->save($data);
+            if($result){
+                $message = array(
+                             'isshow' => 0,
+                        );
+                $res = M('Bank')->where(array('bid'=>$bid))->save($message);
+            }
+        }else{
+            $result = M('Bank')->where(array('bid'=>$data['bid']))->save($data);
+        }
+        
+        if($result || $res){
+            $sample['status'] = 1;
+            $this->ajaxreturn($sample);
+        }else{
+            $sample['status'] = 0;
+            $this->ajaxreturn($sample);
+        }
+    }
+
+    /**
+    * 删除银行地址
+    **/ 
+    public function bankDelect(){
+        $bid = I('post.bid');
+
+        $result = M('Bank')->where(array('bid'=>$bid))->delete();
+        
+        if($result){
+            $sample['status'] = 1;
+            $this->ajaxreturn($sample);
+        }else{
+            $sample['status'] = 0;
+            $this->ajaxreturn($sample);
+        }
+    }
+
+// **************我的推荐人*****************
+    public function recommenderList(){
+        $customerid = $_SESSION['user']['username'];
+        $data = M('User')->where(array('enrollerid'=>$customerid))->select();
+
+        $assign = array(
+                    'data' => $data,
+                );
+        $this->assign($assign);
+        $this->display();
+    }
+
 }

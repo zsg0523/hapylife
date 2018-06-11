@@ -124,7 +124,7 @@
         			<li><a  href="{:U('Home/Purchase/myProfile')}"  >个人资料</a></li>
 					<li><a  href="{:U('Home/Purchase/purchase')}" >购买礼包</a></li>
  					<li><a  href="{:U('Home/Purchase/myOrder')}"  >我的订单</a></li>
- 					<li><a  href="{:U('Home/Register/registerCode')}" >新代理注册</a> </li>
+ 					<li><a  href="{:U('Home/Register/new_register')}" >新代理注册</a> </li>
 					<li><a  href="{:U('Home/Purchase/addressList')}" >地址管理</a></li>
 					<li><a  href="{:U('Home/Purchase/bankList')}" >银行管理</a></li>
 					<li><a  href="{:U('Home/Purchase/recommenderList')}" >我的推荐</a></li>
@@ -141,9 +141,9 @@
 		<div class="main">
 			<div class="rg-div">
 				<form class="form-horizontal" method="post" action="{:U('Home/Register/new_registerInfo')}" enctype="multipart/form-data">
-					<input type="hidden" name="acnumber" value="{:I('get.acnumber')}" />
+					<!--<input type="hidden" name="acnumber" value="{:I('get.acnumber')}" />
 					<input type="hidden" name="Phone"  value="{:I('get.phoneNumber')}" />
-					<input type="hidden" name="acid" value="{:I('get.acid')}" />
+					<input type="hidden" name="acid" value="{:I('get.acid')}" />-->
 					<div class="form-group" onclick="hiden(this);" style="margin-top: 10px;">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>中文姓:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
@@ -172,6 +172,32 @@
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnFirstName']}</div>
 					</div>
+					
+					
+					
+					
+					<div class="form-group" onclick="hiden(this);"> 
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>手机区号:</label>
+						<div class="col-lg-10 col-md-10 col-xs-8">
+							<input type="hidden" name="acid" id="acid" value="" />
+							<select class="form-control" name="acnumber" id="acnumber">
+						    	<foreach name="data" item="v">
+						    		<option  class="opt" value="{$v['acnumber']}" acid="{$v['acid']}" >{$v['name']}</option>						    			
+						    	</foreach>
+						    </select>
+						</div>
+						
+					</div>
+					<div class="form-group" onclick="hiden(this);"> 
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>手机号码:</label>
+						<div class="col-lg-10 col-md-10 col-xs-8">
+							<input type="text" name="Phone" id="phoneNumber" class="form-control" placeholder="请输入手机号码" aria-describedby="basic-addon1" oninput="getAcid();">	
+						</div>
+					</div>
+					
+					
+					
+					
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>密码:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
@@ -187,9 +213,12 @@
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err" id="judgePassword2">{$error['ConfirmPassWord']}</div>
 					</div>
+
+
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>推荐人姓名:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
+							<input type="hidden" name="teamCode" value="">
 							<input type="text" class="form-control" name="EnrollerNameCn" disabled="disabled" value="{$Think.session.user.name_cn}">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnrollerID']}</div>
@@ -431,21 +460,21 @@
 	$(document).ready(function(){
 	
 	   $(".commonHead").load("../Purchase/commonHead.html");
-	   $.ajax({
-			type:"post",
-			url:"inCode",
-			async:false,
-			dataType:'json',
-			data:{
-				
-			},
-			success:function(ret){
-				window.onload.href="ret.callback";
-				$("input[name='Phone']").val(ret.phoneNumber);
-		  		$("input[name='acnumber']").val(ret.acnumber);
-		  		$("input[name='acid']").val(ret.acid);	
-			}
-		});
+//	   $.ajax({
+//			type:"post",
+//			url:"inCode",
+//			async:false,
+//			dataType:'json',
+//			data:{
+//				
+//			},
+//			success:function(ret){
+//				window.onload.href="ret.callback";
+//				$("input[name='Phone']").val(ret.phoneNumber);
+//		  		$("input[name='acnumber']").val(ret.acnumber);
+//		  		$("input[name='acid']").val(ret.acid);	
+//			}
+//		});
 	});
 	var i=1;
     function showSetting(){
@@ -489,7 +518,11 @@
 				list[0].innerText='';
 			}
 			
-		} 
+		}
+		function getAcid(){
+			var acid=$("#acnumber").find("option:selected").attr("acid");
+			$("input[name='acid']").val(acid);
+		}
 		$("input[name='EnrollerID']").blur(function(){
 			var EnrollerID=$("input[name='EnrollerID']").val();
 			
@@ -506,6 +539,7 @@
 //				console.log(data);
 				if(data!==null){
 					$("input[name='EnrollerNameCn']").val(data.lastname+data.firstname);
+					$("input[name='teamCode']").val(data.teamcode);
 				}else{
 					$("input[name='EnrollerNameCn']").val("请输入正确的推荐人ID！");
 				}
