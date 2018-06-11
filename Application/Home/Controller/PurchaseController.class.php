@@ -326,6 +326,68 @@ class PurchaseController extends HomeBaseController{
         }
 	}
 
+    //购买产品IPS支付
+    public function ipsPayment(){
+        //订单号
+        $ir_receiptnum  = I('post.ir_receiptnum')?I('post.ir_receiptnum'):date('YmdHis').rand(10000, 99999);
+        //用户iuid
+        $iuid           = I('post.iuid');
+        //订单信息查询
+        $order          = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
+
+        // wsdl模式访问wsdl程序
+        $client = new \SoapClient("https://pay.hkipsec.com/webservice/GetQRCodeWebService.asmx?wsdl",
+            array(
+                'trace' => true,
+                'exceptions' => true,
+                'stream_context'=>stream_context_create(array('ssl' => array('verify_peer'=>false,
+                        'verify_peer_name'  => false,
+                        'allow_self_signed' => true,
+                        'cache_wsdl' => WSDL_CACHE_NONE,
+                        )
+                    )
+                )
+            ));
+
+        $merchantcert = "GB30j0XP0jGZPVrJc6G69PCLsmPKNmDiISNvrXc0DB2c7uLLFX9ah1zRYHiXAnbn68rWiW2f4pSXxAoX0eePDCaq3Wx9OeP0Ao6YdPDJ546R813x2k76ilAU8a3m8Sq0";
+
+        try{
+            $merAccNo       = "E0001904";
+            $orderId        = $ir_receiptnum;
+            $fee_type       = "CNY";
+            $amount         = $order['ir_price'];
+            $goodsInfo      = "Nulife Product";
+            $strMerchantUrl = "http://apps.nulifeshop.com/nulifeshop/index.php/Home/api/getResponse";
+            $cert           = $merchantcert;
+            $signMD5        = "merAccNo".$merAccNo."orderId".$orderId."fee_type".$fee_type."amount".$amount."goodsInfo".$goodsInfo."strMerchantUrl".$strMerchantUrl."cert".$cert;
+            $signMD5_lower  = strtolower(md5($signMD5));
+
+            $para = array(
+                'merAccNo'      => $merAccNo,
+                'orderId'       => $orderId,
+                'fee_type'      => $fee_type,
+                'amount'        => $amount,
+                'goodsInfo'     => $goodsInfo,
+                'strMerchantUrl'=> $strMerchantUrl,
+                'signMD5'       => $signMD5_lower
+            );
+
+            $result = $client->GetQRCodeXml($para);
+            //对象操作
+            $xmlstr = $result->GetQRCodeXmlResult;
+            //构造SimpleXMLEliement对象
+            $xml = new \SimpleXMLElement($xmlstr);
+            //微信支付链接
+            $code_url = (string)$xml->code_url;
+            //返回数据
+            $para['code_url'] = $code_url;
+            $this->ajaxreturn($para);
+            
+        }catch(SoapFault $f){
+            echo "Error Message:{$f->getMessage()}";
+        }
+    }
+
 	/**
     * 购买产品畅捷支付
     **/
