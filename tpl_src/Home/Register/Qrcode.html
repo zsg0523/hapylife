@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>礼包详情</title>
+	<title>微信二维码支付</title>
 	<link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
 	<style type="text/css">
 		body,html{margin: 0;padding: 0;width: 100%;}
@@ -64,12 +64,14 @@
 	
 	<div class="main container-fluid ">	
 			<h5 style="color: red;text-align: center;">注:请使用微信扫码支付！！！</h3>
+			<input type="hidden" id="userid" value="{$Think.session.user.id}" />
+			<input type="hidden" id="ir_receiptnum" value="{:I('get.ir_receiptnum')}" />
 			<div class="pageDetial">
 				<div class="icon">
-					<img id="qrcode"  src="{$data.ip_picture_zh}">
+					<img id="qrcode"  src="">
 				</div>
 				<div class="title">
-					<span id="ir_id">订单号：{$data.ip_name_zh}</span>
+					<span id="orderId">订单号：{$data.ip_name_zh}</span>
 					<i id="money">金额：￥{$data.ip_price_rmb}</i>
 				</div>
 			</div>		
@@ -80,26 +82,28 @@
 		$(document).ready(function(){
 		    $.ajax({
 				type:"post",
-				url:"http://apps.hapy-life.com/hapylife/index.php/Home/Register/smsCode",
+				url:"http://apps.hapy-life.com/hapylife/index.php/Home/Register/getQrcode",
 				async:false,
 				dataType:'json',
 				data:{
-					acnumber:acnumber,
-					phoneNumber:phoneNumber
+					iuid:$('#userid').val(),
+					ir_receiptnum:$('#ir_receiptnum').val()
 				},
 				success:function(ret){
-					if(ret.status=='101'){
-						setTimeout(function() { settime(obj) },1000);
-						canClick=false;
+//					alert($('#userid').val());
+//					alert($('#ir_receiptnum').val());
+					if(ret!=null){
+						var url = "http://paysdk.weixin.qq.com/example/qrcode.php?data=" + ret.code_url;   //二维码地址  
+						$('#qrcode').src=url;
+						$('#orderId').text("订单号:"+ret.orderId);
+						$('#money').text("金额:￥"+ret.amount);
 					}else{
-						canClick=true;
-						alert(ret.msg);
+						console.log('空空空');
 					}
 					
 				}
 			});
 		});
-	
    </script>
 </body>
 </html>
