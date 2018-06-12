@@ -90,20 +90,40 @@
 					ir_receiptnum:$('#ir_receiptnum').val()
 				},
 				success:function(ret){
-//					alert($('#userid').val());
-//					alert($('#ir_receiptnum').val());
+					
 					if(ret!=null){
 						var url = "http://paysdk.weixin.qq.com/example/qrcode.php?data=" + ret.code_url;   //二维码地址  
 						$("#qrcode").attr('src',url); 
 						$('#orderId').text("订单号:"+ret.orderId);
 						$('#money').text("金额:￥"+ret.amount);
-					}else{
-						console.log('空空空');
+						setTimeout(function() { judgeOK() },1000);
 					}
 					
 				}
 			});
+			
 		});
+		function judgeOK(){
+			$.ajax({
+				type:"post",
+				url:"http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/checkreceipt",
+				async:false,
+				dataType:'json',
+				data:{
+					ir_receiptnum:$('#ir_receiptnum').val()
+				},
+				success:function(ret){
+					
+					if(ret.status==1){
+						window.location.href="{:U('Home/Purchase/purchase')}";
+					}else{
+						console.log(ret.msg);
+						setTimeout(function() { judgeOK() },1000);
+					}
+					
+				}
+			});
+		}
    </script>
 </body>
 </html>
