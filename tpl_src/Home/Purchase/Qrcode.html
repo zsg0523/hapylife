@@ -115,6 +115,7 @@
 				success:function(ret){
 					
 					if(ret.status==1){
+						console.log(ret.msg);
 						window.location.href="{:U('Home/Purchase/purchase')}";
 					}else{
 						console.log(ret.msg);

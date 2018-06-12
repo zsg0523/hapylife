@@ -492,8 +492,7 @@ class RegisterController extends HomeBaseController{
             $fee_type       = "CNY";
             $amount         = $order['ir_price'];
             $goodsInfo      = "Nulife Product";
-            $strMerchantUrl = "http://apps.nulifeshop.com/nulifeshop/index.php/Home/api/getResponse";
-            $cert           = $merchantcert;
+            $strMerchantUrl = "http://apps.hapy-life.com/hapylife/index.php/Home/Register/getResponse";
             $signMD5        = "merAccNo".$merAccNo."orderId".$orderId."fee_type".$fee_type."amount".$amount."goodsInfo".$goodsInfo."strMerchantUrl".$strMerchantUrl."cert".$cert;
             $signMD5_lower  = strtolower(md5($signMD5));
 
@@ -534,7 +533,7 @@ class RegisterController extends HomeBaseController{
 
         //记录数据
         if($data['billno'] != ""){
-            $add  = M('IbosLog')->add($data);           
+            $add  = M('Log')->add($data);           
         }
         
         //查询订单信息
