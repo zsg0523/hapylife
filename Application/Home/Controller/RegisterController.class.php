@@ -126,14 +126,24 @@ class RegisterController extends HomeBaseController{
     * 返回推荐人姓名
     **/ 
     public function checkName(){
-        $customerid = I('post.EnrollerID');
+        $customerid = strtoupper(trim(I('post.EnrollerID')));
         if($customerid){
-            $data = M('User')->where(array('CustomerID'=>$customerid))->find();  
-            $this->ajaxreturn($data);
+            if(substr($customerid,0,3) == 'HPL'){
+                $data = M('User')->where(array('CustomerID'=>$customerid))->find();
+                $this->ajaxreturn($data); 
+            }else{
+                $key      = "Z131MZ8ZV29H5EQ9LGVH";
+                $url      = "https://signupapi.wvhservices.com/api/Account/ValidateHpl?customerId=".$customerid."&"."key=".$key;
+                $wv       = file_get_contents($url);
+                $data = json_decode($wv,true);
+                $data['lastname'] = $data['lastName'];
+                $data['firstname'] = $data['firstName'];
+                $this->ajaxreturn($data);
+            }
         }else{
             $data['status'] = 0;
             $this->ajaxreturn($data);           
-        }
+        } 
     }
     /**
     * 保存用户资料
@@ -260,7 +270,8 @@ class RegisterController extends HomeBaseController{
         $addlog = M('Log')->add($log);
         if($addlog){
             // $this->success('生成订单成功',U('Home/Register/Qrcode',array('ir_receiptnum'=>$order_num)));
-            $this->success('生成订单成功',U('Home/Register/new_cjPayment',array('ir_receiptnum'=>$order_num)));
+            // $this->success('生成订单成功',U('Home/Register/new_cjPayment',array('ir_receiptnum'=>$order_num)));
+            $this->redirect('Home/Register/new_cjPayment',array('ir_receiptnum'=>$order_num));
         }else{
             $this->error('生成订单失败');
         }
@@ -487,7 +498,7 @@ class RegisterController extends HomeBaseController{
         $merchantcert = "GB30j0XP0jGZPVrJc6G69PCLsmPKNmDiISNvrXc0DB2c7uLLFX9ah1zRYHiXAnbn68rWiW2f4pSXxAoX0eePDCaq3Wx9OeP0Ao6YdPDJ546R813x2k76ilAU8a3m8Sq0";
 
         try{
-            $merAccNo       = "E0001904";
+            $merAccNo       = "E00040";
             $orderId        = $ir_receiptnum;
             $fee_type       = "CNY";
             $amount         = $order['ir_price'];

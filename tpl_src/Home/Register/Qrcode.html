@@ -104,6 +104,7 @@
 			
 		});
 		function judgeOK(){
+			var ir_receiptnum=$('#ir_receiptnum').val();
 			$.ajax({
 				type:"post",
 				url:"http://apps.hapy-life.com/hapylife/index.php/Home/Register/checkreceipt",
@@ -115,20 +116,8 @@
 				success:function(ret){
 					
 					if(ret.status==1){
-						console.log($('#ir_receiptnum').val());
-						$.ajax({
-							type:"post",
-							url:"http://apps.hapy-life.com/hapylife/index.php/Home/Register/new_regsuccess",
-							async:false,
-							dataType:'json',
-							data:{
-								ir_receiptnum:$('#ir_receiptnum').val()
-							},
-							success:function(ret){
-								console.log(ret.msg);
-								console.log($('#ir_receiptnum').val());
-							}
-						});
+						console.log(ret.msg);
+						window.location.href="{:U('Home/Register/new_regsuccess/ir_receiptnum/"+ir_receiptnum+"')}";
 					}else{
 						console.log(ret.msg);
 						setTimeout(function() { judgeOK() },1000);
@@ -136,8 +125,7 @@
 					
 				}
 			});
-		}
-		
+		}	
    </script>
 </body>
 </html>

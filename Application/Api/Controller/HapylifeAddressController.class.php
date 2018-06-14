@@ -51,8 +51,8 @@ class HapylifeAddressController extends HomeBaseController{
                 );
             }
             //添加
-            $data       = M('Address')
-                        ->add($tmp);
+            $result       = M('Address')
+                            ->add($tmp);
             if($data){
                 $data['status'] = 1;
                 $this->ajaxreturn($data);

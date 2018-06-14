@@ -5,7 +5,6 @@ use Common\Controller\HomeBaseController;
 * hapylife控制器
 **/
 class PurchaseController extends HomeBaseController{
-    private $i = 0; // 定义全局变量：最少需要答对题目条数
     /**
     * 
     **/
@@ -319,9 +318,12 @@ class PurchaseController extends HomeBaseController{
         $addlog = M('Log')->add($log);
         // 设置session时间
         if($addlog){
-            // $this->success('下单成功,前往支付页面',U('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num)));
-            $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num));
-            // $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$order_num));
+            if($product['ip_type'] == 1){
+
+                $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num));
+            }else{
+                $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$order_num));
+            }
         }else{
             $this->error('订单生成失败');
         }
@@ -353,7 +355,7 @@ class PurchaseController extends HomeBaseController{
         $merchantcert = "GB30j0XP0jGZPVrJc6G69PCLsmPKNmDiISNvrXc0DB2c7uLLFX9ah1zRYHiXAnbn68rWiW2f4pSXxAoX0eePDCaq3Wx9OeP0Ao6YdPDJ546R813x2k76ilAU8a3m8Sq0";
 
         try{
-            $merAccNo       = "E0001904";
+            $merAccNo       = "E00040";
             $orderId        = $ir_receiptnum;
             $fee_type       = "CNY";
             $amount         = $order['ir_price'];
@@ -399,7 +401,7 @@ class PurchaseController extends HomeBaseController{
 
         //记录数据
         if($data['billno'] != ""){
-            $add  = M('IbosLog')->add($data);           
+            $add  = M('Log')->add($data);           
         }
         
         //查询订单信息
