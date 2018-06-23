@@ -313,7 +313,6 @@ class HapylifeRegisterController extends HomeBaseController{
     }
 
     //购买产品畅捷返回结果
-    //购买产品畅捷返回结果
     public function new_notifyVerify(){
         //I('post')，$_POST 无法获取API post过来的字符串数据
         $jsonStr = file_get_contents("php://input");
@@ -461,6 +460,114 @@ class HapylifeRegisterController extends HomeBaseController{
         }
     }
 
+    //购买产品IPS支付
+    public function ipsPayment(){
+        //订单号
+        $ir_receiptnum  = I('post.ir_receiptnum')?I('post.ir_receiptnum'):date('YmdHis').rand(10000, 99999);
+        //用户iuid
+        $iuid           = I('post.iuid');
+        //订单信息查询
+        $order          = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
+
+        // wsdl模式访问wsdl程序
+        $client = new \SoapClient("https://pay.hkipsec.com/webservice/GetQRCodeWebService.asmx?wsdl",
+            array(
+                'trace' => true,
+                'exceptions' => true,
+                'stream_context'=>stream_context_create(array('ssl' => array('verify_peer'=>false,
+                        'verify_peer_name'  => false,
+                        'allow_self_signed' => true,
+                        'cache_wsdl' => WSDL_CACHE_NONE,
+                        )
+                    )
+                )
+            ));
+
+        $merchantcert = "GB30j0XP0jGZPVrJc6G69PCLsmPKNmDiISNvrXc0DB2c7uLLFX9ah1zRYHiXAnbn68rWiW2f4pSXxAoX0eePDCaq3Wx9OeP0Ao6YdPDJ546R813x2k76ilAU8a3m8Sq0";
+
+        try{
+            $merAccNo       = "E00040";
+            $orderId        = $ir_receiptnum;
+            $fee_type       = "CNY";
+            $amount         = $order['ir_price'];
+            $goodsInfo      = "Nulife Product";
+            $strMerchantUrl = "http://apps.hapy-life.com/hapylife/index.php/Api/HapylifeRegister/getResponse";
+            $cert           = $merchantcert;
+            $signMD5        = "merAccNo".$merAccNo."orderId".$orderId."fee_type".$fee_type."amount".$amount."goodsInfo".$goodsInfo."strMerchantUrl".$strMerchantUrl."cert".$cert;
+            $signMD5_lower  = strtolower(md5($signMD5));
+
+            $para = array(
+                'merAccNo'      => $merAccNo,
+                'orderId'       => $orderId,
+                'fee_type'      => $fee_type,
+                'amount'        => $amount,
+                'goodsInfo'     => $goodsInfo,
+                'strMerchantUrl'=> $strMerchantUrl,
+                'signMD5'       => $signMD5_lower
+            );
+
+            $result = $client->GetQRCodeXml($para);
+            //对象操作
+            $xmlstr = $result->GetQRCodeXmlResult;
+            //构造SimpleXMLEliement对象
+            $xml = new \SimpleXMLElement($xmlstr);
+            //微信支付链接
+            $code_url = (string)$xml->code_url;
+            //返回数据
+            $para['code_url'] = $code_url;
+            $this->ajaxreturn($para);
+            
+        }catch(SoapFault $f){
+            echo "Error Message:{$f->getMessage()}";
+        }
+    }
+
+    /**
+    * 支付成功订单状态修改
+    * @param ir_status 0待付款 1待审核 2已支付待发货 3已发货待收货 4已收货待评价 5已评价完成 6审核未通过
+    **/
+    public function getResponse(){
+        //获取ips回调数据
+        $data = I('post.');
+
+        //记录数据
+        if($data['billno'] != ""){
+            $add  = M('Log')->add($data);           
+        }
+        
+        //查询订单信息
+        $order = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->find();
+
+        //支付返回数据验证,是否支付成功验证
+        if($data['succ'] == 'Y'){
+            //签名验证
+            //订单数量&订单金额
+            if($data['amount'] == $order['ir_price']){                
+                //修改订单状态
+                $map = array(
+                    'ir_paytype' =>1,
+                    'ir_status'  =>2,
+                    'update_time'=>time()
+                );
+                $change_orderstatus = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->save($map);
+
+                if($change_orderstatus){
+                    $data['status'] = 1;
+                    $this->ajaxreturn($data);
+                }else{
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data);
+                }
+            }else{
+                $data['status'] = 0;
+                $this->ajaxreturn($data);
+            }
+        }else{
+            $data['status'] = 0;
+            $this->ajaxreturn($data);
+        }
+    }
+
 
     /**
     * 购买产品订单状态查询
@@ -490,6 +597,42 @@ class HapylifeRegisterController extends HomeBaseController{
         $ir_receiptnum = I('post.ir_receiptnum');
         $data = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum,'ir_status'=>2))->find();
         $this->ajaxreturn($data);
+    }
+
+    /**
+    * 返回推荐人姓名
+    **/ 
+    public function checkName(){
+        $customerid = strtoupper(trim(I('post.EnrollerID')));
+        if($customerid){
+            if(substr($customerid,0,3) == 'HPL'){
+                $data = M('User')->where(array('CustomerID'=>$customerid))->find();
+                if($data){
+                    $data['status'] = 1;
+                    $this->ajaxreturn($data); 
+                }else{
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data);
+                }
+            }else{
+                $key      = "Z131MZ8ZV29H5EQ9LGVH";
+                $url      = "https://signupapi.wvhservices.com/api/Account/ValidateHpl?customerId=".$customerid."&"."key=".$key;
+                $wv       = file_get_contents($url);
+                $data = json_decode($wv,true);
+                $data['lastname'] = $data['lastName'];
+                $data['firstname'] = $data['firstName'];
+                if($data){
+                    $data['status'] = 1;
+                    $this->ajaxreturn($data); 
+                }else{
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data);
+                }
+            }
+        }else{
+            $data['status'] = 0;
+            $this->ajaxreturn($data);           
+        } 
     }
     /*********************************************************************普通注册********************************************************************************************/  
     /**
@@ -524,81 +667,84 @@ class HapylifeRegisterController extends HomeBaseController{
                     $data[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
                 }
             }
-            $data['status'] = 200;
-            $data['message']= '未提交任何数据';
+            // $data['status'] = 200;
+            // $data['message']= '未提交任何数据';
             $this->ajaxreturn($data);
         }else{
             $data = I('post.');
-            $User = D("User1"); // 实例化User对象
-            if (!$User->create($data)){
-                 // 如果创建失败 表示验证没有通过 输出错误提示信息
-                $error = $User->getError();
+            if(!empty($data['JustIdcard'])){
+                $img_body1 = substr(strstr($data['JustIdcard'],','),1);
+                $JustIdcard = time().'_'.mt_rand().'.jpg';
+                $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
+                $data['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
+            }
+            if(!empty($data['BackIdcard'])){
+                $img_body2 = substr(strstr($data['BackIdcard'],','),1);
+                $BackIdcard = time().'_'.mt_rand().'.jpg';
+                $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
+                $data['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
+            }
+            $data['PassWord'] = I('PassWord','','md5');
+            $data['JoinedOn'] = time();
+            $data['CustomerID'] = strtoupper($data['CustomerID']);
+            $keyword= 'HPL';
+            $custid = D('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
+            if(empty($custid)){
+                $CustomerID = 'HPL00000001';
             }else{
-                 // 验证通过 可以进行其他数据操作
-                if($User->create($data)){
-                    if(!empty($data['JustIdcard'])){
-                        $img_body1 = substr(strstr($data['JustIdcard'],','),1);
-                        $JustIdcard = time().'_'.mt_rand().'.jpg';
-                        $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
-                        $data['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
-                    }
-                    if(!empty($data['BackIdcard'])){
-                        $img_body2 = substr(strstr($data['BackIdcard'],','),1);
-                        $BackIdcard = time().'_'.mt_rand().'.jpg';
-                        $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
-                        $data['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
-                    }
-                    $data['PassWord'] = md5($data['PassWord']);
-                    $data['JoinedOn'] = time();
-                    $data['CustomerID'] = strtoupper($data['CustomerID']);
-                    $keyword= 'HPL';
-                    $custid = D('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
-                    if(empty($custid)){
-                        $CustomerID = 'HPL00000001';
-                    }else{
-                        $num   = substr($custid,3);
-                        $nums  = $num+1;
-                        $count = strlen($nums);
-                        switch ($count) {
-                            case '1':
-                                $CustomerID = 'HPL0000000'.$nums;
-                                break;
-                            case '2':
-                                $CustomerID = 'HPL000000'.$nums;
-                                break;
-                            case '3':
-                                $CustomerID = 'HPL00000'.$nums;
-                                break;
-                            case '4':
-                                $CustomerID = 'HPL0000'.$nums;
-                                break;
-                            case '5':
-                                $CustomerID = 'HPL000'.$nums;
-                                break;
-                            case '6':
-                                $CustomerID = 'HPL00'.$nums;
-                                break;
-                            case '7':
-                                $CustomerID = 'HPL0'.$nums;
-                                break;
-                            default:
-                                $CustomerID = 'HPL'.$nums;
-                                break;
-                         } 
-                    }
-                    $data['CustomerID'] = $CustomerID;
-                    $result = D('User')->add($data);
-                    if($result){
-                        $sample['status'] = 1;
-                        $this->ajaxreturn($sample);
-                    }
-                }
+                $num   = substr($custid,3);
+                $nums  = $num+1;
+                $count = strlen($nums);
+                switch ($count) {
+                    case '1':
+                        $CustomerID = 'HPL0000000'.$nums;
+                        break;
+                    case '2':
+                        $CustomerID = 'HPL000000'.$nums;
+                        break;
+                    case '3':
+                        $CustomerID = 'HPL00000'.$nums;
+                        break;
+                    case '4':
+                        $CustomerID = 'HPL0000'.$nums;
+                        break;
+                    case '5':
+                        $CustomerID = 'HPL000'.$nums;
+                        break;
+                    case '6':
+                        $CustomerID = 'HPL00'.$nums;
+                        break;
+                    case '7':
+                        $CustomerID = 'HPL0'.$nums;
+                        break;
+                    default:
+                        $CustomerID = 'HPL'.$nums;
+                        break;
+                 } 
+            }
+            $data['CustomerID'] = $CustomerID;
+            $result = D('User')->add($data);
+            if($result){
+                $sample = array(
+                            'status' => 1,
+                            'iuid' => $result
+                        );
+                $this->ajaxreturn($sample);
             }
         }
     }
 
+    // 确认信息页面
+    public function oldregisterInfo(){
+        $iuid = I('post.iuid');
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
+        $userinfo['status'] = 1;
+        $this->ajaxreturn($userinfo);
+    }
+
+
     // 注册成功显示页面
-    public function regsuccess(){
+    public function oldregSuccess(){
         $iuid = I('post.iuid');
         $data = D('User')->where(array('iuid'=>$iuid))->find();
         if($data){
