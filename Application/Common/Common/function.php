@@ -2731,3 +2731,13 @@ function rsaVerify($postData)
         return "true";
     }
 }
+/**去掉字符串前后所有空格*/
+function trimall($str)//删除空格
+{   
+    $oldchar=array(" ","　","\t","\n","\r");
+
+    $newchar=array("","","","","");
+
+    return str_replace($oldchar,$newchar,$str);
+
+}

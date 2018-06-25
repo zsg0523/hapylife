@@ -138,6 +138,10 @@ class HapylifeRegisterController extends HomeBaseController{
                 $data['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
             }
             $data['EnrollerID'] = strtoupper(I('post.EnrollerID'));
+            $data['LastName'] = trimall(I('post.LastName'));
+            $data['FirstName'] = trimall(I('post.FirstName'));
+            $data['EnLastName'] = trimall(I('post.EnLastName'));
+            $data['EnFirstName'] = trimall(I('post.EnFirstName'));
             $add = D('Tempuser')->add($data);
             if($add){
                 $data['status'] = 1;
@@ -226,7 +230,7 @@ class HapylifeRegisterController extends HomeBaseController{
             //产品id
             'ipid'         => $product['ipid'],
             //待注册用户id
-            'htid'        => $htid
+            'htid'        => $htid?$htid:0
         );
         $receipt = M('Receipt')->add($order);
         if($receipt){
@@ -486,7 +490,7 @@ class HapylifeRegisterController extends HomeBaseController{
         $merchantcert = "GB30j0XP0jGZPVrJc6G69PCLsmPKNmDiISNvrXc0DB2c7uLLFX9ah1zRYHiXAnbn68rWiW2f4pSXxAoX0eePDCaq3Wx9OeP0Ao6YdPDJ546R813x2k76ilAU8a3m8Sq0";
 
         try{
-            $merAccNo       = "E00040";
+            $merAccNo       = "E000404";
             $orderId        = $ir_receiptnum;
             $fee_type       = "CNY";
             $amount         = $order['ir_price'];
@@ -686,7 +690,11 @@ class HapylifeRegisterController extends HomeBaseController{
             }
             $data['PassWord'] = I('PassWord','','md5');
             $data['JoinedOn'] = time();
-            $data['CustomerID'] = strtoupper($data['CustomerID']);
+            $data['CustomerID'] = strtoupper(I('post.CustomerID'));
+            $data['LastName'] = trimall(I('post.LastName'));
+            $data['FirstName'] = trimall(I('post.FirstName'));
+            $data['EnLastName'] = trimall(I('post.EnLastName'));
+            $data['EnFirstName'] = trimall(I('post.EnFirstName'));
             $keyword= 'HPL';
             $custid = D('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
             if(empty($custid)){
