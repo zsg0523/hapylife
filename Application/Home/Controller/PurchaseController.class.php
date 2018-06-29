@@ -355,7 +355,7 @@ class PurchaseController extends HomeBaseController{
         $merchantcert = "GB30j0XP0jGZPVrJc6G69PCLsmPKNmDiISNvrXc0DB2c7uLLFX9ah1zRYHiXAnbn68rWiW2f4pSXxAoX0eePDCaq3Wx9OeP0Ao6YdPDJ546R813x2k76ilAU8a3m8Sq0";
 
         try{
-            $merAccNo       = "E00040";
+            $merAccNo       = "E000404";
             $orderId        = $ir_receiptnum;
             $fee_type       = "CNY";
             $amount         = $order['ir_price'];
@@ -399,10 +399,9 @@ class PurchaseController extends HomeBaseController{
         //获取ips回调数据
         $data = I('post.');
 
-        //记录数据
-        if($data['billno'] != ""){
-            $add  = M('Log')->add($data);           
-        }
+        //写入日志记录
+        $jsonStr = json_encode($data);
+        $log     = logTest($jsonStr);
         
         //查询订单信息
         $order = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->find();

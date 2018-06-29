@@ -7,52 +7,22 @@ use Common\Controller\HomeBaseController;
 class HapylifeApiController extends HomeBaseController{
 
     public function index(){
-        
+        //检查WV api用户信息
+        $HappyLifeID  = trim(I('post.HappyLifeID'));
+        $Password     = trim(I('post.Password'));
+        $SponsorID    = trim(I('post.SponsorID'));
+        $FirstName_EN = trim(I('post.FirstName_EN'));
+        $LastName_EN  = trim(I('post.LastName_EN'));
+        $EMailAddress = trim(I('post.EMailAddress'));
+        $Phone        = trim(I('post.Phone'));
+        $IPAddress    = trim(I('post.IPAddress'));
+        $Products     = array('RBS','DTP');
+        $key          = "Z131MZ8ZV29H5EQ9LGVH";
+        $url          = "https://signupapi.wvhservices.com/api/Hpl/HplCreateCustomer";
+        $wv           = doCurlPostRequest($url,$data);
+        // $result       = json_decode($wv,true);
+        p($wv);die;
     }
-    /**
-    * 旧用户注册
-    **/
-    // public function oldregister(){
-    //  $data  = I('post.');
- //        //匹配姓、名和CustomerID
-    //  $where= array(
-    //      'LastName'     =>$data['LastName'],
-    //      'FirstName'    =>$data['FirstName'],
-    //      'CustomerID'   =>$data['CustomerID']
-    //  );
-    //  $find = D('User')->where($where)->find();
-    //  if($find){
- //            //正反面身份证
-    //      if(!empty($data['JustIdcard'])){
- //                $img_body1 = substr(strstr($data['JustIdcard'],','),1);
- //                $JustIdcard = time().'_'.mt_rand().'.jpg';
- //                $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
- //                $tmpe['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
- //            }
- //            if(!empty($data['BackIdcard'])){
- //                $img_body2 = substr(strstr($data['BackIdcard'],','),1);
- //                $BackIdcard = time().'_'.mt_rand().'.jpg';
- //                $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
- //                $tmpe['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
- //            }
-    //      $tmpe = array(
-    //          'Phone'     =>$data['Phone'],
-    //          'PassWord'  =>md5($data['PassWord'])
-    //      );
-    //      $data['iuid'] = $find['iuid'];
-    //      $save = D('User')->where($where)->save($tmpe);
-    //      if($save){
-    //          $data['status'] = 1;
-    //          $this->ajaxreturn($data);               
-    //      }else{
-    //          $data['status'] = 0;
-    //          $this->ajaxreturn($data);
-    //      }
-    //  }else{
-    //      $data['status'] = 0;
-    //      $this->ajaxreturn($data);
-    //  }
-    // }
 
     /**
     * 用户注册LastName FirstName EnrollerID Email PassWord Phone JustIdcard BackIdcard Sex
