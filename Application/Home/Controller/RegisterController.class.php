@@ -565,7 +565,7 @@ class RegisterController extends HomeBaseController{
                     'ir_status'  =>2,
                     'ir_paytime'=>time(),
                     'ips_trade_no' => $data['ipsbillno'],
-                    'ips_trade_status' => $data['succ']
+                    'ips_trade_status' => $data['msg']
                 );
                 $change_orderstatus = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->save($map);
 
