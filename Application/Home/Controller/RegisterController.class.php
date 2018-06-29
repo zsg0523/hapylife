@@ -173,6 +173,10 @@ class RegisterController extends HomeBaseController{
     				$data['BackIdcard']=C('WEB_URL').$upload['name'][1];
     			}
                 $data['EnrollerID'] = strtoupper(I('post.EnrollerID'));
+                $data['LastName'] = trimall(I('post.LastName'));
+                $data['FirstName'] = trimall(I('post.FirstName'));
+                $data['EnLastName'] = trimall(I('post.EnLastName'));
+                $data['EnFirstName'] = trimall(I('post.EnFirstName'));
                 $add = D('Tempuser')->add($data);
                 if($add){
     		        $this->assign('userinfo',$data);
@@ -455,7 +459,7 @@ class RegisterController extends HomeBaseController{
                         'ir_status'  =>2,
                         'rCustomerID'=>$CustomerID,
                         'riuid'      =>$userinfo['iuid'],
-                        'ir_paytype' =>1,
+                        'ir_paytype' =>4,
                         'ir_paytime' =>time(),
                         'ia_name'    =>$userinfo['lastname'].$userinfo['firstname'],
                         'ia_name_en' =>$userinfo['enlastname'].$userinfo['enfirstname'],
@@ -498,7 +502,7 @@ class RegisterController extends HomeBaseController{
         $merchantcert = "GB30j0XP0jGZPVrJc6G69PCLsmPKNmDiISNvrXc0DB2c7uLLFX9ah1zRYHiXAnbn68rWiW2f4pSXxAoX0eePDCaq3Wx9OeP0Ao6YdPDJ546R813x2k76ilAU8a3m8Sq0";
 
         try{
-            $merAccNo       = "E00040";
+            $merAccNo       = "E000404";
             $orderId        = $ir_receiptnum;
             $fee_type       = "CNY";
             $amount         = $order['ir_price'];
@@ -559,13 +563,40 @@ class RegisterController extends HomeBaseController{
                 $map = array(
                     'ir_paytype' =>1,
                     'ir_status'  =>2,
-                    'update_time'=>time()
+                    'ir_paytime'=>time(),
+                    'ips_trade_no' => $data['ipsbillno'],
+                    'ips_trade_status' => $data['succ']
                 );
                 $change_orderstatus = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->save($map);
 
                 if($change_orderstatus){
-                    $data['status'] = 1;
-                    $this->ajaxreturn($data);
+                    $OrderDate         = date("Y-m-d",strtotime("-1 month",time()));
+                    $activa = $OrderDate;
+                    $day    = date('d',strtotime($OrderDate));
+                    if($day>=28){
+                        $allday = 28;
+                    }else{
+                        $allday = $day;
+                    }
+                    $ddd = $allday-1;
+                    if($ddd>=10){
+                        $oneday = $ddd;
+                    }else{
+                        $oneday = '0'.$ddd;
+                    }
+                    //添加激活
+                    $time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
+                    $year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
+                    $endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
+                    $where =array('iuid'=>$order['riuid'],'ir_receiptnum'=>$order['ir_receiptnum'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
+                    $save  = M('Activation')->add($where);
+                    if($save){
+                        $data['status'] = 1;
+                        $this->ajaxreturn($data);
+                    }else{
+                        $data['status'] = 0;
+                        $this->ajaxreturn($data);
+                    }
                 }else{
                     $data['status'] = 0;
                     $this->ajaxreturn($data);
@@ -683,6 +714,10 @@ class RegisterController extends HomeBaseController{
                     $data['PassWord'] = md5($data['PassWord']);
                     $data['JoinedOn'] = time();
                     $data['CustomerID'] = strtoupper($data['CustomerID']);
+                    $data['LastName'] = trimall(I('post.LastName'));
+                    $data['FirstName'] = trimall(I('post.FirstName'));
+                    $data['EnLastName'] = trimall(I('post.EnLastName'));
+                    $data['EnFirstName'] = trimall(I('post.EnFirstName'));
                     $keyword= 'HPL';
                     $custid = D('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
                     if(empty($custid)){

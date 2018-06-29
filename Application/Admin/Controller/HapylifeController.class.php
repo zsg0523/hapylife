@@ -693,5 +693,160 @@ class HapylifeController extends AdminBaseController{
 		}
 	}
 
+	/*****************************************************************送货单管理******************************************************************/
+	//送货单列表
+	public function sendReceipt(){
+		$mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
+        foreach ($mape as $key => $value) {
+            $code[$key]         = $value;
+            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
+            	$code[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+            }else{
+            	$code[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+            }
+        }
+		//0未支付 1待审核 2已支付 3已发货 4已到达
+		$order_status = I('get.status')-1;
+		if($order_status== -1){
+			//所有订单
+			$status = '2,3,4,5';
+		}else{
+			$status = (string)$order_status;
+		}
+		$excel     = I('get.excel');
+		$word      = trim(I('get.word',''));
+		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
 
+		$assign    = D('Receipt')->getSendPage(D('Receipt'),$word,$starttime,$endtime,$status,$order='ir_paytime desc');
+		// p($assign);
+		// die;
+		// 导出excel
+		if($excel == 'excel'){
+			$data = D('Receipt')->getAllSendData(D('Receipt'),$word,$starttime,$endtime,$status,$order='ir_paytime desc');
+			// p($data);die;
+			$export_send_excel = D('Receipt')->export_send_excel($data);
+		}else{
+			$this->assign($assign);
+			$this->assign('status',I('get.status'));
+			$this->assign('word',$word);
+			$this->assign('starttime',I('get.starttime'));
+			$this->assign('endtime',I('get.endtime'));
+			$this->assign('code',$code);
+			$this->display();
+		}
+	}
+
+
+	/**
+	* 送货单核对
+	**/
+	public function send(){
+		$irid      = trim(I('get.id'));
+		$ir_status = trim(I('get.ir_status'));
+		$data      = M('Receipt')->where(array('irid'=>$irid))->find();
+		$userinfo  = M('User')->where(array('iuid'=>$data['riuid']))->find();
+        switch ($ir_status) {
+            case '2':
+                $ir_status = 3;
+                $map  = array(
+					'irid'       =>$irid,
+					'ir_status'  =>$ir_status,
+					'send_time'  =>time()
+                );
+                $save = M('Receipt')->save($map);
+                //日志记录
+                $content = '单号:'.$data['ir_receiptnum'].',确认发货';
+                $add = addLog($data['riuid'],$content,$action=3,$type=2);
+                break;
+            case '3':
+                $ir_status = 4;
+                $map  = array(
+                    'irid'  =>$irid,
+                    'ir_status'=>$ir_status,
+                    'receive_time'  =>time()
+                );
+                $save = M('Receipt')->save($map);
+                
+                //日志记录
+                $content = '单号:'.$data['ir_receiptnum'].',确认送达';
+                $add     = addLog($data['riuid'],$content,$action=3,$type=2);
+                break;
+        }
+        
+        if($save){
+            redirect($_SERVER['HTTP_REFERER']);
+        }else{
+            $this->error("确认失败");
+        }
+
+	}
+
+
+	// 发送短信
+	public function send_sms(){
+		$data = I('post.');
+
+		$issend = I('post.is_send');
+		$issends = I('post.is_sends');
+		$name = I('post.username');
+		$productnams = I('post.productnams');
+		$time = I('post.endtime');
+		
+		if(!empty($issend)){
+			// 发送续费短信
+			$spotemplate = 146228;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
+			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
+			$spoparams = array($name,$productnams);
+		}
+		if(!empty($issends)){
+			$spotemplate = 146227;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
+			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
+			// 发送物流短信
+			$spoparams = array($name,$time);
+		}
+
+        $sponsorSms    = D('Smscode')->sms($appid='1400096409',$appkey='fc1c7e21ab36fef1865b0a3110709c51',$data['phone'],$data['acnumber'],$spotemplate,$sposmsSign,$spoparams);
+        
+        if($sponsorSms['errmsg']=='OK'){
+        	if(!empty($issend)){
+        		$is_send['is_send'] = 2;
+				$result = M('Receipt')->where(array('irid'=>$data['irid']))->save($is_send);
+				if($result){
+	        		$mape  = array(
+	                    'phone'   =>$data['phone'],
+	                    'content'    =>'亲爱的会员'.$name.'，您购买的'.$productnams.'物流信息出现问题，我们会有电话通知您，请留意接听。',
+	                    'acnumber'=>$data['acnumber'],
+	                    'date'    =>date('Y-m-d H:i:s')
+	                );
+	                $add = D('Smscode')->add($mape);
+	                if($add){
+						$this->success('发送成功',U('Admin/Hapylife/sendReceipt'));
+	                }else{
+	                	$this->error('发送失败',U('Admin/Hapylife/sendReceipt'));
+	                }
+	        	}
+        	}
+        	if(!empty($issends)){
+        		$is_send['is_sends'] = 2;
+				$result = M('Receipt')->where(array('irid'=>$data['irid']))->save($is_send);
+				if($result){
+					$mape  = array(
+	                    'phone'   =>$data['phone'],
+	                    'content'    =>'亲爱的会员'.$name.'，这是系统提醒消息，请在'.$time.'之前购买月费包。',
+	                    'acnumber'=>$data['acnumber'],
+	                    'date'    =>date('Y-m-d H:i:s')
+	                );
+	                $add = D('Smscode')->add($mape);
+	                if($add){
+						$this->success('发送成功',U('Admin/Hapylife/sendReceipt'));
+	                }else{
+	                	$this->error('发送失败',U('Admin/Hapylife/sendReceipt'));
+	                }
+				}
+        	}
+        }else{
+            $this->error('发送失败',U('Admin/Hapylife/sendReceipt'));
+        }
+	}
 }

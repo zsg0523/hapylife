@@ -415,7 +415,9 @@ class PurchaseController extends HomeBaseController{
                 $map = array(
                     'ir_paytype' =>1,
                     'ir_status'  =>2,
-                    'update_time'=>time()
+                    'update_time'=>time(),
+                    'ips_trade_no' => $data['ipsbillno'],
+                    'ips_trade_status' => $data['succ']
                 );
                 $change_orderstatus = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->save($map);
 
