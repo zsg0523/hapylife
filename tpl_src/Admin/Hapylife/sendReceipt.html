@@ -1,0 +1,397 @@
+<extend name="Public:base" />
+
+<block name="title">订单管理</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            首页
+            &gt;
+            Hapylife
+            &gt;
+			送货单管理
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+	            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+				    <li>
+				    	<form action="{:U('Admin/Hapylife/sendReceipt')}" method="get">
+				    		<select name="status">
+				    			<option <?php if($status == 0)echo "selected";?>  value="0">所有</option>
+				    			<option <?php if($status == 3)echo "selected";?>  value="3">已支付待发货</option>
+				    			<option <?php if($status == 4)echo "selected";?>  value="4">已发货待收货</option>
+				    			<option <?php if($status == 5)echo "selected";?>  value="5">已完成</option>
+				    		</select>
+				    		<input type="text" name='starttime' value="{$starttime}" placeholder="起始时间,年-月-日">
+					    	<input type="text" name='endtime'   value="{$endtime}" placeholder="结束时间,年-月-日">
+	                        <input name="word" type="text" placeholder="关键词" value="{$word}" size="20" />
+	                        <input class='btn btn-sm' type="submit" value="筛选" />
+	                        <input class='btn btn-sm' type="submit" name='excel' value="excel" />
+	                	</form>
+				    </li>
+	            </ul>
+		</div>
+            <div class="tab-content">
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<tr>
+						<th >订单编号</th>
+						<th >畅捷订单号</th>
+						<th >畅捷订单状态</th>
+						<th >账号</th>
+						<th >姓名</th>
+						<!-- <th >团队标签</th> -->
+                        <th >总金额</th>
+                        <th >总积分</th>
+                        <th >支付类型</th>
+                        <th >商品 * 数量</th>
+                        <th >商品编号</th>
+                        <th >备注</th>
+                        <th >状态</th>
+                        <th >收货人</th>
+                        <th >收货电话</th>
+                        <th >收货地址</th>
+                        <!-- <th >是否送货</th> -->
+                        <th >创建日期</th>
+                        <th >支付日期</th>
+                        <th >发货日期</th>
+                        <th >送达日期</th>
+                        <th >确认发货</th>
+                        <th >确认送达</th>
+                        <th>发送物流短信</th>
+                        <th>发送续费短信</th>
+                        <!-- <th >查询360</th> -->
+						<!-- <th >操作</th> -->
+					</tr>
+					<foreach name="data" item="v">
+						<tr>
+							<td>{$v['ir_receiptnum']}</td>
+							<td>{$v['inner_trade_no']}</td>
+							<td>{$v['trade_status']}</td>
+							<td>{$v['rcustomerid']}</td>
+							<td>{$v['lastname']}{$v['firstname']}</td>
+							<!-- <td>{$v['teamcode']}</td> -->
+							<td>{$v['ir_price']}</td>
+							<td>{$v['ir_point']}</td>
+							<td>
+								<if 	condition="$v['ir_paytype'] eq 0">未支付
+                                <elseif condition="$v['ir_paytype'] eq 1"/>微信支付
+                                <elseif condition="$v['ir_paytype'] eq 2"/>积分支付
+                                <elseif condition="$v['ir_paytype'] eq 3"/>单据转账
+                                <elseif condition="$v['ir_paytype'] eq 4"/>畅捷支付
+                                </if>
+							</td>
+							<td>{$v['productname']}</td>
+							<td>{$v['productno']}</td>
+							<td>{$v['ir_desc']}</td>
+							<td>
+								<if 	condition="$v['ir_status'] eq 0">待付款
+                                <elseif condition="$v['ir_status'] eq 1"/>待审核
+                                <elseif condition="$v['ir_status'] eq 2"/>已支付
+                                <elseif condition="$v['ir_status'] eq 3"/>已发货
+                                <elseif condition="$v['ir_status'] eq 4"/>已送到
+                                <else />已评价
+                                </if>
+							</td>
+							<td>{$v['ia_name']}</td>
+							<td>{$v['ia_phone']}</td>
+							<td>{$v['ia_address']}</td>
+							<!-- <td>
+								<if 	condition="$v['is_delivery'] eq 0">不送货
+                                <elseif condition="$v['is_delivery'] eq 1"/>送货
+                                </if>
+							</td> -->
+							<td>{:date('Y-m-d h:i:s',$v['ir_date'])}</td>
+							<td>
+								<if condition="$v['ir_date'] eq 0">
+								<else/>{:date('Y-m-d H:i:s',$v['ir_paytime'])}
+								</if>
+							</td>
+							<td>
+								<if condition="$v['send_time'] eq 0">
+								<else/>{:date('Y-m-d H:i:s',$v['send_time'])}
+								</if>
+							</td>
+							<td>
+								<if condition="$v['receive_time'] eq 0">
+								<else/>{:date('Y-m-d H:i:s',$v['receive_time'])}
+								</if>
+							</td>
+							<td>
+								<if     condition="$v['ir_status'] eq 2" ><a href="javascript:if(confirm('确定送货？'))location='{:U('Admin/Hapylife/send',array('id'=>$v['irid'],'ir_status'=>$v['ir_status']))}'">確定送货</a>
+								<elseif condition="$v['ir_status'] eq 3"/>待收货
+								<elseif condition="$v['ir_status'] eq 4"/>已送达
+								</if>
+							</td>
+							<td>
+								<if condition="$v['ir_status'] eq 2" >待发货
+								<elseif condition="$v['ir_status'] eq 3"/><a href="javascript:if(confirm('确定送达？'))location='{:U('Admin/Hapylife/send',array('id'=>$v['irid'],'ir_status'=>$v['ir_status']))}'">確定送达</a>
+								<elseif condition="$v['ir_status'] eq 4"/>已送达
+								</if>
+							</td>
+							<!-- <td>
+								<a href="{:U('Admin/Hapylife/checkOrder',array('ir_receiptnum'=>$v['ir_360_orderno']))}">查询</a>
+							</td> -->
+							<!-- <td>
+								<a href="javascript:if(confirm('确定删除{$v['hu_username']}的订单？'))location='{:U('Admin/Hapylife/delete_receipt',array('id'=>$v['irid']))}'">删除</a> 
+							</td> -->
+							<if condition="$v['is_send'] eq 2">
+								<td>已发送</td>
+							<else />
+								<td>
+									<a href="javascript:;" onclick="send(this)" irId="{$v['irid']}" Productnams="{$v['productnams']}" userName="{$v['lastname']}{$v['firstname']}" isSend="{$v['is_send']}">发送短信</a>
+								</td>
+							</if>
+							<if condition="$v['is_sends'] eq 2">
+								<td>已发送</td>
+							<else />
+								<td>
+									<a href="javascript:;" onclick="sends(this)" irId="{$v['irid']}" endTime="{$v['endtime']}" userName="{$v['lastname']}{$v['firstname']}" isSends="{$v['is_sends']}">发送短信</a>
+								</td>
+							</if>
+						</tr>
+					</foreach>
+				</table>
+				<div class='page'>
+					{$page}
+				</div>
+            </div>
+        </div>
+    </div>
+    
+
+	<!-- 查看订单模态框开始 -->
+	<div class="modal fade" id="bjy-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						查看订单
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Hapylife/edit_receipt')}" method="post">
+						<input type="hidden" name="id">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="15%">编号：</th>
+								<td id='Receiptnum'></td>								
+							</tr>
+							<tr>
+                            <th>会员：</th>
+                            <td id='Receiptuser'></td>
+                        </tr>
+                        <tr>
+                            <th>金额：</th>
+                            <td id='Receiptprice'></td>
+                        </tr>
+                        <tr>
+                        	<th>电话：</th>
+                        	<td id="Receiptphone"></td>
+                        </tr>
+                        <tr>
+                            <th>送货地址：</th>
+                            <td>
+                                <input type="text" name="ia_address"  size="50" class="inpMain" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>订单状态：</th>
+                            <td>
+                                <select name="ir_status" id="status">
+                                    <option value="0" >
+                                        待付款
+                                    </option>
+                                    <option value="2" >
+                                        已支付待发货
+                                    </option>
+                                    <option value="3" >
+                                        已发货待收货
+                                    </option>
+                                    <option value="4" >
+                                        已完成
+                                    </option>
+                                </select>               
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>订单备注：</th>
+                            <td id='Receiptdesc'></td>
+                        </tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="修改">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 查看订单模态框结束 -->
+
+	<!-- 添加菜单模态框开始 -->
+	<div class="modal fade" id="bjy-send" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						发送报告
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Hapylife/send_sms')}" method="post" enctype="multipart/form-data">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<input type="hidden" name="irid">
+							<input type="hidden" name="productnams">
+							<input type="hidden" name="username">
+							<input type="hidden" name="is_send">
+							<tr>
+								<th width="15%">号码归属地：</th>
+								<td>
+									<select class="input-medium" name="acnumber" id="acnumber">
+								    	<foreach name="code" item="v">
+								    		<option  class="input-medium" value="{$v['acnumber']}" acid="{$v['acid']}" >{$v['name']}</option>	
+								    	</foreach>
+								    </select>
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">手机号码：</th>
+								<td>
+									<input class="input-medium" type="text" name="phone">
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="发送">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加菜单模态框结束 -->
+
+	<!-- 添加菜单模态框开始 -->
+	<div class="modal fade" id="bjy-sends" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						发送报告
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Hapylife/send_sms')}" method="post" enctype="multipart/form-data">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<input type="hidden" name="irid">
+							<input type="hidden" name="endtime">
+							<input type="hidden" name="username">
+							<input type="hidden" name="is_sends">
+							<tr>
+								<th width="15%">号码归属地：</th>
+								<td>
+									<select class="input-medium" name="acnumber" id="acnumber">
+								    	<foreach name="code" item="v">
+								    		<option  class="input-medium" value="{$v['acnumber']}" acid="{$v['acid']}" >{$v['name']}</option>	
+								    	</foreach>
+								    </select>
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">手机号码：</th>
+								<td>
+									<input class="input-medium" type="text" name="phone">
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="发送">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加菜单模态框结束 -->
+
+</block>
+<block name="js">
+	<script>
+	// 添加菜单
+	function add(){
+		$("input[name='title']").val('');
+		$('#bjy-add').modal('show');
+	}
+
+	// 修改菜单
+	function edit(obj){
+		var receiptId          =$(obj).attr('receiptId');
+		var receiptNum         =$(obj).attr('receiptNum');
+		var receiptDate        =$(obj).attr('receiptDate');
+		var receiptPrice       =$(obj).attr('receiptPrice');
+		var receiptUser        =$(obj).attr('receiptUser');
+		var receiptPhone       =$(obj).attr('receiptPhone');
+		var receiptAddress     =$(obj).attr('receiptAddress');
+		var receiptBankreceipt =$(obj).attr('receiptBankreceipt');
+		var receiptStatus      =$(obj).attr('receiptStatus');
+		var receiptDesc        =$(obj).attr('receiptDesc');
+		Receiptdesc.innerText  =receiptDesc;
+		Receiptnum.innerText   =receiptNum;
+		Receiptuser.innerText  =receiptUser;
+		Receiptphone.innerText =receiptPhone;
+		Receiptprice.innerText =receiptPrice;
+		$("input[name='id']").val(receiptId);
+		$("#bankreceipt").attr("src",receiptBankreceipt);
+		$("#bankpicture").attr("href",receiptBankreceipt);
+		$("input[name='ia_address']").val(receiptAddress);
+		$("select[name='ir_status']").val(receiptStatus);
+		$('#bjy-edit').modal('show');
+	}
+
+
+	// 发送物流短信
+	function send(obj){
+		var irId =$(obj).attr('irId');
+		var Productnams =$(obj).attr('Productnams');
+		var userName =$(obj).attr('userName');
+		var isSend =$(obj).attr('isSend');
+		$("input[name='irid']").val(irId);
+		$("input[name='productnams']").val(Productnams);
+		$("input[name='username']").val(userName);
+		$("input[name='is_send']").val(isSend);
+		$('#bjy-send').modal('show');
+	}
+
+	// 发送会籍到期短信
+	function sends(obj){
+		var irId =$(obj).attr('irId');
+		var endTime =$(obj).attr('endTime');
+		var userName =$(obj).attr('userName');
+		var isSends =$(obj).attr('isSends');
+		$("input[name='irid']").val(irId);
+		$("input[name='endtime']").val(endTime);
+		$("input[name='username']").val(userName);
+		$("input[name='is_sends']").val(isSends);
+		$('#bjy-sends').modal('show');
+	}
+	</script>
+</block>

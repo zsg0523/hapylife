@@ -355,7 +355,7 @@ class PurchaseController extends HomeBaseController{
         $merchantcert = "GB30j0XP0jGZPVrJc6G69PCLsmPKNmDiISNvrXc0DB2c7uLLFX9ah1zRYHiXAnbn68rWiW2f4pSXxAoX0eePDCaq3Wx9OeP0Ao6YdPDJ546R813x2k76ilAU8a3m8Sq0";
 
         try{
-            $merAccNo       = "E0001904";
+            $merAccNo       = "E000404";
             $orderId        = $ir_receiptnum;
             $fee_type       = "CNY";
             $amount         = $order['ir_price'];
@@ -416,7 +416,9 @@ class PurchaseController extends HomeBaseController{
                 $map = array(
                     'ir_paytype' =>1,
                     'ir_status'  =>2,
-                    'update_time'=>time()
+                    'update_time'=>time(),
+                    'ips_trade_no' => $data['ipsbillno'],
+                    'ips_trade_status' => $data['succ']
                 );
                 $change_orderstatus = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->save($map);
 
