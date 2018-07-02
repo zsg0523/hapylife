@@ -318,12 +318,11 @@ class ReceiptModel extends BaseModel{
     * 送货单导出excel
     **/
     public function export_send_excel($data){
-        $title   = array('创建日期','创建时间','用户ID','订单号','畅捷订单号','畅捷订单状态','支付方式','订单状态','产品信息','订单总价','订货人','收货人','收货地址','收货人电话','创建日期','支付日期','发货日期','送达日期');
+        $title   = array('创建日期','创建时间','用户ID','订单号','畅捷订单号','畅捷订单状态','IPS订单号','IPS订单状态','支付方式','订单状态','产品信息','订单总价','订货人','收货人','收货地址','收货人电话','创建日期','支付日期','发货日期','送达日期');
         // p($data);
         foreach ($data as $k => $v) {
             $content[$k]['ir_date']        = date('Y-m-d',$v['ir_date']);
 			$content[$k]['ir_time']        = date('H:i:s',$v['ir_date']);
-			// $content[$k]['customerid']     = $v['customerid'];
 			$content[$k]['rcustomerid']    = $v['rcustomerid'];
 			$content[$k]['ir_receiptnum']  = $v['ir_receiptnum'];
 			$content[$k]['inner_trade_no'] = $v['inner_trade_no'];
