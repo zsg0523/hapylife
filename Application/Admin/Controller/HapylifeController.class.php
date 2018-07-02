@@ -783,27 +783,16 @@ class HapylifeController extends AdminBaseController{
 	}
 
 
-	// 发送短信
+	// 发送物流短信
 	public function send_sms(){
 		$data = I('post.');
-
 		$issend = I('post.is_send');
-		$issends = I('post.is_sends');
-		$name = I('post.username');
-		$productnams = I('post.productnams');
-		$time = I('post.endtime');
 		
 		if(!empty($issend)){
 			// 发送续费短信
 			$spotemplate = 146228;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
 			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
-			$spoparams = array($name,$productnams);
-		}
-		if(!empty($issends)){
-			$spotemplate = 146227;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
-			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
-			// 发送物流短信
-			$spoparams = array($name,$time);
+			$spoparams = array($data['username'],$data['productnams']);
 		}
 
         $sponsorSms    = D('Smscode')->sms($appid='1400096409',$appkey='fc1c7e21ab36fef1865b0a3110709c51',$data['phone'],$data['acnumber'],$spotemplate,$sposmsSign,$spoparams);
@@ -815,11 +804,14 @@ class HapylifeController extends AdminBaseController{
 				if($result){
 	        		$mape  = array(
 	                    'phone'   =>$data['phone'],
-	                    'content'    =>'亲爱的会员'.$name.'，您购买的'.$productnams.'物流信息出现问题，我们会有电话通知您，请留意接听。',
+	                    'content'    =>'亲爱的会员'.$data['username'].'，您购买的'.$data['productnams'].'物流信息出现问题，我们会有电话通知您，请留意接听。',
 	                    'acnumber'=>$data['acnumber'],
-	                    'date'    =>date('Y-m-d H:i:s')
+	                    'date'    =>date('Y-m-d H:i:s'),
+	                    'operator' => $_SESSION['user']['username'],
+	                    'product_name' => $data['productnams'],
+	                    'addressee' => $data['username'],
 	                );
-	                $add = D('Smscode')->add($mape);
+	                $add = D('SmsLog')->add($mape);
 	                if($add){
 						$this->success('发送成功',U('Admin/Hapylife/sendReceipt'));
 	                }else{
@@ -827,26 +819,93 @@ class HapylifeController extends AdminBaseController{
 	                }
 	        	}
         	}
-        	if(!empty($issends)){
-        		$is_send['is_sends'] = 2;
-				$result = M('Receipt')->where(array('irid'=>$data['irid']))->save($is_send);
-				if($result){
-					$mape  = array(
-	                    'phone'   =>$data['phone'],
-	                    'content'    =>'亲爱的会员'.$name.'，这是系统提醒消息，请在'.$time.'之前购买月费包。',
-	                    'acnumber'=>$data['acnumber'],
-	                    'date'    =>date('Y-m-d H:i:s')
-	                );
-	                $add = D('Smscode')->add($mape);
-	                if($add){
-						$this->success('发送成功',U('Admin/Hapylife/sendReceipt'));
-	                }else{
-	                	$this->error('发送失败',U('Admin/Hapylife/sendReceipt'));
-	                }
-				}
-        	}
         }else{
             $this->error('发送失败',U('Admin/Hapylife/sendReceipt'));
+        }
+	}
+
+	// 短信列表
+	public function sends(){
+		$mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
+        foreach ($mape as $key => $value) {
+            $code[$key]         = $value;
+            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
+            	$code[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+            }else{
+            	$code[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+            }
+        }
+       
+		$word      = trim(I('get.word',''));
+		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
+
+		$assign    = D('SmsLog')->getSendPage(D('SmsLog'),$word,$starttime,$endtime,$order='date desc');
+		// p($assign);
+		// die;		
+		$this->assign($assign);
+		$this->assign('word',$word);
+		$this->assign('starttime',I('get.starttime'));
+		$this->assign('endtime',I('get.endtime'));
+		$this->assign('code',$code);
+		$this->display();
+	}
+
+	// 发送短信
+	public function add_sends(){
+		$data = I('post.');
+		if($data['psd'] == 146228){
+			// 物流信息通知
+			$spotemplate = 146228;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
+			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
+			$spoparams = array($data['username'],$data['productnams']);
+		}
+
+		if($data['psd'] == 146227){
+			// 续费信息通知
+			$spotemplate = 146227;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
+			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
+			$spoparams = array($data['username'],$data['endtime']);
+		}
+
+        $sponsorSms    = D('Smscode')->sms($appid='1400096409',$appkey='fc1c7e21ab36fef1865b0a3110709c51',$data['phone'],$data['acnumber'],$spotemplate,$sposmsSign,$spoparams);
+        
+        if($sponsorSms['errmsg']=='OK'){
+        	if($data['psd'] == 146227){
+				$mape  = array(
+                    'phone'   =>$data['phone'],
+                    'content'    =>'亲爱的会员'.$data['username'].'，这是系统提醒消息，请在'.$data['endtime'].'之前购买月费包。',
+                    'acnumber'=>$data['acnumber'],
+                    'date'    =>time(),
+                    'operator' => $_SESSION['user']['username'],
+                    'addressee' => $data['username'],
+                );
+                $add = D('SmsLog')->add($mape);
+                if($add){
+					$this->success('发送成功',U('Admin/Hapylife/sends'));
+                }else{
+                	$this->error('发送失败',U('Admin/Hapylife/sends'));
+                }
+        	}
+    		if($data['psd'] == 146228){
+        		$mape  = array(
+                    'phone'   =>$data['phone'],
+                    'content'    =>'亲爱的会员'.$data['username'].'，您购买的'.$data['productnams'].'物流信息出现问题，我们会有电话通知您，请留意接听。',
+                    'acnumber'=>$data['acnumber'],
+                    'date'    =>time(),
+                    'operator' => $_SESSION['user']['username'],
+                    'product_name' => $data['productnams'],
+                    'addressee' => $data['username'],
+                );
+                $add = D('SmsLog')->add($mape);
+                if($add){
+					$this->success('发送成功',U('Admin/Hapylife/sends'));
+                }else{
+                	$this->error('发送失败',U('Admin/Hapylife/sends'));
+                }
+        	}
+        }else{
+            $this->error('发送失败',U('Admin/Hapylife/sends'));
         }
 	}
 }
