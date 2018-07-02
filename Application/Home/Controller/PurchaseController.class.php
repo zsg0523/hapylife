@@ -576,7 +576,7 @@ class PurchaseController extends HomeBaseController{
 
 			$status  = array(
 				'ir_status'  =>2,
-				'ir_paytype' =>1,
+				'ir_paytype' =>4,
                 'ir_paytime' =>time()
 			);
             //更新订单信息

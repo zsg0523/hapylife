@@ -487,19 +487,22 @@ class HapylifeRegisterController extends HomeBaseController{
                 )
             ));
 
+        //E0001904
         // $merchantcert = "GB30j0XP0jGZPVrJc6G69PCLsmPKNmDiISNvrXc0DB2c7uLLFX9ah1zRYHiXAnbn68rWiW2f4pSXxAoX0eePDCaq3Wx9OeP0Ao6YdPDJ546R813x2k76ilAU8a3m8Sq0";
+        //E000404
         $merchantcert = "1mtfZAJ3sGPc22Vq20LUaJ9Z8w0S8BBP3Jc5uJkwM7v7099nbmwwvVfICu7CkQVGea9JzzVIpzh3xb9YNmRvpp47DtTam7lWCF20aPOBrDgVOCvAL9PXZ91P6bff6U6H";
 
         try{
+             // $merAccNo       = 'E0001904';
             $merAccNo       = "E0004004";
             $orderId        = $ir_receiptnum;
             $fee_type       = "CNY";
             $amount         = $order['ir_price'];
-            $goodsInfo      = "Nulife Product";
-            $strMerchantUrl = "http://apps.hapy-life.com/hapylife/index.php/Api/HapylifeRegister/getResponse";
+            $goodsInfo      = "Product";
+            $strMerchantUrl = "http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/getResponse";
             $cert           = $merchantcert;
             $signMD5        = "merAccNo".$merAccNo."orderId".$orderId."fee_type".$fee_type."amount".$amount."goodsInfo".$goodsInfo."strMerchantUrl".$strMerchantUrl."cert".$cert;
-            $signMD5_lower  = strtolower(md5($signMD5));
+            $signMD5_lower = strtolower(md5($signMD5));
 
             $para = array(
                 'merAccNo'      => $merAccNo,
@@ -511,15 +514,21 @@ class HapylifeRegisterController extends HomeBaseController{
                 'signMD5'       => $signMD5_lower
             );
 
-            $result = $client->GetQRCodeXml($para);
+            $result      = $client->GetQRCodeXml($para);
             //对象操作
-            $xmlstr = $result->GetQRCodeXmlResult;
+            $xmlstr      = $result->GetQRCodeXmlResult;
             //构造SimpleXMLEliement对象
-            $xml = new \SimpleXMLElement($xmlstr);
+            $xml         = new \SimpleXMLElement($xmlstr);
             //微信支付链接
-            $code_url = (string)$xml->code_url;
+            $code_url    = (string)$xml->code_url;
+            $return_code = (string)$xml->return_code;
+            $return_msg  = (string)$xml->return_msg;
+
             //返回数据
             $para['code_url'] = $code_url;
+            $para['return_code'] = $return_code;
+            $para['return_msg'] = $return_msg;
+
             $this->ajaxreturn($para);
             
         }catch(SoapFault $f){

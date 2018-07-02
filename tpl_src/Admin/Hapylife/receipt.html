@@ -46,7 +46,6 @@
 	                        <th >订单备注</th>
 	                        <th >订单状态</th>
 	                        <th >送货地址</th>
-	                        <!-- <th >是否送货</th> -->
 	                        <th >创建日期</th>
 						</tr>
 					<else />
@@ -63,7 +62,6 @@
 	                        <th >收货人</th>
 	                        <th >收货电话</th>
 	                        <th >收货地址</th>
-	                        <!-- <th >是否送货</th> -->
 	                        <th >创建日期</th>
 	                        <th >支付日期</th>
 							<th>操作</th>
@@ -89,11 +87,6 @@
 							<td>{$v['ia_name']}</td>
 							<td>{$v['ia_phone']}</td>
 							<td>{$v.shopprovince}{$v.shopcity}{$v['ia_address']}</td>
-							<!-- <td>
-								<if 	condition="$v['is_delivery'] eq 0">不送货
-                                <elseif condition="$v['is_delivery'] eq 1"/>送货
-                                </if>
-							</td> -->
 							<td>{:date('Y-m-d H:i:s',$v['ir_date'])}</td>
 							<td>
 								<if condition="$v['ir_paytime'] eq 0">
