@@ -23,8 +23,8 @@
 				    			<option <?php if($status == 4)echo "selected";?>  value="4">已发货待收货</option>
 				    			<option <?php if($status == 5)echo "selected";?>  value="5">已完成</option>
 				    		</select>
-				    		<input type="text" name='starttime' value="{$starttime}" placeholder="起始时间,年-月-日">
-					    	<input type="text" name='endtime'   value="{$endtime}" placeholder="结束时间,年-月-日">
+				    		<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
+				    		<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
 	                        <input name="word" type="text" placeholder="关键词" value="{$word}" size="20" />
 	                        <input class='btn btn-sm' type="submit" value="筛选" />
 	                        <input class='btn btn-sm' type="submit" name='excel' value="excel" />
