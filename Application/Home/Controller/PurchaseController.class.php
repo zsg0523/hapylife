@@ -332,7 +332,7 @@ class PurchaseController extends HomeBaseController{
     //购买产品IPS支付
     public function ipsPayment(){
         //订单号
-        $ir_receiptnum  = I('post.ir_receiptnum')?I('post.ir_receiptnum'):date('YmdHis').rand(10000, 99999);
+        $ir_receiptnum  = I('post.ir_receiptnum');
         //用户iuid
         $iuid           = I('post.iuid');
         //订单信息查询
@@ -362,6 +362,7 @@ class PurchaseController extends HomeBaseController{
             $orderId        = $ir_receiptnum;
             $fee_type       = "CNY";
             $amount         = $order['ir_price'];
+            // $amount         = '0.1';
             $goodsInfo      = "Product";
             $strMerchantUrl = "http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/getResponse";
             $cert           = $merchantcert;
@@ -389,10 +390,12 @@ class PurchaseController extends HomeBaseController{
             $return_msg  = (string)$xml->return_msg;
 
             //返回数据
-            $para['code_url'] = $code_url;
+            $para['code_url']    = $code_url;
             $para['return_code'] = $return_code;
-            $para['return_msg'] = $return_msg;
-
+            $para['return_msg']  = $return_msg;
+            //生成二维码
+            $url            = createQrcode(urldecode($code_url),'Upload/avatar/'.$ir_receiptnum.'.png');
+            $para['qrcode'] = C('WEB_URL').'/Upload/avatar/'.$ir_receiptnum.'.png';
             $this->ajaxreturn($para);
             
         }catch(SoapFault $f){

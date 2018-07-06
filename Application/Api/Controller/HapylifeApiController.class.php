@@ -8,20 +8,65 @@ class HapylifeApiController extends HomeBaseController{
 
     public function index(){
         //检查WV api用户信息
-        $HappyLifeID  = trim(I('post.HappyLifeID'));
-        $Password     = trim(I('post.Password'));
-        $SponsorID    = trim(I('post.SponsorID'));
-        $FirstName_EN = trim(I('post.FirstName_EN'));
-        $LastName_EN  = trim(I('post.LastName_EN'));
-        $EMailAddress = trim(I('post.EMailAddress'));
-        $Phone        = trim(I('post.Phone'));
-        $IPAddress    = trim(I('post.IPAddress'));
+        $HappyLifeID  = trim(I('post.happyLifeID'));
+        $Password     = md5(trim(I('post.password')));
+        $SponsorID    = trim(I('post.sponsorID'));
+        $FirstName_EN = trim(I('post.firstName_EN'));
+        $LastName_EN  = trim(I('post.lastName_EN'));
+        $EMailAddress = trim(I('post.emailAddress'));
+        $Phone        = trim(I('post.phone'));
         $Products     = array('RBS','DTP');
         $key          = "Z131MZ8ZV29H5EQ9LGVH";
-        $url          = "https://signupapi.wvhservices.com/api/Hpl/HplCreateCustomer";
-        $wv           = doCurlPostRequest($url,$data);
-        // $result       = json_decode($wv,true);
+        
+        $data         = array(
+                'happyLifeID'  =>$HappyLifeID,
+                'password'     =>$Password,
+                'sponsorID'    =>$SponsorID,
+                'firstName_EN' =>$FirstName_EN,
+                'lastName_EN'  =>$LastName_EN,
+                'emailAddress' =>$EMailAddress,
+                'phone'        =>$Phone,
+                'products'     =>$Products,
+                'key'          =>$key
+        );
+        p(json_encode($data));die;
+        //https://signupapi.wvhservices.com/api/Hpl/HplCreateCustomer
+        //http://192.168.33.10/data/hapylife/index.php/Api/HapylifeApi/index
+        $url           = "https://signupapi.wvhservices.com/api/Hpl/HplCreateCustomer";
+        $wv            = doCurlPostRequest($url,$data);
+        // $result     = json_decode($wv,true);
         p($wv);die;
+    }
+
+    public function hplCreateCustomer(){
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "https://signupapi.wvhservices.com/api/Hpl/HplCreateCustomer",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 30,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "POST",
+          CURLOPT_POSTFIELDS => "{\"happyLifeID\":\"HPL000003\",\"password\":\"25d55ad283aa400af464c76d713c07ad\",\"sponsorID\":\"1234\",\"firstName_EN\":\"test\",\"lastName_EN\":\"test\",\"emailAddress\":\"951095728@qq.com\",\"phone\":\"13242998086\",\"products\":[\"RBS\",\"DTP\"],\"key\":\"Z131MZ8ZV29H5EQ9LGVH\"}",
+          CURLOPT_HTTPHEADER => array(
+            "Cache-Control: no-cache",
+            "Content-Type: application/json",
+            "Postman-Token: be7d743f-ab54-413b-a764-ba30047bb017"
+          ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+          echo "cURL Error #:" . $err;
+        } else {
+          echo $response;
+        }
     }
 
     /**

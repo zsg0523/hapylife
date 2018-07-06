@@ -94,7 +94,7 @@
 							</td>
 							<td>{$v['ia_name']}</td>
 							<td>{$v['ia_phone']}</td>
-							<td>{$v['ia_address']}</td>
+							<td>{$v.shopprovince}{$v.shopcity}{$v.shoparea}{$v['ia_address']}</td>
 							<!-- <td>
 								<if 	condition="$v['is_delivery'] eq 0">不送货
                                 <elseif condition="$v['is_delivery'] eq 1"/>送货
