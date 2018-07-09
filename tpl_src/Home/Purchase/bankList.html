@@ -142,7 +142,7 @@
 							<form name="form" action="{:U('Home/Purchase/bankEdit')}" method="post">
 								<input type="hidden" name="bid" value="{$v['bid']}">
 		  						<!-- <button name="isshow" value="1" type="submit" class="defa" onclick='changeCheck(this);'><input class="sel" type="checkbox" <?php if($v['isshow'] == 1)echo "checked=true;"?> />设为默认地址</button> -->
-		  						<button name="isshow" value="1" type="submit" class="defa" onclick='changeCheck(this);' <?php if($v['isshow'] == 1)echo "disabled='disabled';"?> ><input class="sel" type="checkbox"  <?php if($v['isshow'] == 1)echo "checked=true;"?> />设为默认地址</button>
+		  						<button name="isshow" value="1" type="submit" class="defa" onclick='changeCheck(this);' <?php if($v['isshow'] == 1)echo "disabled='disabled';"?> ><input class="sel" type="checkbox" disabled="disabled"  <?php if($v['isshow'] == 1)echo "checked=true;"?> />设为默认地址</button>
 	  						<button type="button" class="dele" data-bid='{$v['bid']}' data-toggle="modal" data-target="#myModal3">删除</button>
 	  						<button data-bid='{$v['bid']}' data-name='{$v['iu_name']}' data-bankaccount='{$v['bankaccount']}' data-bankname='{$v['bankname']}' data-bankbranch='{$v['bankbranch']}' data-bankprovince='{$v['bankprovince']}' data-banktown='{$v['banktown']}' data-bankregion='{$v['bankregion']}' type="button" class="edit" data-toggle="modal" data-target="#myModal2" >编辑</button>
 		  				</form>
