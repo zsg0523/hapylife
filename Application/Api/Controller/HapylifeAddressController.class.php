@@ -15,13 +15,13 @@ class HapylifeAddressController extends HomeBaseController{
             $this->ajaxreturn($data);
         }else{
             //获取用户iuid,收件人姓名、地址，电话
-            $iuid           = I('post.iuid');
-            $ia_name        = I('post.ia_name');
-            $ia_phone       = I('post.ia_phone');
-            $ia_province       = I('post.ia_province');
-            $ia_town       = I('post.ia_town');
-            $ia_region       = I('post.ia_region');
-            $ia_road       = I('post.ia_road');
+            $iuid           = trimall(I('post.iuid'));
+            $ia_name        = trimall(I('post.ia_name'));
+            $ia_phone       = trimall(I('post.ia_phone'));
+            $ia_province    = trimall(I('post.ia_province'));
+            $ia_town       = trimall(I('post.ia_town'));
+            $ia_region     = trimall(I('post.ia_region'));
+            $ia_road       = trimall(I('post.ia_road'));
 
             $arr  = M('Address')
                   ->where(array('iuid'=>$iuid))
@@ -51,8 +51,8 @@ class HapylifeAddressController extends HomeBaseController{
                 );
             }
             //添加
-            $data       = M('Address')
-                        ->add($tmp);
+            $result       = M('Address')
+                            ->add($tmp);
             if($data){
                 $data['status'] = 1;
                 $this->ajaxreturn($data);
@@ -72,6 +72,29 @@ class HapylifeAddressController extends HomeBaseController{
             $data['status'] = 0;
             $this->ajaxreturn($data);
         }else{
+            $iuids = $_SESSION['user']['id'];
+            // 查询注册信息
+            $userinfo = M('User')->where(array('iuid'=>$iuids))->find(); 
+            // 查询地址表信息
+            $ia_road = M('Address')->where(array('iuid'=>$iuids))->getField('ia_road',true); 
+            
+            if(!in_array($userinfo['shopaddress1'], $ia_road) && $_SESSION['user']['address'] == 0 && !empty($ia_road)){
+               $message = array(
+                        'iuid'            => $userinfo['iuid'],
+                        'ia_name'         => $userinfo['lastname'].$userinfo['firstname'],
+                        'ia_phone'        => $userinfo['phone'],
+                        'ia_province'     => $userinfo['shopprovince'],
+                        'ia_town'         => $userinfo['shopcity'],
+                        'ia_region'       => $userinfo['shoparea'],
+                        'ia_road'         => $userinfo['shopaddress1'],
+                        'is_address_show' => 1
+                    );
+                $result = M('Address')->add($message);
+                if($result){
+                    $_SESSION['user']['address'] = $_SESSION['user']['address'] + 1;
+                }
+            }
+            // p($iuids);
             //获取用户iuid
             $iuid   = I('post.iuid');
             //列表信息
@@ -188,13 +211,13 @@ class HapylifeAddressController extends HomeBaseController{
             $this->ajaxreturn($data);
         }else{
             //收件人姓名、地址，电话,地址id
-            $iaid           = I('post.iaid');
-            $ia_name        = I('post.ia_name');
-            $ia_phone       = I('post.ia_phone');
-            $ia_province       = I('post.ia_province');
-            $ia_town       = I('post.ia_town');
-            $ia_region       = I('post.ia_region');
-            $ia_road       = I('post.ia_road');
+            $iaid           = trimall(I('post.iaid'));
+            $ia_name        = trimall(I('post.ia_name'));
+            $ia_phone       = trimall(I('post.ia_phone'));
+            $ia_province       = trimall(I('post.ia_province'));
+            $ia_town       = trimall(I('post.ia_town'));
+            $ia_region       = trimall(I('post.ia_region'));
+            $ia_road       = trimall(I('post.ia_road'));
 
             $tmp            = array(
                 'ia_name'   =>$ia_name,

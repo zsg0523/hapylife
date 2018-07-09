@@ -126,14 +126,24 @@ class RegisterController extends HomeBaseController{
     * 返回推荐人姓名
     **/ 
     public function checkName(){
-        $customerid = I('post.EnrollerID');
+        $customerid = strtoupper(trim(I('post.EnrollerID')));
         if($customerid){
-            $data = M('User')->where(array('CustomerID'=>$customerid))->find();  
-            $this->ajaxreturn($data);
+            if(substr($customerid,0,3) == 'HPL'){
+                $data = M('User')->where(array('CustomerID'=>$customerid))->find();
+                $this->ajaxreturn($data); 
+            }else{
+                $key      = "Z131MZ8ZV29H5EQ9LGVH";
+                $url      = "https://signupapi.wvhservices.com/api/Account/ValidateHpl?customerId=".$customerid."&"."key=".$key;
+                $wv       = file_get_contents($url);
+                $data = json_decode($wv,true);
+                $data['lastname'] = $data['lastName'];
+                $data['firstname'] = $data['firstName'];
+                $this->ajaxreturn($data);
+            }
         }else{
             $data['status'] = 0;
             $this->ajaxreturn($data);           
-        }
+        } 
     }
     /**
     * 保存用户资料
@@ -163,6 +173,10 @@ class RegisterController extends HomeBaseController{
     				$data['BackIdcard']=C('WEB_URL').$upload['name'][1];
     			}
                 $data['EnrollerID'] = strtoupper(I('post.EnrollerID'));
+                $data['LastName'] = trimall(I('post.LastName'));
+                $data['FirstName'] = trimall(I('post.FirstName'));
+                $data['EnLastName'] = trimall(I('post.EnLastName'));
+                $data['EnFirstName'] = trimall(I('post.EnFirstName'));
                 $add = D('Tempuser')->add($data);
                 if($add){
     		        $this->assign('userinfo',$data);
@@ -260,7 +274,8 @@ class RegisterController extends HomeBaseController{
         $addlog = M('Log')->add($log);
         if($addlog){
             // $this->success('生成订单成功',U('Home/Register/Qrcode',array('ir_receiptnum'=>$order_num)));
-            $this->success('生成订单成功',U('Home/Register/new_cjPayment',array('ir_receiptnum'=>$order_num)));
+            // $this->success('生成订单成功',U('Home/Register/new_cjPayment',array('ir_receiptnum'=>$order_num)));
+            $this->redirect('Home/Register/new_cjPayment',array('ir_receiptnum'=>$order_num));
         }else{
             $this->error('生成订单失败');
         }
@@ -444,7 +459,7 @@ class RegisterController extends HomeBaseController{
                         'ir_status'  =>2,
                         'rCustomerID'=>$CustomerID,
                         'riuid'      =>$userinfo['iuid'],
-                        'ir_paytype' =>1,
+                        'ir_paytype' =>4,
                         'ir_paytime' =>time(),
                         'ia_name'    =>$userinfo['lastname'].$userinfo['firstname'],
                         'ia_name_en' =>$userinfo['enlastname'].$userinfo['enfirstname'],
@@ -484,18 +499,22 @@ class RegisterController extends HomeBaseController{
                 )
             ));
 
-        $merchantcert = "GB30j0XP0jGZPVrJc6G69PCLsmPKNmDiISNvrXc0DB2c7uLLFX9ah1zRYHiXAnbn68rWiW2f4pSXxAoX0eePDCaq3Wx9OeP0Ao6YdPDJ546R813x2k76ilAU8a3m8Sq0";
+        //E0001904
+        // $merchantcert = "GB30j0XP0jGZPVrJc6G69PCLsmPKNmDiISNvrXc0DB2c7uLLFX9ah1zRYHiXAnbn68rWiW2f4pSXxAoX0eePDCaq3Wx9OeP0Ao6YdPDJ546R813x2k76ilAU8a3m8Sq0";
+        //E000404
+        $merchantcert = "1mtfZAJ3sGPc22Vq20LUaJ9Z8w0S8BBP3Jc5uJkwM7v7099nbmwwvVfICu7CkQVGea9JzzVIpzh3xb9YNmRvpp47DtTam7lWCF20aPOBrDgVOCvAL9PXZ91P6bff6U6H";
 
         try{
-            $merAccNo       = "E0001904";
+             // $merAccNo       = 'E0001904';
+            $merAccNo       = "E0004004";
             $orderId        = $ir_receiptnum;
             $fee_type       = "CNY";
             $amount         = $order['ir_price'];
-            $goodsInfo      = "Nulife Product";
-            $strMerchantUrl = "http://apps.nulifeshop.com/nulifeshop/index.php/Home/api/getResponse";
+            $goodsInfo      = "Product";
+            $strMerchantUrl = "http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/getResponse";
             $cert           = $merchantcert;
             $signMD5        = "merAccNo".$merAccNo."orderId".$orderId."fee_type".$fee_type."amount".$amount."goodsInfo".$goodsInfo."strMerchantUrl".$strMerchantUrl."cert".$cert;
-            $signMD5_lower  = strtolower(md5($signMD5));
+            $signMD5_lower = strtolower(md5($signMD5));
 
             $para = array(
                 'merAccNo'      => $merAccNo,
@@ -507,15 +526,21 @@ class RegisterController extends HomeBaseController{
                 'signMD5'       => $signMD5_lower
             );
 
-            $result = $client->GetQRCodeXml($para);
+            $result      = $client->GetQRCodeXml($para);
             //对象操作
-            $xmlstr = $result->GetQRCodeXmlResult;
+            $xmlstr      = $result->GetQRCodeXmlResult;
             //构造SimpleXMLEliement对象
-            $xml = new \SimpleXMLElement($xmlstr);
+            $xml         = new \SimpleXMLElement($xmlstr);
             //微信支付链接
-            $code_url = (string)$xml->code_url;
+            $code_url    = (string)$xml->code_url;
+            $return_code = (string)$xml->return_code;
+            $return_msg  = (string)$xml->return_msg;
+
             //返回数据
             $para['code_url'] = $code_url;
+            $para['return_code'] = $return_code;
+            $para['return_msg'] = $return_msg;
+
             $this->ajaxreturn($para);
             
         }catch(SoapFault $f){
@@ -534,7 +559,7 @@ class RegisterController extends HomeBaseController{
 
         //记录数据
         if($data['billno'] != ""){
-            $add  = M('IbosLog')->add($data);           
+            $add  = M('Log')->add($data);           
         }
         
         //查询订单信息
@@ -549,13 +574,40 @@ class RegisterController extends HomeBaseController{
                 $map = array(
                     'ir_paytype' =>1,
                     'ir_status'  =>2,
-                    'update_time'=>time()
+                    'ir_paytime'=>time(),
+                    'ips_trade_no' => $data['ipsbillno'],
+                    'ips_trade_status' => $data['msg']
                 );
                 $change_orderstatus = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->save($map);
 
                 if($change_orderstatus){
-                    $data['status'] = 1;
-                    $this->ajaxreturn($data);
+                    $OrderDate         = date("Y-m-d",strtotime("-1 month",time()));
+                    $activa = $OrderDate;
+                    $day    = date('d',strtotime($OrderDate));
+                    if($day>=28){
+                        $allday = 28;
+                    }else{
+                        $allday = $day;
+                    }
+                    $ddd = $allday-1;
+                    if($ddd>=10){
+                        $oneday = $ddd;
+                    }else{
+                        $oneday = '0'.$ddd;
+                    }
+                    //添加激活
+                    $time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
+                    $year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
+                    $endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
+                    $where =array('iuid'=>$order['riuid'],'ir_receiptnum'=>$order['ir_receiptnum'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
+                    $save  = M('Activation')->add($where);
+                    if($save){
+                        $data['status'] = 1;
+                        $this->ajaxreturn($data);
+                    }else{
+                        $data['status'] = 0;
+                        $this->ajaxreturn($data);
+                    }
                 }else{
                     $data['status'] = 0;
                     $this->ajaxreturn($data);
@@ -673,6 +725,10 @@ class RegisterController extends HomeBaseController{
                     $data['PassWord'] = md5($data['PassWord']);
                     $data['JoinedOn'] = time();
                     $data['CustomerID'] = strtoupper($data['CustomerID']);
+                    $data['LastName'] = trimall(I('post.LastName'));
+                    $data['FirstName'] = trimall(I('post.FirstName'));
+                    $data['EnLastName'] = trimall(I('post.EnLastName'));
+                    $data['EnFirstName'] = trimall(I('post.EnFirstName'));
                     $keyword= 'HPL';
                     $custid = D('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
                     if(empty($custid)){

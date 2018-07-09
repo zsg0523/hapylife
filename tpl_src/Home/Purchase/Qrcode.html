@@ -92,7 +92,7 @@
 				success:function(ret){
 					
 					if(ret!=null){
-						var url = "http://paysdk.weixin.qq.com/example/qrcode.php?data=" + ret.code_url;   //二维码地址  
+						var url = ret.qrcode;   //二维码地址  
 						$("#qrcode").attr('src',url); 
 						$('#orderId').text("订单号:"+ret.orderId);
 						$('#money').text("金额:￥"+ret.amount);

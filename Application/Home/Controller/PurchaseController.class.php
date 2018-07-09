@@ -5,7 +5,6 @@ use Common\Controller\HomeBaseController;
 * hapylife控制器
 **/
 class PurchaseController extends HomeBaseController{
-    private $i = 0; // 定义全局变量：最少需要答对题目条数
     /**
     * 
     **/
@@ -319,9 +318,12 @@ class PurchaseController extends HomeBaseController{
         $addlog = M('Log')->add($log);
         // 设置session时间
         if($addlog){
-            // $this->success('下单成功,前往支付页面',U('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num)));
-            $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num));
-            // $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$order_num));
+            if($product['ip_type'] == 1){
+
+                $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num));
+            }else{
+                $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$order_num));
+            }
         }else{
             $this->error('订单生成失败');
         }
@@ -330,7 +332,7 @@ class PurchaseController extends HomeBaseController{
     //购买产品IPS支付
     public function ipsPayment(){
         //订单号
-        $ir_receiptnum  = I('post.ir_receiptnum')?I('post.ir_receiptnum'):date('YmdHis').rand(10000, 99999);
+        $ir_receiptnum  = I('post.ir_receiptnum');
         //用户iuid
         $iuid           = I('post.iuid');
         //订单信息查询
@@ -349,19 +351,23 @@ class PurchaseController extends HomeBaseController{
                     )
                 )
             ));
-
-        $merchantcert = "GB30j0XP0jGZPVrJc6G69PCLsmPKNmDiISNvrXc0DB2c7uLLFX9ah1zRYHiXAnbn68rWiW2f4pSXxAoX0eePDCaq3Wx9OeP0Ao6YdPDJ546R813x2k76ilAU8a3m8Sq0";
+        //E0001904
+        // $merchantcert = "GB30j0XP0jGZPVrJc6G69PCLsmPKNmDiISNvrXc0DB2c7uLLFX9ah1zRYHiXAnbn68rWiW2f4pSXxAoX0eePDCaq3Wx9OeP0Ao6YdPDJ546R813x2k76ilAU8a3m8Sq0";
+        //E000404
+        $merchantcert = "1mtfZAJ3sGPc22Vq20LUaJ9Z8w0S8BBP3Jc5uJkwM7v7099nbmwwvVfICu7CkQVGea9JzzVIpzh3xb9YNmRvpp47DtTam7lWCF20aPOBrDgVOCvAL9PXZ91P6bff6U6H";
 
         try{
-            $merAccNo       = "E0001904";
+            // $merAccNo       = 'E0001904';
+            $merAccNo       = "E0004004";
             $orderId        = $ir_receiptnum;
             $fee_type       = "CNY";
             $amount         = $order['ir_price'];
-            $goodsInfo      = "Nulife Product";
-            $strMerchantUrl = "http://apps.nulifeshop.com/nulifeshop/index.php/Home/api/getResponse";
+            // $amount         = '0.1';
+            $goodsInfo      = "Product";
+            $strMerchantUrl = "http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/getResponse";
             $cert           = $merchantcert;
             $signMD5        = "merAccNo".$merAccNo."orderId".$orderId."fee_type".$fee_type."amount".$amount."goodsInfo".$goodsInfo."strMerchantUrl".$strMerchantUrl."cert".$cert;
-            $signMD5_lower  = strtolower(md5($signMD5));
+            $signMD5_lower = strtolower(md5($signMD5));
 
             $para = array(
                 'merAccNo'      => $merAccNo,
@@ -373,19 +379,74 @@ class PurchaseController extends HomeBaseController{
                 'signMD5'       => $signMD5_lower
             );
 
-            $result = $client->GetQRCodeXml($para);
+            $result      = $client->GetQRCodeXml($para);
             //对象操作
-            $xmlstr = $result->GetQRCodeXmlResult;
+            $xmlstr      = $result->GetQRCodeXmlResult;
             //构造SimpleXMLEliement对象
-            $xml = new \SimpleXMLElement($xmlstr);
+            $xml         = new \SimpleXMLElement($xmlstr);
             //微信支付链接
-            $code_url = (string)$xml->code_url;
+            $code_url    = (string)$xml->code_url;
+            $return_code = (string)$xml->return_code;
+            $return_msg  = (string)$xml->return_msg;
+
             //返回数据
-            $para['code_url'] = $code_url;
+            $para['code_url']    = $code_url;
+            $para['return_code'] = $return_code;
+            $para['return_msg']  = $return_msg;
+            //生成二维码
+            $url            = createQrcode(urldecode($code_url),'Upload/avatar/'.$ir_receiptnum.'.png');
+            $para['qrcode'] = C('WEB_URL').'/Upload/avatar/'.$ir_receiptnum.'.png';
             $this->ajaxreturn($para);
             
         }catch(SoapFault $f){
             echo "Error Message:{$f->getMessage()}";
+        }
+    }
+
+    /**
+    * 支付成功订单状态修改
+    * @param ir_status 0待付款 1待审核 2已支付待发货 3已发货待收货 4已收货待评价 5已评价完成 6审核未通过
+    **/
+    public function getResponse(){
+        //获取ips回调数据
+        $data = I('post.');
+
+        //写入日志记录
+        $jsonStr = json_encode($data);
+        $log     = logTest($jsonStr);
+        
+        //查询订单信息
+        $order = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->find();
+
+        //支付返回数据验证,是否支付成功验证
+        if($data['succ'] == 'Y'){
+            //签名验证
+            //订单数量&订单金额
+            if($data['amount'] == $order['ir_price']){                
+                //修改订单状态
+                $map = array(
+                    'ir_paytype' =>1,
+                    'ir_status'  =>2,
+                    'update_time'=>time(),
+                    'ips_trade_no' => $data['ipsbillno'],
+                    'ips_trade_status' => $data['msg']
+                );
+                $change_orderstatus = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->save($map);
+
+                if($change_orderstatus){
+                    $data['status'] = 1;
+                    $this->ajaxreturn($data);
+                }else{
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data);
+                }
+            }else{
+                $data['status'] = 0;
+                $this->ajaxreturn($data);
+            }
+        }else{
+            $data['status'] = 0;
+            $this->ajaxreturn($data);
         }
     }
 
@@ -518,7 +579,7 @@ class PurchaseController extends HomeBaseController{
 
 			$status  = array(
 				'ir_status'  =>2,
-				'ir_paytype' =>1,
+				'ir_paytype' =>4,
                 'ir_paytime' =>time()
 			);
             //更新订单信息

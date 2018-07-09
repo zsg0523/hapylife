@@ -138,6 +138,10 @@ class HapylifeRegisterController extends HomeBaseController{
                 $data['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
             }
             $data['EnrollerID'] = strtoupper(I('post.EnrollerID'));
+            $data['LastName'] = trimall(I('post.LastName'));
+            $data['FirstName'] = trimall(I('post.FirstName'));
+            $data['EnLastName'] = trimall(I('post.EnLastName'));
+            $data['EnFirstName'] = trimall(I('post.EnFirstName'));
             $add = D('Tempuser')->add($data);
             if($add){
                 $data['status'] = 1;
@@ -226,7 +230,7 @@ class HapylifeRegisterController extends HomeBaseController{
             //产品id
             'ipid'         => $product['ipid'],
             //待注册用户id
-            'htid'        => $htid
+            'htid'        => $htid?$htid:0
         );
         $receipt = M('Receipt')->add($order);
         if($receipt){
@@ -438,7 +442,7 @@ class HapylifeRegisterController extends HomeBaseController{
                         'ir_status'  =>2,
                         'rCustomerID'=>$CustomerID,
                         'riuid'      =>$userinfo['iuid'],
-                        'ir_paytype' =>1,
+                        'ir_paytype' =>4,
                         'ir_paytime' =>time(),
                         'ia_name'    =>$userinfo['lastname'].$userinfo['firstname'],
                         'ia_name_en' =>$userinfo['enlastname'].$userinfo['enfirstname'],
@@ -457,6 +461,154 @@ class HapylifeRegisterController extends HomeBaseController{
                     }
                 }
             }
+        }
+    }
+
+    //购买产品IPS支付
+    public function ipsPayment(){
+        //订单号
+        $ir_receiptnum  = I('post.ir_receiptnum')?I('post.ir_receiptnum'):date('YmdHis').rand(10000, 99999);
+        //用户iuid
+        $iuid           = I('post.iuid');
+        //订单信息查询
+        $order          = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
+
+        // wsdl模式访问wsdl程序
+        $client = new \SoapClient("https://pay.hkipsec.com/webservice/GetQRCodeWebService.asmx?wsdl",
+            array(
+                'trace' => true,
+                'exceptions' => true,
+                'stream_context'=>stream_context_create(array('ssl' => array('verify_peer'=>false,
+                        'verify_peer_name'  => false,
+                        'allow_self_signed' => true,
+                        'cache_wsdl' => WSDL_CACHE_NONE,
+                        )
+                    )
+                )
+            ));
+
+        //E0001904
+        // $merchantcert = "GB30j0XP0jGZPVrJc6G69PCLsmPKNmDiISNvrXc0DB2c7uLLFX9ah1zRYHiXAnbn68rWiW2f4pSXxAoX0eePDCaq3Wx9OeP0Ao6YdPDJ546R813x2k76ilAU8a3m8Sq0";
+        //E000404
+        $merchantcert = "1mtfZAJ3sGPc22Vq20LUaJ9Z8w0S8BBP3Jc5uJkwM7v7099nbmwwvVfICu7CkQVGea9JzzVIpzh3xb9YNmRvpp47DtTam7lWCF20aPOBrDgVOCvAL9PXZ91P6bff6U6H";
+
+        try{
+             // $merAccNo       = 'E0001904';
+            $merAccNo       = "E0004004";
+            $orderId        = $ir_receiptnum;
+            $fee_type       = "CNY";
+            $amount         = $order['ir_price'];
+            $goodsInfo      = "Product";
+            $strMerchantUrl = "http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/getResponse";
+            $cert           = $merchantcert;
+            $signMD5        = "merAccNo".$merAccNo."orderId".$orderId."fee_type".$fee_type."amount".$amount."goodsInfo".$goodsInfo."strMerchantUrl".$strMerchantUrl."cert".$cert;
+            $signMD5_lower = strtolower(md5($signMD5));
+
+            $para = array(
+                'merAccNo'      => $merAccNo,
+                'orderId'       => $orderId,
+                'fee_type'      => $fee_type,
+                'amount'        => $amount,
+                'goodsInfo'     => $goodsInfo,
+                'strMerchantUrl'=> $strMerchantUrl,
+                'signMD5'       => $signMD5_lower
+            );
+
+            $result      = $client->GetQRCodeXml($para);
+            //对象操作
+            $xmlstr      = $result->GetQRCodeXmlResult;
+            //构造SimpleXMLEliement对象
+            $xml         = new \SimpleXMLElement($xmlstr);
+            //微信支付链接
+            $code_url    = (string)$xml->code_url;
+            $return_code = (string)$xml->return_code;
+            $return_msg  = (string)$xml->return_msg;
+
+            //返回数据
+            $para['code_url']    = $code_url;
+            $para['return_code'] = $return_code;
+            $para['return_msg']  = $return_msg;
+            //生成二维码
+            $url            = createQrcode(urldecode($code_url),'Upload/avatar/'.$ir_receiptnum.'.png');
+            $para['qrcode'] = C('WEB_URL').'/Upload/avatar/'.$ir_receiptnum.'.png';
+
+            $this->ajaxreturn($para);
+            
+        }catch(SoapFault $f){
+            echo "Error Message:{$f->getMessage()}";
+        }
+    }
+
+    /**
+    * 支付成功订单状态修改
+    * @param ir_status 0待付款 1待审核 2已支付待发货 3已发货待收货 4已收货待评价 5已评价完成 6审核未通过
+    **/
+    public function getResponse(){
+        //获取ips回调数据
+        $data = I('post.');
+
+        //记录数据
+        if($data['billno'] != ""){
+            $add  = M('Log')->add($data);           
+        }
+        
+        //查询订单信息
+        $order = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->find();
+
+        //支付返回数据验证,是否支付成功验证
+        if($data['succ'] == 'Y'){
+            //签名验证
+            //订单数量&订单金额
+            if($data['amount'] == $order['ir_price']){                
+                //修改订单状态
+                $map = array(
+                    'ir_paytype' =>1,
+                    'ir_status'  =>2,
+                    'ir_paytime'=>time(),
+                    'ips_trade_no' => $data['ipsbillno'],
+                    'ips_trade_status' => $data['msg']
+                );
+                $change_orderstatus = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->save($map);
+
+                if($change_orderstatus){
+                    $OrderDate         = date("Y-m-d",strtotime("-1 month",time()));
+                    $activa = $OrderDate;
+                    $day    = date('d',strtotime($OrderDate));
+                    if($day>=28){
+                        $allday = 28;
+                    }else{
+                        $allday = $day;
+                    }
+                    $ddd = $allday-1;
+                    if($ddd>=10){
+                        $oneday = $ddd;
+                    }else{
+                        $oneday = '0'.$ddd;
+                    }
+                    //添加激活
+                    $time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
+                    $year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
+                    $endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
+                    $where =array('iuid'=>$order['riuid'],'ir_receiptnum'=>$order['ir_receiptnum'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
+                    $save  = M('Activation')->add($where);
+                    if($save){
+                        $data['status'] = 1;
+                        $this->ajaxreturn($data);
+                    }else{
+                        $data['status'] = 0;
+                        $this->ajaxreturn($data);
+                    }
+                }else{
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data);
+                }
+            }else{
+                $data['status'] = 0;
+                $this->ajaxreturn($data);
+            }
+        }else{
+            $data['status'] = 0;
+            $this->ajaxreturn($data);
         }
     }
 
@@ -489,6 +641,42 @@ class HapylifeRegisterController extends HomeBaseController{
         $ir_receiptnum = I('post.ir_receiptnum');
         $data = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum,'ir_status'=>2))->find();
         $this->ajaxreturn($data);
+    }
+
+    /**
+    * 返回推荐人姓名
+    **/ 
+    public function checkName(){
+        $customerid = strtoupper(trim(I('post.EnrollerID')));
+        if($customerid){
+            if(substr($customerid,0,3) == 'HPL'){
+                $data = M('User')->where(array('CustomerID'=>$customerid))->find();
+                if($data){
+                    $data['status'] = 1;
+                    $this->ajaxreturn($data); 
+                }else{
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data);
+                }
+            }else{
+                $key      = "Z131MZ8ZV29H5EQ9LGVH";
+                $url      = "https://signupapi.wvhservices.com/api/Account/ValidateHpl?customerId=".$customerid."&"."key=".$key;
+                $wv       = file_get_contents($url);
+                $data = json_decode($wv,true);
+                $data['lastname'] = $data['lastName'];
+                $data['firstname'] = $data['firstName'];
+                if($data){
+                    $data['status'] = 1;
+                    $this->ajaxreturn($data); 
+                }else{
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data);
+                }
+            }
+        }else{
+            $data['status'] = 0;
+            $this->ajaxreturn($data);           
+        } 
     }
     /*********************************************************************普通注册********************************************************************************************/  
     /**
@@ -542,7 +730,11 @@ class HapylifeRegisterController extends HomeBaseController{
             }
             $data['PassWord'] = I('PassWord','','md5');
             $data['JoinedOn'] = time();
-            $data['CustomerID'] = strtoupper($data['CustomerID']);
+            $data['CustomerID'] = strtoupper(I('post.CustomerID'));
+            $data['LastName'] = trimall(I('post.LastName'));
+            $data['FirstName'] = trimall(I('post.FirstName'));
+            $data['EnLastName'] = trimall(I('post.EnLastName'));
+            $data['EnFirstName'] = trimall(I('post.EnFirstName'));
             $keyword= 'HPL';
             $custid = D('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
             if(empty($custid)){

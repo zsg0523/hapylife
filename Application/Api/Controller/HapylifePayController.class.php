@@ -101,35 +101,37 @@ class HapylifePayController extends HomeBaseController{
 				'ir_status'  =>2,
 				'ir_paytype' =>1,
 			);
-			$activaDate = D('Activation')->where(array('iuid'=>$receipt['iuid'],'is_tick'=>1))->order('datetime desc')->getfield('datetime');
-			if(empty($activaDate)){
-				$activa = $OrderDate;
-			}else{
-				$activa = $activaDate;
-			}
-			$day = date('d',strtotime($OrderDate));
-            if($day>=28){
-                $allday = 28;
-            }else{
-                $allday = $day;
-            }
-            $ddd    = $allday-1;
-            if($ddd>=10){
-                $oneday = $ddd;
-            }else{
-                $oneday = '0'.$ddd;
-            }
-            // for($i=0;$i<$receipt['ir_productnum'];$i++) {
-            	//删除原先未激活，添加激活
-            	$time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
-            	$year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
-    			$endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
-				$delete= D('Activation')->where(array('iuid'=>$receipt['iuid'],'datetime'=>$time))->delete();
-				$where =array('iuid'=>$receipt['iuid'],'ir_receiptnum'=>$map['outer_trade_no'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
-				$save  = D('Activation')->add($where);
-            // }   
-        	$upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($status);
             $update  =D('User')->save($tmpe);
+			$upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($status);
+			if($upreceipt){
+				$activaDate = D('Activation')->where(array('iuid'=>$receipt['iuid'],'is_tick'=>1))->order('datetime desc')->getfield('datetime');
+				if(empty($activaDate)){
+					$activa = $OrderDate;
+				}else{
+					$activa = $activaDate;
+				}
+				$day = date('d',strtotime($OrderDate));
+	            if($day>=28){
+	                $allday = 28;
+	            }else{
+	                $allday = $day;
+	            }
+	            $ddd    = $allday-1;
+	            if($ddd>=10){
+	                $oneday = $ddd;
+	            }else{
+	                $oneday = '0'.$ddd;
+	            }
+	            // for($i=0;$i<$receipt['ir_productnum'];$i++) {
+	            	//删除原先未激活，添加激活
+	            	$time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
+	            	$year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
+	    			$endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
+					$delete= D('Activation')->where(array('iuid'=>$receipt['iuid'],'datetime'=>$time))->delete();
+					$where =array('iuid'=>$receipt['iuid'],'ir_receiptnum'=>$map['outer_trade_no'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
+					$save  = D('Activation')->add($where);
+	            // }   
+			}
         	if($upreceipt){
         		//通知畅捷完成支付
 				echo "success";
