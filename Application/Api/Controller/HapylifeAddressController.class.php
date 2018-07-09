@@ -229,9 +229,8 @@ class HapylifeAddressController extends HomeBaseController{
                 'iaid'      =>$iaid
                 );
             //修改
-            $data = M('Address')
-                  ->save($tmp); 
-            if($data){
+            $result = M('Address')->save($tmp); 
+            if($result){
                 $data['status'] = 1;
                 $this->ajaxreturn($data);
             }

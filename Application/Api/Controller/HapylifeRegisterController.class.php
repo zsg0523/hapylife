@@ -652,27 +652,27 @@ class HapylifeRegisterController extends HomeBaseController{
                     $data['status'] = 1;
                     $this->ajaxreturn($data); 
                 }else{
-                    $data['status'] = 0;
-                    $this->ajaxreturn($data);
+                    $sample['status'] = 0;
+                    $this->ajaxreturn($sample);
                 }
             }else{
                 $key      = "Z131MZ8ZV29H5EQ9LGVH";
                 $url      = "https://signupapi.wvhservices.com/api/Account/ValidateHpl?customerId=".$customerid."&"."key=".$key;
                 $wv       = file_get_contents($url);
                 $data = json_decode($wv,true);
-                $data['lastname'] = $data['lastName'];
-                $data['firstname'] = $data['firstName'];
+                $message['lastname'] = $data['lastName'];
+                $message['firstname'] = $data['firstName'];
                 if($data){
                     $data['status'] = 1;
                     $this->ajaxreturn($data); 
                 }else{
-                    $data['status'] = 0;
-                    $this->ajaxreturn($data);
+                    $sample['status'] = 0;
+                    $this->ajaxreturn($sample);
                 }
             }
         }else{
-            $data['status'] = 0;
-            $this->ajaxreturn($data);           
+            $sample['status'] = 0;
+            $this->ajaxreturn($sample);           
         } 
     }
     /*********************************************************************普通注册********************************************************************************************/  
