@@ -525,9 +525,12 @@ class HapylifeRegisterController extends HomeBaseController{
             $return_msg  = (string)$xml->return_msg;
 
             //返回数据
-            $para['code_url'] = $code_url;
+            $para['code_url']    = $code_url;
             $para['return_code'] = $return_code;
-            $para['return_msg'] = $return_msg;
+            $para['return_msg']  = $return_msg;
+            //生成二维码
+            $url            = createQrcode(urldecode($code_url),'Upload/avatar/'.$ir_receiptnum.'.png');
+            $para['qrcode'] = C('WEB_URL').'/Upload/avatar/'.$ir_receiptnum.'.png';
 
             $this->ajaxreturn($para);
             
