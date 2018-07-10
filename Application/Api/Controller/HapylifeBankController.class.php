@@ -92,7 +92,7 @@ class HapylifeBankController extends HomeBaseController{
             // 查询银行表信息
             $bankaccount = M('Bank')->where(array('iuid'=>$iuids))->getField('bankaccount',true); 
             
-            if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0 && !empty($bankaccount)){
+            if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0 && !empty($userinfo['bankaccount'])){
                $message = array(
                         'iuid'         => $userinfo['iuid'],
                         'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],

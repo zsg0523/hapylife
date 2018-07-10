@@ -23,9 +23,7 @@ class HapylifeAddressController extends HomeBaseController{
             $ia_region     = trimall(I('post.ia_region'));
             $ia_road       = trimall(I('post.ia_road'));
 
-            $arr  = M('Address')
-                  ->where(array('iuid'=>$iuid))
-                  ->select();
+            $arr  = M('Address')->where(array('iuid'=>$iuid))->select();
             //判断是否存在地址。有则is_show为0，没有则为1
             if($arr){
                 $tmp        = array(
@@ -51,8 +49,7 @@ class HapylifeAddressController extends HomeBaseController{
                 );
             }
             //添加
-            $result       = M('Address')
-                            ->add($tmp);
+            $result       = M('Address')->add($tmp);
             if($data){
                 $data['status'] = 1;
                 $this->ajaxreturn($data);
@@ -78,7 +75,7 @@ class HapylifeAddressController extends HomeBaseController{
             // 查询地址表信息
             $ia_road = M('Address')->where(array('iuid'=>$iuids))->getField('ia_road',true); 
             
-            if(!in_array($userinfo['shopaddress1'], $ia_road) && $_SESSION['user']['address'] == 0 && !empty($ia_road)){
+            if(!in_array($userinfo['shopaddress1'], $ia_road) && $_SESSION['user']['address'] == 0 && !empty($userinfo['shopaddress1'])){
                $message = array(
                         'iuid'            => $userinfo['iuid'],
                         'ia_name'         => $userinfo['lastname'].$userinfo['firstname'],
