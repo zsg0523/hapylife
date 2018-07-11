@@ -767,7 +767,7 @@ class RegisterController extends HomeBaseController{
                     $data['CustomerID'] = $CustomerID;
                     $result = D('User')->add($data);
                     if($result){
-                        $this->redirect('Home/Register/registerInfo');
+                        $this->redirect('Home/Register/registerInfo',array('iuid'=>$result));
                     }
                 }
             }
@@ -784,10 +784,11 @@ class RegisterController extends HomeBaseController{
 
     // 确认信息页面
     public function registerInfo(){
-        $iuid = max(M('User')->getField('iuid',true));
+        $iuid = I('get.iuid');
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
         $assign = array(
                         'userinfo' => $userinfo,
+                        'iuid' => $iuid,
                         );
         $this->assign($assign);
         $this->display();
@@ -795,11 +796,12 @@ class RegisterController extends HomeBaseController{
 
 	// 注册成功显示页面
 	public function regsuccess(){
-		$data = max(D('User')->select());
-		$data = D('User')->where(array('iuid'=>$data['iuid']))->find();
-		
+		$iuid = I('get.iuid');
+		$data = D('User')->where(array('iuid'=>$iuid))->find();
+
 		$assign = array(
 						'data' => $data,
+                        'iuid' => $iuid,
 						);
         $this->assign($assign);
 		$this->display();
