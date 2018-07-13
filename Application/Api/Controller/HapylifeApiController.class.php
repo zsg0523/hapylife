@@ -7,6 +7,19 @@ use Common\Controller\HomeBaseController;
 class HapylifeApiController extends HomeBaseController{
 
     public function index(){
+
+
+        // {
+        //     "happyLifeID":"HPL000004",
+        //     "password":"25d55ad283aa400af464c76d713c07ad",
+        //     "sponsorID":"1234",
+        //     "firstName_EN":"test",
+        //     "lastName_EN":"test",
+        //     "emailAddress":"951095728@qq.com",
+        //     "phone":"13242998086",
+        //     "products":["RBS","DTP"],
+        //     "key":"Z131MZ8ZV29H5EQ9LGVH"
+        // }
         //检查WV api用户信息
         $HappyLifeID  = trim(I('post.happyLifeID'));
         $Password     = md5(trim(I('post.password')));
@@ -49,7 +62,7 @@ class HapylifeApiController extends HomeBaseController{
           CURLOPT_TIMEOUT => 30,
           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
           CURLOPT_CUSTOMREQUEST => "POST",
-          CURLOPT_POSTFIELDS => "{\"happyLifeID\":\"HPL000003\",\"password\":\"25d55ad283aa400af464c76d713c07ad\",\"sponsorID\":\"1234\",\"firstName_EN\":\"test\",\"lastName_EN\":\"test\",\"emailAddress\":\"951095728@qq.com\",\"phone\":\"13242998086\",\"products\":[\"RBS\",\"DTP\"],\"key\":\"Z131MZ8ZV29H5EQ9LGVH\"}",
+          CURLOPT_POSTFIELDS => "{"happyLifeID":"HPL000003","password":"25d55ad283aa400af464c76d713c07ad","sponsorID":"1234","firstName_EN":"test","lastName_EN":"test","emailAddress":"951095728@qq.com","phone":"13242998086","products":["RBS","DTP"],"key":"Z131MZ8ZV29H5EQ9LGVH"}",
           CURLOPT_HTTPHEADER => array(
             "Cache-Control: no-cache",
             "Content-Type: application/json",

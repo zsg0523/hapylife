@@ -489,10 +489,10 @@ class HapylifeController extends AdminBaseController{
 		$excel     = I('get.excel');
 		$word      = trim(I('get.word',''));
 		$status    = I('get.status')-1;
+		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime')):time();
-		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$order='ir_date desc',$status,$starttime,$endtime);
-		// p($assign);die;
+		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$order='ir_date desc',$status,$starttime,$endtime,$timeType);
 		//导出excel
 		if($excel == 'excel'){
 			$export_excel = D('Receipt')->export_excel($assign['data']);
@@ -500,6 +500,7 @@ class HapylifeController extends AdminBaseController{
 			$this->assign($assign);
 			$this->assign('status',I('get.status'));
 			$this->assign('word',$word);
+			$this->assign('timeType',$timeType);
 			$this->assign('starttime',I('get.starttime'));
 			$this->assign('endtime',I('get.endtime'));
 			$this->display();
@@ -546,7 +547,7 @@ class HapylifeController extends AdminBaseController{
 	public function user(){
 		//有密码账户搜索
 		$count = M('user')->where(array('PassWord'=>array('neq','')))->count();
-		// //账户昵称搜索
+		//账户昵称搜索
 		$word = trim(I('get.word'));
 		if(empty($word)){
 			$map = array();
@@ -715,21 +716,23 @@ class HapylifeController extends AdminBaseController{
 		}
 		$excel     = I('get.excel');
 		$word      = trim(I('get.word',''));
+		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
 
-		$assign    = D('Receipt')->getSendPage(D('Receipt'),$word,$starttime,$endtime,$status,$order='ir_paytime asc');
+		$assign    = D('Receipt')->getSendPage(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime asc');
 		// p($assign);
 		// die;
 		// 导出excel
 		if($excel == 'excel'){
-			$data = D('Receipt')->getAllSendData(D('Receipt'),$word,$starttime,$endtime,$status,$order='ir_paytime desc');
+			$data = D('Receipt')->getAllSendData(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime desc');
 			// p($data);die;
 			$export_send_excel = D('Receipt')->export_send_excel($data);
 		}else{
 			$this->assign($assign);
 			$this->assign('status',I('get.status'));
 			$this->assign('word',$word);
+			$this->assign('timeType',$timeType);
 			$this->assign('starttime',I('get.starttime'));
 			$this->assign('endtime',I('get.endtime'));
 			$this->assign('code',$code);
