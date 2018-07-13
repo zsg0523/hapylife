@@ -705,11 +705,11 @@ class HapylifeController extends AdminBaseController{
             	$code[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
             }
         }
-		//0未支付 1待审核 2已支付 3已发货 4已到达
+		//0未支付 1待审核 2已支付 3已发货 4已到达 5申请退货 8确定退货
 		$order_status = I('get.status')-1;
 		if($order_status== -1){
 			//所有订单
-			$status = '2,3,4,5';
+			$status = '2,3,4,5,6,9';
 		}else{
 			$status = (string)$order_status;
 		}
@@ -744,6 +744,7 @@ class HapylifeController extends AdminBaseController{
 	public function send(){
 		$irid      = trim(I('get.id'));
 		$ir_status = trim(I('get.ir_status'));
+		$ir_statuss = trim(I('get.ir_statuss'));
 		$data      = M('Receipt')->where(array('irid'=>$irid))->find();
 		$userinfo  = M('User')->where(array('iuid'=>$data['riuid']))->find();
         switch ($ir_status) {
@@ -770,6 +771,35 @@ class HapylifeController extends AdminBaseController{
                 
                 //日志记录
                 $content = '单号:'.$data['ir_receiptnum'].',确认送达';
+                $add     = addLog($data['riuid'],$content,$action=3,$type=2);
+                break;
+        }
+
+        switch($ir_statuss){
+        	case '1':
+                $ir_status = 5;
+                $map  = array(
+                    'irid'  =>$irid,
+                    'ir_status'=>$ir_status,
+                    'returns_time'  =>time()
+                );
+                $save = M('Receipt')->save($map);
+                
+                //日志记录
+                $content = '单号:'.$data['ir_receiptnum'].',退货申请';
+                $add     = addLog($data['riuid'],$content,$action=3,$type=2);
+                break;
+            case '2':
+                $ir_status = 8;
+                $map  = array(
+                    'irid'  =>$irid,
+                    'ir_status'=>$ir_status,
+                    'returns_times'  =>time()
+                );
+                $save = M('Receipt')->save($map);
+                
+                //日志记录
+                $content = '单号:'.$data['ir_receiptnum'].',确认退货';
                 $add     = addLog($data['riuid'],$content,$action=3,$type=2);
                 break;
         }

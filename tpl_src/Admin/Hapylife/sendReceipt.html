@@ -58,6 +58,8 @@
                         <th >送达日期</th>
                         <th >确认发货</th>
                         <th >确认送达</th>
+                        <th >确认退货</th>
+                        <th >退货确认</th>
                         <th>发送物流短信</th>
                         <!-- <th>发送续费短信</th> -->
 					</tr>
@@ -117,7 +119,7 @@
 								</if>
 							</td>
 							<td>
-								<if     condition="$v['ir_status'] eq 2" ><a href="javascript:if(confirm('确定送货？'))location='{:U('Admin/Hapylife/send',array('id'=>$v['irid'],'ir_status'=>$v['ir_status']))}'">確定送货</a>
+								<if condition="$v['ir_status'] eq 2" ><a href="javascript:if(confirm('确定送货？'))location='{:U('Admin/Hapylife/send',array('id'=>$v['irid'],'ir_status'=>$v['ir_status']))}'">確定送货</a>
 								<elseif condition="$v['ir_status'] eq 3"/>待收货
 								<elseif condition="$v['ir_status'] eq 4"/>已送达
 								</if>
@@ -128,12 +130,18 @@
 								<elseif condition="$v['ir_status'] eq 4"/>已送达
 								</if>
 							</td>
-							<!-- <td>
-								<a href="{:U('Admin/Hapylife/checkOrder',array('ir_receiptnum'=>$v['ir_360_orderno']))}">查询</a>
-							</td> -->
-							<!-- <td>
-								<a href="javascript:if(confirm('确定删除{$v['hu_username']}的订单？'))location='{:U('Admin/Hapylife/delete_receipt',array('id'=>$v['irid']))}'">删除</a> 
-							</td> -->
+							<td>
+								<if condition="$v['ir_status'] eq 2" ><a href="javascript:if(confirm('确定退货？'))location='{:U('Admin/Hapylife/send',array('id'=>$v['irid'],'ir_statuss'=>1))}'">确定退货</a>
+								<elseif condition="$v['ir_status'] eq 5"/>已申请退货
+								<elseif condition="$v['ir_status'] eq 6"/>已退货
+								</if>
+							</td>
+							<td>
+								<if condition="$v['ir_status'] eq 2" >未申请退货
+								<elseif condition="$v['ir_status'] eq 5"/><a href="javascript:if(confirm('退货确认？'))location='{:U('Admin/Hapylife/send',array('id'=>$v['irid'],'ir_statuss'=>2))}'">退货确认</a>
+								<elseif condition="$v['ir_status'] eq 6"/>已退货
+								</if>
+							</td>
 							<if condition="$v['is_send'] eq 2">
 								<td>已发送</td>
 							<else />
