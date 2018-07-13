@@ -57,7 +57,7 @@
 			.addressInfo>ul>li{width: 100%;height: 25px;}
 			.addressInfo>ul>li>span{width: 30%;height: 25px;line-height: 25px;text-align: left;display: block;float: left;margin-left: 5px;}
 			.addressInfo>ul>li>div{width: 60%;height: 25px;line-height: 25px;text-align: right;float: right;margin-right: 5px; }
-			.addressInfo>form{text-align: center;line-height: 29px;background: #fff;color: #000;}
+			.addressInfo>form{text-align: center;line-height: 29px;background: #fff;color: #000;margin-left: 5px;margin-right: 5px;}
 			.defa{width: 120px;height: 29px;display: block;float: left;text-align: left;color: #fff;background: #439DFE;border-radius: 5px;}
 			.sel{width: 15px;height: 15px;display: block;float: left;}
 			.edit{width:60px;height: 29px;float: right;margin-left: 5%;color: #fff;background: #439DFE;border-radius: 5px;}
@@ -76,7 +76,7 @@
       .head>ul{width: 100%;}
       .navig{width: 100%;}
       .main,.title{width:100%;}
-      #addAddress{width: 100%;}
+      #addAddress{width: 96%;margin-left: 2%;}
       }
       /*平板*/
       @media screen and (min-width: 768px){
@@ -85,7 +85,7 @@
       .head>ul{width: 100%;}
       .navig{width: 100%;}
       .main,.title{width:100%;}
-      #addAddress{width: 100%;}
+      #addAddress{width: 96%;margin-left: 2%;}
    
       }
         /*中等屏幕*/
@@ -95,7 +95,7 @@
         .head>ul{width: 40%;}
         .navig{width: 100%;}
         .main,.title{width:100%;}
-        #addAddress{width: 100%;}
+        #addAddress{width: 96%;margin-left: 2%;}
 
 
       }
@@ -145,7 +145,7 @@
 
 	  					<form name="form" action="{:U('Home/Purchase/addressEdit')}" method="post">
 	  						<input type="hidden" name="iaid" value="{$v['iaid']}">
-	  						<button name="is_address_show" value="1" type="submit" class="defa" onclick='changeCheck(this);' <?php if($v['is_address_show'] == 1)echo "disabled='disabled';"?> ><input class="sel" type="checkbox" <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />设为默认地址</button>
+	  						<button name="is_address_show" value="1" type="submit" class="defa" onclick='changeCheck(this);' <?php if($v['is_address_show'] == 1)echo "disabled='disabled';"?> ><input class="sel" type="checkbox" disabled="disabled" <?php if($v['is_address_show'] == 1)echo "checked=true;"?> />设为默认地址</button>
 	  						<button type="button" class="dele" data-iaid='{$v['iaid']}' data-toggle="modal" data-target="#myModal3">删除</button>
 	  						<button data-iaid='{$v['iaid']}' data-name='{$v['ia_name']}' data-province='{$v['ia_province']}' data-town='{$v['ia_town']}' data-region='{$v['ia_region']}' data-road='{$v['ia_road']}' data-phone='{$v['ia_phone']}' type="button" class="edit" data-toggle="modal" data-target="#myModal2" >编辑</button>
 	  					</form>
