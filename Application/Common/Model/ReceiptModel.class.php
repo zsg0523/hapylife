@@ -14,7 +14,7 @@ class ReceiptModel extends BaseModel{
      * @param  integer  $field  $field
      * @return array            分页数据
      */
-    public function getPage($model,$word,$order='',$status,$starttime,$endtime,$timeType,$limit=20){
+    public function getPage($model,$word,$starttime,$endtime,$status,$order='',$timeType,$limit=20){
         switch ($status) {
             case '-1':
                 if(empty($word)){
