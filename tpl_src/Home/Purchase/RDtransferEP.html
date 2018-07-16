@@ -1,0 +1,94 @@
+<!DOCTYPE html>  
+<html lang="zh-cn">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">  
+    <title>RD转EP</title>  
+    <link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css">
+    <link rel="stylesheet" href="__PUBLIC_CSS__/common.css" />
+    <style type="text/css">
+    	.main{width:100%;min-height:120px;margin:0px auto;background-color: #fff;}	
+    	.commonHead{width:100%;position: fixed;top: 0;left: 0;z-index: 20;}
+    	.EP_top{width: 96%;min-height: 140px;margin:10px auto 0 auto;}
+    	.input_g{width: 100%;height: 35px;margin-bottom: 10px;border-bottom: 1px solid #dedede;}
+    	.input_g>span{width: 30%;height: 35px;line-height: 35px;display: block;}
+    	.input_g>input{width: 70%;height: 34px;line-height: 34px;}
+    	.input_g>p{width: 70%;height: 35px;line-height: 35px;display: block;}
+    	.EP_top>a{width: 100%;height: 40px;line-height: 40px; margin: auto;border-radius: 5px;display: block;margin-top: 20px;background: #2490ed;font-size: 15px;color: #fff;}
+    	
+    	
+    	.recordList{width: 94%;height: auto;margin: auto;}
+    	.recordList>div{color: #2491EE;width: 100%; height: 30px;line-height: 30px; border-bottom: 1px solid #DEDEDE;}
+    	.recordList>ul{width: 100%;height: auto;}
+    	.recordList>ul>li{width: 100%;height: auto;border-bottom: 1px solid #DEDEDE;}
+    	.recordList>ul>li>div{height: 30px;width: 100%;line-height: 30px;}
+    	.recordList>ul>li>div>i{font-size: 12px;color: #2490ed;}
+    	.recordList>ul>li>p{text-indent: 2em;line-height: 20px;font-size: 12px;color: #999;}
+    	@media screen and (min-width:1200px) {
+			.main{width: 1200px;}
+		}
+    </style>
+</head>  
+<body >  
+     <div class="commonHead1">
+  			<include file="Common/commonHead1" />
+  	</div> 
+    <div class="main">  
+  		<form class="EP_top" id="EP_top" action="{:U('IbosWeb/PersonalCenter/RdchangeEp')}" method="post">
+        <input type="hidden" name="rd" value="{$rd}">
+  			<div class="input_g">
+  				<span class="fl">RD转EP</span>
+  				<input class="fl" type="text" name="amount" placeholder="最多为{$rd} 100RD=1EP" />
+  			</div>
+  			
+  			<a class="tc" onclick="checkPassword();">确定</a>
+  			
+  		</form>
+  		
+  		<div class="recordList">
+  			<div>转账记录</div>
+  			<ul>
+          <foreach name="message" item="v">
+  	  			<li>
+  	  				<div><span class="fl">EP提取</span><i class="fr">{:date('Y-m-d H:i:s',$v['create_time'])}</i></div>
+  	  				<p>{$v['content']}</p>
+  	  			</li>
+          </foreach>
+  			</ul>
+  		</div>
+  		
+    </div>  
+  
+  
+  
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>  
+	<script type="text/javascript">  
+	$(document).ready(function(){ 
+			
+	});
+	function checkPassword(){
+      var form=$('#EP_top');
+      var point=$("input[name='rd']").val();
+
+      //alert(Math.floor($("input[name='amount']").val())+'+'+$("input[name='amount']").val());
+      if($("input[name='amount']").val()==""){
+        alert('请输入RD值！！');
+      }else if($("input[name='amount']").val()>point){
+        alert('您的RD不足!');
+      }else if($("input[name='amount']").val()<0){
+        alert('RD不能为负数!');
+      }else if($("input[name='amount']").val()==0){
+        alert('请输入大于0的数!');
+      }else if(Math.floor($("input[name='amount']").val())!=$("input[name='amount']").val()){
+        alert('RD必须为整数!');
+      }else{
+        form.submit();
+      }
+    //window.location.href="{:U('IbosWeb/PersonalCenter/CheckPassword')}";
+  }
+
+ 
+	</script>  
+</body>  
+</html>  
