@@ -137,13 +137,13 @@
 							<td>
 								<if condition="$v['ir_status'] eq 2" ><a href="javascript:if(confirm('确定退货？'))location='{:U('Admin/Hapylife/send',array('id'=>$v['irid'],'ir_statuss'=>1))}'">确定退货</a>
 								<elseif condition="$v['ir_status'] eq 5"/>已申请退货
-								<elseif condition="$v['ir_status'] eq 6"/>已退货
+								<elseif condition="$v['ir_status'] eq 8"/>已退货
 								</if>
 							</td>
 							<td>
 								<if condition="$v['ir_status'] eq 2" >未申请退货
 								<elseif condition="$v['ir_status'] eq 5"/><a href="javascript:if(confirm('退货确认？'))location='{:U('Admin/Hapylife/send',array('id'=>$v['irid'],'ir_statuss'=>2))}'">退货确认</a>
-								<elseif condition="$v['ir_status'] eq 6"/>已退货
+								<elseif condition="$v['ir_status'] eq 8"/>已退货
 								</if>
 							</td>
 							<if condition="$v['is_send'] eq 2">

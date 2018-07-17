@@ -710,7 +710,7 @@ class HapylifeController extends AdminBaseController{
 		$order_status = I('get.status')-1;
 		if($order_status== -1){
 			//所有订单
-			$status = '2,3,4,5,6,9';
+			$status = '2,3,4,5,6,8';
 		}else{
 			$status = (string)$order_status;
 		}

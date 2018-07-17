@@ -64,6 +64,7 @@ class HapylifeBankController extends HomeBaseController{
                 }
                 //添加
                 $addBank = D('Bank')->add($tmp);
+                
                 if($addBank){
                     $data['status'] = 1;
                     $data['message']='银行信息添加成功';
