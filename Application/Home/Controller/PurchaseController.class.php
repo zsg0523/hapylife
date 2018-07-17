@@ -694,7 +694,7 @@ class PurchaseController extends HomeBaseController{
                 'ia_region'   => I('post.ia_region'),
                 'ia_road'     => I('post.ia_road'),
                 );
-        if(!empty($data['ia_name']) && !empty($data['ia_phone']) && !empty($data['ia_province']) && !empty($data['ia_town']) && !empty($data['ia_region']) && !empty($data['ia_road']){
+        if(!empty($data['ia_name']) && !empty($data['ia_phone']) && !empty($data['ia_province']) && !empty($data['ia_town']) && !empty($data['ia_region']) && !empty($data['ia_road'])){
             $result = M('Address')->add($data);   
         }
         
@@ -810,7 +810,7 @@ class PurchaseController extends HomeBaseController{
                 'bankbranch'   => I('post.bankbranch'),
                 'createtime'   => time(),
                 );
-        if(!empty($data['bankaccount']) && !empty($data['bankprovince']) && !empty($data['banktown']) && !empty($data['bankregion']) && !empty($data['bankname']) && !empty($data['bankbranch']){
+        if(!empty($data['bankaccount']) && !empty($data['bankprovince']) && !empty($data['banktown']) && !empty($data['bankregion']) && !empty($data['bankname']) && !empty($data['bankbranch'])){
             $result = M('Bank')->add($data);          
         }
         if($result){
@@ -875,21 +875,20 @@ class PurchaseController extends HomeBaseController{
         $this->display();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// ***********获取验证码*************
+    public function changePassword(){
+        $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
+        foreach ($mape as $key => $value) {
+            $data[$key]         = $value;
+            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
+                $data[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+            }else{
+                $data[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+            }
+        }
+        $this->assign('data',$data);
+        $this->display();
+    }
 
 
 }
