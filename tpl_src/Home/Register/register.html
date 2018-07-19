@@ -224,14 +224,16 @@
 				    <div class="form-group" >
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>国家:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
-							<input type="" class="form-control"  name="ShopCountry" placeholder="地址-国家"  value="{$data['ShopCountry']}">
+							<!--<input type="" class="form-control"  name="ShopCountry" placeholder="地址-国家"  value="{$data['ShopCountry']}">-->
+							<input type="" class="form-control"  name="ShopCountry" placeholder="地址-国家"  value="{$data['ShopCountry']}" onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopCountry']}</div>
 					</div>
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>省:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
-							<input type="" class="form-control"  name="ShopProvince" placeholder="地址-省" value="{$data['ShopProvince']}">
+							<!--<input type="text" class="form-control"   name="ShopProvince" placeholder="地址-省" value="{$data['ShopProvince']}">-->
+							<input type="text" class="form-control"   name="ShopProvince" placeholder="地址-省" value="{$data['ShopProvince']}" onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopProvince']}</div>
 					</div>
@@ -239,21 +241,24 @@
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>市:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
-							<input type="" class="form-control"  name="ShopCity" placeholder="地址-市" value="{$data['ShopCity']}">
+							<!--<input type="text" class="form-control"   name="ShopCity" placeholder="地址-市" value="{$data['ShopCity']}">-->
+							<input type="text" class="form-control"   name="ShopCity" placeholder="地址-市" value="{$data['ShopCity']}" onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopCity']}</div>
 					</div>
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>区:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
-							<input type="" class="form-control"  name="ShopArea" placeholder="地址-区" value="{$data['ShopArea']}">
+							<!--<input type="text" class="form-control"   name="ShopArea" placeholder="地址-区" value="{$data['ShopArea']}">-->
+							<input type="text" class="form-control"   name="ShopArea" placeholder="地址-区" value="{$data['ShopArea']}" onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopArea']}</div>
 					</div>
 					<div class="form-group" onclick="hiden(this);">
-						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>详细地址:</label>
-						<div class="col-lg-10  col-md-10 col-xs-8">
-							<input type="" class="form-control" name="ShopAddress1" placeholder="街道-巷-小区-栋-层-室" value="{$data['ShopAddress1']}">
+						<label for="text" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>详细地址:</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">	
+							<!--<input type="" class="form-control"   name="ShopAddress1" placeholder="街道-巷-小区-栋-层-室" value="{$data['ShopAddress1']}">-->
+							<input type="" class="form-control"   name="ShopAddress1" placeholder="街道-巷-小区-栋-层-室" value="{$data['ShopAddress1']}" onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopAddress1']}</div>
 					</div>
