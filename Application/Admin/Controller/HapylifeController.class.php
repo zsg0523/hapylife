@@ -488,11 +488,17 @@ class HapylifeController extends AdminBaseController{
 	public function receipt(){
 		$excel     = I('get.excel');
 		$word      = trim(I('get.word',''));
-		$status    = I('get.status')-1;
+		$order_status    = I('get.status')-1;
+		if($order_status== -1){
+			//所有订单
+			$status = '0,1,2,3,4,5,7,8';
+		}else{
+			$status = (string)$order_status;
+		}
 		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
-		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$status,$starttime,$endtime,$order='ir_date desc',$timeType);
+		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$starttime,$endtime,$status,$order='ir_date desc',$timeType);
 		//导出excel
 		if($excel == 'excel'){
 			$export_excel = D('Receipt')->export_excel($assign['data']);

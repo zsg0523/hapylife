@@ -19,6 +19,8 @@ class ReceiptModel extends BaseModel{
             case '-1':
                 if(empty($word)){
                     $count=$model->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime))))->count();
+                    p($count);
+                    die;
                 }else{
                     $count=$model
                     ->alias('r')
@@ -46,7 +48,6 @@ class ReceiptModel extends BaseModel{
                             ->order($order)
                             ->limit($page->firstRow.','.$page->listRows)
                             ->select();
-                            p($list);die;        
                     }
                 }else{
                     if (empty($field)) {
@@ -76,7 +77,7 @@ class ReceiptModel extends BaseModel{
                     $count=$model
                     ->alias('r')
                     ->join('hapylife_user u on r.riuid = u.iuid')
-                    ->where(array('ir_status'=>$status,'r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName|ips_trade_no|ips_trade_status'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
+                    ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName|ips_trade_no|ips_trade_status'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
                     ->count();
                 }
                 $page=new_page($count,$limit);
@@ -86,7 +87,7 @@ class ReceiptModel extends BaseModel{
                         $list=$model
                             ->alias('r')
                             ->join('hapylife_user u on r.riuid = u.iuid')
-                            ->where(array('ir_status'=>$status,$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
+                            ->where(array('ir_status'=>array('in',$status),$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
                             ->order($order)
                             ->limit($page->firstRow.','.$page->listRows)
                             ->select();         
@@ -94,7 +95,7 @@ class ReceiptModel extends BaseModel{
                         $list=$model
                             ->alias('r')
                             ->join('hapylife_user u on r.riuid = u.iuid')
-                            ->where(array('ir_status'=>$status,$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
+                            ->where(array('ir_status'=>array('in',$status),$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
                             ->field($field)
                             ->order($order)
                             ->limit($page->firstRow.','.$page->listRows)
@@ -105,7 +106,7 @@ class ReceiptModel extends BaseModel{
                         $list=$model
                             ->alias('r')
                             ->join('hapylife_user u on r.riuid = u.iuid')
-                            ->where(array('ir_status'=>$status,'r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName|ips_trade_no|ips_trade_status'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
+                            ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName|ips_trade_no|ips_trade_status'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
                             ->order($order)
                             ->limit($page->firstRow.','.$page->listRows)
                             ->select();         
@@ -114,7 +115,7 @@ class ReceiptModel extends BaseModel{
                             ->alias('r')
                             ->join('hapylife_user u on r.riuid = u.iuid')
                             ->field($field)
-                            ->where(array('ir_status'=>$status,'r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName|ips_trade_no|ips_trade_status'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
+                            ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName|ips_trade_no|ips_trade_status'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
                             ->order($order)
                             ->limit($page->firstRow.','.$page->listRows)
                             ->select();         
