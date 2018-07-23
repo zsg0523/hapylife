@@ -669,8 +669,9 @@ class PayController extends HomeBaseController{
                 'ia_region'   => I('post.ia_region'),
                 'ia_road'     => I('post.ia_road'),
                 );
-      
-        $result = M('Address')->add($data);
+        if(!empty($data['ia_name']) && !empty($data['ia_phone']) && !empty($data['ia_province']) && !empty($data['ia_town']) && !empty($data['ia_region']) && !empty($data['ia_road'])){
+            $result = M('Address')->add($data);
+        }
         if($result){
             $this->redirect('Home/Purchase/addressList');
         }else{
@@ -783,8 +784,9 @@ class PayController extends HomeBaseController{
                 'bankbranch'   => I('post.bankbranch'),
                 'createtime'   => time(),
                 );
-      
-        $result = M('Bank')->add($data);
+        if(!empty($data['bankaccount']) && !empty($data['bankprovince']) && !empty($data['banktown']) && !empty($data['bankregion']) && !empty($data['bankname']) && !empty($data['bankbranch'])){
+            $result = M('Bank')->add($data);
+        }
         if($result){
             $this->redirect('Home/Purchase/bankList');
         }else{
