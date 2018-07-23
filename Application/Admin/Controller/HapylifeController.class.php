@@ -491,8 +491,8 @@ class HapylifeController extends AdminBaseController{
 		$status    = I('get.status')-1;
 		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
-		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime')):time();
-		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$order='ir_date desc',$status,$starttime,$endtime,$timeType);
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
+		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$status,$starttime,$endtime,$order='ir_date desc',$timeType);
 		//导出excel
 		if($excel == 'excel'){
 			$export_excel = D('Receipt')->export_excel($assign['data']);
@@ -706,7 +706,7 @@ class HapylifeController extends AdminBaseController{
             	$code[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
             }
         }
-		//0未支付 1待审核 2已支付 3已发货 4已到达 5申请退货 8确定退货
+		//0、7未支付 1待审核 2已支付 3已发货 4已到达 5申请退货 8确定退货
 		$order_status = I('get.status')-1;
 		if($order_status== -1){
 			//所有订单

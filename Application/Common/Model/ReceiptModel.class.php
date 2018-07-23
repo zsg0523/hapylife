@@ -19,7 +19,6 @@ class ReceiptModel extends BaseModel{
             case '-1':
                 if(empty($word)){
                     $count=$model->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime))))->count();
-
                 }else{
                     $count=$model
                     ->alias('r')
@@ -72,9 +71,7 @@ class ReceiptModel extends BaseModel{
                 break;
             default:
                 if(empty($word)){
-                    $count=$model
-                        ->where(array('ir_status'=>$status,$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
-                        ->count();
+                    $count=$model->where(array('ir_status'=>$status,$timeType=>array(array('egt',$starttime),array('elt',$endtime))))->count();
                 }else{
                     $count=$model
                     ->alias('r')
@@ -317,7 +314,7 @@ class ReceiptModel extends BaseModel{
     * 送货单导出excel
     **/
     public function export_send_excel($data){
-        $title   = array('用户ID','订单号','畅捷订单号','畅捷订单状态','IPS订单号','IPS订单状态','支付方式','订单状态','产品信息','订单总价','订货人','收货人','收货地址','收货人电话','创建日期','支付日期','发货日期','送达日期');
+        $title   = array('用户ID','订单号','畅捷订单号','畅捷订单状态','IPS订单号','IPS订单状态','支付方式','订单状态','产品信息','订单总价','订货人','收货人','收货地址','收货人电话','创建日期','创建时间','支付日期','支付时间','发货日期','送达日期');
         // p($data);
         foreach ($data as $k => $v) {
             // $content[$k]['ir_date']          = date('Y-m-d',$v['ir_date']);
@@ -358,6 +355,15 @@ class ReceiptModel extends BaseModel{
                 case '4':
                     $content[$k]['ir_status'] = '已送达';
                     break;
+                case '5':
+                    $content[$k]['ir_status'] = '已申请退货';
+                    break;
+                case '7':
+                    $content[$k]['ir_status'] = '待付款';
+                    break;
+                case '8':
+                    $content[$k]['ir_status'] = '已退货';
+                    break;
             }
             // 产品信息
             $content[$k]['ir_desc']       = $v['ir_desc'];
@@ -372,9 +378,13 @@ class ReceiptModel extends BaseModel{
             //收货人电话
             $content[$k]['ia_phone']       = $v['phone'];
             // 创建日期
-            $content[$k]['ir_datetime']  = date('Y-m-d H:i:s',$v['ir_date']);
+            $content[$k]['ir_datetime']  = date('Y-m-d',$v['ir_date']);
+            // 创建时间
+            $content[$k]['ir_datetime']  = date('H:i:s',$v['ir_date']);
             // 支付日期
-            $content[$k]['ir_paytime']   = date('Y-m-d H:i:s',$v['ir_paytime']);
+            $content[$k]['ir_paytime']   = date('Y-m-d',$v['ir_paytime']);
+            // 支付时间
+            $content[$k]['ir_paytime']   = date('H:i:s',$v['ir_paytime']);
 
             if(empty($v['send_time'])){
                 $content[$k]['send_time'] = '暂未发货';
