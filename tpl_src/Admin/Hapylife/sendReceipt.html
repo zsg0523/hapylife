@@ -90,13 +90,13 @@
 							<td>{$v['productno']}</td>
 							<td>{$v['ir_desc']}</td>
 							<td>
-								<if 	condition="$v['ir_status'] eq 0">待付款
-                                <elseif condition="$v['ir_status'] eq 1"/>待审核
-                                <elseif condition="$v['ir_status'] eq 2"/>已支付
+								<if condition="$v['ir_status'] eq 2">已支付
                                 <elseif condition="$v['ir_status'] eq 3"/>已发货
-                                <elseif condition="$v['ir_status'] eq 4"/>已送到
-                                <else />已评价
-                                </if>
+                                <elseif condition="$v['ir_status'] eq 4"/>已送达
+                                <elseif condition="$v['ir_status'] eq 5"/>申请退货
+                                <elseif condition="$v['ir_status'] eq 7 || $v['ir_status'] eq 0"/>待付款
+                                <elseif condition="$v['ir_status'] eq 8"/>已退货
+                            	</if>
 							</td>
 							<td>{$v['ia_name']}</td>
 							<td>{$v['ia_phone']}</td>
@@ -135,7 +135,7 @@
 								</if>
 							</td>
 							<td>
-								<if condition="$v['ir_status'] eq 2" ><a href="javascript:if(confirm('确定退货？'))location='{:U('Admin/Hapylife/send',array('id'=>$v['irid'],'ir_statuss'=>1))}'">确定退货</a>
+								<if condition="$v['ir_status'] eq 2" ><a href="javascript:if(confirm('确定退货？'))location='{:U('Admin/Hapylife/send',array('id'=>$v['irid'],'ir_statuss'=>1))}'">申请退货</a>
 								<elseif condition="$v['ir_status'] eq 5"/>已申请退货
 								<elseif condition="$v['ir_status'] eq 8"/>已退货
 								</if>
