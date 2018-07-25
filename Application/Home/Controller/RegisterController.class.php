@@ -25,14 +25,14 @@ class RegisterController extends HomeBaseController{
     public function new_register(){
         $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
         foreach ($mape as $key => $value) {
-            $data[$key]         = $value;
+            $dat[$key]         = $value;
             if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
-            	$data[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+            	$dat[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
             }else{
-            	$data[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+            	$dat[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
             }
         }
-        $this->assign('data',$data);
+        $this->assign('dat',$dat);
         $this->display();
     }
     /**
@@ -158,11 +158,21 @@ class RegisterController extends HomeBaseController{
             $upload = several_upload();
             $User = D("User1"); // 实例化User对象
             if(!$User->create($data)){
+                $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
+                foreach ($mape as $key => $value) {
+                    $dat[$key]         = $value;
+                    if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
+                        $dat[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+                    }else{
+                        $dat[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+                    }
+                }
                  // 如果创建失败 表示验证没有通过 输出错误提示信息
                 $error = $User->getError();
                 $assign = array(
                             'error' => $error,
-                            'data' => $data
+                            'data' => $data,
+                            'dat' => $dat
                             );
                 $this->assign($assign);
                 $this->display('Register/new_register');

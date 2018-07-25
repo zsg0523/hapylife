@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
 		<meta http-equiv="X-UA-Compatible" content="IE=9" />
 		<title>新用户注册</title>		
@@ -148,28 +148,28 @@
 					<div class="form-group" onclick="hiden(this);" style="margin-top: 10px;">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>中文姓:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
-							<input type="text" class="form-control"  name="LastName" placeholder="中文姓" value="{$data['LastName']}">
+							<input type="text" class="form-control"  name="LastName" placeholder="中文姓" value="{$data['LastName']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['LastName']}</div>
 					</div>
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>中文名:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
-							<input type="text" class="form-control"   name="FirstName" placeholder="中文名" value="{$data['FirstName']}">
+							<input type="text" class="form-control"   name="FirstName" placeholder="中文名" value="{$data['FirstName']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['FirstName']}</div>
 					</div>
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>英文姓:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
-							<input type="text" class="form-control"   name="EnLastName" placeholder="英文姓" value="{$data['EnLastName']}">
+							<input type="text" class="form-control"   name="EnLastName" placeholder="英文姓" value="{$data['EnLastName']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnLastName']}</div>
 					</div>
 					<div class="form-group" onclick="hiden(this);"> 
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>英文名:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
-							<input type="text" class="form-control"   name="EnFirstName" placeholder="英文名" value="{$data['EnFirstName']}">
+							<input type="text" class="form-control"   name="EnFirstName" placeholder="英文名" value="{$data['EnFirstName']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnFirstName']}</div>
 					</div>
@@ -182,7 +182,7 @@
 						<div class="col-lg-10 col-md-10 col-xs-8">
 							<input type="hidden" name="acid" id="acid" value="" />
 							<select class="form-control" name="acnumber" id="acnumber">
-						    	<foreach name="data" item="v">
+						    	<foreach name="dat" item="v">
 						    		<option  class="opt" value="{$v['acnumber']}" acid="{$v['acid']}" >{$v['name']}</option>						    			
 						    	</foreach>
 						    </select>
@@ -192,8 +192,9 @@
 					<div class="form-group" onclick="hiden(this);"> 
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>手机号码:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
-							<input type="text" name="Phone" id="phoneNumber" class="form-control" placeholder="请输入手机号码" aria-describedby="basic-addon1" oninput="getAcid();">	
+							<input type="text" name="Phone" id="phoneNumber" class="form-control" value="{$data['Phone']}" placeholder="请输入手机号码" aria-describedby="basic-addon1" oninput="getAcid();" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">	
 						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['Phone']}</div>
 					</div>
 					
 					
@@ -202,7 +203,7 @@
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>密码:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
-							<input type="password" class="form-control" id="passWord1" name="PassWord" autocomplete="new-password" placeholder="必须填写七位以上的密码" oninput="valiPassword();"/>
+							<input type="password" class="form-control" id="passWord1" name="PassWord" autocomplete="new-password" placeholder="必须填写七位以上的密码" oninput="valiPassword();" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')"/>
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err" id="judgePassword1">{$error['PassWord']}</div>
 
@@ -210,7 +211,7 @@
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>确认密码:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
-							<input type="password" class="form-control" id="passWord2" autocomplete="new-password" name="ConfirmPassWord" placeholder="必须和上面密码一致"    onblur="validate();"/>
+							<input type="password" class="form-control" id="passWord2" autocomplete="new-password" name="ConfirmPassWord" placeholder="必须和上面密码一致"    onblur="validate();" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')"/>
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err" id="judgePassword2">{$error['ConfirmPassWord']}</div>
 					</div>
@@ -220,7 +221,7 @@
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>推荐人姓名:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
 							<input type="hidden" name="teamCode" value="">
-							<input type="text" class="form-control" name="EnrollerNameCn" disabled="disabled" value="{$Think.session.user.name_cn}">
+							<input type="text" class="form-control" name="EnrollerNameCn" disabled="disabled" value="{$Think.session.user.name_cn}" >
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnrollerID']}</div>
 					</div>
@@ -322,7 +323,7 @@
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>省:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<!--<input type="text" class="form-control"   name="ShopProvince" placeholder="地址-省" value="{$data['ShopProvince']}">-->
-							<input type="text" class="form-control"   name="ShopProvince" placeholder="地址-省" value="{$data['ShopProvince']}"   onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
+							<input type="text" class="form-control"   name="ShopProvince" placeholder="地址-省" value="{$data['ShopProvince']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopProvince']}</div>
 					</div>
@@ -362,14 +363,14 @@
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>银行名称:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
-							<input type="" class="form-control"   name="BankName" placeholder="银行名称" value="{$data['BankName']}">
+							<input type="" class="form-control"   name="BankName" placeholder="银行名称" value="{$data['BankName']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['BankName']}</div>
 					</div>
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>银行账号:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
-							<input type="" class="form-control"   name="BankAccount" placeholder="银行账号" value="{$data['BankAccount']}">
+							<input type="" class="form-control"   name="BankAccount" placeholder="银行账号" value="{$data['BankAccount']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
 						</div>
 						<div  class="col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['BankAccount']}</div>
 					</div>
@@ -377,7 +378,7 @@
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>银行所在省:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<!--<input type="" class="form-control"   name="BankProvince" placeholder="银行所在省" value="{$data['BankProvince']}">-->
-							<input type="" class="form-control"   name="BankProvince" placeholder="银行所在省" value="{$data['BankProvince']}"   onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
+							<input type="" class="form-control"   name="BankProvince" placeholder="银行所在省" value="{$data['BankProvince']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['BankProvince']}</div>
 					</div>
@@ -386,7 +387,7 @@
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>银行所在市:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<!--<input type="" class="form-control"   name="BankCity" placeholder="银行所在市" value="{$data['BankCity']}">-->
-							<input type="" class="form-control"   name="BankCity" placeholder="银行所在市" value="{$data['BankCity']}"   onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
+							<input type="" class="form-control"   name="BankCity" placeholder="银行所在市" value="{$data['BankCity']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['BankCity']}</div>
 					</div>
@@ -394,14 +395,14 @@
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>银行所在区:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<!--<input type="" class="form-control"   name="BankArea" placeholder="银行所在区" value="{$data['BankArea']}">-->
-							<input type="" class="form-control"   name="BankArea" placeholder="银行所在区" value="{$data['BankArea']}"   onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
+							<input type="" class="form-control"   name="BankArea" placeholder="银行所在区" value="{$data['BankArea']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['BankArea']}</div>
 					</div>
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>支行名称:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
-							<input type="" class="form-control"   name="SubName" placeholder="支行名称" value="{$data['SubName']}">
+							<input type="" class="form-control"   name="SubName" placeholder="支行名称" value="{$data['SubName']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['SubName']}</div>
 					</div>

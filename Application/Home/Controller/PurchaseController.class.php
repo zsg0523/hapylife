@@ -156,18 +156,21 @@ class PurchaseController extends HomeBaseController{
 	**/
 	public function myOrder(){
 		$iuid = $_SESSION['user']['id'];
+        p($iuid);
         $data['status'] = $_SESSION['user']['status'];
-		$map  = array(
+		p($data);
+        $map  = array(
 				'riuid'=>$iuid,
                 'ir_status'=>2
 			);
-		$data = M('Receipt')
+		$list = M('Receipt')
 				->alias('r')
 				->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
 				->join('hapylife_product hp on hr.ipid=hp.ipid')
 				->where($map)
 				->select();
-		// p($data);
+		p($list);
+        die;
 		$this->assign('data',$data);
 		$this->display();
 	}
