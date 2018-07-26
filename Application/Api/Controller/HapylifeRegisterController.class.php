@@ -659,8 +659,8 @@ class HapylifeRegisterController extends HomeBaseController{
                     $this->ajaxreturn($sample);
                 }
             }else{
-                $key      = "Z131MZ8ZV29H5EQ9LGVH";
-                $url      = "https://signupapi.wvhservices.com/api/Account/ValidateHpl?customerId=".$customerid."&"."key=".$key;
+                $key      = "QACER3H5T6HGYDCCDAZM3";
+                $url      = "https://signupapi.wvhservices.com/api/Hpl/Validate?customerId=".$customerid."&"."key=".$key;
                 $wv       = file_get_contents($url);
                 $data = json_decode($wv,true);
                 $message['lastname'] = $data['lastName'];

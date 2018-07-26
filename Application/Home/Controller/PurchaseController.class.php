@@ -60,12 +60,21 @@ class PurchaseController extends HomeBaseController{
         $find  = M('User')->where(array('iuid'=>$iuid))->find();
         $type  = trim($find['distributortype']);
         $mtype = trim($find['customertype']);
+        $status = $find['status'];
         //判断用户等级 show--1、可点击 2、不可点击
         // p($type);die;
-        $tmpe    = array(
-            'ip_grade' =>$type,
-            'is_pull'  =>1
-        );
+        if(!empty($status)){
+            $tmpe    = array(
+                'ip_grade' =>$type,
+                'is_pull'  =>2
+            );
+        }else{
+            $tmpe    = array(
+                'ip_grade' =>$type,
+                'is_pull'  =>1
+            );
+        }
+        
         $product = D('Product')->where($tmpe)->order('is_sort desc')->select();
 
         foreach ($product as $key => $value) {

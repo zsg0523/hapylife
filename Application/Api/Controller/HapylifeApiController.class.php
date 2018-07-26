@@ -267,8 +267,8 @@ class HapylifeApiController extends HomeBaseController{
         $tmpe = I('post.');
         if(strlen($tmpe['CustomerID'])==8){
                 //检查WV api用户信息
-                $key      = "Z131MZ8ZV29H5EQ9LGVH";
-                $url      = "https://signupapi.wvhservices.com/api/Account/ValidateHpl?customerId=".$tmpe['CustomerID']."&"."key=".$key;
+                $key      = "QACER3H5T6HGYDCCDAZM3";
+                $url      = "https://signupapi.wvhservices.com/api/Hpl/Validate?customerId=".$tmpe['CustomerID']."&"."key=".$key;
                 $wv       = file_get_contents($url);
                 $userinfo = json_decode($wv,true);
                 //检查wv是否存在该账号 Y创建该账号  N登录失败
