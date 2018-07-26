@@ -1,0 +1,103 @@
+<!DOCTYPE html>  
+<html lang="zh-cn">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">  
+    <title>我的积分</title>  
+    <link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css">
+    <link rel="stylesheet" href="__PUBLIC_CSS__/common.css" />
+    <style type="text/css">
+    	.main{width:100%;min-height:120px;margin:0px auto;background-color: #fff;}	
+    	.commonHead{width:100%;position: fixed;top: 0;left: 0;z-index: 20;}
+    	.EP_top{width: 100%;height: 140px;background: #ff896d;color: #fff;}
+    	.EP_top>span{width: 100%;height: 30px;line-height: 30px;display: block;}
+    	.EP_top>a{width: 100%;height: 30px;line-height: 30px;display: block;color: #fff;text-align: center;font-size: 15px;}
+    	
+    	.EP_btn{width: 94%;height: auto;margin: auto;}
+    	.transfer_btn{width: 100%;height: 40px;line-height: 40px;text-align: center;border: 1px solid #dedede;border-radius: 5px;margin: 10px auto;}
+    	.rd{width: 100%;height: 40px;line-height: 40px;border-bottom: 1px solid #dedede;margin: 10px auto;}
+    	.recordList{width: 94%;height: auto;margin: auto;}
+    	.recordList>div{color: #2491EE;width: 100%; height: 30px;line-height: 30px; border-bottom: 1px solid #DEDEDE;}
+    	.recordList>ul{width: 100%;height: auto;}
+    	.recordList>ul>li{width: 100%;height: auto;border-bottom: 1px solid #DEDEDE;}
+    	.recordList>ul>li>div{height: 30px;width: 100%;line-height: 30px;}
+    	.recordList>ul>li>div>i{font-size: 12px;}
+    	.recordList>ul>li>p{text-indent: 2em;line-height: 20px;font-size: 12px;}
+    	@media screen and (min-width:1200px) {
+			.main{width: 1200px;}
+		}
+    </style>
+</head>  
+<body >  
+     <div class="commonHead1">
+  			<include file="Common/commonHead1" />
+  	</div> 
+    <div class="main">  
+  		<div class="EP_top">
+  			<div style="height: 20px;width: 100%;"></div>
+  			<h3 class="tc">EP</h3>
+  			<h3 class="tc">{$data['iu_point']}</h3>
+  			<span class="tc">冻结:{$data['iu_unpoint']}</span>
+  			<a onclick='window.location.href="{:U('IbosWeb/PersonalCenter/myPointMonth')}";'>积分明细</a>
+  		</div>
+  		<div class="EP_btn">
+  			 <div class=" transfer_btn" onclick='window.location.href="{:U('IbosWeb/PersonalCenter/EPtransfer',array('rd'=>$rd))}";'>EP转账</div>
+  			 <div class="rd">
+  			 	<i>RD</i>
+  			 	<span class="fr" id="rd">{$rd}</span>
+  			 </div>
+  			 <div class=" transfer_btn" onclick='toRDchangeEP();'>RD转EP</div>
+  		</div> 
+  		<div class="recordList">
+  			<div>最近记录</div>
+  			<ul>
+          <foreach name="log" item="v">
+  	  			<li>
+  	  				<div>
+                <if condition="$v['action'] eq 0">
+                  <span class="fl">积分提现</span>
+                <elseif condition ="$v['action'] eq 1" />
+                  <span class="fl">积分转出</span>
+                <elseif condition ="$v['action'] eq 2" />
+                  <span class="fl">积分转入</span>
+                <elseif condition ="$v['action'] eq 3" />
+                  <span class="fl">积分支付</span>
+                <elseif condition ="$v['action'] eq 4" />
+                  <span class="fl">积分提现审核</span>
+                <elseif condition ="$v['action'] eq 5" />
+                  <span class="fl">系统发放</span>
+                <elseif condition ="$v['action'] eq 6" />
+                  <span class="fl">RD转EP</span>
+                <elseif condition ="$v['action'] eq 7" />
+                  <span class="fl">系统减少</span>
+                </if>
+                <i class="fr">{:date('Y-m-d H:i:s',$v['create_time'])}</i>
+              </div>
+  	  				<p>{$v['content']}</p>
+  	  			</li>
+          </foreach>
+  			</ul>
+  		</div>
+  		
+    </div>  
+  
+  
+  
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>  
+	<script type="text/javascript">  
+	 $(document).ready(function(){ 
+			
+	  });
+   //返回个人中心
+    function back(){
+        window.location.href ="{:U('IbosWeb/PersonalCenter/personalCenter')}";
+    }
+    function toRDchangeEP(){
+        var rd=document.getElementById('rd').innerText;
+        window.location.href="{:U('IbosWeb/PersonalCenter/RDtransferEP/rd/"+rd+"')}";
+    }
+ 
+	</script>  
+</body>  
+</html>  

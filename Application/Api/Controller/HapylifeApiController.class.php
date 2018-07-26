@@ -6,59 +6,87 @@ use Common\Controller\HomeBaseController;
 **/
 class HapylifeApiController extends HomeBaseController{
 
-	public function index(){
-        
-    }
-	/**
-	* 旧用户注册
-	**/
-	// public function oldregister(){
-	// 	$data  = I('post.');
- //        //匹配姓、名和CustomerID
-	// 	$where= array(
-	// 		'LastName'     =>$data['LastName'],
-	// 		'FirstName'    =>$data['FirstName'],
-	// 		'CustomerID'   =>$data['CustomerID']
-	// 	);
-	// 	$find = D('User')->where($where)->find();
-	// 	if($find){
- //            //正反面身份证
-	// 		if(!empty($data['JustIdcard'])){
- //                $img_body1 = substr(strstr($data['JustIdcard'],','),1);
- //                $JustIdcard = time().'_'.mt_rand().'.jpg';
- //                $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
- //                $tmpe['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
- //            }
- //            if(!empty($data['BackIdcard'])){
- //                $img_body2 = substr(strstr($data['BackIdcard'],','),1);
- //                $BackIdcard = time().'_'.mt_rand().'.jpg';
- //                $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
- //                $tmpe['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
- //            }
-	// 		$tmpe = array(
-	// 			'Phone'     =>$data['Phone'],
-	// 			'PassWord'  =>md5($data['PassWord'])
-	// 		);
-	// 		$data['iuid'] = $find['iuid'];
-	// 		$save = D('User')->where($where)->save($tmpe);
-	// 		if($save){
-	// 			$data['status'] = 1;
-	// 			$this->ajaxreturn($data);				
-	// 		}else{
-	// 			$data['status'] = 0;
-	// 			$this->ajaxreturn($data);
-	// 		}
-	// 	}else{
-	// 		$data['status'] = 0;
-	// 		$this->ajaxreturn($data);
-	// 	}
-	// }
+    public function index(){
 
-	/**
-	* 用户注册LastName FirstName EnrollerID Email PassWord Phone JustIdcard BackIdcard Sex
+
+        // {
+        //     "happyLifeID":"HPL000004",
+        //     "password":"25d55ad283aa400af464c76d713c07ad",
+        //     "sponsorID":"1234",
+        //     "firstName_EN":"test",
+        //     "lastName_EN":"test",
+        //     "emailAddress":"951095728@qq.com",
+        //     "phone":"13242998086",
+        //     "products":["RBS","DTP"],
+        //     "key":"Z131MZ8ZV29H5EQ9LGVH"
+        // }
+        //检查WV api用户信息
+        $HappyLifeID  = trim(I('post.happyLifeID'));
+        $Password     = md5(trim(I('post.password')));
+        $SponsorID    = trim(I('post.sponsorID'));
+        $FirstName_EN = trim(I('post.firstName_EN'));
+        $LastName_EN  = trim(I('post.lastName_EN'));
+        $EMailAddress = trim(I('post.emailAddress'));
+        $Phone        = trim(I('post.phone'));
+        $Products     = array('RBS','DTP');
+        $key          = "Z131MZ8ZV29H5EQ9LGVH";
+        
+        $data         = array(
+                'happyLifeID'  =>$HappyLifeID,
+                'password'     =>$Password,
+                'sponsorID'    =>$SponsorID,
+                'firstName_EN' =>$FirstName_EN,
+                'lastName_EN'  =>$LastName_EN,
+                'emailAddress' =>$EMailAddress,
+                'phone'        =>$Phone,
+                'products'     =>$Products,
+                'key'          =>$key
+        );
+        p(json_encode($data));die;
+        //https://signupapi.wvhservices.com/api/Hpl/HplCreateCustomer
+        //http://192.168.33.10/data/hapylife/index.php/Api/HapylifeApi/index
+        $url           = "https://signupapi.wvhservices.com/api/Hpl/HplCreateCustomer";
+        $wv            = doCurlPostRequest($url,$data);
+        // $result     = json_decode($wv,true);
+        p($wv);die;
+    }
+
+    public function hplCreateCustomer(){
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "https://signupapi.wvhservices.com/api/Hpl/HplCreateCustomer",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 30,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "POST",
+          CURLOPT_POSTFIELDS => "{"happyLifeID":"HPL000003","password":"25d55ad283aa400af464c76d713c07ad","sponsorID":"1234","firstName_EN":"test","lastName_EN":"test","emailAddress":"951095728@qq.com","phone":"13242998086","products":["RBS","DTP"],"key":"Z131MZ8ZV29H5EQ9LGVH"}",
+          CURLOPT_HTTPHEADER => array(
+            "Cache-Control: no-cache",
+            "Content-Type: application/json",
+            "Postman-Token: be7d743f-ab54-413b-a764-ba30047bb017"
+          ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+          echo "cURL Error #:" . $err;
+        } else {
+          echo $response;
+        }
+    }
+
+    /**
+    * 用户注册LastName FirstName EnrollerID Email PassWord Phone JustIdcard BackIdcard Sex
     * IsNew/1新 0旧
-	**/
-	public function newregister(){
+    **/
+    public function newregister(){
         if(IS_POST){
             $data['status'] = 0;
             $data['message']= 'app暂不允许注册，请前往web端';
@@ -230,65 +258,124 @@ class HapylifeApiController extends HomeBaseController{
                 // }
             }
         }
-	}
+    }
 
-	/**
-	* 登录
-	**/
-	public function login(){
-		$tmpe = I('post.');
+    /**
+    * 登录
+    **/
+    public function login(){
+        $tmpe = I('post.');
         if(strlen($tmpe['CustomerID'])==8){
-            $data['status'] = 0;
-            $this->ajaxreturn($data);    
-        }else{
-    		$where= array(
-    			'CustomerID'=>$tmpe['CustomerID'],
-    			'PassWord'  =>md5($tmpe['PassWord'])
-    		);
-    		$data = D('User')->where($where)->find();
-    		if($data){
-    			// $time=strtotime($data['orderdate']);
-    			// if($time>time()){
-    				$data['status'] = 1;
-    				$this->ajaxreturn($data);	
-    			// }else{
-    				// $data['status'] = 2;
-    				// $this->ajaxreturn($data);					
-    			// }
-    		}else{
-    			$data['status'] = 0;
-    			$this->ajaxreturn($data);			
-    		}
-        }
-	}
+                //检查WV api用户信息
+                $key      = "Z131MZ8ZV29H5EQ9LGVH";
+                $url      = "https://signupapi.wvhservices.com/api/Account/ValidateHpl?customerId=".$tmpe['CustomerID']."&"."key=".$key;
+                $wv       = file_get_contents($url);
+                $userinfo = json_decode($wv,true);
+                //检查wv是否存在该账号 Y创建该账号  N登录失败
+                switch ($userinfo['isActive']) {
+                    case 'true':
+                    //检查系统是否存在该账号 Y无密码登录 N创建账号
+                    $checkAccount = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
+                        switch ($checkAccount) {
+                            case null:
+                                //创建该新账号在本系统
+                                $map      = array(
+                                        'CustomerID'  =>$tmpe['CustomerID'],
+                                        'PassWord'    =>md5($userinfo['password']),
+                                        'LastName'    =>$userinfo['lastName'],
+                                        'FirstName'   =>$userinfo['firstName'],
+                                        'isActive'    =>$userinfo['isActive']
+                                    );
+                                $createUser = D('User')->add($map);
+                                break;
+                            default:
+                                //更新相关信息在本系统
+                                $map      = array(
+                                        'PassWord'    =>md5($userinfo['password']),
+                                        'LastName'    =>$userinfo['lastName'],
+                                        'FirstName'   =>$userinfo['firstName'],
+                                        'isActive'    =>$userinfo['isActive']
+                                    );
+                                $createUser = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->save($map);
+                                break;
+                        }
+                        $data = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
+                        //登录后看不到产品
+                        $_SESSION['user']=array(
+                                'id'       =>$data['iuid'],
+                                'username' =>$data['customerid'],
+                                'name_cn'  =>$data['lastname'].$data['firstname'],
+                                'status'   =>2,
+                            );
+                        $data['status'] = 1;
+                        $this->ajaxreturn($data); 
+                        break;
 
-	/**
-	* 获取用户信息
-	**/
-	public function userinfo(){
-		$iuid = I('post.iuid');
-		$data = D('User')->where(array('iuid'=>$iuid))->find();
-		$right= D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Right'))->select();
-		$left = D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Left'))->select();
+                    default:
+                        $data['status'] = 0;
+                        $this->ajaxreturn($data); 
+                        break;
+                }   
+        }else{
+            $where= array(
+                'CustomerID'=>$tmpe['CustomerID'],
+                'PassWord'  =>md5($tmpe['PassWord'])
+            );
+            $data = D('User')->where($where)->find();
+            if($data){
+                if(substr($data['customerid'],0,3) == 'HPL'){
+                    $_SESSION['user']=array(
+                                        'id'       => $data['iuid'],
+                                        'username' => $data['customerid'],
+                                        'name_cn'  => $data['lastname'].$data['firstname'],
+                                        'status'   => 1,
+                                        'address'  => 0,
+                                        'bank'     => 0,
+                                    );
+                }else{
+                    $_SESSION['user']=array(
+                            'id'       => $data['iuid'],
+                            'username' => $data['customerid'],
+                            'name_cn'  => $data['lastname'].$data['firstname'],
+                            'status'   => 2,
+                        );
+                }
+                $data['status'] = 1;
+                $this->ajaxreturn($data);   
+            }else{
+                $data['status'] = 0;
+                $this->ajaxreturn($data);           
+            }
+        }
+    }
+
+    /**
+    * 获取用户信息
+    **/
+    public function userinfo(){
+        $iuid = I('post.iuid');
+        $data = D('User')->where(array('iuid'=>$iuid))->find();
+        $right= D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Right'))->select();
+        $left = D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Left'))->select();
         //right右脚、left左脚
-		if($right){
-			$data['right'] = count($right);
-		}else{
-			$data['right'] = 0;
-		}
-		if($left){
-			$data['left'] = count($left);
-		}else{
-			$data['left'] = 0;
-		}
-		if($data){
-			$data['status'] = 1;
-			$this->ajaxreturn($data);	
-		}else{
-			$data['status'] = 0;
-			$this->ajaxreturn($data);			
-		}
-	}
+        if($right){
+            $data['right'] = count($right);
+        }else{
+            $data['right'] = 0;
+        }
+        if($left){
+            $data['left'] = count($left);
+        }else{
+            $data['left'] = 0;
+        }
+        if($data){
+            $data['status'] = 1;
+            $this->ajaxreturn($data);   
+        }else{
+            $data['status'] = 0;
+            $this->ajaxreturn($data);           
+        }
+    }
 
     /**
     * 编辑用户信息
@@ -442,50 +529,50 @@ class HapylifeApiController extends HomeBaseController{
             $this->ajaxreturn($data);
         }
     }
-	/**
-	* 新闻列表
-	**/	
-	public function newslist(){
-		$map  = array(
-			'is_show' =>1
-		);
-		$data = M('News')
-				->where($map)
-				->order('addtime desc')
-				->select();
-		if($data){
-			$this->ajaxreturn($data);
-		}else{
-			$data = array(
-				'status'=>0,
-				'msg'	=>'无法获取新闻列表'
-			);
-			$this->ajaxreturn($data);
-		}
-	}
+    /**
+    * 新闻列表
+    **/ 
+    public function newslist(){
+        $map  = array(
+            'is_show' =>1
+        );
+        $data = M('News')
+                ->where($map)
+                ->order('addtime desc')
+                ->select();
+        if($data){
+            $this->ajaxreturn($data);
+        }else{
+            $data = array(
+                'status'=>0,
+                'msg'   =>'无法获取新闻列表'
+            );
+            $this->ajaxreturn($data);
+        }
+    }
 
-	/**
-	* 新闻详情
-	**/
-	public function newscontent(){
-		$nid  = I('post.nid');
+    /**
+    * 新闻详情
+    **/
+    public function newscontent(){
+        $nid  = I('post.nid');
         $data = M('News')->where(array('nid'=>$nid))->find();
         if($data){
             $this->ajaxreturn($data);
         }else{
             $data = array(
-				'status'=>0,
-				'msg'	=>'获取新闻详情失败'
-			);
+                'status'=>0,
+                'msg'   =>'获取新闻详情失败'
+            );
             $this->ajaxreturn($data);
         }
-	}
+    }
 
-	/**
-	* 商品列表
-	**/
-	public function productlist(){
-		$map = array(
+    /**
+    * 商品列表
+    **/
+    public function productlist(){
+        $map = array(
             'ip_type'    =>2,
             'ip_name_zh '=>array('NEQ','Rbs'),
         );
@@ -494,36 +581,36 @@ class HapylifeApiController extends HomeBaseController{
             $this->ajaxreturn($data);
         }else{
             $data = array(
-				'status'=>0,
-				'msg'	=>'获取商品列表失败'
-			);
+                'status'=>0,
+                'msg'   =>'获取商品列表失败'
+            );
             $this->ajaxreturn($data);
         }
-	}
+    }
 
-	/**
-	* 商品详情
-	**/
-	public function product(){
-		$ipid = I('post.ipid');
+    /**
+    * 商品详情
+    **/
+    public function product(){
+        $ipid = I('post.ipid');
         $data = M('Product')
-			  ->where(array('ipid'=>$ipid))
-			  ->find();
+              ->where(array('ipid'=>$ipid))
+              ->find();
         if($data){
-       		$this->ajaxreturn($data);
-    	}else{
+            $this->ajaxreturn($data);
+        }else{
             $data = array(
-				'status'=>0,
-				'msg'	=>'获取商品详情失败'
-			);
+                'status'=>0,
+                'msg'   =>'获取商品详情失败'
+            );
             $this->ajaxreturn($data);
         }
-	}
-	/**
-	* 产品订单
-	**/
-	public function order(){
-		$iuid = trim(I('post.iuid'));
+    }
+    /**
+    * 产品订单
+    **/
+    public function order(){
+        $iuid = trim(I('post.iuid'));
         $ipid = trim(I('post.ipid'));
         //商品信息
         $product = M('Product')->where(array('ipid'=>$ipid))->find();
@@ -617,9 +704,9 @@ class HapylifeApiController extends HomeBaseController{
             $order['msg']    = '订单生成失败';
             $this->ajaxreturn($order);
         }
-	}
+    }
 
-	/**
+    /**
     * 购买产品快钱支付
     **/
     public function kqPayment(){
@@ -821,32 +908,32 @@ class HapylifeApiController extends HomeBaseController{
     }
 
     /**
-	* 旅游列表
-	**/	
-	public function travellist(){
-		$map    = array(
-			'is_show' =>1
-		);
-		$travel = M('Travel')
-				->where($map)
-				->order('addtime desc')
-				->select();
+    * 旅游列表
+    **/ 
+    public function travellist(){
+        $map    = array(
+            'is_show' =>1
+        );
+        $travel = M('Travel')
+                ->where($map)
+                ->order('addtime desc')
+                ->select();
         foreach ($travel as $key => $value) {
             $data[$key]                 = $value;
             $data[$key]['travel_price'] = sprintf("%.2f",$value['travel_price']);
         }
-		if($data){
-			$this->ajaxreturn($data);
-		}else{
-			$data = array(
-				'status'=>0,
-				'msg'	=>'无法获取旅游列表'
-			);
-			$this->ajaxreturn($data);
-		}
-	}
+        if($data){
+            $this->ajaxreturn($data);
+        }else{
+            $data = array(
+                'status'=>0,
+                'msg'   =>'无法获取旅游列表'
+            );
+            $this->ajaxreturn($data);
+        }
+    }
 
-	/**
+    /**
     * 旅游详情
     **/
     public function travelcontent(){
@@ -982,10 +1069,10 @@ class HapylifeApiController extends HomeBaseController{
     }
 
     /**
-	* 产品 1收购 2升级 3月费
-	**/
-	public function upgrade(){
-		$iuid  = I('post.iuid');
+    * 产品 1收购 2升级 3月费
+    **/
+    public function upgrade(){
+        $iuid  = I('post.iuid');
         $find  = M('User')->where(array('iuid'=>$iuid))->find();
         $type  = trim($find['distributortype']);
         $mtype = trim($find['customertype']);
@@ -1009,12 +1096,12 @@ class HapylifeApiController extends HomeBaseController{
             $this->ajaxreturn($data);
         }else{
             $data = array(
-				'status'=>0,
-				'msg'	=>'获取失败'
-			);
+                'status'=>0,
+                'msg'   =>'获取失败'
+            );
             $this->ajaxreturn($data);
         }  
-	}
+    }
 
     /**
     * 获取房间
@@ -1709,4 +1796,5 @@ class HapylifeApiController extends HomeBaseController{
             $this->ajaxreturn($data);
         }
     }
+
 }

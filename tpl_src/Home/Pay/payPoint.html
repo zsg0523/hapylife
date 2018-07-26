@@ -1,0 +1,60 @@
+<!DOCTYPE html>  
+<html lang="zh-cn">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">  
+    <title>积分支付</title>  
+    <link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="__PUBLIC_CSS__/common.css" />-->
+    <style type="text/css">
+    	html{background-color: #EEEEF0;}
+    	#body{background-color: #EEEEF0;}
+    	.main{width:100%;min-height:150px;margin:100px auto;background-color: #fff;}	
+    	.commonHead{width:100%;position: fixed;top: 0;left: 0;z-index: 20;}
+    	.ep_group{width: 100%;height: 30px;line-height: 30px;}
+    	.ep_group>span{width: 30%;height:30px; margin-left: 5px;display: block;float: left;}
+    	.ep_group>span:nth-child(2){color: #FF6600;}
+    	.tc{text-align: center;}
+    	.main>a{width: 96%;height: 40px;line-height: 40px; margin: auto;border-radius: 5px;display: block;margin-top: 10px;margin-left: 2%; background: #2490ed;font-size: 15px;color: #fff;}
+    	@media screen and (min-width:1200px) {
+			.main{width: 1200px;}
+			
+		}
+    </style>
+</head>  
+<body id="body">  
+    <div class="commonHead">
+  		<include file="Purchase/commonHead" />
+  	</div>
+    <div class="main">  
+		<div class="ep_group">
+            <span class="tc">所需EP:&nbsp;&nbsp; </span>
+            <span id="proPoint">{$data['ir_point']}</span>
+        </div>
+        <div class="ep_group">
+            <span class="tc">您的EP:&nbsp;&nbsp; </span>
+            <span id="logins_point">{$data['iu_point']}</span>
+        </div>
+        <div class="ep_group" >
+            <span class="tc" >剩余EP:&nbsp;&nbsp;</span>
+            <span id="havePoint">{$data['re_ep']}</span>
+        </div>
+        <a class="tc" onclick='window.location.href="{:U('Home/Pay/toCheckPoint',array('ir_receiptnum'=>$ir_receiptnum))}"'>确认支付</a>                            
+        
+    </div>  
+    
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>  
+	<script type="text/javascript">
+	$(document).ready(function(){ 
+//		changeCommonHead('积分支付');
+		
+	});
+	//返回个人中心
+	function back(){
+			window.location.href ="{:U('Home/PersonalCenter/personalCenter')}";
+	}
+	  
+	</script>  
+</body>  
+</html>  

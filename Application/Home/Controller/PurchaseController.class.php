@@ -11,7 +11,7 @@ class PurchaseController extends HomeBaseController{
     public function test(){
         $order = M('Receipt')
                 ->alias('r')
-                ->join('hapylife_user u on r.iuid = u.iuid')
+                ->join('hapylife_user u on r.riuid = u.iuid')
                 ->select();
         // p($order);die;
         foreach ($order as $key => $value) {
@@ -65,14 +65,14 @@ class PurchaseController extends HomeBaseController{
         $tmpe    = array(
             'ip_grade' =>$type,
             'is_pull'  =>1
-        ); 
+        );
         $product = D('Product')->where($tmpe)->order('is_sort desc')->select();
 
         foreach ($product as $key => $value) {
             $data[$key]         = $value; 
             $data[$key]['show'] = 1; 
         }
-        // p($data);die;
+        // p($tmpe);die;
         $this->assign('product',$data);
 		$this->display();
 	}
@@ -157,16 +157,16 @@ class PurchaseController extends HomeBaseController{
 	public function myOrder(){
 		$iuid = $_SESSION['user']['id'];
         $data['status'] = $_SESSION['user']['status'];
-		$map  = array(
-				'riuid'=>$iuid
+        $map  = array(
+				'riuid'=>$iuid,
+                'ir_status'=>2
 			);
-		$data = M('Receipt')
+		$list = M('Receipt')
 				->alias('r')
 				->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
 				->join('hapylife_product hp on hr.ipid=hp.ipid')
 				->where($map)
 				->select();
-		// p($data);
 		$this->assign('data',$data);
 		$this->display();
 	}
@@ -235,16 +235,20 @@ class PurchaseController extends HomeBaseController{
         $product = M('Product')->where(array('ipid'=>$ipid))->find();
         //用户信息
         $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
+        // 查询是否存在未支付的订单
+        $ir_receiptnum = M('Receipt')->where(array('riuid'=>$iuid,'ir_ordertype'=>$product['ip_type'],'ir_status'=>0))->getfield('ir_receiptnum');
+        
+        if(!empty($ir_receiptnum)){
+            $result = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->delete();
+            if($result){
+                $res = M('Receiptlist')->where(array('ir_receiptnum'=>$ir_receiptnum))->delete();
+            }
+        }
         //生成唯一订单号
         $order_num = date('YmdHis').rand(10000, 99999);
-        switch ($product['ip_type']) {
+        switch ($product['ip_type']){
             case '1':
-                $list= D('Receipt')->where(array('ir_ordertype'=>$product['ip_type'],'riuid'=>$iuid,'is_delete'=>0))->select();
-                if($list){
-                    $this->error('请付款或删除重新下单');
-                }else{
-                    $con = '首购单';
-                }
+                $con = '首购单';
                 break;
             case '2':
                 $con = '升级单';
@@ -264,10 +268,10 @@ class PurchaseController extends HomeBaseController{
             'ir_date'       =>time(),
             //订单的状态(0待生成订单，1待支付订单，2已付款订单)
             'ir_status'     =>0,
-            //下单用户id
-            'riuid'         =>$iuid,
+            //下单用户id==
+            'riuid'          =>$iuid,
             //下单用户
-            'rcustomerID'    =>$userinfo['customerid'],
+            'rCustomerID'    =>$userinfo['customerid'],
             //收货人
             'ia_name'       =>$ia_name,
             //收货人电话
@@ -302,20 +306,173 @@ class PurchaseController extends HomeBaseController{
         }
          //生成日志记录
         $content = '您的'.$con.'订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
+        // echo 2;
         $log = array(
-            'from_iuid' =>$iuid,
+            'iuid' =>$iuid,
             'content'   =>$content,
             'action'    =>0,
             'type'      =>2,
             'date'      =>date('Y-m-d H:i:s')          
         );
         $addlog = M('Log')->add($log);
+        // 设置session时间
         if($addlog){
-            $this->success('下单成功,前往支付页面',U('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num)));
+            if($product['ip_type'] == 1){
+
+                $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num));
+            }else{
+                $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$order_num));
+            }
         }else{
             $this->error('订单生成失败');
         }
 	}
+
+    //购买产品IPS支付
+    public function ipsPayment(){
+        //订单号
+        $ir_receiptnum  = I('post.ir_receiptnum');
+        //用户iuid
+        $iuid           = I('post.iuid');
+        //订单信息查询
+        $order          = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
+
+        // wsdl模式访问wsdl程序
+        $client = new \SoapClient("https://pay.hkipsec.com/webservice/GetQRCodeWebService.asmx?wsdl",
+            array(
+                'trace' => true,
+                'exceptions' => true,
+                'stream_context'=>stream_context_create(array('ssl' => array('verify_peer'=>false,
+                        'verify_peer_name'  => false,
+                        'allow_self_signed' => true,
+                        'cache_wsdl' => WSDL_CACHE_NONE,
+                        )
+                    )
+                )
+            ));
+        //E0001904
+        // $merchantcert = "GB30j0XP0jGZPVrJc6G69PCLsmPKNmDiISNvrXc0DB2c7uLLFX9ah1zRYHiXAnbn68rWiW2f4pSXxAoX0eePDCaq3Wx9OeP0Ao6YdPDJ546R813x2k76ilAU8a3m8Sq0";
+        //E000404
+        $merchantcert = "1mtfZAJ3sGPc22Vq20LUaJ9Z8w0S8BBP3Jc5uJkwM7v7099nbmwwvVfICu7CkQVGea9JzzVIpzh3xb9YNmRvpp47DtTam7lWCF20aPOBrDgVOCvAL9PXZ91P6bff6U6H";
+
+        try{
+            // $merAccNo       = 'E0001904';
+            $merAccNo       = "E0004004";
+            $orderId        = $ir_receiptnum;
+            $fee_type       = "CNY";
+            $amount         = $order['ir_price'];
+            // $amount         = '0.1';
+            $goodsInfo      = "Product";
+            $strMerchantUrl = "http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/getResponse";
+            $cert           = $merchantcert;
+            $signMD5        = "merAccNo".$merAccNo."orderId".$orderId."fee_type".$fee_type."amount".$amount."goodsInfo".$goodsInfo."strMerchantUrl".$strMerchantUrl."cert".$cert;
+            $signMD5_lower = strtolower(md5($signMD5));
+
+            $para = array(
+                'merAccNo'      => $merAccNo,
+                'orderId'       => $orderId,
+                'fee_type'      => $fee_type,
+                'amount'        => $amount,
+                'goodsInfo'     => $goodsInfo,
+                'strMerchantUrl'=> $strMerchantUrl,
+                'signMD5'       => $signMD5_lower
+            );
+
+            $result      = $client->GetQRCodeXml($para);
+            //对象操作
+            $xmlstr      = $result->GetQRCodeXmlResult;
+            //构造SimpleXMLEliement对象
+            $xml         = new \SimpleXMLElement($xmlstr);
+            //微信支付链接
+            $code_url    = (string)$xml->code_url;
+            $return_code = (string)$xml->return_code;
+            $return_msg  = (string)$xml->return_msg;
+
+            //返回数据
+            $para['code_url']    = $code_url;
+            $para['return_code'] = $return_code;
+            $para['return_msg']  = $return_msg;
+            //生成二维码
+            $url            = createQrcode(urldecode($code_url),'Upload/avatar/'.$ir_receiptnum.'.png');
+            $para['qrcode'] = C('WEB_URL').'/Upload/avatar/'.$ir_receiptnum.'.png';
+            $this->ajaxreturn($para);
+            
+        }catch(SoapFault $f){
+            echo "Error Message:{$f->getMessage()}";
+        }
+    }
+
+    /**
+    * 支付成功订单状态修改
+    * @param ir_status 0待付款 1待审核 2已支付待发货 3已发货待收货 4已收货待评价 5已评价完成 6审核未通过
+    **/
+    public function getResponse(){
+        //获取ips回调数据
+        $data = I('post.');
+
+        //写入日志记录
+        $jsonStr = json_encode($data);
+        $log     = logTest($jsonStr);
+        
+        //查询订单信息
+        $order = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->find();
+
+        //支付返回数据验证,是否支付成功验证
+        if($data['succ'] == 'Y'){
+            //签名验证
+            //订单数量&订单金额
+            if($data['amount'] == $order['ir_price']){                
+                //修改订单状态
+                $map = array(
+                    'ir_paytype' =>1,
+                    'ir_status'  =>2,
+                    'ir_paytime'=>time(),
+                    'ips_trade_no' => $data['ipsbillno'],
+                    'ips_trade_status' => $data['msg']
+                );
+                $change_orderstatus = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->save($map);
+
+                if($change_orderstatus){
+                    $OrderDate         = date("Y-m-d",strtotime("-1 month",time()));
+                    $activa = $OrderDate;
+                    $day    = date('d',strtotime($OrderDate));
+                    if($day>=28){
+                        $allday = 28;
+                    }else{
+                        $allday = $day;
+                    }
+                    $ddd = $allday-1;
+                    if($ddd>=10){
+                        $oneday = $ddd;
+                    }else{
+                        $oneday = '0'.$ddd;
+                    }
+                    //添加激活
+                    $time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
+                    $year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
+                    $endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
+                    $where =array('iuid'=>$order['riuid'],'ir_receiptnum'=>$order['ir_receiptnum'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
+                    $save  = M('Activation')->add($where);
+                    if($save){
+                        $data['status'] = 1;
+                        $this->ajaxreturn($data);
+                    }else{
+                        $data['status'] = 0;
+                        $this->ajaxreturn($data);
+                    }
+                }else{
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data);
+                }
+            }else{
+                $data['status'] = 0;
+                $this->ajaxreturn($data);
+            }
+        }else{
+            $data['status'] = 0;
+            $this->ajaxreturn($data);
+        }
+    }
 
 	/**
     * 购买产品畅捷支付
@@ -390,62 +547,77 @@ class PurchaseController extends HomeBaseController{
 		//更改订单状态
 		if($return == "true" && $map['trade_status'] == 'TRADE_SUCCESS'){
 			//修改用户最近订单日期/是否通过/等级/数量
-            $tmpe['iuid']     =$receipt['iuid'];
-            $find             =D('User')->where(array('iuid'=>$receipt['iuid']))->find();
-            if($find['number']==0){
-            	$tmpe['OrderDate']= date("m/d/Y h:i:s A");
-            	$OrderDate        = date("Y-m-d",strtotime("-1 month",time()));
-                if($find['isnew']==0){
-                    if($find['number']==0){
+            $tmpe['iuid'] = $receipt['riuid'];
+            $userinfo     = D('User')->where(array('iuid'=>$receipt['riuid']))->find();
+            //number 购买产品的次数
+            if($userinfo['number']==0){
+                //支付日期
+            	$tmpe['OrderDate'] = date("m/d/Y h:i:s A");
+            	$OrderDate         = date("Y-m-d",strtotime("-1 month",time()));
+                //如果是旧用户
+                if($userinfo['isnew'] == 0){
+                    if($userinfo['number']==0){
+                        //isCheck 是否审核
                         $tmpe['IsCheck'] = 1;   
                     }
                 }else{
                     $tmpe['IsCheck'] = 2;
                 }
             }else{
-            	$OrderDate       = $find['orderdate'];
+                //
+            	$OrderDate       = $userinfo['orderdate'];
                 $tmpe['IsCheck'] = 2;
             }
+            //产品等级
             $tmpe['DistributorType'] = D('Product')->where(array('ipid'=>$receipt['ipid']))->getfield('ip_after_grade');
-            $tmpe['Number']   =$find['number']+1;
-			$status  = array(
-				'ir_status'  =>2,
-				'ir_paytype' =>1,
-                'ir_paytime' =>time()
-			);
-			$activaDate = D('Activation')->where(array('iuid'=>$receipt['iuid'],'is_tick'=>1))->order('datetime desc')->getfield('datetime');
-			if(empty($activaDate)){
-				$activa = $OrderDate;
-			}else{
-				$activa = $activaDate;
-			}
-			$day = date('d',strtotime($OrderDate));
+            //购买产品次数+1
+            $tmpe['Number']          = $find['number']+1;
+            //用户的激活记录
+            $activaDate = D('Activation')->where(array('iuid'=>$receipt['riuid'],'is_tick'=>1))->order('datetime desc')->getfield('datetime');
+
+            if(empty($activaDate)){
+                $activa = $OrderDate;
+            }else{
+                $activa = $activaDate;
+            }
+            $day = date('d',strtotime($OrderDate));
             if($day>=28){
                 $allday = 28;
             }else{
                 $allday = $day;
             }
-            $ddd    = $allday-1;
+            $ddd = $allday-1;
             if($ddd>=10){
                 $oneday = $ddd;
             }else{
                 $oneday = '0'.$ddd;
             }
             // for($i=0;$i<$receipt['ir_productnum'];$i++) {
-            	//删除原先未激活，添加激活
-            	$time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
-            	$year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
-    			$endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
-				$delete= D('Activation')->where(array('iuid'=>$receipt['iuid'],'datetime'=>$time))->delete();
-				$where =array('iuid'=>$receipt['iuid'],'ir_receiptnum'=>$map['outer_trade_no'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
-				$save  = D('Activation')->add($where);
-            // }   
+                //删除原先未激活，添加激活
+                $time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
+                $year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
+                $endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
+                $delete= D('Activation')->where(array('iuid'=>$receipt['riuid'],'datetime'=>$time))->delete();
+                $where =array('iuid'=>$receipt['riuid'],'ir_receiptnum'=>$map['outer_trade_no'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
+                $save  = D('Activation')->add($where);
+            // }
+
+			$status  = array(
+				'ir_status'  =>2,
+				'ir_paytype' =>4,
+                'ir_paytime' =>time()
+			);
+            //更新订单信息
         	$upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($status);
+            //修改用户信息
             $update    = D('User')->save($tmpe);
         	if($upreceipt){
         		//通知畅捷完成支付
-				echo "success";
-				$this->seccess('支付成功，跳转',U('Home/Purchase/myOrder'));
+                // 清除session
+				unset($_SESSION['user']['time']);
+                // echo "success";
+				$this->redirect('Home/Purchase/myOrder');
+
         	}
 		}
     }
@@ -473,24 +645,250 @@ class PurchaseController extends HomeBaseController{
         }
     }
 
+// *****************收货地址********************
+    /**
+    * 收货地址列表
+    **/ 
+    public function addressList(){
+        $iuid = $_SESSION['user']['id'];
+        // 查询注册信息
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
+        // 查询地址表信息
+        $ia_road = M('Address')->where(array('iuid'=>$iuid))->getField('ia_road',true); 
+        
+        if(!in_array($userinfo['shopaddress1'], $ia_road) && $_SESSION['user']['address'] == 0 && !empty($userinfo['shopaddress1'])){
+           $message = array(
+                    'iuid'            => $userinfo['iuid'],
+                    'ia_name'         => $userinfo['lastname'].$userinfo['firstname'],
+                    'ia_phone'        => $userinfo['phone'],
+                    'ia_province'     => $userinfo['shopprovince'],
+                    'ia_town'         => $userinfo['shopcity'],
+                    'ia_region'       => $userinfo['shoparea'],
+                    'ia_road'         => $userinfo['shopaddress1'],
+                    'is_address_show' => 1
+                );
+            $result = M('Address')->add($message);
+            if($result){
+                $_SESSION['user']['address'] = $_SESSION['user']['address'] + 1;
+            }
+        }
+        
+        $data = M('Address')->where(array('iuid'=>$iuid))->order('is_address_show DESC')->select();
+        $assign = array(
+                    'data' => $data
+                );
+        $this->assign($assign);
+        $this->display();
+    } 
+
+    /**
+    * 添加收货地址
+    **/ 
+    public function addressAdd(){
+        $data = array(
+                'iuid'        => I('post.iuid'),
+                'ia_name'     => I('post.ia_name'),
+                'ia_phone'    => I('post.ia_phone'),
+                'ia_province' => I('post.ia_province'),
+                'ia_town'     => I('post.ia_town'),
+                'ia_region'   => I('post.ia_region'),
+                'ia_road'     => I('post.ia_road'),
+                );
+        if(!empty($data['ia_name']) && !empty($data['ia_phone']) && !empty($data['ia_province']) && !empty($data['ia_town']) && !empty($data['ia_region']) && !empty($data['ia_road'])){
+            $result = M('Address')->add($data);   
+        }
+        
+        if($result){
+            $this->redirect('Home/Purchase/addressList');
+        }else{
+            $this->error('添加失败');
+        }
+    }
+
+    /**
+    * 编辑收货地址
+    **/ 
+    public function addressEdit(){
+        $iuid = $_SESSION['user']['id'];
+        $iaid = M('Address')->where(array('iuid'=>$iuid,'is_address_show'=>1))->getfield('iaid');
+
+        $data = I('post.');
+        
+        if($data['is_address_show']){
+            $result = M('Address')->where(array('iaid'=>$data['iaid']))->save($data);
+            if($result){
+                $message = array(
+                             'is_address_show' => 0,
+                        );
+                $res = M('Address')->where(array('iaid'=>$iaid))->save($message);
+            }
+        }else{
+            $result = M('Address')->where(array('iaid'=>$data['iaid']))->save($data);
+        }
+        
+        if($result || $res){
+            $this->redirect('Home/Purchase/addressList');
+        }else{
+            $this->error('修改失败');
+        }
+    }
+
+    /**
+    * 删除收货地址
+    **/ 
+    public function addressDelect(){
+        $iaid = I('post.iaid');
+
+        $result = M('Address')->where(array('iaid'=>$iaid))->delete();
+        
+        if($result){
+            $this->redirect('Home/Purchase/addressList');
+        }else{
+            $this->error('删除失败');
+        }
+    }
 
 
+// *****************银行地址********************
+    /**
+    * 银行地址列表
+    **/ 
+    public function bankList(){
+        $iuid = $_SESSION['user']['id'];
+        // 查询注册信息
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
+        // 查询银行表信息
+        $bankaccount = M('Bank')->where(array('iuid'=>$iuid))->getField('bankaccount',true); 
+        
+        if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0 && !empty($userinfo['bankaccount'])){
+           $message = array(
+                    'iuid'         => $userinfo['iuid'],
+                    'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
+                    'bankaccount'  => $userinfo['bankaccount'],
+                    'bankprovince' => $userinfo['bankprovince'],
+                    'banktown'     => $userinfo['bankcity'],
+                    'bankregion'   => $userinfo['bankarea'],
+                    'bankname'     => $userinfo['bankname'],
+                    'bankbranch'   => $userinfo['subname'],
+                    'createtime'   => time(),
+                    'isshow'       => 1,
+                );
+            $result = M('Bank')->add($message);
+            if($result){
+                $_SESSION['user']['bank'] = $_SESSION['user']['bank'] + 1;
+            }
+        }
+        
+        $data = M('Bank')->where(array('iuid'=>$iuid))->order('isshow DESC')->select();
+
+        $assign = array(
+                    'data' => $data,
+                    'userinfo' => $userinfo
+                );
+        $this->assign($assign);
+        $this->display();
+    } 
 
 
+    /**
+    * 添加银行地址
+    **/ 
+    public function bankAdd(){
+        $iuid = $_SESSION['user']['id'];
+        // 查询注册信息
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
 
+        $data = I('post.');
+        $data = array(
+                'iuid'         => I('post.iuid'),
+                'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
+                'bankaccount'  => I('post.bankaccount'),
+                'bankprovince' => I('post.bankprovince'),
+                'banktown'     => I('post.banktown'),
+                'bankregion'   => I('post.bankregion'),
+                'bankname'     => I('post.bankname'),
+                'bankbranch'   => I('post.bankbranch'),
+                'createtime'   => time(),
+                );
+        if(!empty($data['bankaccount']) && !empty($data['bankprovince']) && !empty($data['banktown']) && !empty($data['bankregion']) && !empty($data['bankname']) && !empty($data['bankbranch'])){
+            $result = M('Bank')->add($data);          
+        }
+        if($result){
+            $this->redirect('Home/Purchase/bankList');
+        }else{
+            $this->error('添加失败');
+        }
+    }
 
+    /**
+    * 编辑银行地址
+    **/ 
+    public function bankEdit(){
+        $iuid = $_SESSION['user']['id'];
+        $bid = M('Bank')->where(array('iuid'=>$iuid,'isshow'=>1))->getfield('bid');
 
+        $data = I('post.');
 
+        if($data['isshow']){
+            $result = M('Bank')->where(array('bid'=>$data['bid']))->save($data);
+            if($result){
+                $message = array(
+                             'isshow' => 0,
+                        );
+                $res = M('Bank')->where(array('bid'=>$bid))->save($message);
+            }
+        }else{
+            $result = M('Bank')->where(array('bid'=>$data['bid']))->save($data);
+        }
+        
+        if($result || $res){
+            $this->redirect('Home/Purchase/bankList');
+        }else{
+            $this->error('修改失败');
+        }
+    }
 
+    /**
+    * 删除银行地址
+    **/ 
+    public function bankDelect(){
+        $bid = I('post.bid');
 
+        $result = M('Bank')->where(array('bid'=>$bid))->delete();
+        
+        if($result){
+            $this->redirect('Home/Purchase/bankList');
+        }else{
+            $this->error('删除失败');
+        }
+    }
 
+// **************我的推荐人*****************
+    public function recommenderList(){
+        $customerid = $_SESSION['user']['username'];
+        $data = M('User')->where(array('enrollerid'=>$customerid))->select();
 
+        $assign = array(
+                    'data' => $data,
+                );
+        $this->assign($assign);
+        $this->display();
+    }
 
-
-
-
-
-
+// ***********获取验证码*************
+    public function changePassword(){
+        $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
+        foreach ($mape as $key => $value) {
+            $data[$key]         = $value;
+            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
+                $data[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+            }else{
+                $data[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+            }
+        }
+        $this->assign('data',$data);
+        $this->display();
+    }
 
 
 }

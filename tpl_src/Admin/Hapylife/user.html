@@ -13,34 +13,66 @@
         </h1>
     </div>
     <div class="col-xs-12">
-        <div class="tabbable">
-            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
-            	<li class="active">
-					<a href="#home" data-toggle="tab">用户列表</a>
-			    </li>
-			    <li>
-			    	<form action="{:U('Admin/Hapylife/user')}" method="get">
-			    		<select name="status">
-			    			<option <?php if($status == 0)echo "selected";?>  value="0">所有</option>
-			    			<option <?php if($status == 1)echo "selected";?>  value="1">待付款</option>
-			    			<option <?php if($status == 3)echo "selected";?>  value="3">已支付</option>
-			    			<option <?php if($status == 4)echo "selected";?>  value="4">已完成</option>
-			    		</select>
-			    		<input type="text" name='starttime' value="{$starttime}" placeholder="起始时间,年-月-日">
-				    	<input type="text" name='endtime'   value="{$endtime}" placeholder="结束时间,年-月-日">
-                        <input name="word" type="text" placeholder="关键词" value="{$word}" size="20" />
-                        <input class='btn btn-sm' type="submit" value="筛选" />
-                        <input class='btn btn-sm' type="submit" name='excel' value="excel" />
-                	</form>
-			    </li>
-			    <li>
-					&nbsp;&nbsp;
-				</li>
-				<li>
-					<button class='btn btn-sm'>注册人数:{$count}</button>
-				</li>
-            </ul>
-		</div>
+    	<if condition="$_SESSION['user']['username'] eq mary || $_SESSION['user']['username'] eq admin2">
+        	<div class="tabbable">
+	            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+	            	<li class="active">
+						<a href="#home" data-toggle="tab">User List</a>
+				    </li>
+				    <li>
+				    	<form action="{:U('Admin/Hapylife/user')}" method="get">
+				    		
+				    		<select name="status">
+				    			<option <?php if($status == 0)echo "selected";?>  value="0">All</option>
+				    			<option <?php if($status == 1)echo "selected";?>  value="1">Pending</option>
+				    			<option <?php if($status == 3)echo "selected";?>  value="3">Paid</option>
+				    			<option <?php if($status == 4)echo "selected";?>  value="4">Completed</option>
+				    		</select>
+				    		<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
+				    		<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
+	                        <input name="word" type="text" placeholder="keyword" value="{$word}" size="20" />
+	                        <input class='btn btn-sm' type="submit" value="search" />
+	                        <input class='btn btn-sm' type="submit" name='excel' value="excel" />
+	                	</form>
+				    </li>
+				    <li>
+						&nbsp;&nbsp;
+					</li>
+					<li>
+						<button class='btn btn-sm'>register:{$count}</button>
+					</li>
+				</ul>
+			</div>
+		<else />
+			<div class="tabbable">
+	            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+	            	<li class="active">
+						<a href="#home" data-toggle="tab">用户列表</a>
+				    </li>
+				    <li>
+				    	<form action="{:U('Admin/Hapylife/user')}" method="get">
+				    		<select name="status">
+				    			<option <?php if($status == 0)echo "selected";?>  value="0">所有</option>
+				    			<option <?php if($status == 1)echo "selected";?>  value="1">待付款</option>
+				    			<option <?php if($status == 3)echo "selected";?>  value="3">已支付</option>
+				    			<option <?php if($status == 4)echo "selected";?>  value="4">已完成</option>
+				    		</select>
+				    		<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
+				    		<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
+	                        <input name="word" type="text" placeholder="关键词" value="{$word}" size="20" />
+	                        <input class='btn btn-sm' type="submit" value="筛选" />
+	                        <input class='btn btn-sm' type="submit" name='excel' value="excel" />
+	                	</form>
+				    </li>
+				    <li>
+						&nbsp;&nbsp;
+					</li>
+					<li>
+						<button class='btn btn-sm'>注册人数:{$count}</button>
+					</li>
+				</ul>
+			</div>
+		</if>
             <div class="tab-content">
 				<table class="table table-striped table-bordered table-hover table-condensed">
 					<if condition="$_SESSION['user']['username'] eq mary || $_SESSION['user']['username'] eq admin2">
@@ -86,11 +118,11 @@
 					<if condition="$_SESSION['user']['username'] eq mary || $_SESSION['user']['username'] eq admin2">
 						<foreach name="data" item="v">
 							<tr>
-								<td>{:date('Y-m-d',$v['joinedon'])}</td>
+								<td>{:date('Y-m-d H:i:s',$v['joinedon'])}</td>
 								<td>{$v.customerid}</td>
 								<td>
 								<if condition="$v['ir_paytime'] eq 0">
-								<else/>{:date('Y-m-d H:i:s',$v['ir_paytime'])}
+								<else/>{:date('Y-m-d H:i:s',$v['ir_paytime']-3600*13)}
 								</if>
 								</td>
 								<td>{$v.enrollerid}</td>
@@ -107,7 +139,7 @@
 								<td>{$v.email}</td>
 								<td>{$v.password}</td>
 								<td>{$v.phone}</td>
-								<td>{$v.shopaddress1}</td>
+								<td>{$v.shopprovince}{$v.shopcity}{$v.shopaddress1}</td>
 								<td>{$v.shopcity}</td>
 								<td>{$v.shopprovince}</td>
 								<td>{$v.shopcountry}</td>
@@ -126,7 +158,7 @@
 								<td>{$v.phone}</td>
 								<td>{$v.email}</td>
 								<td>{$v.enrollerid}</td>
-								<td>{$v.shopaddress1}</td>
+								<td>{$v.shopprovince}{$v.shopcity}{$v.shopaddress1}</td>
 								<td>{$v.idcard}</td>
 								<td><?php if(!empty($v['justidcard'])){echo '<a href="'.$v['justidcard'].'" target="_blank"><img width="20" height="20" src="'.$v['justidcard'].'">'.'<a>';}else{echo '';} ?></td>
 								<td><?php if(!empty($v['backidcard'])){echo '<a href="'.$v['backidcard'].'" target="_blank"><img width="20" height="20" src="'.$v['backidcard'].'">'.'<a>';}else{echo '';} ?></td>

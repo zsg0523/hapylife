@@ -16,9 +16,16 @@ class HapylifeBankController extends HomeBaseController{
         }else{
             //获取用户银行账号信息
             $iuid        = I('post.iuid');
+            // 查询注册信息
+            $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
+            $bankaccount = I('post.bankaccount');
+            $bankprovince = I('post.bankprovince');
+            $banktown = I('post.banktown');
+            $bankregion = I('post.bankregion');
             $bankname    = I('post.bankname');
             $bankbranch  = I('post.bankbranch');
-            $bankaccount = I('post.bankaccount');
+            $iu_name = $userinfo['lastname'].$userinfo['firstname'];
+
             if(empty($iuid)||$iuid==0){
                 $data['status'] = 0;
                 $data['message']='银行信息添加失败';
@@ -31,24 +38,33 @@ class HapylifeBankController extends HomeBaseController{
                 if($arr){
                     $tmp        = array(
                         'iuid'        =>$iuid,
-                        'bankname'    =>$bankname,
-                        'bankbranch'  =>$bankbranch,
-                        'bankaccount' =>$bankaccount,
+                        'iu_name'      => $iu_name,
+                        'bankaccount'  => $bankaccount,
+                        'bankprovince' => $bankprovince,
+                        'banktown'     => $banktown,
+                        'bankregion'   => $bankregion,
+                        'bankname'     => $bankname,
+                        'bankbranch'   => $bankbranch,
                         'createtime'  =>time(),
                         'isshow'      =>0
                     );
                 }else{
                     $tmp        = array(
                         'iuid'        =>$iuid,
-                        'bankname'    =>$bankname,
-                        'bankbranch'  =>$bankbranch,
-                        'bankaccount' =>$bankaccount,
+                        'iu_name'      => $iu_name,
+                        'bankaccount'  => $bankaccount,
+                        'bankprovince' => $bankprovince,
+                        'banktown'     => $banktown,
+                        'bankregion'   => $bankregion,
+                        'bankname'     => $bankname,
+                        'bankbranch'   => $bankbranch,
                         'createtime'  =>time(),
                         'isshow'      =>1
                     );
                 }
                 //添加
                 $addBank = D('Bank')->add($tmp);
+                
                 if($addBank){
                     $data['status'] = 1;
                     $data['message']='银行信息添加成功';
@@ -72,15 +88,37 @@ class HapylifeBankController extends HomeBaseController{
             $this->ajaxreturn($data);
         }else{
             //获取用户iuid
-            $iuid   = I('post.iuid');
+            $iuid = I('post.iuid');
+            // 查询注册信息
+            $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
+            // 查询银行表信息
+            $bankaccount = M('Bank')->where(array('iuid'=>$iuid))->getField('bankaccount',true); 
+            
+            if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0 && !empty($userinfo['bankaccount'])){
+               $message = array(
+                        'iuid'         => $userinfo['iuid'],
+                        'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
+                        'bankaccount'  => $userinfo['bankaccount'],
+                        'bankprovince' => $userinfo['bankprovince'],
+                        'banktown'     => $userinfo['bankcity'],
+                        'bankregion'   => $userinfo['bankarea'],
+                        'bankname'     => $userinfo['bankname'],
+                        'bankbranch'   => $userinfo['subname'],
+                        'createtime'   => time(),
+                        'isshow'       => 1,
+                    );
+                $result = M('Bank')->add($message);
+                if($result){
+                    $_SESSION['user']['bank'] = $_SESSION['user']['bank'] + 1;
+                }
+            }        
             //列表信息
             $data   = D('Bank')
                     ->where(array('iuid'=>$iuid))
                     ->select(); 
             if($data){
                 $this->ajaxreturn($data);
-            }
-            else{
+            }else{
             	$data['status'] = 0;
                 $this->ajaxreturn($data);
             }
@@ -103,8 +141,7 @@ class HapylifeBankController extends HomeBaseController{
             $data   = D('Bank')->where($tmp)->find(); 
             if($data){
                 $this->ajaxreturn($data);
-            }
-            else{
+            }else{
                 $data['status'] = 0;
                 $this->ajaxreturn($data);
             }
@@ -134,8 +171,7 @@ class HapylifeBankController extends HomeBaseController{
             if($tmp){
                 $data['status'] = 1;
                 $this->ajaxreturn($data);
-            }
-            else{
+            }else{
                 $data['status'] = 0;
                 $this->ajaxreturn($data);
             }
@@ -175,8 +211,7 @@ class HapylifeBankController extends HomeBaseController{
             if($save){
                 $data['status'] = 1;
                 $this->ajaxreturn($data);
-            }
-            else{
+            }else{
                 $data['status'] = 0;
                 $this->ajaxreturn($data);
             }
@@ -198,8 +233,7 @@ class HapylifeBankController extends HomeBaseController{
             if($data){
                 $tmp['status'] = 1;
                 $this->ajaxreturn($tmp);
-            }
-            else{
+            }else{
                 $tmp['status'] = 0;
                 $this->ajaxreturn($tmp);
             }

@@ -1310,6 +1310,19 @@ function qrcode($url,$size=4){
 }
 
 /**
+* 生成二维码
+* @param url 链接
+* @param qrcodeName 二维码名称
+**/
+function createQrcode($url,$qrcodeName){
+    $renderer = new \BaconQrCode\Renderer\Image\Png();
+    $renderer->setHeight(256);
+    $renderer->setWidth(256);
+    $writer = new \BaconQrCode\Writer($renderer);
+    $writer->writeFile($url,$qrcodeName);
+}
+
+/**
  * 数组转xls格式的excel文件
  * @param  array  $data      需要生成excel文件的数组
  * @param  string $filename  生成的excel文件名
@@ -1988,53 +2001,6 @@ function ibos360_GetReturnOrders($data,$pageModel){
     $ibos360_result = doCurlPostRequest($ibos360_url,$ibos360_userdata);
     $ibos360_result = json_decode($ibos360_result,true);
     return $ibos360_result;
-}
-
- /**
- * 功能：生成二维码
- * @param string $qr_data   手机扫描后要跳转的网址
- * @param string $qr_level  默认纠错比例 分为L、M、Q、H四个等级，H代表最高纠错能力
- * @param string $qr_size   二维码图大小，1－10可选，数字越大图片尺寸越大
- * @param string $save_path 图片存储路径
- * @param string $save_prefix 图片名称前缀
- */
-function createQRcode($save_path,$qr_data,$qr_level='L',$qr_size=4,$save_prefix='qrcode'){
-    if(!isset($save_path)) return '';
-    //设置生成png图片的路径
-    $PNG_TEMP_DIR = & $save_path;
-    //导入二维码核心程序
-
-    vendor('Phpqrcode.phpqrcode');  //注意这里的大小写哦，不然会出现找不到类，Phpqrcode是文件夹名字，class#phpqrcode就代表class.phpqrcode.php文件名
-
-    //检测并创建生成文件夹
-    if (!file_exists($PNG_TEMP_DIR)){
-        mkdir($PNG_TEMP_DIR);
-    }
-    $filename = $PNG_TEMP_DIR.'test.png';
-    $errorCorrectionLevel = 'L';
-    if (isset($qr_level) && in_array($qr_level, array('L','M','Q','H'))){
-        $errorCorrectionLevel = & $qr_level;
-    }
-    $matrixPointSize = 4;
-    if (isset($qr_size)){
-        $matrixPointSize = & min(max((int)$qr_size, 1), 10);
-    }
-    if (isset($qr_data)) {
-        if (trim($qr_data) == ''){
-            die('data cannot be empty!');
-        }
-        //生成文件名 文件路径+图片名字前缀+md5(名称)+.png
-        $filename = $PNG_TEMP_DIR.$save_prefix.md5($qr_data.'|'.$errorCorrectionLevel.'|'.$matrixPointSize).'.png';
-        //开始生成
-        QRcode::png($qr_data, $filename, $errorCorrectionLevel, $matrixPointSize, 2);
-    } else {
-        //默认生成
-        QRcode::png('PHP QR Code :)', $filename, $errorCorrectionLevel, $matrixPointSize, 2);
-    }
-    if(file_exists($PNG_TEMP_DIR.basename($filename)))
-        return basename($filename);
-    else
-        return FALSE;
 }
 
 /**
@@ -2730,4 +2696,14 @@ function rsaVerify($postData)
     {
         return "true";
     }
+}
+/**去掉字符串前后所有空格*/
+function trimall($str)//删除空格
+{   
+    $oldchar=array(" ","　","\t","\n","\r");
+
+    $newchar=array("","","","","");
+
+    return str_replace($oldchar,$newchar,$str);
+
 }
