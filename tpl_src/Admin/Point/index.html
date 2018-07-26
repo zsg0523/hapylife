@@ -20,9 +20,9 @@
 			    </li>
 			    <li>
 					<form action="{:U('Admin/Point/index')}" method="get">
-	                        <input name="word" type="text" placeholder="关键词" value="{$word}" size="20" />
-	                        <input class='btn btn-sm' type="submit" value="筛选" />
-	                	</form>
+                        <input name="word" type="text" placeholder="关键词" value="{$word}" size="20" />
+                        <input class='btn btn-sm' type="submit" value="筛选" />
+                	</form>
 				</li>
             </ul>
             <div class="tab-content">
@@ -42,7 +42,7 @@
 						<th>增加奖金</th>
 						<th>系统增加</th>
 						<th>系统减少</th>
-						<th>查看360明细</th>
+						<!-- <th>查看360明细</th> -->
 						<th>明細</th>
 						<th>日誌</th>
 						<th>操作</th>
@@ -65,9 +65,9 @@
 							<td align="right">{$v['realpoint3']?$v['realpoint3']:0}</td>
 							<td align="right">{$v['realpoint2']?$v['realpoint2']:0}</td>
 							<td align="right">{$v['realpoint1']?$v['realpoint1']:0}</td>
-							<td align="center">
+							<!-- <td align="center">
 								<a href="{:U('Admin/Point/getAllWalletdetail',array('hu_nickname'=>$v['hu_nickname'],'iuid'=>$v['iuid']))}">查看360明細</a> 
-							</td>
+							</td> -->
 							<td align="center">
 								<a href="{:U('Admin/Point/userpoint',array('hu_nickname'=>$v['hu_nickname'],'iuid'=>$v['iuid']))}">查看明細</a> 
 							</td>

@@ -10,166 +10,6 @@ use Common\Controller\AdminBaseController;
 *  添加和删除积分
 **/
 class PointController extends AdminBaseController{
-	/**
-	* 积分提现列表
-	* @param status 0一审 1二审 2审核完毕 3审核不通过
-	**/
-	public function check(){   
-        //0未支付 1待审核 2已支付 3已完成
-        $status = I('get.status')-1;
-        if($status== -1){
-            //所有订单
-            $status = '0,1,2,3';
-        }else{
-            $status = (string)$status;
-        }
-        $excel     = I('get.excel');
-        $kqexcel   = I('get.kqexcel');
-        $word      = trim(I('get.word',''));
-        $type      = I('get.type')?I('get.type'):1;
-        $starttime = I('get.starttime');
-        $endtime   = I('get.endtime')?date('Y-m-d',strtotime(I('get.endtime'))+86400):'';
-		$assign    = D('Getpoint')->getAllData(D('Getpoint'),$word,$type,$starttime,$endtime,$status,$order="date desc");
-        // p($assign);die;
-		//导出excel
-        if($excel == 'excel'){
-            $data         = D('Getpoint')->getExcelData(D('Getpoint'),$word,$type,$starttime,$endtime,$status,$order="date desc");
-            $export_excel = D('Getpoint')->export_excel($data);
-        }else if($kqexcel == '快钱excel'){
-            $data         = D('Getpoint')->getExcelData(D('Getpoint'),$word,$type,$starttime,$endtime,$status,$order="date desc");
-            $export_excel = D('Getpoint')->kq_excel($assign['data']);
-        }else{
-            $this->assign($assign);
-            $this->assign('status',I('get.status'));
-            $this->assign('word',$word);
-            $this->assign('starttime',I('get.starttime'));
-            $this->assign('endtime',I('get.endtime'));
-            $this->assign('type',$type);
-            $this->display();
-        }
-	}
-
-	/**
-	* 审核通过
-	**/
-	public function checkok(){
-        $igid     = trim(I('get.id'));
-        $status   = trim(I('get.status'));
-        $session  = session();
-        $data     = M('Getpoint')->where(array('igid'=>$igid))->find();
-        $userinfo = M('User')->where(array('iuid'=>$data['iuid']))->find();
-        // p($status);die;
-        switch ($status) {
-            case '0':
-                $status = 1;
-                $map  = array(
-                    'igid'  =>$igid,
-                    'status'=>$status,
-                    'handletime'=>date('Y-m-d H:i:s'),
-                    'opename'=>$session['user']['username'],
-                    'content'=>'处理中'
-                );
-                $save = M('Getpoint')->save($map);
-                //日志记录
-                $content = '单号:'.$data['pointno'].',的提现在处理中';
-                $add = addLog($data['iuid'],$content,$action=4,$type=1);
-                break;
-            case '1':
-                //扣除用户冻结的积分
-                $unpoint = bcsub($userinfo['iu_unpoint'],$data['getpoint'],4);
-                $status = 2;
-                $map  = array(
-                    'igid'       =>$igid,
-                    'status'     =>$status,
-                    'handletime' =>date('Y-m-d H:i:s'),
-                    'opename'    =>$session['user']['username'],
-                    'content'    =>'提现成功'
-                );
-                $save = M('Getpoint')->save($map);
-                if($unpoint<0){
-                    $this->error("申请提现积分超过目前冻结积分");
-                }else{
-                    $temp    = array(
-                                'iuid'=>$data['iuid'],
-                                'iu_unpoint'=>$unpoint
-                            );
-                    $savepoint= M('User')->save($temp);
-
-                    //日志记录
-                    $content = '单号:'.$data['pointno'].',提现已成功，请核对银行账号余额或交易记录';
-                    $add     = addLog($data['iuid'],$content,$action=4,$type=1);                 
-                }
-                break;
-        }
-        
-        if($save){
-            redirect($_SERVER['HTTP_REFERER']);
-        }else{
-            $this->error("审核失败");
-        }
-	}
-
-	/**
-	* 驳回申请
-	**/
-	public function checkno(){
-        $igid        = trim(I('post.id'));
-        $content     = I('post.content');
-        $iuid        = I('post.iuid');
-        $session     = session();
-        $data        = M('Getpoint')->where(array('igid'=>$igid))->find();
-        $userinfo    = M('User')->where(array('iuid'=>$data['iuid']))->find();
-        //扣除用户冻结的积分
-        $unpoint = bcsub($data['unpoint'], $data['getpoint'],4);
-        //增加用户积分
-        $iu_point= bcadd($userinfo['iu_point'], $data['getpoint'],4);
-        // p($unpoint);
-        // p($iu_point);die;
-        $temp        = array(
-            'iuid'       =>$iuid,
-            'iu_unpoint' =>$unpoint,
-            'iu_point'   =>$iu_point
-        );
-        $savepoint   = M('User')->save($temp);
-
-	    $map  = array(
-	        'igid'      =>$igid,
-	        'status'    =>3,
-            'content'   =>$content,
-            'handletime'=>date('Y-m-d H:i:s'),
-            'opename'   =>$session['user']['username']            
-	    );
-
-	    $save = M('Getpoint')->save($map);
-        if($save){
-            $where   =array(
-                'hu_nickname'=>$userinfo['hu_nickname'],
-                'hu_username'=>$userinfo['hu_username'],
-                'iuid'       =>$iuid,
-                'content'    =>$content,
-                'getpoint'   =>$data['getpoint'],
-                'realpoint'  =>$data['getpoint'],
-                'pointtype'  =>8,
-                'date'       =>date('Y-m-d H:i:s'),
-                'handletime' =>date('Y-m-d H:i:s'),
-                'status'     =>3,
-                'unpoint'    =>$unpoint,
-                'leftpoint'  =>$iu_point,
-                'opename'    =>$session['user']['username'],
-                'send'       =>'系统驳回',
-                'received'   =>$userinfo['hu_nickname'],
-                'content'    =>'系统驳回在'.date('Y-m-d H:i:s').'时,提现驳回'.$data['getpoint'].'EP到'.$userinfo['hu_nickname'].',剩EP余额'.$iu_point
-            );
-            $add = M('Getpoint')->add($where);
-            //日志记录
-            $content = '单号:'.$data['pointno'].',驳回提现，提现订单失效';
-            $add     = addLog($iuid,$content,$action=4,$type=1);
-            redirect($_SERVER['HTTP_REFERER']);
-        }else{
-            $this->error("驳回失败");
-        }
-	}
-
     /**
     * 积分转账列表
     **/
@@ -198,7 +38,8 @@ class PointController extends AdminBaseController{
     public function index(){
         //账户昵称搜索
         $word = I('get.word');
-        $assign=D('User')->getAllPoint(D('User'),$word,"iu.iuid",$limit=50);
+        $assign=D('User')->getAllPoint(D('User'),$word,"iuid",$limit=50);
+        // P($assign);
         $this->assign($assign);
         $this->assign('word',$word);
         $this->display();
@@ -256,28 +97,6 @@ class PointController extends AdminBaseController{
             $export_excel = D('Getpoint')->pointInfo_excel($data);
         }else{
             // p($assign);die;
-            $this->assign($assign);
-            $this->assign('starttime',$starttime);
-            $this->assign('endtime',$endtime);
-            $this->assign('hu_nickname',$hu_nickname);
-            $this->display();
-        }
-    }
-    /**
-    * 积分新增(奖金兑换)列表
-    **/
-    public function newpoint(){
-        $type      = '3';
-        $starttime = I('get.starttime');
-        $endtime   = I('get.endtime')?date('Y-m-d',strtotime(I('get.endtime'))+86400):'';
-        $excel     = I('get.excel');
-        $hu_nickname= I('get.hu_nickname');
-        $assign    = D('Getpoint')->getAllPointInfo(D('Getpoint'),$type,$date,$hu_nickname,$starttime,$endtime,$limit=50,$field='','date desc');
-        // p($assign);die;
-        if($excel == 'excel'){
-            $data         = D('Getpoint')->getAllExcel(D('Getpoint'),$type,$date,$hu_nickname,$starttime,$endtime,'date desc');
-            $export_excel = D('Getpoint')->pointInfo_excel($data);
-        }else{
             $this->assign($assign);
             $this->assign('starttime',$starttime);
             $this->assign('endtime',$endtime);
@@ -353,19 +172,18 @@ class PointController extends AdminBaseController{
     public function opepoint(){
         $session = session();
         $data    = I('post.');
-        $user    = D('User')->where(array('hu_nickname'=>$data['hu_nickname']))->find();
+        $user    = D('User')->where(array('CustomerID'=>$data['hu_nickname']))->find();
         $password= md5($data['password']);
-        $admin   = D('Users')->where(array('id'=>$session['user']['id']))->find();
-        // p($session);die;
+        $admin   = D('Admin')->where(array('id'=>$session['user']['id']))->find();
         if($data['pointtype']==1){
             $leftpoint = bcsub($user['iu_point'],$data['realpoint'],4);
-            $content   = '系统减少积分'.$data['realpoint'];
+            $data['content']   = '系统减少积分'.$data['realpoint'];
             $action    =7;
             $data['send']       = $data['hu_nickname'];
             $data['received']   = '系统';
         }else{
             $leftpoint = bcadd($user['iu_point'],$data['realpoint'],4);
-            $content   = '系统增加积分'.$data['realpoint'];
+            $data['content']   = '系统增加积分'.$data['realpoint'];
             $action    =5;
             $data['send']       = '系统';
             $data['received']   = $data['hu_nickname'];
@@ -373,7 +191,7 @@ class PointController extends AdminBaseController{
         if($admin && $admin['password']==$password){
             $data['iuid']       = $user['iuid'];
             $data['opename']    = $session['user']['username'];
-            $data['hu_username']= $user['hu_username'];
+            $data['hu_username']= $user['lastname'].$user['firstname'];
             $data['getpoint']   = $data['realpoint'];
             $data['iu_unpoint'] = $user['iu_unpoint'];
             $data['leftpoint']  = $leftpoint;
@@ -386,7 +204,7 @@ class PointController extends AdminBaseController{
             if($add){
                 $save = D('User')->where(array('iuid'=>$user['iuid']))->setField('iu_point',$leftpoint);
                 //日志记录
-                $add = addLog($user['iuid'],$content,$action,$type=1);
+                $add = addLog($user['iuid'],$data['content'],$action,$type=1);
                 $this->success('操作成功');
             }else{
                 $this->error("操作失败,请确认是否正确"); 
@@ -401,7 +219,7 @@ class PointController extends AdminBaseController{
     public function add_point(){
         $tmpe     = I('post.');
         $session  = session();
-        $user     = D('User')->where(array('hu_nickname'=>$tmpe['hu_nickname']))->find();
+        $user     = D('User')->where(array('CustomerID'=>$tmpe['hu_nickname']))->find();
         $data['iuid'] = $user['iuid'];
         $data['hu_username'] = $user['hu_username'];
         $data['hu_nickname'] = $user['hu_nickname'];
@@ -530,7 +348,7 @@ class PointController extends AdminBaseController{
     public function edit_point(){
         $tmpe     = I('post.');
         $session  = session();
-        $user     = D('User')->where(array('hu_nickname'=>$tmpe['hu_nickname']))->find();
+        $user     = D('User')->where(array('CustomerID'=>$tmpe['hu_nickname']))->find();
         $data['iuid'] = $user['iuid'];
         $data['hu_username'] = $user['hu_username'];
         $data['hu_nickname'] = $user['hu_nickname'];
@@ -635,12 +453,12 @@ class PointController extends AdminBaseController{
     public function userlog(){
         $word      = trim(I('get.word',''));
         $nickname  = trim(I('get.hu_nickname',''));
-        $iuid      = D('User')->where(array('hu_nickname'=>$nickname))->getfield('iuid');
+        $iuid      = D('User')->where(array('CustomerID'=>$nickname))->getfield('iuid');
         $type      = 1;
         $action    = '0,1,2,3,5,6,7';
         $starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
         $endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+86400:time();
-        $assign    = D('IbosLog')->getAllLog(D('IbosLog'),$word,$starttime,$endtime,$action,$type,$iuid,$order='create_time desc',$limit=50);
+        $assign    = D('Log')->getAllLog(D('Log'),$word,$starttime,$endtime,$action,$type,$iuid,$order='create_time desc',$limit=50);
         // p($assign);die;
         $this->assign($assign);
         $this->assign('word',$word);
