@@ -412,7 +412,7 @@
 						<div class="col-lg-10  col-md-10 col-xs-8">
 							<input type="" class="form-control"   name="Idcard" placeholder="身份证号码" value="{$data['Idcard']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['Idcard']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err" id="idcardage">{$error['Idcard']}</div>
 					</div>
 					
 					<div class="form-group" >
@@ -554,34 +554,28 @@
 			var acid=$("#acnumber").find("option:selected").attr("acid");
 			$("input[name='acid']").val(acid);
 		}
-//		$("input[name='EnrollerID']").blur(function(){
-//			var EnrollerID=$("input[name='EnrollerID']").val();
-//			
-//			$.ajax({
-//			type:"post",
-//			url:"checkName",
-//			async:false,
-//			dataType:'json',
-//			data:{
-//				EnrollerID:EnrollerID
-//			},
-//			success:function(data){
-////				console.log(12123);
-////				console.log(data);
-//				if(data!==null){
-//					$("input[name='EnrollerNameCn']").val(data.lastname+data.firstname);
-//					$("input[name='teamCode']").val(data.teamcode);
-//				}else{
-//					$("input[name='EnrollerNameCn']").val("请输入正确的推荐人ID！");
-//				}
-//				
-//			},
-//			error:function(){
-//				alert('ajax请求错误~！');
-//				
-//			},
-//			});
-//		});
+		$("input[name='Idcard']").blur(function(){
+			var idcard=$("input[name='Idcard']").val();
+			if(idcard.length==18){	
+				var reg =/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(idcard);
+				if(reg){
+					var year=parseInt(idcard.substring(6,10));
+					var myDate = new Date();
+					if((myDate.getFullYear()-year)>=22){
+						$("#idcardage").text("您的年龄为"+(myDate.getFullYear()-year)+"周岁！！");
+						$("#idcardage").css('color','#3E8F3E');
+					}else{
+						alert('您的年龄不足22周岁不能注册！');
+					}
+					
+//					alert(year+"+"+(myDate.getFullYear()-year));
+				}else{
+					alert('请输入正确的身份证!');
+				}
+			
+			}
+			
+		});
 		
 	</script>
 </html>
