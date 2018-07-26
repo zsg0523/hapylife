@@ -59,7 +59,7 @@
 				<span >HAPYLIFE 新用户注册</span>
 			</div>
 			<div class="rg-div">				
-				<form class="form-horizontal"  id="forms" method="post" action="{:U('Home/Register/register')}" enctype="multipart/form-data">
+				<form class="form-horizontal"  id="forms" method="post" action="{:U('Home/Register/register')}" enctype="multipart/form-data" onsubmit="return checkform();" >
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>中文姓:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
@@ -318,7 +318,7 @@
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>身份证号码:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
-							<input type="" class="form-control"  name="Idcard" placeholder="身份证号码" value="{$data['Idcard']}">
+							<input type="" class="form-control"  name="Idcard" placeholder="身份证号码" value="{$data['Idcard']}" onblur="judgeIdcard();">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err" id="idcardage">{$error['Idcard']}</div>
 					</div>
@@ -455,7 +455,8 @@
 			var acid=$("#acnumber").find("option:selected").attr("acid");
 			$("input[name='acid']").val(acid);
 		}
-		$("input[name='Idcard']").blur(function(){
+		var judge=true;
+		function judgeIdcard(){
 			var idcard=$("input[name='Idcard']").val();
 			if(idcard.length==18){	
 				var reg =/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(idcard);
@@ -466,7 +467,8 @@
 						$("#idcardage").text("您的年龄为"+(myDate.getFullYear()-year)+"周岁！！");
 						$("#idcardage").css('color','#3E8F3E');
 					}else{
-						alert('您的年龄不足22周岁不能注册！')
+						judge=false;
+						alert('您的年龄不足22周岁不能注册！');
 					}
 					
 //					alert(year+"+"+(myDate.getFullYear()-year));
@@ -476,6 +478,12 @@
 			
 			}
 			
-		});
+		}
+		function checkform(){
+			if(judge==false){
+				alert('您的年龄不足22周岁不能注册！');		
+			}
+			return judge;
+		}
 	</script>
 </html>
