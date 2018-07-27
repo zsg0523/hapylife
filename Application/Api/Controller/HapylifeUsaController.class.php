@@ -14,6 +14,8 @@ class HapylifeUsaController extends HomeBaseController{
 		$userinfo = M('User')->where(array('iuid'=>$iuid))->find();
 		$usa      = new \Common\UsaApi\Usa;
 		$result   = $usa->createCustomer($userinfo['customerid'],$password,$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
+		p($userinfo);
+		p($result);
         if(!empty($result['result'])){
         	$map = json_decode($result['result'],true);
             $wv  = array(
@@ -25,6 +27,7 @@ class HapylifeUsaController extends HomeBaseController{
             	$templateId='164137';
             	$params = array();
 				$sms    = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+				p($sms);
             }else{
             	echo 'false';
             }
