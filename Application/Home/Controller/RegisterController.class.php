@@ -492,7 +492,7 @@ class RegisterController extends HomeBaseController{
                     $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($status);
                     if($upreceipt){
                         $usa = new \Common\UsaApi\Usa;
-                        $result = $usa->createCustomer($userinfo['customerid'],$_SESSION['user']['password'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
+                        $result = $usa->createCustomer($userinfo['customerid'],$_SESSION['user']['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
                         if(!empty($result['result'])){
                             $wv = array(
                                         'wvCustomerID' => $result['result']['wvCustomerID'],
