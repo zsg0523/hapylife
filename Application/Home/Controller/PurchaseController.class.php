@@ -165,9 +165,7 @@ class PurchaseController extends HomeBaseController{
 	**/
 	public function myOrder(){
 		$iuid = $_SESSION['user']['id'];
-        p($iuid);
         $data['status'] = $_SESSION['user']['status'];
-		p($data);
         $map  = array(
 				'riuid'=>$iuid,
                 'ir_status'=>2
@@ -178,8 +176,6 @@ class PurchaseController extends HomeBaseController{
 				->join('hapylife_product hp on hr.ipid=hp.ipid')
 				->where($map)
 				->select();
-		p($list);
-        die;
 		$this->assign('data',$data);
 		$this->display();
 	}
@@ -281,7 +277,7 @@ class PurchaseController extends HomeBaseController{
             'ir_date'       =>time(),
             //订单的状态(0待生成订单，1待支付订单，2已付款订单)
             'ir_status'     =>0,
-            //下单用户id
+            //下单用户id==
             'riuid'          =>$iuid,
             //下单用户
             'rCustomerID'    =>$userinfo['customerid'],
@@ -494,6 +490,7 @@ class PurchaseController extends HomeBaseController{
         //订单号
 		$order_num                     = I('get.ir_receiptnum');
 		$order = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->find();
+        // p($order);die;
 		$postData                      = array();	
 		// 基本参数
 		$postData['Service']           = 'nmg_quick_onekeypay';
