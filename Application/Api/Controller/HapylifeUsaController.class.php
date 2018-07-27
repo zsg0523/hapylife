@@ -8,7 +8,7 @@ use Common\Controller\HomeBaseController;
 **/
 class HapylifeUsaController extends HomeBaseController{
 
-	public function test(){
+	public function testUsaClass(){
 		$usa = new \Common\UsaApi\Usa;
 		$usa->createCustomer();
 	}
@@ -79,6 +79,7 @@ class HapylifeUsaController extends HomeBaseController{
             'lastName_EN'  =>$map['lastName_EN'],
             'emailAddress' =>$map['emailAddress'],
             'phone'        =>$map['phone'],
+            'dob'          =>$map['dob'],
             'key'          =>$key
 		);
 		$data    = json_encode($data);
