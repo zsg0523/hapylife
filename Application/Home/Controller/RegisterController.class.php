@@ -188,7 +188,8 @@ class RegisterController extends HomeBaseController{
                 $this->assign($assign);
                 $this->display('Register/new_register');
             }else{
-                $data['iuid']= $_SESSION['user']['id'];
+                $data['iuid'] = $_SESSION['user']['id'];
+                $_SESSION['user']['password'] = trim(I('post.PassWord'));
     			if(isset($upload['name'])){
     				$data['JustIdcard']=C('WEB_URL').$upload['name'][0];
     				$data['BackIdcard']=C('WEB_URL').$upload['name'][1];
@@ -489,6 +490,23 @@ class RegisterController extends HomeBaseController{
                     );
                     //更新订单信息
                     $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($status);
+                    if($upreceipt){
+                        $usa = new \Common\UsaApi\Usa;
+                        $result = $usa->createCustomer($userinfo['customerid'],$_SESSION['user']['password'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
+                        if(!empty($result['result'])){
+                            $wv = array(
+                                        'wvCustomerID' => $result['result']['wvCustomerID'],
+                                        'wvOrderID' => $result['result']['wvOrderID']
+                                    );
+                            $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
+                            if($res){
+                                $code   =rand(100000,999999);
+                                $minute ='1';
+                                $param = array($code,$minute);
+                                $sms = D('Smscode')->sms($userinfo['acnumber'],$param);
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -9,8 +9,28 @@ use Common\Controller\HomeBaseController;
 class HapylifeUsaController extends HomeBaseController{
 
 	public function testUsaClass(){
+		$iuid = I('post.iuid');
+		$password = I('post.password');
+		$userinfo = M('User')->where(array('iuid'=>$iuid))->find();
 		$usa = new \Common\UsaApi\Usa;
-		$usa->createCustomer();
+        $result = $usa->createCustomer($userinfo['customerid'],$password,$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
+        if(!empty($result['result'])){
+            $wv = array(
+                        'wvCustomerID' => $result['result']['wvCustomerID'],
+                        'wvOrderID' => $result['result']['wvOrderID']
+                    );
+            $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
+            if($res){
+                $code   =rand(100000,999999);
+                $minute ='1';
+                $param = array($code,$minute);
+                $sms = D('Smscode')->sms($userinfo['acnumber'],$param);
+            }else{
+            	echo 'false';
+            }
+        }else{
+        	echo 'error';
+        }
 	}
 
 
