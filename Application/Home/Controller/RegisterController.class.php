@@ -1,6 +1,7 @@
 <?php 
 namespace Home\Controller;
 use Common\Controller\HomeBaseController;
+use Api\Controller\HapylifeUsaController;
 /**
  * 用户注册Controller
  **/
