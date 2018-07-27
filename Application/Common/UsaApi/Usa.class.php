@@ -40,7 +40,7 @@ class usa
 	* CREATE CUSTOMER
 	**/
 	public function createCustomer($happyLifeID,$password,$sponsorID,$firstName_EN,$lastName_EN,$emailAddress,$phone,$products='RBS,DTP',$dob='2000-1-1'){
-		// $map  = I('post.');
+		
 		$key  = $this->key;
 		$url  = $this->url;
 		$data = array(

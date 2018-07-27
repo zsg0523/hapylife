@@ -490,20 +490,21 @@ class RegisterController extends HomeBaseController{
                     );
                     //更新订单信息
                     $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($status);
+                    //发送数据至usa
                     if($upreceipt){
-                        $usa = new \Common\UsaApi\Usa;
-                        $result = $usa->createCustomer($userinfo['customerid'],$_SESSION['user']['password'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
+                        $usa    = new \Common\UsaApi\Usa;
+                        $result = $usa->createCustomer($userinfo['customerid'],$_SESSION['user']['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
                         if(!empty($result['result'])){
-                            $wv = array(
-                                        'wvCustomerID' => $result['result']['wvCustomerID'],
-                                        'wvOrderID' => $result['result']['wvOrderID']
+                            $map = json_decode($result['result'],true);
+                            $wv  = array(
+                                        'wvCustomerID' => $map['wvCustomerID'],
+                                        'wvOrderID'    => $map['wvOrderID']
                                     );
                             $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                             if($res){
-                                $code   =rand(100000,999999);
-                                $minute ='1';
-                                $param = array($code,$minute);
-                                $sms = D('Smscode')->sms($userinfo['acnumber'],$param);
+                                $templateId ='164137';
+                                $params     = array();
+                                $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                             }
                         }
                     }

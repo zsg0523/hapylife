@@ -9,22 +9,22 @@ use Common\Controller\HomeBaseController;
 class HapylifeUsaController extends HomeBaseController{
 
 	public function testUsaClass(){
-		$iuid = I('post.iuid');
+		$iuid     = I('post.iuid');
 		$password = I('post.password');
 		$userinfo = M('User')->where(array('iuid'=>$iuid))->find();
-		$usa = new \Common\UsaApi\Usa;
-        $result = $usa->createCustomer($userinfo['customerid'],$password,$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
+		$usa      = new \Common\UsaApi\Usa;
+		$result   = $usa->createCustomer($userinfo['customerid'],$password,$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
         if(!empty($result['result'])){
-            $wv = array(
-                        'wvCustomerID' => $result['result']['wvCustomerID'],
-                        'wvOrderID' => $result['result']['wvOrderID']
+        	$map = json_decode($result['result'],true);
+            $wv  = array(
+						'wvCustomerID' => $map['wvCustomerID'],
+						'wvOrderID'    => $map['wvOrderID']
                     );
             $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
             if($res){
-                $code   =rand(100000,999999);
-                $minute ='1';
-                $param = array($code,$minute);
-                $sms = D('Smscode')->sms($userinfo['acnumber'],$param);
+            	$templateId='164137';
+            	$params = array();
+				$sms    = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
             }else{
             	echo 'false';
             }
