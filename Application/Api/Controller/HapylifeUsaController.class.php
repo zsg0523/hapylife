@@ -23,7 +23,7 @@ class HapylifeUsaController extends HomeBaseController{
 		$this->key = "QACER3H5T6HGYDCCDAZM3";
 		$this->url = "https://signupapi-qa.wvhservices.com";
 	}
-
+	
 	/**
 	* VALIDATEHPL
 	* @param customerId: id to validate

@@ -592,6 +592,7 @@ class RegisterController extends HomeBaseController{
                 $change_orderstatus = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->save($map);
 
                 if($change_orderstatus){
+
                     $OrderDate         = date("Y-m-d",strtotime("-1 month",time()));
                     $activa = $OrderDate;
                     $day    = date('d',strtotime($OrderDate));
@@ -612,7 +613,7 @@ class RegisterController extends HomeBaseController{
                     $endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
                     $where =array('iuid'=>$order['riuid'],'ir_receiptnum'=>$order['ir_receiptnum'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
                     $save  = M('Activation')->add($where);
-                    if($save){
+                    if($save){                      
                         $data['status'] = 1;
                         $this->ajaxreturn($data);
                     }else{
