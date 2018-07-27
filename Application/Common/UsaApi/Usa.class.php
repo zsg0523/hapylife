@@ -76,6 +76,7 @@ class usa
             'lastName_EN'  =>$map['lastName_EN'],
             'emailAddress' =>$map['emailAddress'],
             'phone'        =>$map['phone'],
+            'dob'          =>$map['dob'],
             'key'          =>$key
 		);
 		$data    = json_encode($data);
