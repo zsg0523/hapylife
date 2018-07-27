@@ -148,7 +148,7 @@ class UserModel extends BaseModel{
 					$count=$model
 					->alias('u')
 			        ->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			        // ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			        ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 		            ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 		            ->count();
 				}
@@ -159,7 +159,7 @@ class UserModel extends BaseModel{
 			            $list=$model
 			            	->alias('u')
 			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	// ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
@@ -168,7 +168,7 @@ class UserModel extends BaseModel{
 			            $list=$model
 			            	->alias('u')
 			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	// ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->field($field)
 			                ->order($order)
@@ -180,7 +180,7 @@ class UserModel extends BaseModel{
 			            $list=$model
 			            	->alias('u')
 			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	// ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
@@ -189,7 +189,7 @@ class UserModel extends BaseModel{
 			            $list=$model
 			            	->alias('u')
 			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	// ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			                ->field($field)
 			                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
@@ -203,14 +203,14 @@ class UserModel extends BaseModel{
 					$count=$model
 						->alias('u')
 						->join('left join hapylife_receipt c on u.iuid = c.riuid')
-						// ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+						->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 						->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 						->count();
 				}else{
 					$count=$model
 						->alias('u')
 				        ->join('left join hapylife_receipt c on u.iuid = c.riuid')
-				        // ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				        ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			            ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			            ->count();
 				}
@@ -221,7 +221,7 @@ class UserModel extends BaseModel{
 			            $list=$model
 			            	->alias('u')
 			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	// ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			            	->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
@@ -230,7 +230,7 @@ class UserModel extends BaseModel{
 			            $list=$model
 			            	->alias('u')
 			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	// ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			            	->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->field($field)
 			                ->order($order)
@@ -242,7 +242,7 @@ class UserModel extends BaseModel{
 			            $list=$model
 			            	->alias('u')
 			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	// ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			                ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
@@ -251,7 +251,7 @@ class UserModel extends BaseModel{
 			            $list=$model
 			            	->alias('u')
 			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	// ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			                ->field($field)
 			                ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)

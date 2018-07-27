@@ -51,12 +51,16 @@ class HapylifeAddController extends HomeBaseController{
                     );
             $res = M('Getpoint')->add($arr);
             if($res){
-                $sample['msg'] = '添加成功';
-                $sample['status'] = 1;
+                $sample = array(
+                        'msg' => '添加成功',
+                        'status' => 1,
+                    );
                 $this->ajaxreturn($sample);
             }else{
-                $sample['msg'] = '添加失败';
-                $sample['status'] = 0;
+                $sample = array(
+                        'msg' => '添加失败',
+                        'status' => 0,
+                    );
                 $this->ajaxreturn($sample);
             }
         }

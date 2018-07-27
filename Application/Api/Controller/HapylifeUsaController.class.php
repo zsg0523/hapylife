@@ -87,7 +87,7 @@ class HapylifeUsaController extends HomeBaseController{
 		$result  = post_json_data($sendUrl,$data);
 		print_r($result);
 	}
-	
+
 
 
 

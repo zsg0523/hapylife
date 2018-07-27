@@ -131,20 +131,30 @@ class RegisterController extends HomeBaseController{
         if($customerid){
             if(substr($customerid,0,3) == 'HPL'){
                 $data = M('User')->where(array('CustomerID'=>$customerid))->find();
-                $this->ajaxreturn($data); 
+                if(!empty($data)){
+                    $this->ajaxreturn($data);     
+                }else{
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data);           
+                }
             }else{
-                $key      = "Z131MZ8ZV29H5EQ9LGVH";
-                $url      = "https://signupapi.wvhservices.com/api/Account/ValidateHpl?customerId=".$customerid."&"."key=".$key;
+                $key      = "QACER3H5T6HGYDCCDAZM3";
+                $url      = "https://signupapi.wvhservices.com/api/Hpl/Validate?customerId=".$customerid."&"."key=".$key;
                 $wv       = file_get_contents($url);
                 $data = json_decode($wv,true);
-                $data['lastname'] = $data['lastName'];
-                $data['firstname'] = $data['firstName'];
-                $this->ajaxreturn($data);
+                if(!empty($data)){
+                    $data['lastname'] = $data['lastName'];
+                    $data['firstname'] = $data['firstName'];
+                    $this->ajaxreturn($data);     
+                }else{
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data);           
+                }
             }
         }else{
             $data['status'] = 0;
             $this->ajaxreturn($data);           
-        } 
+        }
     }
     /**
     * 保存用户资料

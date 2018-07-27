@@ -479,30 +479,32 @@
 		}else if($(this).attr('name')=='EnrollerID'){
 			$(this).val($(this).val().replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,''));
 			var EnrollerID=$("input[name='EnrollerID']").val();
-			$.ajax({
-				type:"post",
-				url:"checkName",
-				async:false,
-				dataType:'json',
-				data:{
-					EnrollerID:EnrollerID
-				},
-				success:function(data){
-	//				console.log(12123);
-	//				console.log(data);
-					if(data.status == 0){
-						$("input[name='EnrollerNameCn']").val("请输入正确的推荐人ID！");
-					}else{
-						$("input[name='EnrollerNameCn']").val(data.lastname+data.firstname);
-						$("input[name='teamCode']").val(data.teamcode);
-					}
-					
-				},
-				error:function(){
-					alert('ajax请求错误~！');
-					
-				},
-			});
+			if(EnrollerID != ''){
+				$.ajax({
+					type:"post",
+					url:"checkName",
+					async:false,
+					dataType:'json',
+					data:{
+						EnrollerID:EnrollerID
+					},
+					success:function(data){
+		//				console.log(12123);
+		//				console.log(data);
+						if(data.status == 0){
+							$("input[name='EnrollerNameCn']").val("请输入正确的推荐人ID！");
+						}else{
+							$("input[name='EnrollerNameCn']").val(data.lastname+data.firstname);
+							$("input[name='teamCode']").val(data.teamcode);
+						}
+						
+					},
+					error:function(){
+						alert('ajax请求错误~！');
+						
+					},
+				});
+			}
 		}else{
 			$(this).val($(this).val().replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,''));
 		}	

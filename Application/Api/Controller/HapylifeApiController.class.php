@@ -5,7 +5,6 @@ use Common\Controller\HomeBaseController;
 * hapylife控制器
 **/
 class HapylifeApiController extends HomeBaseController{
-
     public function index(){
         //检查WV api用户信息
         $HappyLifeID  = trim(I('post.happyLifeID'));
@@ -222,8 +221,8 @@ class HapylifeApiController extends HomeBaseController{
         $tmpe = I('post.');
         if(strlen($tmpe['CustomerID'])==8){
                 //检查WV api用户信息
-                $key      = "Z131MZ8ZV29H5EQ9LGVH";
-                $url      = "https://signupapi.wvhservices.com/api/Account/ValidateHpl?customerId=".$tmpe['CustomerID']."&"."key=".$key;
+                $key      = "QACER3H5T6HGYDCCDAZM3";
+                $url      = "https://signupapi.wvhservices.com/api/Hpl/Validate?customerId=".$tmpe['CustomerID']."&"."key=".$key;
                 $wv       = file_get_contents($url);
                 $userinfo = json_decode($wv,true);
                 //检查wv是否存在该账号 Y创建该账号  N登录失败
@@ -548,9 +547,7 @@ class HapylifeApiController extends HomeBaseController{
     **/
     public function product(){
         $ipid = I('post.ipid');
-        $data = M('Product')
-              ->where(array('ipid'=>$ipid))
-              ->find();
+        $data = M('Product')->where(array('ipid'=>$ipid))->find();
         if($data){
             $this->ajaxreturn($data);
         }else{
