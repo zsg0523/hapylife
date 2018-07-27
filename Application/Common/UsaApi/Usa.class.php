@@ -39,7 +39,7 @@ class usa
 	/**
 	* CREATE CUSTOMER
 	**/
-	function createCustomer(){
+	public function createCustomer(){
 		$map  = I('post.');
 		$key  = $this->key;
 		$url  = $this->url;
@@ -84,6 +84,8 @@ class usa
 		$result  = post_json_data($sendUrl,$data);
 		print_r($result);
 	}
+
+
 
 	
 
