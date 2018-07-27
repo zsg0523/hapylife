@@ -7,8 +7,19 @@ use Common\Controller\HomeBaseController;
 class HapylifeAddController extends HomeBaseController{
     /**
     * 添加用户积分
+    {
+    "sendpoint":[
+            {"customerid":"HPL00003","point":"10000"},
+            {"customerid":"HPL00003","point":"10000"},
+            {"customerid":"HPL00003","point":"10000"},
+            {"customerid":"HPL00003","point":"10000"}
+        ]
+    }
     **/ 
     public function addPoint(){
+        $jsonStr = file_get_contents("php://input");
+        $data = json_decode($jsonStr,true);
+        p($data);die;
         $CustomerID = strtoupper(trim(I('post.customerid')));
         // 获取用户信息
         $userinfo = M('User')->where(array('CustomerID'=>$CustomerID))->find();
