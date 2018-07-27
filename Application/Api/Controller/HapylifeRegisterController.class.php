@@ -651,32 +651,30 @@ class HapylifeRegisterController extends HomeBaseController{
         if($customerid){
             if(substr($customerid,0,3) == 'HPL'){
                 $data = M('User')->where(array('CustomerID'=>$customerid))->find();
-                if($data){
-                    $data['status'] = 1;
-                    $this->ajaxreturn($data); 
+                if(!empty($data)){
+                    $this->ajaxreturn($data);     
                 }else{
-                    $sample['status'] = 0;
-                    $this->ajaxreturn($sample);
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data);           
                 }
             }else{
                 $key      = "QACER3H5T6HGYDCCDAZM3";
                 $url      = "https://signupapi.wvhservices.com/api/Hpl/Validate?customerId=".$customerid."&"."key=".$key;
                 $wv       = file_get_contents($url);
                 $data = json_decode($wv,true);
-                $message['lastname'] = $data['lastName'];
-                $message['firstname'] = $data['firstName'];
-                if($data){
-                    $data['status'] = 1;
-                    $this->ajaxreturn($data); 
+                if(!empty($data)){
+                    $data['lastname'] = $data['lastName'];
+                    $data['firstname'] = $data['firstName'];
+                    $this->ajaxreturn($data);     
                 }else{
-                    $sample['status'] = 0;
-                    $this->ajaxreturn($sample);
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data);           
                 }
             }
         }else{
-            $sample['status'] = 0;
-            $this->ajaxreturn($sample);           
-        } 
+            $data['status'] = 0;
+            $this->ajaxreturn($data);           
+        }
     }
     /*********************************************************************普通注册********************************************************************************************/  
     /**

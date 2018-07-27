@@ -66,7 +66,7 @@ class PurchaseController extends HomeBaseController{
         if(!empty($status)){
             $tmpe    = array(
                 'ip_grade' =>$type,
-                'is_pull'  =>2
+                'is_push'  =>2
             );
         }else{
             $tmpe    = array(

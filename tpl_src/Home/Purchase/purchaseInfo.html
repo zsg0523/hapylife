@@ -132,7 +132,11 @@
 				
 				<div class="title">
 					<span class="">名称：{$data.ip_name_zh}</span>
-					<i class="">售价：￥{$data.ip_price_rmb}</i>
+					<if condition="$data['is_push'] eq 2">
+						<i class="">售价：{$data.ip_price_ep}EP</i>
+					<else />
+						<i class="">售价：￥{$data.ip_price_rmb}</i>
+					</if>
 				</div>
 				<div class="link">
 					<a href="{:U('Home/Purchase/order',array('ipid'=>$data['ipid']))}" target="_blank">去支付</a>

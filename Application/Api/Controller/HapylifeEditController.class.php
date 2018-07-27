@@ -15,13 +15,24 @@ class HapylifeEditController extends HomeBaseController{
             $result = M('User')->where(array('CustomerID'=>$id))->setField('status',1);
         }
         if($result){
-            $sample['status'] = 1;
-            $sample['msg'] = '修改成功';
+            $sample = array(
+                    'msg' => '修改成功',
+                    'status' => 1,
+                );
             $this->ajaxreturn($sample);
         }else{
-            $sample['status'] = 0;
-            $sample['msg'] = '修改失败';
+            $sample = array(
+                    'msg' => '修改失败',
+                    'status' => 0,
+                );
             $this->ajaxreturn($sample);
         }
+    }
+
+    /**
+    * 接收200月费包订单参数
+    **/ 
+    public function acceptList(){
+        $CustomerID = json_decode(htmlspecialchars_decode(trim(I('post.customerid'))));
     }
 }
