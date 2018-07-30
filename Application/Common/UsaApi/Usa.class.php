@@ -13,7 +13,7 @@ class usa
 
 	public function __construct(){
 		// production 生产环境配置
-		// $this->key = "Z131MZ8ZV29H5EQ9LGVH";
+		// $this->key = "KDHE5011CVFO1KJEP1A0S";
 		// $this->url = "https://signupapi.wvhservices.com";
 
 		// qa 沙盒环境
