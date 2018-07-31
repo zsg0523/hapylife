@@ -41,7 +41,7 @@ class FeedBackController extends HomeBaseController{
     * 1ibos 2nlc  3hrac 4elpa 5hapylife
     **/
     public function feedbackList(){
-        $iuid     = I('post.iuid');
+        $iuid     = $_SESSION['user']['id'];
         $data     = D('feedback')->where(array('iuid'=>$iuid,'whichApp'=>5))->order('create_time desc')->select();
         foreach ($data as $key => $value) {
             $feedback[$key]   = $value;
@@ -68,12 +68,10 @@ class FeedBackController extends HomeBaseController{
             $feedback[$key]['create_time'] = word_time($value['create_time']); 
             
         }
-        if($feedback){
-            $this->ajaxreturn($feedback);
-        }else{
-            $data['status'] = 0;
-            $this->ajaxreturn($data);
-        }
+        p($feedback);
+        die;
+        $this->assign('feedback',$feedback);
+        $this->display();
     }
 
 	/**

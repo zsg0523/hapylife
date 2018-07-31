@@ -552,7 +552,7 @@ class HapylifeController extends AdminBaseController{
 	**/
 	public function user(){
 		//有密码账户搜索
-		$count = M('user')->where(array('PassWord'=>array('neq','')))->count();
+		$count = M('user')->count();
 		//账户昵称搜索
 		$word = trim(I('get.word'));
 		if(empty($word)){
@@ -702,7 +702,7 @@ class HapylifeController extends AdminBaseController{
 
 	public function users(){
 		//有密码账户搜索
-		$count = M('user')->where(array('PassWord'=>array('neq','')))->count();
+		$count = M('user')->count();
 		//账户昵称搜索
 		$word = trim(I('get.word'));
 		if(empty($word)){
@@ -714,21 +714,16 @@ class HapylifeController extends AdminBaseController{
 		}
 		
 		$excel     = I('get.excel');
-		$status    = I('get.status')-1;
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
-		$assign    = D('User')->getPage(D('User'),$word,$order='joinedon desc',$status,$starttime,$endtime);
+		$assign    = D('User')->getPageS(D('User'),$word,$order='joinedon desc',$starttime,$endtime);
 
-		// $assign = unique_arr($data['data']);
-		// p($assign);
-		// die;
 		//导出excel
 		if($excel == 'excel'){
 			$export_excel = D('User')->export_excel($assign['data']);
 		}else{
 			$this->assign($assign);
 			$this->assign('count',$count);
-			$this->assign('status',I('get.status'));
 			$this->assign('word',$word);
 			$this->assign('starttime',I('get.starttime'));
 			$this->assign('endtime',I('get.endtime'));

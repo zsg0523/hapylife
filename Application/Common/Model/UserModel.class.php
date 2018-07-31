@@ -269,6 +269,72 @@ class UserModel extends BaseModel{
         return $data;
     }
 
+    /**
+     * 获取分页数据
+     * @param  subject  $model  model对象
+     * @param  array    $map    where条件
+     * @param  string   $order  排序规则
+     * @param  integer  $limit  每页数量
+     * @param  integer  $field  $field
+     * @return array            分页数据
+     */
+    public function getPageS($model,$word,$order='',$starttime,$endtime,$limit=20){
+    		if(empty($word)){
+				$count=$model
+					->alias('u')
+					->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+					->count();
+			}else{
+				$count=$model
+					->alias('u')
+		            ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		            ->count();
+			}
+	        $page=new_page($count,$limit);
+	        // 获取分页数据
+	        if(empty($word)){
+	        	if (empty($field)) {
+		            $list=$model
+		            	->alias('u')
+		            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }else{
+		            $list=$model
+		            	->alias('u')
+		            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->field($field)
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }
+	        }else{
+	        	if (empty($field)) {
+		            $list=$model
+		            	->alias('u')
+		                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }else{
+		            $list=$model
+		            	->alias('u')
+		                ->field($field)
+		                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }
+	        }
+	        
+        $data=array(
+            'data'=>$list,
+            'page'=>$page->show()
+            );
+        return $data;
+    }
+
 	public function export_excel($data){
 		if($_SESSION['user']['username'] == 'mary' || $_SESSION['user']['username'] == 'admin2'){
 			$title   = array('UREGTIME','Happy Life ID','Payment Date Time (Dallas time)','Sponsor ID W & H','Product','Gender','Last Name','First Name','En Last Name','En First Name','email address','password','phone1','mailing address1','mailing city','mailing province','mailing country','Identification Card (upload)','Account Type');
