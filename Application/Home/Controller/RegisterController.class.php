@@ -495,6 +495,7 @@ class RegisterController extends HomeBaseController{
                         $usa    = new \Common\UsaApi\Usa;
                         $result = $usa->createCustomer($userinfo['customerid'],$_SESSION['user']['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
                         if(!empty($result['result'])){
+                            $log = addUsaLog($result['result']);
                             $map = json_decode($result['result'],true);
                             $wv  = array(
                                         'wvCustomerID' => $map['wvCustomerID'],
