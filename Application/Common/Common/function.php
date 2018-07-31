@@ -96,7 +96,7 @@ function logTest($data){
 
 function addUsaLog($data){
     $log  = date('Y-m-d H:i:s').'**********'.$data.'**********'.PHP_EOL;
-    $add  = file_put_contents('usa.txt', $log,FILE_APPEND);
+    $add  = file_put_contents('./usa.txt', $log,FILE_APPEND);
     return;
 }
 

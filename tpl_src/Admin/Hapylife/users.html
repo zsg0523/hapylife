@@ -124,10 +124,7 @@
 							<tr>
 								<td>{:date('Y-m-d H:i:s',$v['joinedon'])}</td>
 								<td>{$v.customerid}</td>
-								<if condition="empty($v['wvcustomerid']) eq true">
-								<else />
-									<td>{$v.wvcustomerid}</td>
-								</if>	
+								<td>{$v.wvcustomerid}</td>
 								<td>{$v.wvorderid}</td>
 								<td>
 								<if condition="$v['ir_paytime'] eq 0">

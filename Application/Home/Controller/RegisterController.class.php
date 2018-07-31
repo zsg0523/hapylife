@@ -493,7 +493,7 @@ class RegisterController extends HomeBaseController{
                     //发送数据至usa
                     if($upreceipt){
                         $usa    = new \Common\UsaApi\Usa;
-                        $result = $usa->createCustomer($userinfo['customerid'],$_SESSION['user']['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
+                        $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
                         if(!empty($result['result'])){
                             $log = addUsaLog($result['result']);
                             $map = json_decode($result['result'],true);
@@ -506,6 +506,19 @@ class RegisterController extends HomeBaseController{
                                 $templateId ='164137';
                                 $params     = array();
                                 $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                                if($sms){
+                                    $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->find();
+                                    $contents = array(
+                                                'acnumber' => $userinfo['acnumber'],
+                                                'phone' => $userinfo['phone'],
+                                                'operator' => '系统',
+                                                'addressee' => $status['ia_name'],
+                                                'product_name' => $receiptlist['product_name'],
+                                                'date' => time(),
+                                                'content' => '恭喜您注册成功，请注意查收邮件'
+                                    );
+                                    $logs = M('SmsLog')->add($contents);
+                                }
                             }
                         }
                     }
