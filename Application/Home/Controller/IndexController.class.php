@@ -176,6 +176,7 @@ class IndexController extends HomeBaseController{
                                                 'status'   =>1,
                                                 'address'  =>0,
                                                 'bank'     =>0,
+                                                'password' =>$tmpe['PassWord'],
                                             );
                         }else{
                             $_SESSION['user']=array(

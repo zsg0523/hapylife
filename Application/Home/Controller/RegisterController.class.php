@@ -24,6 +24,8 @@ class RegisterController extends HomeBaseController{
         $this->display();
     }
     public function new_register(){
+        p($_SESSION);
+        die;
         $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
         foreach ($mape as $key => $value) {
             $dat[$key]         = $value;
