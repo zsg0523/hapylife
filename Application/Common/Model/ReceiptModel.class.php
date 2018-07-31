@@ -136,14 +136,14 @@ class ReceiptModel extends BaseModel{
         $count=$model
             ->alias('r')
             ->join('hapylife_user u on r.riuid = u.iuid')
-            ->where(array('r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName|ips_trade_no|ips_trade_status'=>array('like','%'.$word.'%'),'ir_date'=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+            ->where(array('r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName|ips_trade_no|ips_trade_status'=>array('like','%'.$word.'%'),'ir_date|ir_paytime'=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
             ->count();
         // 获取分页数据
         if (empty($field)) {
             $list=$model
                 ->alias('r')
                 ->join('hapylife_user u on r.riuid = u.iuid')
-                ->where(array('r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName|ips_trade_no|ips_trade_status'=>array('like','%'.$word.'%'),'ir_date'=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                ->where(array('r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName|ips_trade_no|ips_trade_status'=>array('like','%'.$word.'%'),'ir_date|ir_paytime'=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
                 ->order('ir_paytime desc')
                 ->select();
         }else{
@@ -151,7 +151,7 @@ class ReceiptModel extends BaseModel{
                 ->alias('r')
                 ->join('hapylife_user u on r.riuid = u.iuid')
                 ->field($field)
-                ->where(array('r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName|ips_trade_no|ips_trade_status'=>array('like','%'.$word.'%'),'ir_date'=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                ->where(array('r.rCustomerID|ir_receiptnum|inner_trade_no|trade_status|ir_price|u.LastName|u.FirstName|ips_trade_no|ips_trade_status'=>array('like','%'.$word.'%'),'ir_date|ir_paytime'=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
                 ->order('ir_paytime desc')
                 ->select();         
         }
