@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+	<title>添加意见</title>
+	<link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
+	<style type="text/css">
+		ul,li{list-style: none;float: left;}
+		body,html{margin: 0;padding: 0;}
+		a{text-decoration: none;color: #fff;}
+		a:hover{cursor: pointer;text-decoration: none;color: #fff;}
+		.main{height: auto;margin: auto;}
+      	.commonHead{width: 100%;height: auto;}
+  	
+      	.title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
+		
+		.addfeedback{width: 100%;border: 1px solid #DEDEDE;margin-top: 5px;}
+		.sel{width: 94%;height: 35px;line-height: 30px;margin-bottom: 5px;margin-left: 3%;}
+    	.sel>span{display: block;width: 60px;height: 30px;}
+    	.sel>select{display: block;height: 28px;background-color: #fff;}
+    	.addfeedback>textarea{width: 94%;height: 80px;margin-left: 3%;color: #333;text-indent: 2em;resize:none;}
+    	
+    	.imgfile{width: 94%;margin-left: 3%;text-align: center;float: left;}
+    	.headImg{height:30px;}
+        .fileInput{width: 100%;  height: 30px;opacity: 0.0;background: black;cursor: pointer;margin-top: -30px;}
+        .dd{width: 100%;}
+        .dd img{border:1px #fff solid;}
+        
+		.fl{float: left;}
+		.fr{float: right;}
+		#addfeed{height: 40px;line-height:40px;text-align: center; border-radius: 5px;position: fixed;z-index: 10;
+			font-size: 16px;bottom: 0;left: 0;  color: #FFFFFF; background-color: #2491EE;margin: 0;border: none;}
+		/*手机*/
+      	@media screen and (max-width: 768px){
+     		.main,.title{width:100%;}
+    		#addfeed{width: 100%;} 
+      	}
+      	/*平板*/
+     	@media screen and (min-width: 768px){
+       	.main,.title{width:100%;}
+      	#addfeed{width: 100%;} 
+      
+      	}
+        /*中等屏幕*/
+      	@media screen and (min-width: 992px){
+         	.main,.title{width:100%;}
+         	#addfeed{width: 100%;} 
+        
+      	}
+      	/*大屏幕*/
+      	@media screen and (min-width: 1200px){
+        	.main,.title{width:1200px;margin: auto;}
+        	#addfeed{width: 1200px;left: 50%;margin-left: -600px;}   
+      	}
+      	
+      	#feedbackcontent::-webkit-input-placeholder{color:red;}
+	</style>
+</head>
+	<body class="">
+		<div class="commonHead">
+  			<include file="Purchase/commonHead" />		
+		</div>
+		<div class="title">
+			添加意见反馈
+		</div>
+		<div class="main">
+			<form class="addfeedback" id="addfeedback" action="" method="post">
+				<div class="sel" id="sel">
+					<span class="fl">&nbsp;类型</span>
+		    		<select class="fr" name="ordertype">
+			          	<option value="0">软件</option>
+			    		<option value="1">账户</option>
+			    		<option value="2">购物</option>
+			    		<option value="3">银行</option>
+			            <option value="4">服务</option>
+			            <option value="5">其他</option>
+	                </select>
+				</div>
+				
+				<textarea data-role="none" class="feedbackcontent" id="feedbackcontent" name="feedbackcontent" placeholder="您的宝贵意见是我们进步的源泉！"></textarea>
+				<div class="imgfile">
+					<img class="headImg" src="__PUBLIC_IMAGE__/camera.png"/>
+					<input type="file"  name="file" class="fileInput" id="doc" multiple="multiple" onchange="javascript:setImagePreviews();" accept="image/*" />
+					上传图片
+				</div>
+				<div class="dd" id="dd"></div>
+				<div style="clear: both;">
+					
+				</div>
+				
+				
+		
+			</form>
+
+			<div style="height:50px;width: 100%;"></div>
+  			<button type="button" id="addfeed" onclick=''>确认</button>
+		</div>
+		
+
+		<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
+		<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
+		
+		<script type="text/javascript">
+		$(document).ready(function(){
+	   		
+		});
+		$('#addfeed').click(function(){
+			var form=$('#addfeedback');
+			form.submit();
+		});
+		//下面用于多图片上传预览功能
+	    function setImagePreviews(avalue) {
+	        var docObj = document.getElementById("doc");
+	        var dd = document.getElementById("dd");
+	        dd.innerHTML = "";
+	        var fileList = docObj.files;
+	        if(fileList.length>3){
+	        	alert('最多只能上传三张！')
+	        }else{
+	        	for (var i = 0; i < fileList.length; i++) {            		 
+				 	dd.innerHTML += "<div > <img style='float:left;'   id='img" + i + "'  /> </div>";
+		            var imgObjPreview = document.getElementById("img"+i); 
+		            if (docObj.files && docObj.files[i]) {
+		                //火狐下，直接设img属性
+		                imgObjPreview.style.display = 'block';
+		                imgObjPreview.style.width = '33%';
+	//	                imgObjPreview.style.height = '180px';
+		                //imgObjPreview.src = docObj.files[0].getAsDataURL();
+		                //火狐7以上版本不能用上面的getAsDataURL()方式获取，需要一下方式
+		                imgObjPreview.src = window.URL.createObjectURL(docObj.files[i]);
+		            }
+		            else {
+		                //IE下，使用滤镜
+		                docObj.select();
+		                var imgSrc = document.selection.createRange().text;
+		                alert(imgSrc)
+		                var localImagId = document.getElementById("img" + i);
+		                //必须设置初始大小
+		                localImagId.style.width = "33%";
+	//	                localImagId.style.height = "180px";
+		                //图片异常的捕捉，防止用户修改后缀来伪造图片
+		                try {
+		                    localImagId.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale)";
+		                    localImagId.filters.item("DXImageTransform.Microsoft.AlphaImageLoader").src = imgSrc;
+		                }
+		                catch (e) {
+		                    alert("您上传的图片格式不正确，请重新选择!");
+		                    return false;
+		                }
+		                imgObjPreview.style.display = 'none';
+		                document.selection.empty();
+		            }
+		        }  
+	        	
+	        }
+	        
+	
+	
+	
+	        return true;
+	
+	    }
+		</script>
+	    
+	</body>
+</html>
