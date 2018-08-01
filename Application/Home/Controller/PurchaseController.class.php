@@ -168,7 +168,7 @@ class PurchaseController extends HomeBaseController{
         $data['status'] = $_SESSION['user']['status'];
         $map  = array(
 				'riuid'=>$iuid,
-                'ir_status'=>2
+                'ir_status'=>array('in','2,3,4,5')
 			);
 		$data = M('Receipt')
 				->alias('r')
