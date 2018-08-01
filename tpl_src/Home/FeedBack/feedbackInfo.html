@@ -66,9 +66,15 @@
 					<span>{$v['create_time']}&nbsp;</span>
 					<p>{$v['content']}</p>
 					<ul>
-						<li><img src="{$v['image1']}"></li>
-						<li><img src="{$v['image2']}"></li>
-						<li><img src="{$v['image3']}"></li>
+						<if condition="empty($v['image1']) neq true">
+							<li><img src="{$v['image1']}"></li>
+						</if>
+						<if condition="empty($v['image2']) neq true">
+							<li><img src="{$v['image2']}"></li>
+						</if>
+						<if condition="empty($v['image3']) neq true">
+							<li><img src="{$v['image3']}"></li>
+						</if>
 					</ul>
 				</div>
 			</foreach>

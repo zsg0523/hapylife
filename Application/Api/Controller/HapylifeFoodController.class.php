@@ -487,8 +487,8 @@ class HapylifeFoodController extends HomeBaseController{
     **/
     public function feedbackList(){
         $iuid     = I('post.iuid');
-        $whichApp = I('post.whichApp');
-        $data     = D('feedback')->where(array('iuid'=>$iuid,'whichApp'=>$whichApp))->order('create_time desc')->select();
+        // $whichApp = I('post.whichApp');
+        $data     = D('feedback')->where(array('iuid'=>$iuid,'whichApp'=>5))->order('create_time desc')->select();
         foreach ($data as $key => $value) {
             $feedback[$key]   = $value;
             switch ($value['type']) {

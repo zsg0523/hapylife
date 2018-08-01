@@ -20,12 +20,15 @@ class FeedBackController extends HomeBaseController{
 				);
 		//最多三张图
 		$upload = several_upload();
-		if(isset($upload['name'])){
+		if(isset($upload['name'][0])){
 			$data['image1']=C('WEB_URL').$upload['name'][0];
-			$data['image2']=C('WEB_URL').$upload['name'][1];
-			$data['image3']=C('WEB_URL').$upload['name'][2];
 		}
-
+        if(isset($upload['name'][1])){
+            $data['image2']=C('WEB_URL').$upload['name'][1];
+        }
+        if(isset($upload['name'][2])){
+            $data['image3']=C('WEB_URL').$upload['name'][2];
+        }
 		$addComment = M('Feedback')->add($data);
 
 		if($addComment){
