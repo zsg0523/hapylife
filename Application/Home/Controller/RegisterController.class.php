@@ -496,10 +496,10 @@ class RegisterController extends HomeBaseController{
                         $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
                         if(!empty($result['result'])){
                             $log = addUsaLog($result['result']);
-                            $map = json_decode($result['result'],true);
+                            $maps = json_decode($result['result'],true);
                             $wv  = array(
-                                        'wvCustomerID' => $map['wvCustomerID'],
-                                        'wvOrderID'    => $map['wvOrderID']
+                                        'wvCustomerID' => $maps['wvCustomerID'],
+                                        'wvOrderID'    => $maps['wvOrderID']
                                     );
                             $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                             if($res){

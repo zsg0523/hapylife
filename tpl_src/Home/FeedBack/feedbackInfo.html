@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-	<title>意见反馈</title>
+	<title>意见反馈详情</title>
 	<link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
 	<style type="text/css">
 		ul,li{list-style: none;float: left;}
@@ -17,10 +17,12 @@
   	
       	.title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
 		
-		.feedback{width: 100%;height:75px;border: 1px solid #DEDEDE;margin-top: 5px;clear: both;}
-		.feedback>div{width: 50%;height: 35px;line-height: 35px;float: left;text-indent: 5px;}
-      	.feedback>span{width: 50%;height: 35px;line-height: 35px;text-align: right; float:right;text-indent: 5px;}
-      	.feedback>p{ width: 100%;max-height:40px;line-height: 20px; text-indent: 2em;clear: both;overflow: hidden;font-size: 13px;color: #777;}
+		.feedback{width: 100%;border: 1px solid #DEDEDE;margin-top: 5px;clear: both;}
+		.feedback>div{width: 50%;height: 40px;line-height: 40px;float: left;text-indent: 5px;margin-bottom: 10px;}
+		.feedback>div>img{width: 40px; height: 40px; border-radius: 20px;}
+      	.feedback>span{width: 50%;height: 40px;line-height: 40px;text-align: right; float:right;text-indent: 5px;margin-bottom: 10px;}
+      	.feedback>p{width: 100%;min-height:40px;line-height: 20px; text-indent: 2em;overflow: hidden;font-size: 13px;color: #777;display: block;}
+      	
       	#addfeed{height: 40px;line-height:40px;text-align: center; border-radius: 5px;position: fixed;z-index: 10;
 			font-size: 16px;bottom: 0;left: 0;  color: #FFFFFF; background-color: #2491EE;margin: 0;border: none;}
 		
@@ -53,16 +55,18 @@
   			<include file="Purchase/commonHead" />		
 		</div>
 		<div class="title">
-			意见反馈
+			意见反馈详情
 		</div>
 		<div class="main">
-			<div class="feedback" onclick='window.location.href="{:U('Home/Purchase/feedbackinfo')}";'>
-				<div>我的意见(银行)</div>
-				<span>2018-07-03 17:10:39</span>
-				<p>测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试</p>
-			</div>
+			<foreach name="data" item="v">
+				<div class="feedback">
+					<div><img src="__PUBLIC_IMAGE__/icon150x150.png"/>官方回复</div>
+					<span>{$v['create_time']}&nbsp;</span>
+					<p>{$v['content']}</p>
+				</div>
+			</foreach>
 			<div style="height:50px;width: 100%;"></div>
-  			<button type="button" id="addfeed" onclick='window.location.href="{:U('Home/Purchase/addfeedback')}";'>添加意见反馈</button>
+  			<button type="button" id="addfeed" onclick='window.location.href="{:U('Home/FeedBack/addfeedback')}";'>添加意见反馈</button>
 		</div>
 		
 

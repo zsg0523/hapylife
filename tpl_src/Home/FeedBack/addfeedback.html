@@ -67,10 +67,10 @@
 			添加意见反馈
 		</div>
 		<div class="main">
-			<form class="addfeedback" id="addfeedback" action="" method="post">
+			<form class="addfeedback" id="addfeedback" action="{:U('Home/FeedBack/feedback')}" method="post" enctype="multipart/form-data">
 				<div class="sel" id="sel">
 					<span class="fl">&nbsp;类型</span>
-		    		<select class="fr" name="ordertype">
+		    		<select class="fr" name="type">
 			          	<option value="0">软件</option>
 			    		<option value="1">账户</option>
 			    		<option value="2">购物</option>
@@ -80,7 +80,7 @@
 	                </select>
 				</div>
 				
-				<textarea data-role="none" class="feedbackcontent" id="feedbackcontent" name="feedbackcontent" placeholder="您的宝贵意见是我们进步的源泉！"></textarea>
+				<textarea data-role="none" class="feedbackcontent" id="feedbackcontent" name="content" placeholder="您的宝贵意见是我们进步的源泉！"></textarea>
 				<div class="imgfile">
 					<img class="headImg" src="__PUBLIC_IMAGE__/camera.png"/>
 					<input type="file"  name="file" class="fileInput" id="doc" multiple="multiple" onchange="javascript:setImagePreviews();" accept="image/*" />

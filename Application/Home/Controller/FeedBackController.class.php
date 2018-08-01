@@ -10,8 +10,9 @@ class FeedBackController extends HomeBaseController{
 	* 1ibos 2nlc  3hrac 4elpa 5hapylife 
 	**/
 	public function feedback(){
+        $data = I('post.');
+        $data['iuid'] = $_SESSION['user']['id'];
 		$data = array(
-					'iuid'         => trim(I('post.iuid')),
 					'whichApp'     => 5,
 					'content'      => trim(I('post.content')),
 					'type'		   => trim(I('post.type')),	
@@ -20,11 +21,14 @@ class FeedBackController extends HomeBaseController{
 				);
 		//最多三张图
 		$upload = several_upload();
+        p($upload);
+        die;
 		if(isset($upload['name'])){
 			$data['image1']=C('WEB_URL').$upload['name'][0];
 			$data['image2']=C('WEB_URL').$upload['name'][1];
 			$data['image3']=C('WEB_URL').$upload['name'][2];
 		}
+
 		$addComment = M('feedback')->add($data);
 
 		if($addComment){
@@ -68,8 +72,6 @@ class FeedBackController extends HomeBaseController{
             $feedback[$key]['create_time'] = word_time($value['create_time']); 
             
         }
-        p($feedback);
-        die;
         $this->assign('feedback',$feedback);
         $this->display();
     }
@@ -78,7 +80,7 @@ class FeedBackController extends HomeBaseController{
     * 用户反馈详情及回复
     **/
     public function feedbackInfo(){
-        $fbid    = I('post.fbid');
+        $fbid    = I('get.fbid');
         $content = D('feedback')->join('hapylife_user on hapylife_feedback.iuid = hapylife_user.iuid')->where(array('fbid'=>$fbid))->select();
         foreach ($content as $key => $value) {
             $data['content'][$key]                = $value;
@@ -89,11 +91,14 @@ class FeedBackController extends HomeBaseController{
             $data['reply'][$key]                  = $value;
             $data['reply'][$key]['create_time']   = word_time($value['create_time']);
         }
-        if($data){
-            $this->ajaxreturn($data);
-        }else{
-            $data['status'] = 0;
-            $this->ajaxreturn($data);
-        }
+        $this->assign('data',$data);
+        $this->display();
+    }
+
+    /**
+    * 添加反馈意见
+    **/ 
+    public function addfeedback(){
+        $this->display();
     }
 }
