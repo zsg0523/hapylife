@@ -12,17 +12,19 @@
 		body,html{margin: 0;padding: 0;}
 		a{text-decoration: none;color: #fff;}
 		a:hover{cursor: pointer;text-decoration: none;color: #fff;}
-		.main{height: auto;margin: auto;}
+		.main{height: auto;margin: auto;overflow: hidden;}
       	.commonHead{width: 100%;height: auto;}
   	
       	.title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
 		
-		.feedback{width: 100%;border: 1px solid #DEDEDE;margin-top: 5px;clear: both;}
+		.feedback{width: 100%;border: 1px solid #DEDEDE;margin-top: 5px;overflow: hidden;}
 		.feedback>div{width: 50%;height: 40px;line-height: 40px;float: left;text-indent: 5px;margin-bottom: 10px;}
 		.feedback>div>img{width: 40px; height: 40px; border-radius: 20px;}
       	.feedback>span{width: 50%;height: 40px;line-height: 40px;text-align: right; float:right;text-indent: 5px;margin-bottom: 10px;}
       	.feedback>p{width: 100%;min-height:40px;line-height: 20px; text-indent: 2em;overflow: hidden;font-size: 13px;color: #777;display: block;}
-      	
+      	.feedback>ul{width: 100%;float: left;}
+      	.feedback>ul>li{float: left;width: 32%;margin-left: 1%;}
+      	.feedback>ul>li>img{width: 100%;border: 5px solid #fff;border-radius: 5px}
       	#addfeed{height: 40px;line-height:40px;text-align: center; border-radius: 5px;position: fixed;z-index: 10;
 			font-size: 16px;bottom: 0;left: 0;  color: #FFFFFF; background-color: #2491EE;margin: 0;border: none;}
 		
