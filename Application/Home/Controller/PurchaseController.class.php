@@ -170,7 +170,7 @@ class PurchaseController extends HomeBaseController{
 				'riuid'=>$iuid,
                 'ir_status'=>2
 			);
-		$list = M('Receipt')
+		$data = M('Receipt')
 				->alias('r')
 				->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
 				->join('hapylife_product hp on hr.ipid=hp.ipid')
