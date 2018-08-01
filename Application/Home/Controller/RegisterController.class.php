@@ -229,7 +229,7 @@ class RegisterController extends HomeBaseController{
 	* 首购订单
 	**/
 	public function registerOrder(){
-		$iuid = $_SESSION['user']['id'];
+        $iuid = $_SESSION['user']['id'];
         $ipid = I('get.ipid');
         $htid = D('Tempuser')->order('htid desc')->getfield('htid');
         //商品信息
@@ -300,7 +300,7 @@ class RegisterController extends HomeBaseController{
             $this->redirect('Home/Register/new_cjPayment',array('ir_receiptnum'=>$order_num));
         }else{
             $this->error('生成订单失败');
-        }
+        }  
 	}
     
     /**
@@ -506,7 +506,7 @@ class RegisterController extends HomeBaseController{
                                 $templateId ='164137';
                                 $params     = array();
                                 $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                                if($sms){
+                                if($sms['errmsg'] == 'OK'){
                                     $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->find();
                                     $contents = array(
                                                 'acnumber' => $userinfo['acnumber'],

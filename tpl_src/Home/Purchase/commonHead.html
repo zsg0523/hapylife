@@ -84,16 +84,16 @@
         	<li><a  href="{:U('Home/Purchase/myProfile')}"  >个人资料</a></li>
 					<li><a  href="{:U('Home/Purchase/purchase')}" >购买礼包</a></li>
  					<li><a  href="{:U('Home/Purchase/myOrder')}"  >我的订单</a></li>
- 					<li><a  href="{:U('Home/Register/new_register')}" >新代理注册</a> </li>
+ 					<!-- <li><a  href="{:U('Home/Register/new_register')}" >新代理注册</a> </li> -->
 					<li><a  href="{:U('Home/Purchase/addressList')}" >地址管理</a></li>
 					<li><a  href="{:U('Home/Purchase/bankList')}" >银行管理</a></li>
 					<li><a  href="{:U('Home/Purchase/recommenderList')}" >我的推荐</a></li>
 					<li><a  href="{:U('Home/FeedBack/feedbackList')}" >意见反馈</a></li>
-					<!--<li><a  href="{:U('Home/Purchase/changePassword')}" >修改密码</a></li>-->
+					<li><a  href="{:U('Home/Purchase/changePassword')}" >修改密码</a></li>
 					<li><a  href="{:U('Home/index/log_out')}" >退出登录</a></li>
 				</ul>
 				<div>
-					<span>{$Think.session.user.username},您好!</span>
+					<span>{$Think.session.user.username},您好! <i style="color: red">目前系统正在升级维护，暂无法进行新代理注册。</i></span>
 				</div>
 			</div>
 		</header>
