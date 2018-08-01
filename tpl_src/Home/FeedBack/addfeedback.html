@@ -83,8 +83,9 @@
 				<textarea data-role="none" class="feedbackcontent" id="feedbackcontent" name="content" placeholder="您的宝贵意见是我们进步的源泉！"></textarea>
 				<div class="imgfile">
 					<img class="headImg" src="__PUBLIC_IMAGE__/camera.png"/>
-					<input type="file"  name="file" class="fileInput" id="doc" multiple="multiple" onchange="javascript:setImagePreviews();" accept="image/*" />
-					上传图片
+					<input type="hidden" name="imgfile" id="imgfile" value="" />
+					<input type="file"  name="file" class="fileInput" id="fileInput" multiple="multiple" onchange="javascript:setImagePreviews();" accept="image/*" />
+					上传图片(最多三张)
 				</div>
 				<div class="dd" id="dd"></div>
 				<div style="clear: both;">
@@ -108,17 +109,23 @@
 	   		
 		});
 		$('#addfeed').click(function(){
+			var files=document.getElementById('fileInput').files;
+			$('#imgfile').val(files);
+			
+//			console.log(files);
+			
 			var form=$('#addfeedback');
 			form.submit();
 		});
 		//下面用于多图片上传预览功能
 	    function setImagePreviews(avalue) {
-	        var docObj = document.getElementById("doc");
+	        var docObj = document.getElementById("fileInput");
 	        var dd = document.getElementById("dd");
 	        dd.innerHTML = "";
 	        var fileList = docObj.files;
 	        if(fileList.length>3){
-	        	alert('最多只能上传三张！')
+	        	alert('最多只能上传三张！');
+	        	docObj='';
 	        }else{
 	        	for (var i = 0; i < fileList.length; i++) {            		 
 				 	dd.innerHTML += "<div > <img style='float:left;'   id='img" + i + "'  /> </div>";
