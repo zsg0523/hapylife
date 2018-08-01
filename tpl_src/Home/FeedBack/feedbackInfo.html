@@ -58,11 +58,16 @@
 			意见反馈详情
 		</div>
 		<div class="main">
-			<foreach name="data" item="v">
+			<foreach name="data[reply]" item="v">
 				<div class="feedback">
 					<div><img src="__PUBLIC_IMAGE__/icon150x150.png"/>官方回复</div>
 					<span>{$v['create_time']}&nbsp;</span>
 					<p>{$v['content']}</p>
+					<ul>
+						<li><img src="{$v['image1']}"></li>
+						<li><img src="{$v['image2']}"></li>
+						<li><img src="{$v['image3']}"></li>
+					</ul>
 				</div>
 			</foreach>
 			<div style="height:50px;width: 100%;"></div>

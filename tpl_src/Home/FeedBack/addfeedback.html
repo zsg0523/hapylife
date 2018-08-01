@@ -83,8 +83,7 @@
 				<textarea data-role="none" class="feedbackcontent" id="feedbackcontent" name="content" placeholder="您的宝贵意见是我们进步的源泉！"></textarea>
 				<div class="imgfile">
 					<img class="headImg" src="__PUBLIC_IMAGE__/camera.png"/>
-					<input type="hidden" name="imgfile" id="imgfile" value="" />
-					<input type="file"  name="file" class="fileInput" id="fileInput" multiple="multiple" onchange="javascript:setImagePreviews();" accept="image/*" />
+					<input type="file"  name="file[]" class="fileInput" id="fileInput" multiple="multiple" onchange="javascript:setImagePreviews();" accept="image/*" />
 					上传图片(最多三张)
 				</div>
 				<div class="dd" id="dd"></div>
@@ -109,11 +108,6 @@
 	   		
 		});
 		$('#addfeed').click(function(){
-			var files=document.getElementById('fileInput').files;
-			$('#imgfile').val(files);
-			
-//			console.log(files);
-			
 			var form=$('#addfeedback');
 			form.submit();
 		});
