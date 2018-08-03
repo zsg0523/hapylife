@@ -65,7 +65,11 @@
     					<li>&nbsp;推荐人ID:<span>{$v['customerid']}&nbsp;</span></li>
     					<li>&nbsp;推荐人名字:<span>{$v['lastname']}{$v['firstname']}&nbsp;</span></li>
     					<li>&nbsp;会员状态:<span>{$v['distributortype']}&nbsp;</span></li>
-    					<li>&nbsp;推荐日期:<span>{:date('Y-m-d',$v['joinedon'])}&nbsp;</span></li>
+              <if condition="empty($v['orderdate']) eq true">
+    					 <li>&nbsp;推荐日期:<span>无&nbsp;</span></li>
+              <else />
+                <li>&nbsp;推荐日期:<span>{$v['orderdate']}&nbsp;</span></li>
+              </if>
     				</ul>
           </foreach>
   				
