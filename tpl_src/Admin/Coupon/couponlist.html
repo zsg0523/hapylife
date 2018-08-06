@@ -1,0 +1,171 @@
+<extend name="Public:base" />
+
+<block name="title">优惠券列表</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            首页
+            &gt;
+			优惠券列表
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+			    <li>
+			    	<form action="{:U('Admin/Coupon/couponlist')}" method="get">
+			    		<select name="id">
+			    			<option <?php if($id == 0)echo "selected";?> value="0">所有</option>
+			    			<foreach name="coupon" item="v">
+			    				<option <?php if($id == $v['id'])echo "selected";?> value="{$v['id']}">{$v['name']}</option>
+			    			</foreach>
+			    		</select>
+			    		<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off" placeholder="开始时间" />
+				    	<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off" placeholder="结束时间"/>
+                        <input name="word" type="text" placeholder="关键词" value="{$word}" size="20" />
+                        <input class='btn btn-sm' type="submit" value="筛选" placeholder="优惠券类型，优惠券名称等" />
+                        <!-- <input class='btn btn-sm' type="submit" name='excel' value="excel" /> -->
+                	</form>
+			    </li>
+            </ul>
+		</div>
+            <div class="tab-content">
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<tr>
+						<th>优惠券图片</th>
+						<th>优惠券类型</th>
+						<th>优惠券名称</th>
+						<th>优惠券编码</th>
+						<if condition="$id eq 1 || $id eq 4 || $id eq 5 || $id eq 7 || $id eq 8 || $id eq 12">
+							<th>优惠券价值</th>
+						</if>
+						<if condition="$id eq 2">
+							<th>礼品名称</th>
+						</if>
+						<if condition="$id eq 3">
+							<th>入场地址</th>
+							<th>活动图片</th>
+						</if>
+						<th>开始时间</th>
+						<th>结束时间</th>
+						<if condition="$id eq 5">
+							<th>原金额</th>
+							<th>打折幅度</th>
+							<th>折后金额</th>
+						</if>
+						<th>转赠次数</th>
+						<if condition="$id eq 5 || $id eq 7 || $id eq 8 || $id eq 12">
+							<th>所属app</th>
+							<th>产品名称</th>
+							<th>产品id</th>
+						</if>
+						<if condition="$id eq 2 || $id eq 5 || $id eq 7 || $id eq 8 || $id eq 12">
+							<th>对应商品图片</th>
+						</if>
+						<!-- <th>优惠券二维码</th> -->
+					</tr>
+					<foreach name="data" item="v">
+						<tr>
+							<td><img src="{$v['img']}" width="40px" height="40px"></td>
+							<td>{$v['name']}</td>
+							<td>{$v['c_name']}</td>
+							<td>{$v['c_number']}</td>
+							<if condition="$id eq 1 || $id eq 4 || $id eq 5 || $id eq 7 || $id eq 8 || $id eq 12">
+								<td>{$v['discount_money']}{$v['type']}</td>
+							</if>
+							<if condition="$id eq 2">
+								<td>{$v['g_name']}</td>
+							</if>
+							<if condition="$id eq 3">
+								<td>{$v['location']}</td>
+								<td><img src="{$v['pro_img']}" width="40px" height="40px"></td>
+							</if>
+							<td>{:date('Y-m-d',$v['start_time'])}</td>
+							<td>{:date('Y-m-d',$v['end_time'])}</td>
+							<if condition="$id eq 5">
+								<td>{$v['original_money']}{$v['type']}</td>
+								<td>{$v['discount']}</td>
+								<td>{$v['discount_money']}{$v['type']}</td>
+							</if>
+							<if condition="$v['conditions'] eq 0">
+                                <td>
+                                    不可转赠
+                                </td>
+                            <elseif condition="$v['conditions'] eq 1" />
+                                <td>
+                                    转赠多次
+                                </td>
+                            <else />
+                                <td>
+                                    转赠一次
+                                </td>
+                            </if>
+							<if condition="$id eq 5 || $id eq 7 || $id eq 8 || $id eq 12">
+								<if condition="$v['which_app'] eq 1">
+									<td>ELPA</td>
+								<elseif condition="$v['which_app'] eq 2"/>
+									<td>HRAC</td>
+								<elseif condition="$v['which_app'] eq 3"/>
+									<td>NLC</td>
+								<elseif condition="$v['which_app'] eq 4"/>
+									<td>IBOS</td>
+								<elseif condition="$v['which_app'] eq 5"/>
+									<td>HAPYLIFE</td>
+								<else />
+									<td></td>
+								</if>
+								<td>{$v['pro_name']}</td>
+								<td>{$v['product_id']}</td>
+							</if>
+							<if condition="$id eq 2 || $id eq 5 || $id eq 7 || $id eq 8 || $id eq 12">
+								<td><img src="{$v['pro_img']}" width="40px" height="40px"></td>
+							</if>
+							<!-- <td><img src="{$v['qrcode']}" width="40px" height="40px"></td> -->
+						</tr>
+					</foreach>
+				</table>
+				<div class='page'>
+					{$page}
+				</div>
+            </div>
+        </div>
+    </div>
+    
+</block>
+<block name="js">
+	<script>
+	// 添加菜单
+	function add(){
+		$("input[name='title']").val('');
+		$('#bjy-add').modal('show');
+	}
+
+	// 修改菜单
+	function edit(obj){
+		var receiptId          =$(obj).attr('receiptId');
+		var receiptNum         =$(obj).attr('receiptNum');
+		var receiptDate        =$(obj).attr('receiptDate');
+		var receiptPrice       =$(obj).attr('receiptPrice');
+		var receiptUser        =$(obj).attr('receiptUser');
+		var receiptPhone       =$(obj).attr('receiptPhone');
+		var receiptAddress     =$(obj).attr('receiptAddress');
+		var receiptBankreceipt =$(obj).attr('receiptBankreceipt');
+		var receiptStatus      =$(obj).attr('receiptStatus');
+		var receiptDesc        =$(obj).attr('receiptDesc');
+		Receiptdesc.innerText  =receiptDesc;
+		Receiptnum.innerText   =receiptNum;
+		Receiptuser.innerText  =receiptUser;
+		Receiptphone.innerText =receiptPhone;
+		Receiptprice.innerText =receiptPrice;
+		$("input[name='id']").val(receiptId);
+		$("#bankreceipt").attr("src",receiptBankreceipt);
+		$("#bankpicture").attr("href",receiptBankreceipt);
+		$("input[name='ia_address']").val(receiptAddress);
+		$("select[name='ir_status']").val(receiptStatus);
+		$('#bjy-edit').modal('show');
+	}
+
+	//
+	</script>
+</block>
