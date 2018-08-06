@@ -167,7 +167,7 @@ class RegisterController extends HomeBaseController{
         }else{
             $data = I('post.');
             $upload = several_upload();
-            $User = D("User1"); // 实例化User对象
+            $User = D("User"); // 实例化User对象
             if(!$User->create($data)){
                 $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
                 foreach ($mape as $key => $value) {
@@ -766,7 +766,7 @@ class RegisterController extends HomeBaseController{
 		$data = I('post.');
 		$upload = several_upload();
 		if(IS_POST){
-			$User = D("User1"); // 实例化User对象
+			$User = D("User"); // 实例化User对象
             if(!$User->create($data)){
                  // 如果创建失败 表示验证没有通过 输出错误提示信息
                 $error = $User->getError();

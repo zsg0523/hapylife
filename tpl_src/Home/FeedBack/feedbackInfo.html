@@ -54,10 +54,7 @@
 </head>
 	<body class="">
 		<div class="commonHead">
-  			<include file="Purchase/commonHead" />		
-		</div>
-		<div class="title">
-			意见反馈详情
+			<include file="Common/commonHead1" />
 		</div>
 		<div class="main">
 			<foreach name="data[reply]" item="v">
@@ -88,8 +85,11 @@
 		
 		<script type="text/javascript">
 		$(document).ready(function(){
-	   		
+	   		changeCommonHead('意见反馈详情');
 		});
+		function back(){
+	    	window.location.href ="{:U('Home/FeedBack/feedbackList')}";
+		}
 		</script>
 	    
 	</body>

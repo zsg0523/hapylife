@@ -15,49 +15,22 @@
       button{outline:none;border: none;background: #fff;}
       input[type="radio"], input[type="checkbox"] {margin: 7px 5px 0 5px;}
     	      p{margin: 0;padding: 0;}
+
     	
-    
-    	header{width: 100%;height: 100px;background:#2491ee;color: #fff;}
-	    .head{height: 100px;margin: 0 auto;position: relative;z-index: 1;}
-	    .head>span{height: 60px;width: 60%;line-height: 60px;font-size: 40px;display: block;float: left;margin-left: 5%;}
-	    .head>span:hover{cursor:pointer;}
-	    .head>span>sup{font-size:12px;top: -1.7em;}
-	    
-	    .head>p{width: 40px;height: 40px;color: #fff;font-size: 28px;line-height: 40px;text-align:center;
-	    display: block;float: right;margin-right: 10px;margin-top: 10px;}
-      .head>p:hover{cursor: pointer;}
-      
-      .head>ul{height:auto;position: absolute;z-index: 5;background-color: #FFF;color: #000;right: 0;top: 100px;display: none;border:1px solid #DEDEDE;}
-      .head>ul>li{width: 100%;height: 35px;}
-     	.head>ul>li>a{width: 100%;height: 35px;font-size: 16px;color: #2491ee;text-align: center;line-height: 35px; border-bottom: 1px #dedede solid;display:inline-block;}
-      
-      .head>div{width: 100%;height: 40px;float: left;}
-      .head>div>span{width:95%;height: 40px;float: left;font-size: 14px;line-height: 20px;margin-left: 5%;}
-			.head>div>a{width: 35%;height: 40px;line-height:40px;float: right;font-size: 14px;display:inline-block;color: #fff;text-align: right;}	
-      
-      	
-      .navig{height: 40px;margin: auto;border-bottom:1px solid #DEDEDE;}
-      .navig>span{width: 40px;height: 38px;color: #2491ee;font-size: 28px;line-height: 38px;text-align:center;margin-left: 10px;background: #EEEEEE;border-radius: 3px;}
-      .navig>span:hover{cursor: pointer;}
-    	
-    	
-    	
-    	.wrap{width: 100%;height: 100%;position: relative;}
+    	.wrap{width: 100%;height: 100%;position: relative;background: #f0f0f0;}
 			.main{height: auto;margin: auto;color: #000;}
 			.title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
 			
 			#addCard{width: 100%;height: 40px;line-height:40px;text-align: center; border-radius: 5px;position: fixed;z-index: 10;
 			font-size: 16px;bottom: 0;  color: #FFFFFF; background-color: #2491EE;}
-			.addressInfo{width: 100%;height: 212px;border: 1px solid #DEDEDE;margin-top: 5px;}
-			.addressInfo>ul{width: 100%;height: 180px;border-bottom: 1px #DEDEDE solid;}
+			.addressInfo{width: 100%;height: 125px;border: 1px solid #DEDEDE;margin-top: 10px;background: #fff;border-radius: 5px;}
+			.addressInfo>ul{width: 65%;height: 125px;border-bottom: 1px #DEDEDE solid;margin-bottom: 0px;display: block;float: left;}
 			.addressInfo>ul>li{width: 100%;height: 25px;}
-			.addressInfo>ul>li>span{width: 30%;height: 25px;line-height: 25px;text-align: left;display: block;float: left;margin-left: 5px;}
-			.addressInfo>ul>li>div{width: 60%;height: 25px;line-height: 25px;text-align: right;float: right;margin-right: 5px; }
-			.addressInfo>form{text-align: center;line-height: 29px;background: #fff;color: #000;margin-left: 5px;margin-right: 5px;}
-			.defa{width: 120px;height: 29px;display: block;float: left;text-align: left;color: #fff;background: #439DFE;border-radius: 5px;}
-			.sel{width: 15px;height: 15px;display: block;float: left;}
-			.edit{width:60px;height: 29px;float: right;margin-left: 5%;color: #fff;background: #439DFE;border-radius: 5px;}
-			.dele{width: 60px;height: 29px;display: block;float: right;background:#439DFE ; color:#fff;margin-left: 5%;border-radius: 5px;}
+			.addressInfo>ul>li>div{width:95%;height: 25px;line-height: 25px;text-align: ;float: left;margin-left: 5px; }
+			.addressInfo>form{width: 80px;height: 121px;display: block; float: right; text-align: center;line-height: 29px;background: #fff;color: #000;margin-left: 5px;margin-right: 5px;}
+			.defa{width: 50px;height: 25px;line-height: 20px;font-size: 12px; display: block;float: right;text-align: center;color: #ffb1bb;background: #fff;border:1px solid #ffb1bb; border-radius: 10px;margin-top: 10px}
+			.edit{width:50px;height: 25px;line-height: 20px;font-size: 12px; float: right;color: #fff;text-align: center;background: #439DFE;border-radius: 10px;margin-top:15px;display: inline-block;}
+			.dele{width: 50px;height: 25px;line-height: 20px;font-size: 12px; display: block;float: right;text-align: center;background:#439DFE ; color:#fff;border-radius: 10px;margin-top: 15px;}
 			.btn-info{background-color: #439DFE;}
 			
 			#save{width: 100%;}
@@ -104,47 +77,30 @@
     </style>
   </head>
   <body>
-  	<header>
-			<div class="head">
-				<span>HAPYLIFE<sup>TM</sup></span>
-				<p class="glyphicon glyphicon-menu-hamburger" id="design" onclick="showSetting();"></p>
-				<ul id="setting">
-        			<li><a  href="{:U('Home/Purchase/myProfile')}"  >个人资料</a></li>
-					<li><a  href="{:U('Home/Purchase/purchase')}" >购买礼包</a></li>
- 					<li><a  href="{:U('Home/Purchase/myOrder')}"  >我的订单</a></li>
- 					<!-- <li><a  href="{:U('Home/Register/new_register')}" >新代理注册</a> </li> -->
-					<li><a  href="{:U('Home/Purchase/addressList')}" >地址管理</a></li>
-					<li><a  href="{:U('Home/Purchase/bankList')}" >银行管理</a></li>
-					<li><a  href="{:U('Home/Purchase/recommenderList')}" >我的推荐</a></li>
-					<li><a  href="{:U('Home/FeedBack/feedbackList')}" >意见反馈</a></li>
-					<li><a  href="{:U('Home/Purchase/changePassword')}" >修改密码</a></li>
-					<li><a  href="{:U('Home/index/log_out')}" >退出登录</a></li>
-				</ul>
-				<div>
-					<span>{$Think.session.user.username},您好!<br> <i style="color: red">目前系统正在升级维护，暂无法进行注册。</i></span>
-				</div>
-			</div>
-		</header>
+
   		<div class="wrap">
-  			<div class="main">
-  				<div class="title">
-						银行管理
+  			<div class="commonHead">
+  				<include file="Common/commonHead1" />
 				</div>
+  			<div class="main">
   				<foreach name="data" item="v">
 	  				<div class="addressInfo">
 	  					<ul>
-	  						<li><span>开户人:</span><div>{$v['iu_name']}</div></li>
-	  						<li><span>卡号:</span><div>{$v['bankaccount']}</div></li>
-	  						<li><span>银行名称:</span><div>{$v['bankname']}</div></li>
-	  						<li><span>银行省:</span><div>{$v['bankprovince']}</div></li>
-	  						<li><span>银行市:</span><div>{$v['banktown']}</div></li>
-	  						<li><span>银行区/县:</span><div>{$v['bankregion']}</div></li>
-	  						<li><span>支行名称:</span><div>{$v['bankbranch']}</div></li>
+	  						<li><div>{$v['iu_name']}</div></li>
+	  						<li><div>{$v['bankaccount']}</div></li>
+	  						<li><div>{$v['bankname']}</div></li>
+	  						<li><div>{$v['bankprovince']}{$v['banktown']}{$v['bankregion']}</div></li>
+	  						<!--<li><div>{$v['banktown']}</div></li>
+	  						<li><div>{$v['bankregion']}</div></li>-->
+	  						<li><div>{$v['bankbranch']}</div></li>
 	  					</ul>
 							<form name="form" action="{:U('Home/Purchase/bankEdit')}" method="post">
 								<input type="hidden" name="bid" value="{$v['bid']}">
-		  						<!-- <button name="isshow" value="1" type="submit" class="defa" onclick='changeCheck(this);'><input class="sel" type="checkbox" <?php if($v['isshow'] == 1)echo "checked=true;"?> />设为默认地址</button> -->
-		  						<button name="isshow" value="1" type="submit" class="defa" onclick='changeCheck(this);' <?php if($v['isshow'] == 1)echo "disabled='disabled';"?> ><input class="sel" type="checkbox" disabled="disabled"  <?php if($v['isshow'] == 1)echo "checked=true;"?> />设为默认地址</button>
+	  						<if 	condition="$v['isshow'] eq 1" >
+	  							<button name="isshow" value="1" type="submit" class="defa" onclick='' disabled='disabled'; >默认</button>
+	  						<else />
+		              <button name="isshow" value="1" type="submit" class="defa" onclick='' style="width: 80px;color: #666;background: #fff;border:1px solid #666;">设为默认</button>          
+	  						</if>
 	  						<button type="button" class="dele" data-bid='{$v['bid']}' data-toggle="modal" data-target="#myModal3">删除</button>
 	  						<button data-bid='{$v['bid']}' data-name='{$v['iu_name']}' data-bankaccount='{$v['bankaccount']}' data-bankname='{$v['bankname']}' data-bankbranch='{$v['bankbranch']}' data-bankprovince='{$v['bankprovince']}' data-banktown='{$v['banktown']}' data-bankregion='{$v['bankregion']}' type="button" class="edit" data-toggle="modal" data-target="#myModal2" >编辑</button>
 		  				</form>
@@ -167,7 +123,7 @@
 											<div class="form-group" style="font-size: 18px;">是否删除？</div>
 											<div class="form-group">
 											  <button type="button" class="btn btn-danger" onclick='form.action="{:U('Home/Purchase/bankDelect')}";form.submit();'>删除</button>
-											  <button type="submit" class="btn btn-info" style="float: right;">取消</button>
+											  <button type="submit" class="btn btn-info" data-dismiss="modal" aria-label="Close" style="float: right;">取消</button>
 											</div>
 										  
 										</form>
@@ -294,9 +250,17 @@
   			
   		</div>
 
-	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
+
+		<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
     <script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
-    <script type="text/javascript" >
+    <script type="text/javascript">
+		$(document).ready(function(){
+
+	   		changeCommonHead('银行管理');
+		});
+		function back(){
+        	window.location.href ="{:U('Home/Purchase/center')}";
+   	}
 	  //去特殊字符
     $('input').blur(function(){
 			if($(this).val()!=$(this).val().replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')){
@@ -304,26 +268,6 @@
 //				alert($(this).val());
 			}	
     });    
-    var i=1;
-    function showSetting(){
-    	var setting=document.getElementById('setting');
-	  	var des=document.getElementById('design');
-			if(i==1){
-				setting.style.display="block";
-			  i=0;
-			}else{
-				setting.style.display="none";
-			  i=1;
-			}
-   }
-  function changeCheck(obj){
-    	var checkBoxs=document.getElementsByClassName("sel");
-    	for (var i=0;i<checkBoxs.length;i++) {
-    		checkBoxs[i].checked=false;
-    	}
-			obj.parentElement.getElementsByClassName('sel')[0].checked='true';
- 
-    }
   $('#myModal2').on('show.bs.modal', function (event) {
 		  var button=$(event.relatedTarget);
  			var bid=button.data('bid');

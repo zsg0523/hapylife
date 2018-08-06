@@ -9,13 +9,12 @@
 	<link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
 	<style type="text/css">
 		ul,li{list-style: none;float: left;}
-		body,html{margin: 0;padding: 0;}
+		body,html{margin: 0;padding: 0;background-color: #F0F0F0;}
 		a{text-decoration: none;color: #fff;}
 		a:hover{cursor: pointer;text-decoration: none;color: #fff;}
-		.main{height: auto;margin: auto;}
+		.main{height: auto;margin: auto;background-color: #F0F0F0;}
       	.commonHead{width: 100%;height: auto;}
   	
-      	.title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
 		
 		.order_list{width: 100%;height: auto;margin: auto;}
 		.order_list>ul{margin: 0px;padding: 0px;margin-top: 5px;width: 100%;}
@@ -50,23 +49,23 @@
 </head>
 	<body class="">
 		<div class="commonHead">
-  			<include file="Purchase/commonHead" />	
+
+  			<include file="Common/commonHead1" />
+
 		</div>
-		<div class="title">
-			我的订单
-		</div>
+		
 		<div class="main container">
 			<div class="order_list">
 				<if condition="$Think.session.user.status eq 1">
 					<volist name='data' id='v'>
 						<ul class="row panel panel-default">
 							<li class="col-xs-4 col-sm-4  col-md-1"><img src="{$v.ip_picture_zh}"></li>
-							<li class="col-xs-8 col-sm-8  col-md-3">&nbsp;商品名:<span>{$v.product_name}</span></li>
+							<li class="col-xs-8 col-sm-8  col-md-3">&nbsp;<span>{$v.product_name}</span></li>
 							<li class="col-xs-8 col-sm-8  col-md-2">
 								&nbsp;
-								<if 	condition="$v['ir_ordertype'] eq 1" >订单类型:<span>首购单</span>
-		                        <elseif condition="$v['ir_ordertype'] eq 2"/>订单类型:<span>升级单</span>
-		                        <elseif condition="$v['ir_ordertype'] eq 3"/>订单类型:<span>月费单</span>
+								<if 	condition="$v['ir_ordertype'] eq 1" ><span>首购单</span>
+		                        <elseif condition="$v['ir_ordertype'] eq 2"/><span>升级单</span>
+		                        <elseif condition="$v['ir_ordertype'] eq 3"/><span>月费单</span>
 		                        <else />
 		                       </if>
 							</li>
@@ -111,8 +110,13 @@
 		
 		<script type="text/javascript">
 		$(document).ready(function(){
-	   		
+
+	   		changeCommonHead('我的订单');
+
 		});
+		function back(){
+        	window.location.href ="{:U('Home/Purchase/center')}";
+   		}
 		</script>
 	    
 	</body>

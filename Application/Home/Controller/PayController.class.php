@@ -2,8 +2,8 @@
 namespace Home\Controller;
 use Common\Controller\HomeBaseController;
 /**
-* hapylife控制器
-**/
+ * PayController
+ */
 class PayController extends HomeBaseController{
     /**
     * 
@@ -41,7 +41,6 @@ class PayController extends HomeBaseController{
             $this->error('支付金额不能少于或等于0');
         }
     }
-
 
 
 

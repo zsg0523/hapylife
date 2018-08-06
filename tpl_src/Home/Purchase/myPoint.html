@@ -38,15 +38,15 @@
   			<h3 class="tc">EP</h3>
   			<h3 class="tc">{$data['iu_point']}</h3>
   			<span class="tc">冻结:{$data['iu_unpoint']}</span>
-  			<a onclick='window.location.href="{:U('IbosWeb/PersonalCenter/myPointMonth')}";'>积分明细</a>
+  			<a onclick='window.location.href="{:U('Home/Purchase/myPointMonth')}";'>积分明细</a>
   		</div>
   		<div class="EP_btn">
-  			 <div class=" transfer_btn" onclick='window.location.href="{:U('IbosWeb/PersonalCenter/EPtransfer',array('rd'=>$rd))}";'>EP转账</div>
-  			 <div class="rd">
+  			 <div class=" transfer_btn" onclick='window.location.href="{:U('Home/Purchase/EPtransfer',array('rd'=>$rd))}";'>EP转账</div>
+  			 <!--<div class="rd">
   			 	<i>RD</i>
   			 	<span class="fr" id="rd">{$rd}</span>
-  			 </div>
-  			 <div class=" transfer_btn" onclick='toRDchangeEP();'>RD转EP</div>
+  			 </div>-->
+  			 <!--<div class=" transfer_btn" onclick='toRDchangeEP();'>RD转EP</div>-->
   		</div> 
   		<div class="recordList">
   			<div>最近记录</div>
@@ -86,17 +86,16 @@
 	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>  
 	<script type="text/javascript">  
-	 $(document).ready(function(){ 
-			
-	  });
-   //返回个人中心
-    function back(){
-        window.location.href ="{:U('IbosWeb/PersonalCenter/personalCenter')}";
-    }
-    function toRDchangeEP(){
-        var rd=document.getElementById('rd').innerText;
-        window.location.href="{:U('IbosWeb/PersonalCenter/RDtransferEP/rd/"+rd+"')}";
-    }
+		$(document).ready(function(){
+	   		changeCommonHead('我的积分');
+		});
+		function back(){
+        	window.location.href ="{:U('Home/Purchase/center')}";
+   		}
+	    function toRDchangeEP(){
+	        var rd=document.getElementById('rd').innerText;
+	        window.location.href="{:U('IbosWeb/PersonalCenter/RDtransferEP/rd/"+rd+"')}";
+	    }
  
 	</script>  
 </body>  

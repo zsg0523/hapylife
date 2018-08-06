@@ -38,20 +38,20 @@
   	</div>
     <div class="main">  
 		<div class="paymentInfo" id="paymentInfo">
-			<!--<input type="text" name="ip_type" value="{:I('get.ip_type')}">-->
+			<input type="text" name="ip_type" value="{:I('get.ip_type')}">
 			<div class="payCheck">
 				<span class="tc">付款详情</span>
 				<div class="radioBox">
 					<div class="form-group" onclick="changeRadio(this);">
-						<label for="">Ips支付:</label>
-					    <input class="fr" type="radio" name="paytype"  value="1" checked="checked" />
+						<label for="">畅捷支付:</label>
+					    <input class="fr" type="radio" name="paytype"  value="4" checked="checked" />
 					</div>
 					<div class="form-group" onclick="changeRadio(this);">
 						<label for="">积分支付:</label>
 					    <input class="fr" type="radio" name="paytype"  value="2" checked="checked" />
 					</div>
 				</div>
-				<!--<input type="hidden" name="ntid" value="{:I('get.ntid')}">-->
+				<input type="hidden" name="ntid" value="{:I('get.ntid')}">
 				<p class="tc">合计:&nbsp;&nbsp;￥<i id="money">{$data['ip_price_rmb']}</i>&nbsp;&nbsp;EP&nbsp;<b id="point">{$data['ip_point']}</b></p>
 			</div>
 			<div class="addCart tc" onclick="topay();">去付款</div>

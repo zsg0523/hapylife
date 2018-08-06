@@ -10,7 +10,7 @@
 	<!--<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />-->
 	<style>
 		body{background: white;margin: 0;padding: 0;font-family: "微软雅黑";font-size: 14px;}
-		.main{height: auto;margin: auto;}
+		.main{height: auto;margin:20px auto;}
 		.commonHead{width: 100%;height: auto;}
 		
 		.title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
@@ -39,11 +39,11 @@
 	</style>
 	<body>
 		<div class="commonHead">
-  			<include file="Purchase/commonHead" />		
+
+  			<include file="Common/commonHead1" />		
+
   		</div>
-  		<div class="title">
-  			个人资料
-  		</div>
+  		
 		<div class="main">
 			<div class="container-fluid">
 				<div class="row">
@@ -149,7 +149,13 @@
 		<script type="text/javascript">
 		$(document).ready(function(){
 	
+
+	   		changeCommonHead('个人资料');
+
 		});
+		function back(){
+        	window.location.href ="{:U('Home/Purchase/center')}";
+   		}
 		</script>
 	</body>
 
