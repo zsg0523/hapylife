@@ -682,7 +682,7 @@ class PurchaseController extends HomeBaseController{
             }
         }
         
-        $data = M('Address')->where(array('iuid'=>$iuid))->order('is_address_show DESC')->select();
+        $data = M('Address')->where(array('iuid'=>$iuid))->order('iaid DESC')->select();
         $assign = array(
                     'data' => $data
                 );
@@ -788,7 +788,7 @@ class PurchaseController extends HomeBaseController{
             }
         }
         
-        $data = M('Bank')->where(array('iuid'=>$iuid))->order('isshow DESC')->select();
+        $data = M('Bank')->where(array('iuid'=>$iuid))->order('bid DESC')->select();
 
         $assign = array(
                     'data' => $data,
