@@ -60,12 +60,21 @@ class PurchaseController extends HomeBaseController{
         $find  = M('User')->where(array('iuid'=>$iuid))->find();
         $type  = trim($find['distributortype']);
         $mtype = trim($find['customertype']);
+        $status = $find['status'];
         //判断用户等级 show--1、可点击 2、不可点击
         // p($type);die;
-        $tmpe    = array(
-            'ip_grade' =>$type,
-            'is_pull'  =>1
-        );
+        if(!empty($status)){
+            $tmpe    = array(
+                'ip_grade' =>$type,
+                'is_push'  =>2
+            );
+        }else{
+            $tmpe    = array(
+                'ip_grade' =>$type,
+                'is_pull'  =>1
+            );
+        }
+        
         $product = D('Product')->where($tmpe)->order('is_sort desc')->select();
 
         foreach ($product as $key => $value) {
@@ -157,9 +166,9 @@ class PurchaseController extends HomeBaseController{
 	public function myOrder(){
 		$iuid = $_SESSION['user']['id'];
         $data['status'] = $_SESSION['user']['status'];
-		$map  = array(
+        $map  = array(
 				'riuid'=>$iuid,
-                'ir_status'=>2
+                'ir_status'=>array('in','2,3,4,5')
 			);
 		$data = M('Receipt')
 				->alias('r')
@@ -167,7 +176,6 @@ class PurchaseController extends HomeBaseController{
 				->join('hapylife_product hp on hr.ipid=hp.ipid')
 				->where($map)
 				->select();
-		// p($data);
 		$this->assign('data',$data);
 		$this->display();
 	}
@@ -269,7 +277,7 @@ class PurchaseController extends HomeBaseController{
             'ir_date'       =>time(),
             //订单的状态(0待生成订单，1待支付订单，2已付款订单)
             'ir_status'     =>0,
-            //下单用户id
+            //下单用户id==
             'riuid'          =>$iuid,
             //下单用户
             'rCustomerID'    =>$userinfo['customerid'],
@@ -427,15 +435,40 @@ class PurchaseController extends HomeBaseController{
                 $map = array(
                     'ir_paytype' =>1,
                     'ir_status'  =>2,
-                    'update_time'=>time(),
+                    'ir_paytime'=>time(),
                     'ips_trade_no' => $data['ipsbillno'],
                     'ips_trade_status' => $data['msg']
                 );
                 $change_orderstatus = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->save($map);
 
                 if($change_orderstatus){
-                    $data['status'] = 1;
-                    $this->ajaxreturn($data);
+                    $OrderDate         = date("Y-m-d",strtotime("-1 month",time()));
+                    $activa = $OrderDate;
+                    $day    = date('d',strtotime($OrderDate));
+                    if($day>=28){
+                        $allday = 28;
+                    }else{
+                        $allday = $day;
+                    }
+                    $ddd = $allday-1;
+                    if($ddd>=10){
+                        $oneday = $ddd;
+                    }else{
+                        $oneday = '0'.$ddd;
+                    }
+                    //添加激活
+                    $time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
+                    $year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
+                    $endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
+                    $where =array('iuid'=>$order['riuid'],'ir_receiptnum'=>$order['ir_receiptnum'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
+                    $save  = M('Activation')->add($where);
+                    if($save){
+                        $data['status'] = 1;
+                        $this->ajaxreturn($data);
+                    }else{
+                        $data['status'] = 0;
+                        $this->ajaxreturn($data);
+                    }
                 }else{
                     $data['status'] = 0;
                     $this->ajaxreturn($data);
@@ -457,6 +490,7 @@ class PurchaseController extends HomeBaseController{
         //订单号
 		$order_num                     = I('get.ir_receiptnum');
 		$order = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->find();
+        // p($order);die;
 		$postData                      = array();	
 		// 基本参数
 		$postData['Service']           = 'nmg_quick_onekeypay';
@@ -631,7 +665,7 @@ class PurchaseController extends HomeBaseController{
         // 查询地址表信息
         $ia_road = M('Address')->where(array('iuid'=>$iuid))->getField('ia_road',true); 
         
-        if(!in_array($userinfo['shopaddress1'], $ia_road) && $_SESSION['user']['address'] == 0 && !empty($ia_road)){
+        if(!in_array($userinfo['shopaddress1'], $ia_road) && $_SESSION['user']['address'] == 0 && !empty($userinfo['shopaddress1'])){
            $message = array(
                     'iuid'            => $userinfo['iuid'],
                     'ia_name'         => $userinfo['lastname'].$userinfo['firstname'],
@@ -648,7 +682,7 @@ class PurchaseController extends HomeBaseController{
             }
         }
         
-        $data = M('Address')->where(array('iuid'=>$iuid))->order('is_address_show DESC')->select();
+        $data = M('Address')->where(array('iuid'=>$iuid))->order('iaid DESC')->select();
         $assign = array(
                     'data' => $data
                 );
@@ -669,8 +703,10 @@ class PurchaseController extends HomeBaseController{
                 'ia_region'   => I('post.ia_region'),
                 'ia_road'     => I('post.ia_road'),
                 );
-      
-        $result = M('Address')->add($data);
+        if(!empty($data['ia_name']) && !empty($data['ia_phone']) && !empty($data['ia_province']) && !empty($data['ia_town']) && !empty($data['ia_region']) && !empty($data['ia_road'])){
+            $result = M('Address')->add($data);   
+        }
+        
         if($result){
             $this->redirect('Home/Purchase/addressList');
         }else{
@@ -733,7 +769,7 @@ class PurchaseController extends HomeBaseController{
         // 查询银行表信息
         $bankaccount = M('Bank')->where(array('iuid'=>$iuid))->getField('bankaccount',true); 
         
-        if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0 && !empty($bankaccount)){
+        if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0 && !empty($userinfo['bankaccount'])){
            $message = array(
                     'iuid'         => $userinfo['iuid'],
                     'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
@@ -752,7 +788,7 @@ class PurchaseController extends HomeBaseController{
             }
         }
         
-        $data = M('Bank')->where(array('iuid'=>$iuid))->order('isshow DESC')->select();
+        $data = M('Bank')->where(array('iuid'=>$iuid))->order('bid DESC')->select();
 
         $assign = array(
                     'data' => $data,
@@ -783,8 +819,9 @@ class PurchaseController extends HomeBaseController{
                 'bankbranch'   => I('post.bankbranch'),
                 'createtime'   => time(),
                 );
-      
-        $result = M('Bank')->add($data);
+        if(!empty($data['bankaccount']) && !empty($data['bankprovince']) && !empty($data['banktown']) && !empty($data['bankregion']) && !empty($data['bankname']) && !empty($data['bankbranch'])){
+            $result = M('Bank')->add($data);          
+        }
         if($result){
             $this->redirect('Home/Purchase/bankList');
         }else{
@@ -847,21 +884,20 @@ class PurchaseController extends HomeBaseController{
         $this->display();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// ***********获取验证码*************
+    public function changePassword(){
+        $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
+        foreach ($mape as $key => $value) {
+            $data[$key]         = $value;
+            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
+                $data[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+            }else{
+                $data[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+            }
+        }
+        $this->assign('data',$data);
+        $this->display();
+    }
 
 
 }
