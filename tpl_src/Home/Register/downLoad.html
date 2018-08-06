@@ -1,90 +1,58 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
-		<meta http-equiv="X-UA-Compatible" content="IE=9" />
-		<title>APP下载</title>
-	</head>
-	<!-- <link rel="stylesheet" href="css/bootstrap.min.css" />    -->
-    <link rel="stylesheet" href="__PUBLIC_CSS__/bootstrap.min.css" />
-    <style>
-    	body{font-family: "微软雅黑";margin: auto;}
+<!DOCTYPE html>  
+<html lang="zh-cn">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">  
+    <title>APP下载</title>  
+    <link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
     	*{margin: 0;padding: 0;}
 			ul,li{list-style:none;padding: 0;margin: 0;}
 			a{ 
 				text-decoration:none; 
 				color:#333; 
 			}
-			a:hover{text-decoration:none; }
-		.container-fluid{background-color: #439dfe;height: 30vh;}
-		.lg-fontmid{text-align: center;margin-top: 8vh;}
-		.lg-title{font-size: 40px;color: white;}
-		.lg-form{margin-top: 20vh;}
-		.lg-zt{width:100%;border-bottom: 1px solid #439dfe;text-align: center;}        
-		.lg-font{font-size: 16px;color:#439dfe ;line-height: 50px;}           
-		.btn-blue{background:#439dfe;color: white;}            
-		.btn-blue:hover{color: white;}
-		.lg-input{width: 100%;border-bottom: 1px solid #DDDDDD;height: 50px;padding-top: 20px;}
-		.lg-input input{width:100%;border: none;}
-		.lg-input input:focus{outline: none;}
-		.lg-reg{text-align: right;line-height: 50px;}
-		.lg-reg a{color: #439dfe;font-size: 20px;}
-		.lg-reg a:hover{text-decoration: none;}
-		.links{width:100%;min-height: 300px;z-index: 2;font-weight: bold;padding: 0;margin: 0;}
-		#title{width: 100%; height:50px;text-align:center;line-height: 50px;font-size: 18px;display: block;color: #fff;}
-		.links>li{width: 46%;height: 40px;display: block;float: left;margin: 5px 2%;background-color: #fff;border-radius: 15px;position: relative;z-index: 2;border:1px solid #439dfe;}
-		.links>li>img{width: 66px;height:30px;float: right;display: block;border-radius: 15px;position: absolute;z-index: 3;left: 0;top:5px}
-		.links>li>a{width:80%;height: 40px; line-height: 40px;text-align: center;display: block;color: #000;position: absolute;z-index: 4;right: 0;}
+		a:hover{text-decoration:none; }
+    	.main{width:100%;min-height:300px;margin:50px auto 0 auto;background-image: url(__PUBLIC_IMAGE__/bg.png);background-size:100%;}
+    	
+    	.head{width: 100%;}
+    	.head>img{width: 100%;}
+    	
+		.links{width:96%;min-height: 300px;z-index: 2;font-weight: bold;padding: 0;margin-left: 2%;margin-top: 30px;background-color: #fff;border-radius: 5px;}
+		#title{width: 100%; height:50px;text-align:center;line-height: 50px;font-size: 18px;display: block;color: #000;}
+		.links>li{width: 33%;display: block;float: left;background-color: #fff;text-align: center;margin-bottom: 10px;}
+		.links>li>img{width:55px;display: block;margin: auto;}
+		.links>li>div{width:100%;height: 40px; line-height: 40px;display: block;float: left;}
+		.links>li>div>a{width: 90px;height: 30px;line-height: 30px;display: block;color: #118bfa;border-radius: 15px;border: 1px solid #118bfa;margin: auto;margin-top: 5px;}
 		
-		#addRec{width: 96%; height: 40px;line-height:40px;text-align: center; border-radius: 5px;position: fixed;z-index: 10;
-			font-size: 16px;bottom: 0;left: 2%;  color: #FFFFFF; background-color: #2491EE;margin: 0;border: none;}
-		/*手机*/
-      	@media screen and (max-width: 768px){
-     		body{width:100%;}
-     		
-      	}
-      	/*平板*/
-      	@media screen and (min-width: 768px){
-       		body{width:100%;}
-       	
-      	}
-        /*中等屏幕*/
-      	@media screen and (min-width: 992px){
-         	body{width:100%;}
-         
-      	}
-      	/*大屏幕*/
-      	@media screen and (min-width: 1200px){
-        	body{width:1200px;}
-        	#addRec{width: 1200px;left: 50%;margin-left: -600px;}
-        	
-     	}
+    	.commonHead{width:100%;position: fixed;top: 0;left: 0;z-index: 20;}
+    	@media screen and (min-width:1200px) {
+			.main{width: 1200px;}
+		}
     </style>
-	<body>
-		<div class="container-fluid">
-			<div class="container">
-				<div class="row lg-fontmid">
-					<div class="col-lg-12 col-xs-12">
-						<span class="lg-title">HAPY</span>
-				        <span class="lg-title">LIFE™</span>			
-					</div>				   	
-				</div>
-				<div class="row lg-form">	
-					<div class="lg-zt">
-					   <span class="lg-font">APP下载</span>
-					</div>			
-				</div>
-			</div>
-			<ul class="links">
-				<span id="title">&nbsp;&nbsp;下&nbsp;&nbsp;载&nbsp;&nbsp;地&nbsp;&nbsp;址&nbsp;&nbsp;</span>
-				<li>
+</head>  
+<body >  
+    <div class="commonHead">
+  			<include file="Common/commonHead1" />
+  	</div>
+    <div class="main">
+    	<div class="head">
+    		<img src="__PUBLIC_IMAGE__/bg1.png"/>
+    	</div>
+    	<div class="">
+    		<ul class="links">
+				<span id="title">APP下载</span>
+				<li onclick="">
 					<img src="__PUBLIC_IMAGE__/apple.png"/>
-					<a href="https://itunes.apple.com/cn/app/hapylife/id1332226817?mt=8">apple</a>
+					<div>
+						<a style="color: #00c7fe;border: 1px solid #00c7fe;" href="https://itunes.apple.com/cn/app/hapylife/id1332226817?mt=8">苹果商店</a>
+					</div>
 				</li>
 				<li>
 					<img src="__PUBLIC_IMAGE__/huawei.png"/>
-					<a href="http://app.hicloud.com/app/C100210855">华为</a>
+					<div>
+						<a style="color: #28c0c5;border: 1px solid #28c0c5;" href="http://app.hicloud.com/app/C100210855">华为应用市场</a>
+					</div>
 				</li>
 				<!--<li>
 					<img src="__PUBLIC_IMAGE__/geogle.png"/>
@@ -92,7 +60,9 @@
 				</li>-->
 				<li>
 					<img src="__PUBLIC_IMAGE__/ali.png"/>
-					<a href="https://www.25pp.com/android/detail_7704633/">阿里</a>
+					<div>
+						<a style="color: #ee6c14;border: 1px solid #ee6c14;" href="https://www.25pp.com/android/detail_7704633/">阿里平台</a>
+					</div>
 				</li>
 				<!--<li>
 					<img src="__PUBLIC_IMAGE__/vivo.png"/>
@@ -100,7 +70,9 @@
 				</li>-->
 				<li>
 					<img src="__PUBLIC_IMAGE__/360.png"/>
-					<a href="http://zhushou.360.cn/detail/index/soft_id/3971331?recrefer=SE_D_hapylife">360</a>
+					<div>
+						<a style="color: #54d85b;border: 1px solid #54d85b;" href="http://zhushou.360.cn/detail/index/soft_id/3971331?recrefer=SE_D_hapylife">360应用平台</a>
+					</div>
 				</li>
 				<!--<li>
 					<img src="__PUBLIC_IMAGE__/xiaomi.png"/>
@@ -108,15 +80,37 @@
 				</li>-->
 				<li>
 					<img src="__PUBLIC_IMAGE__/tenc.png"/>
-					<a href="http://sj.qq.com/myapp/detail.htm?apkName=com.k837437211.xkb">腾讯</a>
+					<div>
+						<a style="color: #d41b28;border: 1px solid #d41b28;" href="http://sj.qq.com/myapp/detail.htm?apkName=com.k837437211.xkb">腾讯应用宝</a>
+					</div>					
 				</li>
 				<li>
 					<img src="__PUBLIC_IMAGE__/load.png"/>
-					<a href="http://apps.hapy-life.com/hapylife/tpl_src/Public/hapylife.apk">本地</a>
+					<div>
+						<a style="color: #118bfa;border: 1px solid #118bfa;" href="http://apps.hapy-life.com/hapylife/tpl_src/Public/hapylife.apk">本地下载</a>
+					</div>
 					<!--<a href="__PUBLIC__/hapylife.apk">本地</a>-->
 				</li>
 			</ul>
-		</div>
-		<button type="button" id="addRec" onclick='window.location.href="{:U('Home/Index/index')}";'>去登录</button>
-	</body>
-</html>
+    	</div>
+		
+    </div>  
+    
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
+	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>  
+	<script type="text/javascript">  
+    $(document).ready(function(){
+    	changeCommonHead('APP下载');
+		var height=$('.main').height();
+		if(height<=$(window).height()){
+			$('.main').height($(window).height());
+		}
+    });
+    function back(){
+        window.location.href ="{:U('Home/Index/index')}";
+   	}
+   
+	  
+	</script>  
+</body>  
+</html>  

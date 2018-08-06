@@ -79,12 +79,12 @@ class FeedBackController extends HomeBaseController{
     **/
     public function feedbackInfo(){
         $fbid    = I('get.fbid');
-        $content = D('feedback')->join('hapylife_user on hapylife_feedback.iuid = hapylife_user.iuid')->where(array('fbid'=>$fbid))->select();
+        $content = M('Feedback')->join('hapylife_user on hapylife_feedback.iuid = hapylife_user.iuid')->where(array('fbid'=>$fbid))->select();
         foreach ($content as $key => $value) {
             $data['content'][$key]                = $value;
             $data['content'][$key]['create_time'] = word_time($value['create_time']); 
         }
-        $reply   = D('Feedback')->where(array('id'=>$fbid))->select();
+        $reply   = M('Feedback')->where(array('id'=>$fbid))->select();
         foreach ($reply as $key => $value) {
             $data['reply'][$key]                  = $value;
             $data['reply'][$key]['create_time']   = word_time($value['create_time']);

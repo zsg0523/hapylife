@@ -68,13 +68,13 @@ class IndexController extends HomeBaseController{
                             );
                     }
                    
-                    $this->redirect('Home/Purchase/purchase');
+                    $this->redirect('Home/Purchase/center');
                 }
             }
         }else{
             $data=check_login();
             if($data){
-                $this->redirect('Home/Purchase/purchase');
+                $this->redirect('Home/Purchase/center');
             }else{
                 $this->display('Login/login');
             }
@@ -105,7 +105,7 @@ class IndexController extends HomeBaseController{
                         'status'   =>2,
                     );
             }
-            $this->redirect('Home/Purchase/purchase');
+            $this->redirect('Home/Purchase/center');
         }else{
             if(IS_POST){
                 $tmpe = I('post.');
@@ -152,7 +152,7 @@ class IndexController extends HomeBaseController{
                                     'status'   =>2,
                                 );
                             // p($_SESSION);die;
-                            $this->redirect('Home/Purchase/purchase');
+                            $this->redirect('Home/Purchase/center');
                             break;
 
                         default:
@@ -185,13 +185,13 @@ class IndexController extends HomeBaseController{
                                     'status'   =>2,
                                 );
                         }
-                        $this->redirect('Home/Purchase/purchase');
+                        $this->redirect('Home/Purchase/center');
                     }
                 }
             }else{
                 $data=check_login();
                 if($data){
-                    $this->redirect('Home/Purchase/purchase');
+                    $this->redirect('Home/Purchase/center');
                 }else{
                     $this->display('Login/login');
                 }

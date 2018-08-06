@@ -36,18 +36,18 @@
 		/*手机*/
       	@media screen and (max-width: 768px){
      		.main,.title{width:100%;}
-    		#addfeed{width: 100%;} 
+    		#addfeed{width: 96%;margin-left: 2%;}  
       	}
       	/*平板*/
      	@media screen and (min-width: 768px){
        	.main,.title{width:100%;}
-      	#addfeed{width: 100%;} 
+      	#addfeed{width: 96%;margin-left: 2%;}  
       
       	}
         /*中等屏幕*/
       	@media screen and (min-width: 992px){
          	.main,.title{width:100%;}
-         	#addfeed{width: 100%;} 
+         	#addfeed{width: 96%;margin-left: 2%;}  
         
       	}
       	/*大屏幕*/
@@ -61,10 +61,7 @@
 </head>
 	<body class="">
 		<div class="commonHead">
-  			<include file="Purchase/commonHead" />		
-		</div>
-		<div class="title">
-			添加意见反馈
+			<include file="Common/commonHead1" />
 		</div>
 		<div class="main">
 			<form class="addfeedback" id="addfeedback" action="{:U('Home/FeedBack/feedback')}" method="post" enctype="multipart/form-data">
@@ -105,8 +102,11 @@
 		
 		<script type="text/javascript">
 		$(document).ready(function(){
-	   		
+	   		changeCommonHead('意见反馈详情');
 		});
+		function back(){
+	    	window.location.href ="{:U('Home/FeedBack/feedbackList')}";
+		}
 		$('#addfeed').click(function(){
 			var form=$('#addfeedback');
 			form.submit();

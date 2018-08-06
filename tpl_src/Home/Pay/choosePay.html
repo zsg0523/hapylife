@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css">
     <!--<link rel="stylesheet" href="__PUBLIC_CSS__/common.css" />-->
     <style type="text/css">
-    	html{background-color: #EEEEF0;}
-    	#body{background-color: #EEEEF0;}
-    	.main{width:100%;min-height:150px;margin:100px auto;background-color: #fff;}	
+    	html{background-color: #F0F0F0;}
+    	#body{background-color: #F0F0F0;}
+    	.main{width:100%;min-height:150px;margin:50px auto;background-color: #fff;}	
     	.commonHead{width:100%;position: fixed;top: 0;left: 0;z-index: 20;}
     	
     	.paymentInfo{width: 100%;display: block;}
@@ -34,24 +34,24 @@
 </head>  
 <body id="body">  
     <div class="commonHead">
-  		<include file="Purchase/commonHead" />
+  		<include file="Common/commonHead1" />
   	</div>
     <div class="main">  
 		<div class="paymentInfo" id="paymentInfo">
-			
+			<!--<input type="text" name="ip_type" value="{:I('get.ip_type')}">-->
 			<div class="payCheck">
 				<span class="tc">付款详情</span>
 				<div class="radioBox">
 					<div class="form-group" onclick="changeRadio(this);">
+						<label for="">Ips支付:</label>
+					    <input class="fr" type="radio" name="paytype"  value="1" checked="checked" />
+					</div>
+					<div class="form-group" onclick="changeRadio(this);">
 						<label for="">积分支付:</label>
 					    <input class="fr" type="radio" name="paytype"  value="2" checked="checked" />
 					</div>
-					<div class="form-group" onclick="changeRadio(this);">
-						<label for="">快钱支付:</label>
-					    <input class="fr" type="radio" name="paytype"  value="4" />
-					</div>
 				</div>
-				<input type="hidden" name="ntid" value="{:I('get.ntid')}">
+				<!--<input type="hidden" name="ntid" value="{:I('get.ntid')}">-->
 				<p class="tc">合计:&nbsp;&nbsp;￥<i id="money">{$data['ip_price_rmb']}</i>&nbsp;&nbsp;EP&nbsp;<b id="point">{$data['ip_point']}</b></p>
 			</div>
 			<div class="addCart tc" onclick="topay();">去付款</div>
@@ -61,10 +61,12 @@
 	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>  
 	<script type="text/javascript">
-	$(document).ready(function(){ 
-//		changeCommonHead('支付方式');
-		
-	});
+		$(document).ready(function(){
+	   		changeCommonHead('选择支付方式');
+		});
+		function back(){
+        	window.location.href ="{:U('Home/Purchase/center')}";
+   		}
 	//改变支付类型单选框
 		function changeRadio(val){
 			var inputs=$(val).find("input");

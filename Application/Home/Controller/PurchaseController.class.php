@@ -168,7 +168,7 @@ class PurchaseController extends HomeBaseController{
         $data['status'] = $_SESSION['user']['status'];
         $map  = array(
 				'riuid'=>$iuid,
-                'ir_status'=>2
+                'ir_status'=>array('in','2,3,4,5')
 			);
 		$data = M('Receipt')
 				->alias('r')
@@ -326,12 +326,13 @@ class PurchaseController extends HomeBaseController{
         $addlog = M('Log')->add($log);
         // 设置session时间
         if($addlog){
-            if($product['ip_type'] == 1){
-
-                $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num));
-            }else{
-                $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$order_num));
-            }
+//          if($product['ip_type'] == 1){
+//
+//              $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num));
+//          }else{
+//              $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$order_num));
+//          }
+			$this->redirect('Home/Pay/choosePay',array('ir_receiptnum'=>$order_num,'ip_type'=>$product['ip_type']));
         }else{
             $this->error('订单生成失败');
         }
@@ -682,7 +683,7 @@ class PurchaseController extends HomeBaseController{
             }
         }
         
-        $data = M('Address')->where(array('iuid'=>$iuid))->order('is_address_show DESC')->select();
+        $data = M('Address')->where(array('iuid'=>$iuid))->order('iaid DESC')->select();
         $assign = array(
                     'data' => $data
                 );
@@ -788,7 +789,7 @@ class PurchaseController extends HomeBaseController{
             }
         }
         
-        $data = M('Bank')->where(array('iuid'=>$iuid))->order('isshow DESC')->select();
+        $data = M('Bank')->where(array('iuid'=>$iuid))->order('bid DESC')->select();
 
         $assign = array(
                     'data' => $data,

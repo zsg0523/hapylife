@@ -20,7 +20,6 @@
     	.wrap{width: 100%;}
       .main{height: auto;margin: auto;}
       .commonHead{width: 100%;height: auto;}
-      .title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
       
       .recommender{width: 100%;height:120px;border: 1px solid #DEDEDE;margin-top: 5px;}
       .recommender>li{width: 100%;height: 30px;text-align: left;line-height: 30px;}
@@ -31,17 +30,17 @@
       /*手机*/
       @media screen and (max-width: 768px){
      .main,.title{width:100%;}
-     #addRec{width: 100%;}
+     #addRec{width: 96%;margin-left: 2%;}
       }
       /*平板*/
       @media screen and (min-width: 768px){
        .main,.title{width:100%;}
-       #addRec{width: 100%;}
+       #addRec{width: 96%;margin-left: 2%;}
       }
         /*中等屏幕*/
       @media screen and (min-width: 992px){
          .main,.title{width:100%;} 
-         #addRec{width: 100%;} 
+         #addRec{width: 96%;margin-left: 2%;} 
       }
       /*大屏幕*/
       @media screen and (min-width: 1200px){
@@ -54,11 +53,8 @@
   <body>
   		<div class="wrap">
   			<div class="commonHead">
-  					<include file="Purchase/commonHead" />
-  			</div>
-  			<div class="title">
-  				我的推荐
-  			</div>
+			  		<include file="Common/commonHead1" />
+				</div>
   			<div class="main">
           <foreach name="data" item="v">
     				<ul class="recommender">
@@ -70,37 +66,21 @@
           </foreach>
   				
   				<div style="height:50px;width: 100%;"></div>
-  				<button type="button" disabled="disabled" id="addRec" onclick='window.location.href="{:U('Home/Register/new_register')}";'>新代理注册</button>
+  				<button type="button"  id="addRec" onclick='window.location.href="{:U('Home/Register/new_register')}";'>新代理注册</button>
   			</div>
   			
   		</div>
 
-  <script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
-  <script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
-  <script type="text/javascript" >
-//		$(document).ready(function(){
-//	
-//	   $(".commonHead").load("commonHead.html");
-//		});
-//var i=1;
-//	function showSetting(obj){
-//  	var setting=document.getElementById('setting');
-//	  	var des=document.getElementById('design');
-//			if(i==1){
-//				setting.style.display="block";
-//				des.style.color="#000";
-//			  des.style.backgroundColor="#fff";
-//			  des.style.borderBottom="#dedede 1px solid";
-//			  i=0;
-//			}else{
-//				setting.style.display="none";
-//				des.style.color="#fff";
-//			  des.style.backgroundColor="#2491ee";
-//			  des.style.borderBottom="none";
-//			  i=1;
-//			}
-//  }  
-  </script>
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
+    <script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+		$(document).ready(function(){
+	   		changeCommonHead('我的推荐');
+		});
+		function back(){
+        	window.location.href ="{:U('Home/Purchase/center')}";
+   		}
+    </script>
 
   </body>
 </html>
