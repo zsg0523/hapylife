@@ -84,7 +84,7 @@
 	   		$(".commonHead").load("../Purchase/commonHead.html");
 		});
     var countdown=60;
-    var canClick=true;
+   
 	function settime(val) {	
 		if (countdown == 0) { 
 			val.style.backgroundColor='#439DFE';
@@ -99,6 +99,7 @@
 		}
 
 	}
+	var canClick=true;
 	function sendPhone(obj){
 		var acid=$("#acnumber").find("option:selected").attr("acid");
 		$("input[name='acid']").val(acid);

@@ -488,11 +488,17 @@ class HapylifeController extends AdminBaseController{
 	public function receipt(){
 		$excel     = I('get.excel');
 		$word      = trim(I('get.word',''));
-		$status    = I('get.status')-1;
+		$order_status    = I('get.status')-1;
+		if($order_status== -1){
+			//所有订单
+			$status = '0,1,2,3,4,5,7,8';
+		}else{
+			$status = (string)$order_status;
+		}
+		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
-		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime')):time();
-		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$order='ir_date desc',$status,$starttime,$endtime);
-		// p($assign);die;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
+		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$starttime,$endtime,$status,$order='ir_date desc',$timeType);
 		//导出excel
 		if($excel == 'excel'){
 			$export_excel = D('Receipt')->export_excel($assign['data']);
@@ -500,6 +506,7 @@ class HapylifeController extends AdminBaseController{
 			$this->assign($assign);
 			$this->assign('status',I('get.status'));
 			$this->assign('word',$word);
+			$this->assign('timeType',$timeType);
 			$this->assign('starttime',I('get.starttime'));
 			$this->assign('endtime',I('get.endtime'));
 			$this->display();
@@ -545,8 +552,8 @@ class HapylifeController extends AdminBaseController{
 	**/
 	public function user(){
 		//有密码账户搜索
-		$count = M('user')->where(array('PassWord'=>array('neq','')))->count();
-		// //账户昵称搜索
+		$count = M('user')->count();
+		//账户昵称搜索
 		$word = trim(I('get.word'));
 		if(empty($word)){
 			$map = array();
@@ -693,6 +700,55 @@ class HapylifeController extends AdminBaseController{
 		}
 	}
 
+	public function users(){
+		//有密码账户搜索
+		$count = M('user')->count();
+		//账户昵称搜索
+		$word = trim(I('get.word'));
+		if(empty($word)){
+			$map = array();
+		}else{
+			$map = array(
+				'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%')
+			);
+		}
+		
+		$excel     = I('get.excel');
+		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
+		$assign    = D('User')->getPageS(D('User'),$word,$order='joinedon desc',$starttime,$endtime);
+
+		//导出excel
+		if($excel == 'excel'){
+			$export_excel = D('User')->export_excel($assign['data']);
+		}else{
+			$this->assign($assign);
+			$this->assign('count',$count);
+			$this->assign('word',$word);
+			$this->assign('starttime',I('get.starttime'));
+			$this->assign('endtime',I('get.endtime'));
+			$this->display();
+		}
+	}
+
+	/**
+	* 用户删除
+	**/
+	public function delete_users(){
+		$id=I('get.id');
+		$map=array(
+			'iuid'=>$id
+			);
+		
+		$result=D('User')->deleteData($map);
+		if($result){
+			redirect($_SERVER['HTTP_REFERER']);
+		}else{
+			$this->error('删除失败');
+		}
+	}
+
+
 	/*****************************************************************送货单管理******************************************************************/
 	//送货单列表
 	public function sendReceipt(){
@@ -705,31 +761,33 @@ class HapylifeController extends AdminBaseController{
             	$code[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
             }
         }
-		//0未支付 1待审核 2已支付 3已发货 4已到达
+		//0、7未支付 1待审核 2已支付 3已发货 4已到达 5申请退货 8确定退货
 		$order_status = I('get.status')-1;
 		if($order_status== -1){
 			//所有订单
-			$status = '2,3,4,5';
+			$status = '2,3,4,5,6,8';
 		}else{
 			$status = (string)$order_status;
 		}
 		$excel     = I('get.excel');
 		$word      = trim(I('get.word',''));
+		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
 
-		$assign    = D('Receipt')->getSendPage(D('Receipt'),$word,$starttime,$endtime,$status,$order='ir_paytime asc');
+		$assign    = D('Receipt')->getSendPage(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime asc');
 		// p($assign);
 		// die;
 		// 导出excel
 		if($excel == 'excel'){
-			$data = D('Receipt')->getAllSendData(D('Receipt'),$word,$starttime,$endtime,$status,$order='ir_paytime desc');
+			$data = D('Receipt')->getAllSendData(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime desc');
 			// p($data);die;
 			$export_send_excel = D('Receipt')->export_send_excel($data);
 		}else{
 			$this->assign($assign);
 			$this->assign('status',I('get.status'));
 			$this->assign('word',$word);
+			$this->assign('timeType',$timeType);
 			$this->assign('starttime',I('get.starttime'));
 			$this->assign('endtime',I('get.endtime'));
 			$this->assign('code',$code);
@@ -744,6 +802,7 @@ class HapylifeController extends AdminBaseController{
 	public function send(){
 		$irid      = trim(I('get.id'));
 		$ir_status = trim(I('get.ir_status'));
+		$ir_statuss = trim(I('get.ir_statuss'));
 		$data      = M('Receipt')->where(array('irid'=>$irid))->find();
 		$userinfo  = M('User')->where(array('iuid'=>$data['riuid']))->find();
         switch ($ir_status) {
@@ -770,6 +829,35 @@ class HapylifeController extends AdminBaseController{
                 
                 //日志记录
                 $content = '单号:'.$data['ir_receiptnum'].',确认送达';
+                $add     = addLog($data['riuid'],$content,$action=3,$type=2);
+                break;
+        }
+
+        switch($ir_statuss){
+        	case '1':
+                $ir_status = 5;
+                $map  = array(
+                    'irid'  =>$irid,
+                    'ir_status'=>$ir_status,
+                    'returns_time'  =>time()
+                );
+                $save = M('Receipt')->save($map);
+                
+                //日志记录
+                $content = '单号:'.$data['ir_receiptnum'].',退货申请';
+                $add     = addLog($data['riuid'],$content,$action=3,$type=2);
+                break;
+            case '2':
+                $ir_status = 8;
+                $map  = array(
+                    'irid'  =>$irid,
+                    'ir_status'=>$ir_status,
+                    'returns_times'  =>time()
+                );
+                $save = M('Receipt')->save($map);
+                
+                //日志记录
+                $content = '单号:'.$data['ir_receiptnum'].',确认退货';
                 $add     = addLog($data['riuid'],$content,$action=3,$type=2);
                 break;
         }

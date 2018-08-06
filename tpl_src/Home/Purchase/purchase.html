@@ -62,7 +62,11 @@
 					<div class="icon"><img src="{$v.ip_picture_zh}"></div>
 					<div class="intro">
 					<span>名称：{$v.ip_name_zh}</span>
-					<p>售价：￥{$v.ip_price_rmb}</p>
+					<if condition="$v['is_push'] eq 2">
+						<p>售价：{$v.ip_price_ep}EP</p>
+					<else />
+						<p>售价：￥{$v.ip_price_rmb}</p>
+					</if>
 					<a href="{:U('Home/Purchase/purchaseInfo',array('ipid'=>$v['ipid']))}">查看详情</a>
 					</div>
 					

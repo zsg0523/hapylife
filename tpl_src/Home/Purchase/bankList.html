@@ -32,7 +32,7 @@
      	.head>ul>li>a{width: 100%;height: 35px;font-size: 16px;color: #2491ee;text-align: center;line-height: 35px; border-bottom: 1px #dedede solid;display:inline-block;}
       
       .head>div{width: 100%;height: 40px;float: left;}
-      .head>div>span{width:60%;height: 40px;float: left;font-size: 14px;line-height: 40px;margin-left: 5%;}
+      .head>div>span{width:95%;height: 40px;float: left;font-size: 14px;line-height: 20px;margin-left: 5%;}
 			.head>div>a{width: 35%;height: 40px;line-height:40px;float: right;font-size: 14px;display:inline-block;color: #fff;text-align: right;}	
       
       	
@@ -53,7 +53,7 @@
 			.addressInfo>ul>li{width: 100%;height: 25px;}
 			.addressInfo>ul>li>span{width: 30%;height: 25px;line-height: 25px;text-align: left;display: block;float: left;margin-left: 5px;}
 			.addressInfo>ul>li>div{width: 60%;height: 25px;line-height: 25px;text-align: right;float: right;margin-right: 5px; }
-			.addressInfo>form{text-align: center;line-height: 29px;background: #fff;color: #000;}
+			.addressInfo>form{text-align: center;line-height: 29px;background: #fff;color: #000;margin-left: 5px;margin-right: 5px;}
 			.defa{width: 120px;height: 29px;display: block;float: left;text-align: left;color: #fff;background: #439DFE;border-radius: 5px;}
 			.sel{width: 15px;height: 15px;display: block;float: left;}
 			.edit{width:60px;height: 29px;float: right;margin-left: 5%;color: #fff;background: #439DFE;border-radius: 5px;}
@@ -68,7 +68,7 @@
       .head>ul{width: 100%;}
       .navig{width: 100%;}
       .main,.title{width:100%;}
-      #addCard{width: 100%;}
+      #addCard{width: 96%;margin-left: 2%;}
       }
       /*平板*/
       @media screen and (min-width: 768px){
@@ -77,7 +77,7 @@
       .head>ul{width: 100%;}
       .navig{width: 100%;}
       .main,.title{width:100%;}
-      #addCard{width: 100%;}
+      #addCard{width: 96%;margin-left: 2%;}
    
       }
         /*中等屏幕*/
@@ -87,7 +87,7 @@
         .head>ul{width: 40%;}
         .navig{width: 100%;}
         .main,.title{width:100%;}
-        #addCard{width: 100%;}
+        #addCard{width: 96%;margin-left: 2%;}
 
 
       }
@@ -112,14 +112,16 @@
         			<li><a  href="{:U('Home/Purchase/myProfile')}"  >个人资料</a></li>
 					<li><a  href="{:U('Home/Purchase/purchase')}" >购买礼包</a></li>
  					<li><a  href="{:U('Home/Purchase/myOrder')}"  >我的订单</a></li>
- 					<li><a  href="{:U('Home/Register/new_register')}" >新代理注册</a> </li>
+ 					<!-- <li><a  href="{:U('Home/Register/new_register')}" >新代理注册</a> </li> -->
 					<li><a  href="{:U('Home/Purchase/addressList')}" >地址管理</a></li>
 					<li><a  href="{:U('Home/Purchase/bankList')}" >银行管理</a></li>
 					<li><a  href="{:U('Home/Purchase/recommenderList')}" >我的推荐</a></li>
+					<li><a  href="{:U('Home/FeedBack/feedbackList')}" >意见反馈</a></li>
+					<li><a  href="{:U('Home/Purchase/changePassword')}" >修改密码</a></li>
 					<li><a  href="{:U('Home/index/log_out')}" >退出登录</a></li>
 				</ul>
 				<div>
-					<span>{$Think.session.user.username},您好!</span>
+					<span>{$Think.session.user.username},您好!<br> <i style="color: red">目前系统正在升级维护，暂无法进行注册。</i></span>
 				</div>
 			</div>
 		</header>
@@ -142,7 +144,7 @@
 							<form name="form" action="{:U('Home/Purchase/bankEdit')}" method="post">
 								<input type="hidden" name="bid" value="{$v['bid']}">
 		  						<!-- <button name="isshow" value="1" type="submit" class="defa" onclick='changeCheck(this);'><input class="sel" type="checkbox" <?php if($v['isshow'] == 1)echo "checked=true;"?> />设为默认地址</button> -->
-		  						<button name="isshow" value="1" type="submit" class="defa" onclick='changeCheck(this);' <?php if($v['isshow'] == 1)echo "disabled='disabled';"?> ><input class="sel" type="checkbox"  <?php if($v['isshow'] == 1)echo "checked=true;"?> />设为默认地址</button>
+		  						<button name="isshow" value="1" type="submit" class="defa" onclick='changeCheck(this);' <?php if($v['isshow'] == 1)echo "disabled='disabled';"?> ><input class="sel" type="checkbox" disabled="disabled"  <?php if($v['isshow'] == 1)echo "checked=true;"?> />设为默认地址</button>
 	  						<button type="button" class="dele" data-bid='{$v['bid']}' data-toggle="modal" data-target="#myModal3">删除</button>
 	  						<button data-bid='{$v['bid']}' data-name='{$v['iu_name']}' data-bankaccount='{$v['bankaccount']}' data-bankname='{$v['bankname']}' data-bankbranch='{$v['bankbranch']}' data-bankprovince='{$v['bankprovince']}' data-banktown='{$v['banktown']}' data-bankregion='{$v['bankregion']}' type="button" class="edit" data-toggle="modal" data-target="#myModal2" >编辑</button>
 		  				</form>
@@ -200,19 +202,26 @@
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>银行省:</label>
-										    <input name="bankprovince" type="text" class="form-control" placeholder="银行所在省">
+										    <!--<input name="bankprovince" type="text" class="form-control" placeholder="银行所在省">-->
+										    	<input name="bankprovince" type="text" class="form-control" placeholder="银行所在省"    >
+										    
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>银行市:</label>
-										    <input name="banktown" type="text" class="form-control" placeholder="银行所在市">
+										    <!--<input name="banktown" type="text" class="form-control" placeholder="银行所在市">-->
+										    	<input name="banktown" type="text" class="form-control" placeholder="银行所在市"    >
+										    
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>银行区/县:</label>
-										    <input name="bankregion" type="text" class="form-control" placeholder="银行所在区/县">
+										    <!--<input name="bankregion" type="text" class="form-control" placeholder="银行所在区/县">-->
+										    	<input name="bankregion" type="text" class="form-control" placeholder="银行所在区/县"    >
+										    
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>支行名称:</label>
-										    <input name="bankbranch" type="text" class="form-control" placeholder="支行名称">
+										    <!--<input name="bankbranch" type="text" class="form-control" placeholder="支行名称">-->
+										    	<input name="bankbranch" type="text" class="form-control" placeholder="支行名称"    >
 										  </div>
 										  <div class="form-group">
 											  <button type="submit" class="btn btn-info" id="save">保存</button>
@@ -252,19 +261,23 @@
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>银行省:</label>
-										    <input name="bankprovince" type="text" class="form-control" placeholder="银行所在省">
+										    <!--<input name="bankprovince" type="text" class="form-control" placeholder="银行所在省">-->
+										    	<input  name="bankprovince" type="text" class="form-control" placeholder="银行所在省"    >
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>银行市:</label>
-										    <input name="banktown" type="text" class="form-control" placeholder="银行所在市">
+										    <!--<input name="banktown" type="text" class="form-control" placeholder="银行所在市">-->
+										    	<input name="banktown" type="text" class="form-control" placeholder="银行所在市"    >
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>银行区/县:</label>
-										    <input name="bankregion" type="text" class="form-control" placeholder="银行所在区/县">
+										    <!--<input name="bankregion" type="text" class="form-control" placeholder="银行所在区/县">-->
+										    <input name="bankregion" type="text" class="form-control" placeholder="银行所在区/县"    >
 										  </div>
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>支行名称:</label>
-										    <input name="bankbranch" type="text" class="form-control" placeholder="支行名称">
+										    <!--<input name="bankbranch" type="text" class="form-control" placeholder="支行名称">-->
+										    	<input name="bankbranch" type="text" class="form-control" placeholder="支行名称"    >
 										  </div>
 										  <div class="form-group">
 										  <button type="submit" class="btn btn-info" id="save">保存</button>
@@ -284,7 +297,13 @@
 	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
     <script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
     <script type="text/javascript" >
-    
+	  //去特殊字符
+    $('input').blur(function(){
+			if($(this).val()!=$(this).val().replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')){
+				$(this).val($(this).val().replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,''));
+//				alert($(this).val());
+			}	
+    });    
     var i=1;
     function showSetting(){
     	var setting=document.getElementById('setting');

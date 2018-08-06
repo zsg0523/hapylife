@@ -1,6 +1,7 @@
 <?php 
 namespace Home\Controller;
 use Common\Controller\HomeBaseController;
+use Api\Controller\HapylifeUsaController;
 /**
  * 用户注册Controller
  **/
@@ -25,14 +26,14 @@ class RegisterController extends HomeBaseController{
     public function new_register(){
         $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
         foreach ($mape as $key => $value) {
-            $data[$key]         = $value;
+            $dat[$key]         = $value;
             if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
-            	$data[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+            	$dat[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
             }else{
-            	$data[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+            	$dat[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
             }
         }
-        $this->assign('data',$data);
+        $this->assign('dat',$dat);
         $this->display();
     }
     /**
@@ -130,20 +131,30 @@ class RegisterController extends HomeBaseController{
         if($customerid){
             if(substr($customerid,0,3) == 'HPL'){
                 $data = M('User')->where(array('CustomerID'=>$customerid))->find();
-                $this->ajaxreturn($data); 
+                if(!empty($data)){
+                    $this->ajaxreturn($data);     
+                }else{
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data);           
+                }
             }else{
-                $key      = "Z131MZ8ZV29H5EQ9LGVH";
-                $url      = "https://signupapi.wvhservices.com/api/Account/ValidateHpl?customerId=".$customerid."&"."key=".$key;
+                $key      = "KDHE5011CVFO1KJEP1A0S";
+                $url      = "https://signupapi.wvhservices.com/api/Hpl/Validate?customerId=".$customerid."&"."key=".$key;
                 $wv       = file_get_contents($url);
                 $data = json_decode($wv,true);
-                $data['lastname'] = $data['lastName'];
-                $data['firstname'] = $data['firstName'];
-                $this->ajaxreturn($data);
+                if(empty($data['error'])){
+                    $data['lastname'] = $data['lastName'];
+                    $data['firstname'] = $data['firstName'];
+                    $this->ajaxreturn($data);     
+                }else{
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data);           
+                }
             }
         }else{
             $data['status'] = 0;
             $this->ajaxreturn($data);           
-        } 
+        }
     }
     /**
     * 保存用户资料
@@ -158,16 +169,27 @@ class RegisterController extends HomeBaseController{
             $upload = several_upload();
             $User = D("User1"); // 实例化User对象
             if(!$User->create($data)){
+                $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
+                foreach ($mape as $key => $value) {
+                    $dat[$key]         = $value;
+                    if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
+                        $dat[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+                    }else{
+                        $dat[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+                    }
+                }
                  // 如果创建失败 表示验证没有通过 输出错误提示信息
                 $error = $User->getError();
                 $assign = array(
                             'error' => $error,
-                            'data' => $data
+                            'data' => $data,
+                            'dat' => $dat
                             );
                 $this->assign($assign);
                 $this->display('Register/new_register');
             }else{
-                $data['iuid']= $_SESSION['user']['id'];
+                $data['iuid'] = $_SESSION['user']['id'];
+                $_SESSION['user']['password'] = trim(I('post.PassWord'));
     			if(isset($upload['name'])){
     				$data['JustIdcard']=C('WEB_URL').$upload['name'][0];
     				$data['BackIdcard']=C('WEB_URL').$upload['name'][1];
@@ -207,7 +229,7 @@ class RegisterController extends HomeBaseController{
 	* 首购订单
 	**/
 	public function registerOrder(){
-		$iuid = $_SESSION['user']['id'];
+        $iuid = $_SESSION['user']['id'];
         $ipid = I('get.ipid');
         $htid = D('Tempuser')->order('htid desc')->getfield('htid');
         //商品信息
@@ -278,7 +300,7 @@ class RegisterController extends HomeBaseController{
             $this->redirect('Home/Register/new_cjPayment',array('ir_receiptnum'=>$order_num));
         }else{
             $this->error('生成订单失败');
-        }
+        }  
 	}
     
     /**
@@ -468,6 +490,38 @@ class RegisterController extends HomeBaseController{
                     );
                     //更新订单信息
                     $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($status);
+                    //发送数据至usa
+                    if($upreceipt){
+                        $usa    = new \Common\UsaApi\Usa;
+                        $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
+                        if(!empty($result['result'])){
+                            $log = addUsaLog($result['result']);
+                            $maps = json_decode($result['result'],true);
+                            $wv  = array(
+                                        'wvCustomerID' => $maps['wvCustomerID'],
+                                        'wvOrderID'    => $maps['wvOrderID']
+                                    );
+                            $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
+                            if($res){
+                                $templateId ='164137';
+                                $params     = array();
+                                $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                                if($sms['errmsg'] == 'OK'){
+                                    $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->find();
+                                    $contents = array(
+                                                'acnumber' => $userinfo['acnumber'],
+                                                'phone' => $userinfo['phone'],
+                                                'operator' => '系统',
+                                                'addressee' => $status['ia_name'],
+                                                'product_name' => $receiptlist['product_name'],
+                                                'date' => time(),
+                                                'content' => '恭喜您注册成功，请注意查收邮件'
+                                    );
+                                    $logs = M('SmsLog')->add($contents);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -581,6 +635,7 @@ class RegisterController extends HomeBaseController{
                 $change_orderstatus = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->save($map);
 
                 if($change_orderstatus){
+
                     $OrderDate         = date("Y-m-d",strtotime("-1 month",time()));
                     $activa = $OrderDate;
                     $day    = date('d',strtotime($OrderDate));
@@ -601,7 +656,7 @@ class RegisterController extends HomeBaseController{
                     $endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
                     $where =array('iuid'=>$order['riuid'],'ir_receiptnum'=>$order['ir_receiptnum'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
                     $save  = M('Activation')->add($where);
-                    if($save){
+                    if($save){                      
                         $data['status'] = 1;
                         $this->ajaxreturn($data);
                     }else{
@@ -767,7 +822,7 @@ class RegisterController extends HomeBaseController{
                     $data['CustomerID'] = $CustomerID;
                     $result = D('User')->add($data);
                     if($result){
-                        $this->redirect('Home/Register/registerInfo');
+                        $this->redirect('Home/Register/registerInfo',array('iuid'=>$result));
                     }
                 }
             }
@@ -784,10 +839,11 @@ class RegisterController extends HomeBaseController{
 
     // 确认信息页面
     public function registerInfo(){
-        $iuid = max(M('User')->getField('iuid',true));
+        $iuid = I('get.iuid');
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
         $assign = array(
                         'userinfo' => $userinfo,
+                        'iuid' => $iuid,
                         );
         $this->assign($assign);
         $this->display();
@@ -795,11 +851,12 @@ class RegisterController extends HomeBaseController{
 
 	// 注册成功显示页面
 	public function regsuccess(){
-		$data = max(D('User')->select());
-		$data = D('User')->where(array('iuid'=>$data['iuid']))->find();
-		
+		$iuid = I('get.iuid');
+		$data = D('User')->where(array('iuid'=>$iuid))->find();
+
 		$assign = array(
 						'data' => $data,
+                        'iuid' => $iuid,
 						);
         $this->assign($assign);
 		$this->display();

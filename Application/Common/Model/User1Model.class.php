@@ -31,6 +31,7 @@ class User1Model extends BaseModel{
         array('BankArea','require','请填写银行所在区'), 
         array('SubName','require','支行名称不能为空'), 
         // array('Idcard','/(\d{6})(\d{4})(\d{2})(\d{2})(\d{3})([0-9]|X|x)|[A-Za-z]{1}\d{6}[(\d)]{3}/','请输入有效身份证号码'),
+        // array('Idcard','/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[012])(0[1-9]|[12]\d|3[01])\d{3}(\d|[xX])$/','请输入有效身份证号码'),
         // array('Idcard','/[^\w\s]+/','存在非法字符'),
    );
 }

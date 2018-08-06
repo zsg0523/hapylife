@@ -18,7 +18,7 @@
       	.title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
 		
 		.order_list{width: 100%;height: auto;margin: auto;}
-		.order_list>ul{margin: 0px;padding: 0px;margin-top: 5px;}
+		.order_list>ul{margin: 0px;padding: 0px;margin-top: 5px;width: 100%;}
 		.order_list>ul>li{height: 30px;font-size: 14px;text-align: left;line-height: 30px;}
 		.order_list>ul>li:first-child{height: 60px;}
 		.order_list>ul>li>span{width: auto;height: 30px;display: block;float: right;margin-right: 5px;line-height: 30px;}
@@ -50,7 +50,7 @@
 </head>
 	<body class="">
 		<div class="commonHead">
-  					
+  			<include file="Purchase/commonHead" />	
 		</div>
 		<div class="title">
 			我的订单
@@ -78,7 +78,6 @@
 							<li class="col-xs-12 col-sm-12  col-md-3">
 								&nbsp;
 							<if condition="$v['ir_status'] eq 0">交易状态:<span>待付款</span>
-								
 		                        <elseif condition="$v['ir_status'] eq 1"/>交易状态:<span>待审核</span>
 		                        <elseif condition="$v['ir_status'] eq 2"/>交易状态:<span>已支付</span>
 		                        <elseif condition="$v['ir_status'] eq 3"/>交易状态:<span>已发货</span>
@@ -112,7 +111,7 @@
 		
 		<script type="text/javascript">
 		$(document).ready(function(){
-	   		$(".commonHead").load("commonHead.html");
+	   		
 		});
 		</script>
 	    

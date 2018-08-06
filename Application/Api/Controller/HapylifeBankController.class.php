@@ -64,6 +64,7 @@ class HapylifeBankController extends HomeBaseController{
                 }
                 //添加
                 $addBank = D('Bank')->add($tmp);
+                
                 if($addBank){
                     $data['status'] = 1;
                     $data['message']='银行信息添加成功';
@@ -86,13 +87,14 @@ class HapylifeBankController extends HomeBaseController{
             $data['status'] = 0;
             $this->ajaxreturn($data);
         }else{
-            $iuids = $_SESSION['user']['id'];
+            //获取用户iuid
+            $iuid = I('post.iuid');
             // 查询注册信息
-            $userinfo = M('User')->where(array('iuid'=>$iuids))->find(); 
+            $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
             // 查询银行表信息
-            $bankaccount = M('Bank')->where(array('iuid'=>$iuids))->getField('bankaccount',true); 
+            $bankaccount = M('Bank')->where(array('iuid'=>$iuid))->getField('bankaccount',true); 
             
-            if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0 && !empty($bankaccount)){
+            if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0 && !empty($userinfo['bankaccount'])){
                $message = array(
                         'iuid'         => $userinfo['iuid'],
                         'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
@@ -109,10 +111,7 @@ class HapylifeBankController extends HomeBaseController{
                 if($result){
                     $_SESSION['user']['bank'] = $_SESSION['user']['bank'] + 1;
                 }
-            }
-        
-            //获取用户iuid
-            $iuid   = I('post.iuid');
+            }        
             //列表信息
             $data   = D('Bank')
                     ->where(array('iuid'=>$iuid))
