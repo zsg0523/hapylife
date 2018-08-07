@@ -11,26 +11,32 @@ class PayController extends HomeBaseController{
     public function receiptSon(){
         $ir_receiptnum   = I('post.ir_receiptnum');
         $ip_paytype      = I('post.ip_paytype');
+//      p($ip_paytype);die;
         $ir_price        = I('post.ir_unpaid');
-        $ir_payreceiptnum= date('YmdHis').rand(100000, 999999);
+        $pay_receiptnum= date('YmdHis').rand(100000, 999999);
         $mape            = array(
             'ir_receiptnum'   =>$ir_receiptnum,
             'ip_paytype'      =>$ip_paytype,
             'ir_price'        =>$ir_price,
-            'ir_payreceiptnum'=>$ir_payreceiptnum
+            'pay_receiptnum'  =>$pay_receiptnum
         );
         if($ir_price>0){
             $add = D('receiptson')->add($mape);
             if($add){
+//          	if($ip_paytype==1){
+//          		$this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
+//          	}else if($ip_paytype==4){
+//          		$this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
+//          	}
                 switch ($ip_paytype) {
                     case '1':
-                        $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$ir_payreceiptnum)); 
+                        $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
                         break;
                     case '2':
                         $this->redirect('Home/Pay/payInt',array('ir_receiptnum'=>$ir_payreceiptnum)); 
                         break;
                     case '4':
-                        $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$ir_payreceiptnum));
+                        $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
                         break;
                 }
             }else{
