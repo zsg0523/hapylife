@@ -48,12 +48,6 @@
 				<button type="button" class="btn  btn-block  btn-info" onclick='checkPassword();' id="btn-info">确定</button>
 			</div>
 		</div>
-		<!--<div class="input-group" id="input-group">
-    		<span class="input-group-addon" id="basic-addon3">登录密码:</span>
-    		<input type="password" class="form-control" id="basic-url" name="password" aria-describedby="basic-addon3">
-		</div>-->
-		<!--<span id="tishi">密码错误！</span>-->
-		<!--<a class="tc" onclick='checkPassword();'>确定</a>-->
 		
     </div>  
     
@@ -64,7 +58,7 @@
 	   		changeCommonHead('确认密码');
 		});
 		function back(){
-        	window.location.href ="{:U('Home/Purchase/myPoint')}";
+        	window.location.href ="{:U('Home/Purchase/center')}";
    		}
    	
     function checkPassword(){
@@ -91,7 +85,7 @@
 	    				}
 					},
 					error:function(){
-						alert('接口错误！！!');
+//						alert('接口错误！！!');
 					}
 				});
   				
@@ -101,7 +95,7 @@
                 
         }
     function back(){
-            window.location.href ="{:U('Home/PersonalCenter/personalCenter')}";
+            window.location.href ="{:U('Home/Purchase/center')}";
     }
       
 	</script>  

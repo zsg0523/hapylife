@@ -51,7 +51,7 @@
 					    <input class="fr" type="radio" name="paytype"  value="2" checked="checked" />
 					</div>
 				</div>
-				<!--<input type="hidden" name="ntid" value="{:I('get.ntid')}">-->
+				
 				<p class="tc">合计:&nbsp;&nbsp;￥<i id="money">{$data['ip_price_rmb']}</i>&nbsp;&nbsp;EP&nbsp;<b id="point">{$data['ip_point']}</b></p>
 			</div>
 			<div class="addCart tc" onclick="topay();">去付款</div>
@@ -76,7 +76,7 @@
     function topay(){
     	var radio=$('input[name="paytype"]:checked');
     	var ir_paytype=radio[0].value;
-    	var ntid=$('input[name="ntid"]').val();
+    	
     	$.ajax({
 				type:"POST",
 				url:"{:U('Home/Register/getOrder')}",
@@ -93,11 +93,11 @@
     					if(ir_paytype==2){
     						// alert(ir_paytype);
 				    		window.location.href="{:U('Home/Pay/payPoint/ir_receiptnum/"+ir_receiptnum+"')}"
-				    	}else if(ir_paytype==4){
+				    	}else if(ir_paytype==1){
 				    		// alert(ir_paytype);
 				    		$.ajax({
 								type:"POST",
-								url:"{:U('Home/Pay/kqPayment')}",
+								url:"{:U('Home/Purchase/ipsPayment')}",
 								async:false, 
 								dataType: 'json',
 								data:{
