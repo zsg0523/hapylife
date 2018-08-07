@@ -20,10 +20,12 @@
     	.radioBox{width: 90%;min-height: 30px; margin-left: 5%;font-size: 14px;display: block;}
     	.form-group{width: 100%;height:30px;display: block;}
     	.form-group>label{font-weight: normal;display: inline-block;width: 35%;float: left;text-align: left;}
-    	.form-group>input{width: 16px;height: 16px;display: inline-block;width: 60%;float: right;}
+    	.form-group>input[type=checkbox], input[type=radio]{width: 16px;height: 16px;display: inline-block;width: 60%;float: right;}
     	.payCheck>p{width: 90%;height: 15%;font-size: 14px;color: #FF6600;display: block;margin-left: 5%;}
     	.topay{width: 100%;height: 50px;border-top: 1px solid #DEDEDE;position: fixed;bottom: 0;left: 0;z-index: 2;background:#2490ed;color:#fff;
     	line-height: 50px;font-size: 16px;}
+    	.ir_unpaid{height: 30px;line-height: 30px;display: block;}
+    	
     	
     	
     	@media screen and (min-width:1200px) {
@@ -37,25 +39,29 @@
   		<include file="Common/commonHead1" />
   	</div>
     <div class="main">  
-		<div class="paymentInfo" id="paymentInfo">
-			<!--<input type="text" name="ip_type" value="{:I('get.ip_type')}">-->
+		<form class="paymentInfo" id="paymentInfo" action="{:U('Home/Pay/receiptSon')}" method="post" >
+			<input type="hidden" name="ir_receiptnum" id="ir_receiptnum" value="{:I('get.ir_receiptnum')}" />
 			<div class="payCheck">
 				<span class="tc">付款详情</span>
 				<div class="radioBox">
 					<div class="form-group" onclick="changeRadio(this);">
-						<label for="">Ips支付:</label>
+						<label for="">IPS支付:</label>
 					    <input class="fr" type="radio" name="paytype"  value="1" checked="checked" />
 					</div>
 					<div class="form-group" onclick="changeRadio(this);">
 						<label for="">积分支付:</label>
-					    <input class="fr" type="radio" name="paytype"  value="2" checked="checked" />
+					    <input class="fr" type="radio" name="paytype"  value="2"  />
+					</div>
+					<div class="form-group">
+						<label for="">本次付款金额:</label>
+					    <input class="fr" type="text" class="ir_unpaid" name="ir_unpaid"  value="{:I('get.ir_unpaid')}"/>
 					</div>
 				</div>
-				<!--<input type="hidden" name="ntid" value="{:I('get.ntid')}">-->
-				<p class="tc">合计:&nbsp;&nbsp;￥<i id="money">{$data['ip_price_rmb']}</i>&nbsp;&nbsp;EP&nbsp;<b id="point">{$data['ip_point']}</b></p>
+				<p class="tc">合计:&nbsp;&nbsp;￥<i id="money">{:I('get.ir_price')}</i>&nbsp;&nbsp;EP&nbsp;<span id="point">{:I('get.ir_point')}</span></p>				
+				<p class="tc">待付款:&nbsp;&nbsp;￥<i id="money">{:I('get.ir_unpaid')}</i>&nbsp;&nbsp;EP&nbsp;<span id="point">{:I('get.ir_unpoint')}</span></p>
 			</div>
-			<div class="addCart tc" onclick="topay();">去付款</div>
-		</div>
+			<div class="addCart tc" onclick="">去付款</div>
+		</form>
     </div>  
     
 	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
@@ -72,60 +78,7 @@
 			var inputs=$(val).find("input");
 			inputs[0].checked='checked';
 	}
-  	//判断支付类型跳转支付
-    function topay(){
-    	var radio=$('input[name="paytype"]:checked');
-    	var ir_paytype=radio[0].value;
-    	var ntid=$('input[name="ntid"]').val();
-    	$.ajax({
-				type:"POST",
-				url:"{:U('Home/Register/getOrder')}",
-				async:false, 
-				dataType: 'json',
-				data:{
-					ir_paytype:ir_paytype,
-					ntid:ntid
-				},
-				success:function(ret){
-					// console.log(ret);
-    				if(ret){
-    					var ir_receiptnum=ret;
-    					if(ir_paytype==2){
-    						// alert(ir_paytype);
-				    		window.location.href="{:U('Home/Pay/payPoint/ir_receiptnum/"+ir_receiptnum+"')}"
-				    	}else if(ir_paytype==4){
-				    		// alert(ir_paytype);
-				    		$.ajax({
-								type:"POST",
-								url:"{:U('Home/Pay/kqPayment')}",
-								async:false, 
-								dataType: 'json',
-								data:{
-									ir_receiptnum:ir_receiptnum
-								},
-								success:function(ret){
-									console.log(ret);
-				    				if(ret.status){
-								    	window.location.href=ret.url;
-				    				}	    	
-							    	
-								},
-								error:function(){
-									//alert('接口错误！！!');
-								}
-							});	
 
-				    		
-				    	}	
-    				}	    	
-			    	
-				},
-				error:function(){
-					//alert('接口错误！！!');
-				}
-			});
-	
-    }
 	</script>  
 </body>  
 </html>  
