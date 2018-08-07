@@ -326,13 +326,11 @@ class PurchaseController extends HomeBaseController{
         $addlog = M('Log')->add($log);
         // 设置session时间
         if($addlog){
-//          if($product['ip_type'] == 1){
-//
-//              $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$order_num));
-//          }else{
-//              $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$order_num));
-//          }
-			$this->redirect('Home/Pay/choosePay',array('ir_receiptnum'=>$order_num,'ip_type'=>$product['ip_type']));
+            if($product['ip_type'] == 1){
+                $this->redirect('Home/Pay/choosePay1',array('ir_receiptnum'=>$order_num,'ir_price'=>$product['ip_price_rmb'],'ir_point'=>$product['ip_point'],'ir_unpaid'=>$product['ip_price_rmb'],'ir_unpoint'=>$product['ip_point']));
+            }else{
+                $this->redirect('Home/Pay/choosePay',array('ir_receiptnum'=>$order_num,'ir_price'=>$product['ip_price_rmb'],'ir_point'=>$product['ip_point'],'ir_unpaid'=>$product[' ip_price_rmb'],'ir_unpoint'=>$product['ip_point']));
+            }
         }else{
             $this->error('订单生成失败');
         }
