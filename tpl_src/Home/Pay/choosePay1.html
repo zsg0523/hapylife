@@ -72,11 +72,18 @@
 		function back(){
         	window.location.href ="{:U('Home/Purchase/center')}";
    		}
-	//改变支付类型单选框
+		//改变支付类型单选框
 		function changeRadio(val){
 			var inputs=$(val).find("input");
 			inputs[0].checked='checked';
-	}
+		}
+		function topay(){
+			var form=$('#paymentInfo');
+			var ir_unpaid=$("input[name='ir_unpaid']").val();
+			if(ir_unpaid>0&&ir_unpaid!=null){
+				form.submit();
+			}
+		}
 
 	</script>  
 </body>  
