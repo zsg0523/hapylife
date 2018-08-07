@@ -20,7 +20,7 @@ class PayController extends HomeBaseController{
             'ir_payreceiptnum'=>$ir_payreceiptnum
         );
         if($ir_price>0){
-            $add = D('receiptSon')->add($mape);
+            $add = D('receiptson')->add($mape);
             if($add){
                 switch ($ip_paytype) {
                     case '1':
