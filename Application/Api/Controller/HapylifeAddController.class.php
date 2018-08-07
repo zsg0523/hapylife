@@ -66,7 +66,7 @@ class HapylifeAddController extends HomeBaseController{
                 }
             }
         }
-        if($result){
+        if($res){
             $sample = array(
                     'msg' => 'Add Success',
                     'status' => 1,

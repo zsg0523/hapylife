@@ -731,6 +731,24 @@ class HapylifeController extends AdminBaseController{
 		}
 	}
 
+	/**
+	* 用户删除
+	**/
+	public function delete_users(){
+		$id=I('get.id');
+		$map=array(
+			'iuid'=>$id
+			);
+		
+		$result=D('User')->deleteData($map);
+		if($result){
+			redirect($_SERVER['HTTP_REFERER']);
+		}else{
+			$this->error('删除失败');
+		}
+	}
+
+
 	/*****************************************************************送货单管理******************************************************************/
 	//送货单列表
 	public function sendReceipt(){
