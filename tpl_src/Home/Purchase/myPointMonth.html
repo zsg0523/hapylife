@@ -12,7 +12,7 @@
     	
     	#wrap{width: 100%;background-color: #fff;}
     	
-    	.note{width: 96%;height:40px;margin: auto; border-bottom:#eeeef0 1px solid;font-size: 15px;line-height:40px;background:#fff url(../../res/img/input_next.png) 98% 50% no-repeat;background-size:8px 13px;}
+    	.note{width: 96%;height:40px;margin: auto; border-bottom:#eeeef0 1px solid;font-size: 15px;line-height:40px;background:#fff url(__PUBLIC_IMAGE__/input_next.png) 98% 50% no-repeat;background-size:8px 13px;}
     	.note_date{width: 33%;height:40px;float: left;font-size:13px;}
     	.note_increase{width: 33%;height:40px;float:left;color: #1DBD8D;}
     	.note_reduce{width: 33%;height:40px;float:left;color: #FF0000;}
@@ -36,7 +36,7 @@
 		</div>
 		<div id="wrap">
             <foreach name="data" item="v">
-				<div class="note btn_go2" onclick='window.location.href="{:U('IbosWeb/PersonalCenter/myPointDay',array('date'=>$v['date']))}";'>
+				<div class="note btn_go2" onclick='window.location.href="{:U('Home/Purchase/myPointDay',array('date'=>$v['date']))}";'>
 					<div class="note_date">{$v['date']}</div>
 					<div class="note_increase">+{$v['increase']}</div>
 					<div class="note_reduce">-{$v['reduce']}</div>

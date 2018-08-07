@@ -2801,3 +2801,16 @@ function rand_char(){
     $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';  
     return $chars[mt_rand(1, $base) - 1];  
 }
+
+/**
+* 生成二维码
+* @param url 链接
+* @param qrcodeName 二维码名称
+**/
+function createCode($url,$qrcodeName){
+    $renderer = new \BaconQrCode\Renderer\Image\Png();
+    $renderer->setHeight(256);
+    $renderer->setWidth(256);
+    $writer = new \BaconQrCode\Writer($renderer);
+    $writer->writeFile($url,$qrcodeName);
+}
