@@ -24,7 +24,7 @@
     	.payCheck>p{width: 90%;height: 15%;font-size: 14px;color: #FF6600;display: block;margin-left: 5%;}
     	.topay{width: 100%;height: 50px;border-top: 1px solid #DEDEDE;position: fixed;bottom: 0;left: 0;z-index: 2;background:#2490ed;color:#fff;
     	line-height: 50px;font-size: 16px;}
-    	.ir_unpaid{height: 30px;line-height: 30px;display: block;}
+    	.ir_unpaid{width: 60%; height: 30px;line-height: 30px;display: block;}
     	
     	
     	@media screen and (min-width:1200px) {
@@ -45,15 +45,15 @@
 				<div class="radioBox">
 					<div class="form-group" onclick="changeRadio(this);">
 						<label for="">畅捷支付:</label>
-					    <input class="fr" type="radio" name="paytype"  value="4" checked="checked" />
+					    <input class="fr" type="radio" name="ip_paytype"  value="4" checked="checked" />
 					</div>
 					<div class="form-group" onclick="changeRadio(this);">
 						<label for="">积分支付:</label>
-					    <input class="fr" type="radio" name="paytype"  value="2"  />
+					    <input class="fr" type="radio" name="ip_paytype"  value="2"  />
 					</div>
 					<div class="form-group">
 						<label for="">本次付款金额:</label>
-					    <input class="fr" type="text" class="ir_unpaid" name="ir_unpaid"  value="{:I('get.ir_unpaid')}"/>
+					    <input type="text" class="ir_unpaid" name="ir_unpaid"  value="{:I('get.ir_unpaid')}"/>
 					</div>
 				</div>
 				<p class="tc">合计:&nbsp;&nbsp;￥<i id="money">{:I('get.ir_price')}</i>&nbsp;&nbsp;EP&nbsp;<span id="point">{:I('get.ir_point')}</span></p>				
