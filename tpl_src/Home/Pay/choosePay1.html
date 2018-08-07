@@ -57,7 +57,7 @@
 					</div>
 				</div>
 				<p class="tc">合计:&nbsp;&nbsp;￥<i id="money">{:I('get.ir_price')}</i>&nbsp;&nbsp;EP&nbsp;<span id="point">{:I('get.ir_point')}</span></p>				
-				<p class="tc">待付款:&nbsp;&nbsp;￥<i id="money">{:I('get.ir_unpaid')}</i>&nbsp;&nbsp;EP&nbsp;<span id="point">{:I('get.un_point')}</span></p>
+				<p class="tc">待付款:&nbsp;&nbsp;￥<i id="money">{:I('get.ir_unpaid')}</i>&nbsp;&nbsp;EP&nbsp;<span id="point">{:I('get.ir_unpoint')}</span></p>
 			</div>
 			<div class="addCart tc" onclick="">去付款</div>
 		</form>
@@ -72,11 +72,18 @@
 		function back(){
         	window.location.href ="{:U('Home/Purchase/center')}";
    		}
-	//改变支付类型单选框
+		//改变支付类型单选框
 		function changeRadio(val){
 			var inputs=$(val).find("input");
 			inputs[0].checked='checked';
-	}
+		}
+		function topay(){
+			var form=$('#paymentInfo');
+			var ir_unpaid=$("input[name='ir_unpaid']").val();
+			if(ir_unpaid>0&&ir_unpaid!=null){
+				form.submit();
+			}
+		}
 
 	</script>  
 </body>  
