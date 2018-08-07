@@ -1,0 +1,36 @@
+<!DOCTYPE html>  
+<html lang="zh-cn">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">  
+    <title>公共头部</title>  
+    <link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css">
+    <style type="text/css">
+    	#commonHead{width: 100%;height: 50px;font-size: 18px;color: #fff;background: url(__PUBLIC_IMAGE__/bg.png) no-repeat;background-size:100%; line-height: 50px;font-weight: bold;margin: auto;}
+    	.btn-info{background: #2490ed;}
+    	.tc{text-align: center;}
+    	@media screen and (min-width:1200px) {
+    		#commonHead{width: 1200px;margin: auto;}
+    		
+    	}
+    </style>
+</head>  
+<body >  
+    <div class=" tc" id="commonHead">  
+  		
+    </div>  
+  
+  
+  
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
+	
+	<script type="text/javascript"> 
+		//显示标题
+		function changeCommonHead(title){
+			var head=document.getElementById('commonHead');
+			head.innerText=title;
+		}
+	</script>  
+</body>  
+</html>  
