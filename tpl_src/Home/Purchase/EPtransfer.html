@@ -34,11 +34,10 @@
   			<include file="Common/commonHead1" />
   	</div> 
     <div class="main">  
-  		<form class="EP_top" method="post" action="{:U('IbosWeb/PersonalCenter/toCheckPasswordEP')}" id="EP_top">
-  			<input type="hidden" name="rd" value="{$rd}" />
+  		<form class="EP_top" method="post" action="{:U('Home/Purchase/toCheckPasswordEP')}" id="EP_top">
   			<div class="input_g">
   				<span class="fl">账号填写</span>
-  				<input class="fl" type="text" name="hu_nickname" placeholder="请输入转账ID" />
+  				<input class="fl" type="text" name="CustomerID" placeholder="请输入转账ID" />
   			</div>
   			<div class="input_g">
   				<span class="fl">名称</span>
@@ -85,7 +84,7 @@
 	function checkPassword(){
     	var form=$('#EP_top');
     	var point=$("input[name='iu_point']").attr("data-point");
-    	if($("input[name='hu_nickname']").val()==""){
+    	if($("input[name='CustomerID']").val()==""){
     		alert('请输入转入账号！');
     	}else if($("input[name='iu_point']").val()==""){
     		alert('请输入转出积分！');
@@ -93,28 +92,30 @@
     		alert('您的积分不足!');
     	}else if($("input[name='iu_point']").val()<0){
     		alert('转出积分不能为负数!');
-    	}else{
+    	}else if($("input[name='iu_point']").val()==0){
+        alert('转出积分不能为零!');
+      }else{
     		form.submit();
     	}
 		//window.location.href="{:U('IbosWeb/PersonalCenter/CheckPassword')}";
 	}
   
-  $("input[name='hu_nickname']").blur(function(){
-      var hu_nickname=$("input[name='hu_nickname']").val();
+  $("input[name='CustomerID']").blur(function(){
+      var CustomerID=$("input[name='CustomerID']").val();
       var hu_nicknameCN=document.getElementById('hu_nicknameCN');
-      console.log(hu_nickname);
-      if(hu_nickname!=""){
+      console.log(CustomerID);
+      if(CustomerID!=""){
         $.ajax({
           type:"post",
-          url:"{:U('IbosWeb/PersonalCenter/checkName')}",
+          url:"{:U('Home/Purchase/checkName')}",
           async:false,
           dataType:'json',
           data:{
-            hu_nickname:hu_nickname
+            CustomerID:CustomerID
           },
           success:function(data){
             if(data.status == 1){
-              hu_nicknameCN.innerText=data.hu_username;          
+              hu_nicknameCN.innerText=data.lastname+data.firstname;          
             }else{
               alert("请输入正确的推荐人ID！");
               hu_nicknameCN.innerText="名称";          

@@ -42,6 +42,22 @@ class PayController extends HomeBaseController{
         }
     }
 
+    // 确认密码
+    public function checkPassWord(){
+        $iuid = $_SESSION['user']['id'];
+        $password = md5(trim(I('post.password')));
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
+        if($userinfo['password'] != $password){
+            // 密码错误
+            $data['status'] = 0;
+            $this->ajaxreturn($data);
+        }else{
+            // 密码正确
+            $data['status'] = 1;
+            $this->ajaxreturn($data);
+        }
+    }
+
 
 
 

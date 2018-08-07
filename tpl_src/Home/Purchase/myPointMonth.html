@@ -36,7 +36,7 @@
 		</div>
 		<div id="wrap">
             <foreach name="data" item="v">
-				<div class="note btn_go2" onclick='window.location.href="{:U('IbosWeb/PersonalCenter/myPointDay',array('date'=>$v['date']))}";'>
+				<div class="note btn_go2" onclick='window.location.href="{:U('Home/Purchase/myPointDay',array('date'=>$v['date']))}";'>
 					<div class="note_date">{$v['date']}</div>
 					<div class="note_increase">+{$v['increase']}</div>
 					<div class="note_reduce">-{$v['reduce']}</div>
