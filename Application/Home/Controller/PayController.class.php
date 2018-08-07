@@ -24,8 +24,7 @@ class PayController extends HomeBaseController{
             if($add){
                 switch ($ip_paytype) {
                     case '1':
-                        $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$ir_payreceiptnum));
-                        
+                        $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$ir_payreceiptnum)); 
                         break;
                     case '2':
                         # code...
@@ -35,7 +34,7 @@ class PayController extends HomeBaseController{
                         break;
                 }
             }else{
-               $this->error('系统缓慢,请重新提交'); 
+               $this->error('系统超时,请重新提交'); 
             }
         }else{
             $this->error('支付金额不能少于或等于0');

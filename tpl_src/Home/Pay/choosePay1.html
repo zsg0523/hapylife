@@ -38,7 +38,6 @@
   	</div>
     <div class="main">  
 		<div class="paymentInfo" id="paymentInfo">
-			<input type="text" name="ip_type" value="{:I('get.ip_type')}">
 			<div class="payCheck">
 				<span class="tc">付款详情</span>
 				<div class="radioBox">
@@ -51,8 +50,8 @@
 					    <input class="fr" type="radio" name="paytype"  value="2" checked="checked" />
 					</div>
 				</div>
-				
-				<p class="tc">合计:&nbsp;&nbsp;￥<i id="money">{$data['ip_price_rmb']}</i>&nbsp;&nbsp;EP&nbsp;<b id="point">{$data['ip_point']}</b></p>
+				<p class="tc">合计:&nbsp;&nbsp;￥<i id="money">{:I('get.ir_price')}</i>&nbsp;&nbsp;EP&nbsp;<b id="point">{:I('get.ir_point')}</b></p>				
+				<p class="tc">待付款:&nbsp;&nbsp;￥<i id="money">{:I('get.ir_unpaid')}</i>&nbsp;&nbsp;EP&nbsp;<b id="point">{:I('get.ir_unpoint')}</b></p>
 			</div>
 			<div class="addCart tc" onclick="topay();">去付款</div>
 		</div>
