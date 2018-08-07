@@ -27,7 +27,7 @@ class PayController extends HomeBaseController{
                         $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$ir_payreceiptnum)); 
                         break;
                     case '2':
-                        # code...
+                        $this->redirect('Home/Pay/payInt',array('ir_receiptnum'=>$ir_payreceiptnum)); 
                         break;
                     case '4':
                         $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$ir_payreceiptnum));
@@ -60,11 +60,14 @@ class PayController extends HomeBaseController{
     // 积分支付
     public function payInt(){
         $iuid = $_SESSION['user']['id'];
-        $ir_receiptnum = I('post.ir_receiptnum');
+        $ir_receiptnum = I('get.ir_receiptnum');
+        p($ir_receiptnum);
         // 获取用户信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
         // 获取订单信息
         $receipt = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
+        p($receipt);
+        die;
         // 用户剩余积分
         $residue = $userinfo['iu_point']-$receipt['ir_point'];
         if($residue>0){
@@ -210,37 +213,39 @@ class PayController extends HomeBaseController{
                             //更新订单信息
                             $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->save($status);
                             //发送数据至usa
-                            if($upreceipt){
-                                $usa    = new \Common\UsaApi\Usa;
-                                $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
-                                if(!empty($result['result'])){
-                                    $log = addUsaLog($result['result']);
-                                    $maps = json_decode($result['result'],true);
-                                    $wv  = array(
-                                                'wvCustomerID' => $maps['wvCustomerID'],
-                                                'wvOrderID'    => $maps['wvOrderID']
-                                            );
-                                    $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
-                                    if($res){
-                                        $templateId ='164137';
-                                        $params     = array();
-                                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                                        if($sms['errmsg'] == 'OK'){
-                                            $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
-                                            $contents = array(
-                                                        'acnumber' => $userinfo['acnumber'],
-                                                        'phone' => $userinfo['phone'],
-                                                        'operator' => '系统',
-                                                        'addressee' => $status['ia_name'],
-                                                        'product_name' => $receiptlist['product_name'],
-                                                        'date' => time(),
-                                                        'content' => '恭喜您注册成功，请注意查收邮件'
-                                            );
-                                            $logs = M('SmsLog')->add($contents);
-                                        }
-                                    }
-                                }
-                            }
+                            // if($upreceipt){
+                            //     $usa    = new \Common\UsaApi\Usa;
+                            //     $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
+                            //     if(!empty($result['result'])){
+                            //         $log = addUsaLog($result['result']);
+                            //         $maps = json_decode($result['result'],true);
+                            //         $wv  = array(
+                            //                     'wvCustomerID' => $maps['wvCustomerID'],
+                            //                     'wvOrderID'    => $maps['wvOrderID']
+                            //                 );
+                            //         $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
+                            //         if($res){
+                            //             $templateId ='164137';
+                            //             $params     = array();
+                            //             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                            //             if($sms['errmsg'] == 'OK'){
+                            //                 $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
+                            //                 $contents = array(
+                            //                             'acnumber' => $userinfo['acnumber'],
+                            //                             'phone' => $userinfo['phone'],
+                            //                             'operator' => '系统',
+                            //                             'addressee' => $status['ia_name'],
+                            //                             'product_name' => $receiptlist['product_name'],
+                            //                             'date' => time(),
+                            //                             'content' => '恭喜您注册成功，请注意查收邮件'
+                            //                 );
+                            //                 $logs = M('SmsLog')->add($contents);
+                            //             }
+                            //         }
+                            //     }
+                            // }
+                            p($upreceipt);
+                            die;
                         }
                     }
                 }

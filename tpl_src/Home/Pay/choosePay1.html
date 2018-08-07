@@ -45,11 +45,11 @@
 				<div class="radioBox">
 					<div class="form-group" onclick="changeRadio(this);">
 						<label for="">畅捷支付:</label>
-					    <input class="fr" type="radio" name="paytype"  value="4" checked="checked" />
+					    <input class="fr" type="radio" name="ip_paytype"  value="4" checked="checked" />
 					</div>
 					<div class="form-group" onclick="changeRadio(this);">
 						<label for="">积分支付:</label>
-					    <input class="fr" type="radio" name="paytype"  value="2"  />
+					    <input class="fr" type="radio" name="ip_paytype"  value="2"  />
 					</div>
 					<div class="form-group">
 						<label for="">本次付款金额:</label>
@@ -59,7 +59,7 @@
 				<p class="tc">合计:&nbsp;&nbsp;￥<i id="money">{:I('get.ir_price')}</i>&nbsp;&nbsp;EP&nbsp;<span id="point">{:I('get.ir_point')}</span></p>				
 				<p class="tc">待付款:&nbsp;&nbsp;￥<i id="money">{:I('get.ir_unpaid')}</i>&nbsp;&nbsp;EP&nbsp;<span id="point">{:I('get.ir_unpoint')}</span></p>
 			</div>
-			<div class="addCart tc" onclick="">去付款</div>
+			<div class="addCart tc" onclick="topay()">去付款</div>
 		</form>
     </div>  
     
