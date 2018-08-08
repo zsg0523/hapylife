@@ -42,6 +42,7 @@
 			<span class="fl">金额:</span>
 			<p class="fl" id="amount">0.1</p>
   		</div>
+  		<input type="hidden" name="ir_receiptnum" id="ir_receiptnum" value="{I:(get.ir_receiptnum)}" />
 		<div class="form-group"  style="padding-top: 20px;">
 				<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label">登录密码:</label>
 				<div class="col-lg-10 col-md-10 col-xs-8">
@@ -69,7 +70,7 @@
     function checkPassword(){
     	
     	var ir_receiptnum=$('#ir_receiptnum').val();
-    	alert(ir_receiptnum);
+//  	alert(ir_receiptnum);
     	var password=$('input[name="password"]').val();
             if(password!=""){
             	
@@ -84,7 +85,7 @@
 					},
 					success:function(ret){
 	    				if(ret.status==1){
-	    					window.location.href ="{:U('Home/Pay/paySuccess/ir_receiptnum/"+ir_receiptnum+"')}";
+	    					window.location.href ="{:U('Home/Pay/paySuccess/ir_receiptnum/"+ +"')}";
 	    				}else{
 	    					alert('密码错误！！!');
 	    				}
