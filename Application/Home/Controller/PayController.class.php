@@ -13,32 +13,35 @@ class PayController extends HomeBaseController{
         $ip_paytype      = I('post.ip_paytype');
 //      p($ip_paytype);die;
         $ir_price        = I('post.ir_unpaid');
-        $pay_receiptnum= date('YmdHis').rand(100000, 999999);
+        $pay_receiptnum  = date('YmdHis').rand(100000, 999999);
+        $iuid            = D('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->getfield('riuid');
         $mape            = array(
             'ir_receiptnum'   =>$ir_receiptnum,
             'ip_paytype'      =>$ip_paytype,
             'ir_price'        =>$ir_price,
-            'pay_receiptnum'  =>$pay_receiptnum
+            'pay_receiptnum'  =>$pay_receiptnum,
+            'riuid'           =>$iuid,
+            'cretime'         =>time()
         );
         if($ir_price>0){
             $add = D('receiptson')->add($mape);
             if($add){
-//          	if($ip_paytype==1){
-//          		$this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
-//          	}else if($ip_paytype==4){
-//          		$this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
-//          	}
-                switch ($ip_paytype) {
-                    case '1':
-                        $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
-                        break;
-                    case '2':
-                        $this->redirect('Home/Pay/payInt',array('ir_receiptnum'=>$pay_receiptnum)); 
-                        break;
-                    case '4':
-                        $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
-                        break;
-                }
+             	if($ip_paytype==1){
+             		$this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
+             	}else if($ip_paytype==4){
+             		$this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
+             	}
+                // switch ($ip_paytype) {
+                //     case '1':
+                //         $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
+                //         break;
+                //     case '2':
+                //         $this->redirect('Home/Pay/payInt',array('ir_receiptnum'=>$pay_receiptnum)); 
+                //         break;
+                //     case '4':
+                //         $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
+                //         break;
+                // }
             }else{
                $this->error('系统超时,请重新提交'); 
             }

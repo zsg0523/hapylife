@@ -294,8 +294,10 @@ class PurchaseController extends HomeBaseController{
             'ir_productnum' =>1,
             //订单总金额
             'ir_price'      =>$product['ip_price_rmb'],
+            'ir_unpaid'     =>$product['ip_price_rmb'],
             //订单总积分
             'ir_point'      =>$product['ip_point'],
+            'ir_unpoint'    =>$product['ip_point'],
             //订单备注
             'ir_desc'       =>$con,
             //订单类型
@@ -346,8 +348,7 @@ class PurchaseController extends HomeBaseController{
         //用户iuid
         $iuid           = I('post.iuid');
         //订单信息查询
-        $order          = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
-
+        $order          = M('Receiptson')->where(array('pay_receiptnum'=>$ir_receiptnum))->find();
         // wsdl模式访问wsdl程序
         $client = new \SoapClient("https://pay.hkipsec.com/webservice/GetQRCodeWebService.asmx?wsdl",
             array(
@@ -404,7 +405,7 @@ class PurchaseController extends HomeBaseController{
             $para['return_code'] = $return_code;
             $para['return_msg']  = $return_msg;
             //生成二维码
-            $url            = createQrcode(urldecode($code_url),'Upload/avatar/'.$ir_receiptnum.'.png');
+            $url            = createCode(urldecode($code_url),'Upload/avatar/'.$ir_receiptnum.'.png');
             $para['qrcode'] = C('WEB_URL').'/Upload/avatar/'.$ir_receiptnum.'.png';
             $this->ajaxreturn($para);
             
@@ -426,58 +427,54 @@ class PurchaseController extends HomeBaseController{
         $log     = logTest($jsonStr);
         
         //查询订单信息
-        $order = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->find();
+        $receipt = M('Receiptson')->where(array('pay_receiptnum'=>$data['billno']))->find();
 
         //支付返回数据验证,是否支付成功验证
         if($data['succ'] == 'Y'){
             //签名验证
             //订单数量&订单金额
-            if($data['amount'] == $order['ir_price']){                
+            if($data['amount'] == $receipt['ir_price']){                
                 //修改订单状态
                 $map = array(
                     'ir_paytype' =>1,
-                    'ir_status'  =>2,
-                    'ir_paytime'=>time(),
-                    'ips_trade_no' => $data['ipsbillno'],
-                    'ips_trade_status' => $data['msg']
+                    'status'  =>2,
+                    'paytime'=>time(),
+                    'inner_trade_no' => $data['ipsbillno'],
+                    'trade_status' => $data['msg']
                 );
-                $change_orderstatus = M('Receipt')->where(array('ir_receiptnum'=>$data['billno']))->save($map);
-
+                $change_orderstatus = M('Receiptson')->where(array('pay_receiptnum'=>$data['billno']))->save($map);
                 if($change_orderstatus){
+                    $order   = D('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();  
                     $OrderDate         = date("Y-m-d",strtotime("-1 month",time()));
-                    $activa = $OrderDate;
-                    $day    = date('d',strtotime($OrderDate));
-                    if($day>=28){
-                        $allday = 28;
+                    $subnum= bcsub($order['ir_unpaid'],$receipt['ir_price'],2);
+                    if($subnum=='0.00'){
+                        $sub      = 0;
+                        $unp      = 0;
+                        $ir_status= 2;
                     }else{
-                        $allday = $day;
+                        $sub      = $subnum;
+                        $unp      = bcdiv($sub,100,4);
+                        $ir_status= 202;
                     }
-                    $ddd = $allday-1;
-                    if($ddd>=10){
-                        $oneday = $ddd;
-                    }else{
-                        $oneday = '0'.$ddd;
+                    if($sub==0){
+                        $addactivation     = D('Activation')->addAtivation($OrderDate,$receipt['riuid'],$receipt['ir_receiptnum']);
                     }
-                    //添加激活
-                    $time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
-                    $year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
-                    $endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
-                    $where =array('iuid'=>$order['riuid'],'ir_receiptnum'=>$order['ir_receiptnum'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
-                    $save  = M('Activation')->add($where);
-                    if($save){
-                        $data['status'] = 1;
-                        $this->ajaxreturn($data);
-                    }else{
-                        $data['status'] = 0;
-                        $this->ajaxreturn($data);
-                    }
+                    $status  = array(
+                        'ir_status'  =>$ir_status,
+                        'ir_unpaid'  =>$sub,
+                        'ir_unpoint' =>$unp
+                    );
+                    //更新订单信息
+                    $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+                    $data['status'] = 1;
+                    $this->ajaxreturn($data);
                 }else{
                     $data['status'] = 0;
-                    $this->ajaxreturn($data);
+                    $this->ajaxreturn($data);  
                 }
             }else{
                 $data['status'] = 0;
-                $this->ajaxreturn($data);
+                $this->ajaxreturn($data);         
             }
         }else{
             $data['status'] = 0;
@@ -490,8 +487,10 @@ class PurchaseController extends HomeBaseController{
     **/
     public function cjPayment(){
         //订单号
-		$order_num                     = I('get.ir_receiptnum');
-		$order = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->find();
+		$order_num  = I('get.ir_receiptnum');
+        // p($order_num);die;
+        $order      = M('Receiptson')->where(array('pay_receiptnum'=>$order_num))->find();
+        // p($order);die;
         // p($order);die;
 		$postData                      = array();	
 		// 基本参数
@@ -502,7 +501,7 @@ class PurchaseController extends HomeBaseController{
 		$postData['InputCharset']      = 'UTF-8';
 		$postData['TradeDate']         = date('Ymd').'';
 		$postData['TradeTime']         = date('His').'';
-		$postData['ReturnUrl']         = 'http://apps.hapy-life.com/hapylife';// 前台跳转url
+		$postData['ReturnUrl']         = 'http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/getPayUrl?ir_receiptnum='.$order_num;// 前台跳转url
 		$postData['Memo']              = '备注';
 		// 4.4.2.8. 直接支付请求接口（畅捷前台） 业务参数++++++++++++++++++
 		$postData['TrxId']             = $order_num; //外部流水号
@@ -530,7 +529,7 @@ class PurchaseController extends HomeBaseController{
 		$postData['RoyaltyParameters'] = '';      //"[{'userId':'13890009900','PID':'2','account_type':'101','amount':'100.00'},{'userId':'13890009900','PID':'2','account_type':'101','amount':'100.00'}]"; //退款分润账号集
 		$postData['NotifyUrl']         = 'http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/notifyVerify';//异步通知地址
 		$postData['AccessChannel']     = 'wap';//用户终端类型；web,wap
-		$postData['Extension']         = '';//扩展字段
+		$postData['Extension']         = '';//扩展字段s
 		$postData['Sign']              = rsaSign($postData);
 		$postData['SignType']          = 'RSA'; //签名类型		
 		$query                         = http_build_query($postData);
@@ -550,89 +549,82 @@ class PurchaseController extends HomeBaseController{
 		foreach ($data as $key => $value) {
 			$temp = explode('=', $value);
 			$map[$temp[0]]=urldecode(trim($temp[1]));
-		}
-		$receipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->find();
-		$cjPayStatus = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($map);
-		//验签
-		$return = rsaVerify($map);
-		//更改订单状态
-		if($return == "true" && $map['trade_status'] == 'TRADE_SUCCESS'){
-			//修改用户最近订单日期/是否通过/等级/数量
-            $tmpe['iuid'] = $receipt['riuid'];
-            $userinfo     = D('User')->where(array('iuid'=>$receipt['riuid']))->find();
-            //number 购买产品的次数
-            if($userinfo['number']==0){
-                //支付日期
-            	$tmpe['OrderDate'] = date("m/d/Y h:i:s A");
-            	$OrderDate         = date("Y-m-d",strtotime("-1 month",time()));
-                //如果是旧用户
-                if($userinfo['isnew'] == 0){
-                    if($userinfo['number']==0){
-                        //isCheck 是否审核
-                        $tmpe['IsCheck'] = 1;   
-                    }
-                }else{
-                    $tmpe['IsCheck'] = 2;
+        }
+        // $map['outer_trade_no'] = '20180808104800320253';
+        $receipt = M('Receiptson')->where(array('pay_receiptnum'=>$map['outer_trade_no']))->find();
+        $cjPayStatus = M('Receiptson')->where(array('pay_receiptnum'=>$map['outer_trade_no']))->save($map);
+        //验签
+        $return = rsaVerify($map);
+        //更改订单状态
+        if($return == "true" && $map['trade_status'] == 'TRADE_SUCCESS'){
+            $whereSon= array(
+                'status'    =>2,
+                'ir_paytype'=>4
+            );
+            $saveSon = D('Receiptson')->where(array('pay_receiptnum'=>$map['outer_trade_no']))->save($whereSon);
+            if($saveSon){
+                D('Receiptson')->where(array('pay_receiptnum'=>$map['outer_trade_no']))->setfield('paytime',time());
+                $order = D('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();
+                $subnum= bcsub($order['ir_unpaid'],$receipt['ir_price'],2);
+                if($subnum=='0.00'){
+                    $sub      = 0;
+                    $unp      = 0;
+                    $ir_status= 2;
+                }else{  
+                    $sub      = $subnum;
+                    $unp      = bcdiv($sub,100,4);
+                    $ir_status= 202;
                 }
-            }else{
-                //
-            	$OrderDate       = $userinfo['orderdate'];
-                $tmpe['IsCheck'] = 2;
+                if($sub==0){
+                    $userinfo     = D('User')->where(array('iuid'=>$order['riuid']))->find();
+                    //修改用户最近订单日期/是否通过/等级/数量
+                    $tmpe['iuid'] = $order['riuid'];
+                    //产品等级
+                    $tmpe['DistributorType'] = D('Product')->where(array('ipid'=>$order['ipid']))->getfield('ip_after_grade');
+                    //购买产品次数+1
+                    $tmpe['Number']          = $userinfo['number']+1;
+                    //number 购买产品的次数
+                    if($userinfo['number']==0){
+                        //支付日期
+                        $tmpe['OrderDate']= date("m/d/Y h:i:s A");
+                        $OrderDate        = date("Y-m-d",strtotime("-1 month",time()));
+                    }else{
+                        $OrderDate        = $userinfo['orderdate'];
+                    }
+                    $addactivation        = D('Activation')->addAtivation($OrderDate,$order['riuid'],$order['ir_receiptnum']);
+                    //修改用户信息
+                    $update    = D('User')->save($tmpe);
+                }
+                $status  = array(
+                    'ir_status'  =>$ir_status,
+                    'ir_unpaid'  =>$sub,
+                    'ir_unpoint' =>$unp
+                );
+                //更新订单信息
+                $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+                if($upreceipt){
+                    echo 'success';
+                }
             }
-            //产品等级
-            $tmpe['DistributorType'] = D('Product')->where(array('ipid'=>$receipt['ipid']))->getfield('ip_after_grade');
-            //购买产品次数+1
-            $tmpe['Number']          = $find['number']+1;
-            //用户的激活记录
-            $activaDate = D('Activation')->where(array('iuid'=>$receipt['riuid'],'is_tick'=>1))->order('datetime desc')->getfield('datetime');
-
-            if(empty($activaDate)){
-                $activa = $OrderDate;
-            }else{
-                $activa = $activaDate;
-            }
-            $day = date('d',strtotime($OrderDate));
-            if($day>=28){
-                $allday = 28;
-            }else{
-                $allday = $day;
-            }
-            $ddd = $allday-1;
-            if($ddd>=10){
-                $oneday = $ddd;
-            }else{
-                $oneday = '0'.$ddd;
-            }
-            // for($i=0;$i<$receipt['ir_productnum'];$i++) {
-                //删除原先未激活，添加激活
-                $time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
-                $year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
-                $endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
-                $delete= D('Activation')->where(array('iuid'=>$receipt['riuid'],'datetime'=>$time))->delete();
-                $where =array('iuid'=>$receipt['riuid'],'ir_receiptnum'=>$map['outer_trade_no'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
-                $save  = D('Activation')->add($where);
-            // }
-
-			$status  = array(
-				'ir_status'  =>2,
-				'ir_paytype' =>4,
-                'ir_paytime' =>time()
-			);
-            //更新订单信息
-        	$upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($status);
-            //修改用户信息
-            $update    = D('User')->save($tmpe);
-        	if($upreceipt){
-        		//通知畅捷完成支付
-                // 清除session
-				unset($_SESSION['user']['time']);
-                // echo "success";
-				$this->redirect('Home/Purchase/myOrder');
-
-        	}
 		}
     }
-
+    /**
+    *
+    **/
+    public function getPayUrl(){
+        $pay_receiptnum = I('get.ir_receiptnum');
+        $ir_receiptnum  = D('Receiptson')->where(array('pay_receiptnum'=>$pay_receiptnum))->getField('ir_receiptnum');
+        $order          = D('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
+        if($order['ir_unpaid']==0){
+            $this->redirect('Home/Purchase/center');
+        }else{
+            if($order['ir_ordertype'] == 1){
+                $this->redirect('Home/Pay/choosePay1',array('ir_unpoint'=>$order['ir_unpoint'],'ir_price'=>$order['ir_price'],'ir_point'=>$order['ir_point'],'ir_unpaid'=>$order['ir_unpaid'],'ir_receiptnum'=>$ir_receiptnum));
+            }else{
+                $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$order['ir_unpoint'],'ir_price'=>$order['ir_price'],'ir_point'=>$order['ir_point'],'ir_unpaid'=>$order['ir_unpaid'],'ir_receiptnum'=>$ir_receiptnum));
+            }
+        }
+     }
 
     /**
     * 购买产品订单状态查询
@@ -642,8 +634,8 @@ class PurchaseController extends HomeBaseController{
     public function checkreceipt(){
         $ir_receiptnum = I('post.ir_receiptnum');
         //订单状态查询
-        $receipt       = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
-        if($receipt['ir_status'] == 2){
+        $receipt       = M('Receiptson')->where(array('pay_receiptnum'=>$ir_receiptnum))->find();
+        if($receipt['status'] == 2){
             //支付成功
             $data['ir_price'] = $receipt['ir_price'];
             $data['status'] = 1;
