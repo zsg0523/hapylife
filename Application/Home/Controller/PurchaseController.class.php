@@ -265,6 +265,9 @@ class PurchaseController extends HomeBaseController{
             case '3':
                 $con = '月费单';
                 break;
+            case '4' :
+                $con = '重销单';
+                break;
         }
         if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
             $this->error('请先填写个人信息的地区和详细地址');

@@ -14,7 +14,7 @@
     	
     	.note{width: 96%;height:40px;margin: auto; border-bottom:#eeeef0 1px solid;font-size: 15px;line-height:40px;background:#fff  no-repeat;background-size:8px 13px;}
     	.note_date{width: 44%;height:40px;float: left;font-size:12px;overflow: hidden;}
-    	.note_increase{width: 28%;height:40px;float:left;color: #1DBD8D;}
+    	.note_increase{width: 28%;height:40px;float:left;}
     	.note_reduce{width: 28%;height:40px;float:left;color: #FF0000;}
     	
     	.title{width: 96%;height:40px;margin: auto; background-color: #fff;font-size:1em;line-height: 40px;color:#000;border-bottom:#CCCCCC 1px solid;}
@@ -41,7 +41,11 @@
 				<div class="note">
 					<div class="note_date">{$v['date']}</div>
 					<div class="note_increase">{$v['type']}</div>
-					<div class="note_reduce">{$v['syslog']}{$v['point']}</div>
+                    <if condition="$v['syslog'] eq '+'">
+                       <div class="note_reduce" style="color: #1DBD8D">{$v['syslog']}{$v['point']}</div>
+                    <else />
+                        <div class="note_reduce">{$v['syslog']}{$v['point']}</div>
+                    </if>
 				</div>
             </foreach>	
 		</div>

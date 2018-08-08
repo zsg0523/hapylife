@@ -174,20 +174,6 @@ class HapylifePointController extends HomeBaseController{
     }
 
     /**
-    * 转账EP确认密码
-    **/ 
-    public function toCheckPasswordEP(){
-        $data = I('post.');
-        if($data){
-            $data['status'] = 1;
-            $this->ajaxreturn($data);
-        }else{
-            $sample['status'] = 0;
-            $this->ajaxreturn($sample);
-        }
-    }
-
-    /**
     * 生成订单
     **/
     public function receiptlist(){
@@ -465,6 +451,8 @@ class HapylifePointController extends HomeBaseController{
                     'data' => $data,
                     'dates' => $dates
                     );
+        p($assign);
+        die;
         if(!empty($assign['data'])){
             $assign['status'] = 1;
             $this->ajaxreturn($assign);
