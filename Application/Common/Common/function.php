@@ -2814,3 +2814,4 @@ function createCode($url,$qrcodeName){
     $writer = new \BaconQrCode\Writer($renderer);
     $writer->writeFile($url,$qrcodeName);
 }
+

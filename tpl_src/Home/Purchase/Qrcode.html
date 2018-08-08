@@ -104,6 +104,7 @@
 			
 		});
 		function judgeOK(){
+		 	var  ir_receiptnum=$('#ir_receiptnum').val();
 			$.ajax({
 				type:"post",
 				url:"http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/checkreceipt",
@@ -116,7 +117,7 @@
 					
 					if(ret.status==1){
 						console.log(ret.msg);
-						window.location.href="{:U('Home/Purchase/purchase')}";
+						window.location.href="{:U('Home/Purchase/getPayUrl/ir_receiptnum/"+ir_receiptnum+"')}";
 					}else{
 						console.log(ret.msg);
 						setTimeout(function() { judgeOK(); },1000);
