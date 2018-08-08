@@ -143,8 +143,9 @@ class PayController extends HomeBaseController{
                             $change_receipt = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($maps);
                             if($change_receipt){
                                 // 支付完成
-                                $data['status'] = 1;
-                                $this->ajaxreturn($data);
+                                // $data['status'] = 1;
+                                // $this->ajaxreturn($data);
+                                $this->redirect('Home/Purchase/center');
                             }
                         }else{
                             $maps = array(
@@ -155,8 +156,9 @@ class PayController extends HomeBaseController{
                             $change_receipts = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($maps);
                             if($change_receipts){
                                 // 支付完成一部分
-                                $data['status'] = 3;
-                                $this->ajaxreturn($data);
+                                // $data['status'] = 3;
+                                // $this->ajaxreturn($data);
+                                $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum']));
                             }
                         }
                     }
