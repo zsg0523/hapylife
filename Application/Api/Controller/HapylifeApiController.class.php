@@ -1021,7 +1021,7 @@ class HapylifeApiController extends HomeBaseController{
     }
 
     /**
-    * 产品 1收购 2升级 3月费
+    * 产品 1首购 2升级 3月费
     **/
     public function upgrade(){
         $iuid  = I('post.iuid');
