@@ -33,7 +33,7 @@ class PayController extends HomeBaseController{
                         $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
                         break;
                     case '2':
-                        $this->redirect('Home/Pay/payInt',array('ir_receiptnum'=>$ir_payreceiptnum)); 
+                        $this->redirect('Home/Pay/payInt',array('ir_receiptnum'=>$pay_receiptnum)); 
                         break;
                     case '4':
                         $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
@@ -71,7 +71,11 @@ class PayController extends HomeBaseController{
         // 获取用户信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
         // 获取订单信息
-        $receipt = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
+        $receipt = M('Receiptson')
+                    ->alias('rs')
+                    ->join('hapylife_receipt AS r ON rs.ir_receiptnum = r.ir_receiptnum')
+                    ->where(array('pay_receiptnum'=>$ir_receiptnum))
+                    ->find();
         p($receipt);
         die;
         // 用户剩余积分

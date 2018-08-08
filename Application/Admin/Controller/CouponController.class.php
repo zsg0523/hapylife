@@ -228,7 +228,7 @@ class CouponController extends AdminBaseController{
 		if($result){
 			$res = M('CouponGroups')->where(array('cid'=>$id))->delete();
 		}
-		if($res){
+		if($result){
 			$this->redirect('Admin/Coupon/coupon');
 		}else{
 			$this->error('删除失败');

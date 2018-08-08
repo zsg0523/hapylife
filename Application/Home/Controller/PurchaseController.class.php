@@ -56,7 +56,7 @@ class PurchaseController extends HomeBaseController{
 	* 购买礼包
 	**/
 	public function purchase(){
-		$iuid  = $_SESSION['user']['id'];
+        $iuid  = $_SESSION['user']['id'];
         $find  = M('User')->where(array('iuid'=>$iuid))->find();
         $type  = trim($find['distributortype']);
         $mtype = trim($find['customertype']);
@@ -75,13 +75,13 @@ class PurchaseController extends HomeBaseController{
             );
         }
         
-        $product = D('Product')->where($tmpe)->order('is_sort desc')->select();
-
+        $products = D('Product')->where($tmpe)->order('is_sort desc')->select();
+        $an_pro = M('Product')->where(array('ip_type'=>4))->select();
+        $product = array_merge($products,$an_pro);
         foreach ($product as $key => $value) {
             $data[$key]         = $value; 
             $data[$key]['show'] = 1; 
         }
-        // p($tmpe);die;
         $this->assign('product',$data);
 		$this->display();
 	}
@@ -319,7 +319,7 @@ class PurchaseController extends HomeBaseController{
         $log = array(
             'iuid' =>$iuid,
             'content'   =>$content,
-            'action'    =>0,
+            'action'    =>1,
             'type'      =>2,
             'date'      =>date('Y-m-d H:i:s')          
         );

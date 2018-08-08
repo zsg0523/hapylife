@@ -52,7 +52,7 @@
 	</div>
 	<div class="main row">
 		<if condition="$Think.session.user.status eq 1">
-			<volist id='v' name='product'>
+			<foreach name="product" item="v">
 				<div class="giftPackage col-xs-12 col-sm-12 col-md-12" id="giftPackage">
 					<div class="icon"><img src="{$v.ip_picture_zh}"></div>
 					<div class="intro">
@@ -66,7 +66,7 @@
 					</div>
 					
 				</div>
-		    </volist>
+		    </foreach>
 		<else />
 		</if>
 	</div>
