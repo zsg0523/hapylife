@@ -439,8 +439,8 @@ class PurchaseController extends HomeBaseController{
                     'ir_paytype' =>1,
                     'status'  =>2,
                     'paytime'=>time(),
-                    'inner_trade_no' => $data['ipsbillno'],
-                    'trade_status' => $data['msg']
+                    'ips_trade_no' => $data['ipsbillno'],
+                    'ips_trade_status' => $data['msg']
                 );
                 $change_orderstatus = M('Receiptson')->where(array('pay_receiptnum'=>$data['billno']))->save($map);
                 if($change_orderstatus){
@@ -576,34 +576,172 @@ class PurchaseController extends HomeBaseController{
                     $ir_status= 202;
                 }
                 if($sub==0){
-                    $userinfo     = D('User')->where(array('iuid'=>$order['riuid']))->find();
-                    //修改用户最近订单日期/是否通过/等级/数量
-                    $tmpe['iuid'] = $order['riuid'];
-                    //产品等级
-                    $tmpe['DistributorType'] = D('Product')->where(array('ipid'=>$order['ipid']))->getfield('ip_after_grade');
-                    //购买产品次数+1
-                    $tmpe['Number']          = $userinfo['number']+1;
-                    //number 购买产品的次数
-                    if($userinfo['number']==0){
-                        //支付日期
-                        $tmpe['OrderDate']= date("m/d/Y h:i:s A");
-                        $OrderDate        = date("Y-m-d",strtotime("-1 month",time()));
+                    //判断是否新代理注册
+                    if($order['htid']){
+                        $tmpeArr = M('Tempuser')->where(array('htid'=>$order['htid']))->find();
+                        //添加新用户
+                        $keyword= 'HPL';
+                        $custid = M('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
+                        if(empty($custid)){
+                            $CustomerID = 'HPL00000001';
+                        }else{
+                            $num   = substr($custid,3);
+                            $nums  = $num+1;
+                            $count = strlen($nums);
+                            switch ($count) {
+                                case '1':
+                                    $CustomerID = 'HPL0000000'.$nums;
+                                    break;
+                                case '2':
+                                    $CustomerID = 'HPL000000'.$nums;
+                                    break;
+                                case '3':
+                                    $CustomerID = 'HPL00000'.$nums;
+                                    break;
+                                case '4':
+                                    $CustomerID = 'HPL0000'.$nums;
+                                    break;
+                                case '5':
+                                    $CustomerID = 'HPL000'.$nums;
+                                    break;
+                                case '6':
+                                    $CustomerID = 'HPL00'.$nums;
+                                    break;
+                                case '7':
+                                    $CustomerID = 'HPL0'.$nums;
+                                    break;
+                                default:
+                                    $CustomerID = 'HPL'.$nums;
+                                    break;
+                             } 
+                        }
+                        //用户资料
+                        $tmpe = array(
+                            'EnrollerID'  =>$tmpeArr['enrollerid'],
+                            'Sex'         =>$tmpeArr['sex'],
+                            'LastName'    =>$tmpeArr['lastname'],
+                            'FirstName'   =>$tmpeArr['firstname'],
+                            'Email'       =>$tmpeArr['email'],
+                            'PassWord'    =>md5($tmpeArr['password']),
+                            'acid'        =>$tmpeArr['acid'],
+                            'acnumber'    =>$tmpeArr['acnumber'],
+                            'Phone'       =>$tmpeArr['phone'],
+                            'ShopAddress1'=>$tmpeArr['shopaddress1'],
+                            'ShopArea'    =>$tmpeArr['shoparea'],
+                            'ShopCity'    =>$tmpeArr['shopcity'],
+                            'ShopProvince'=>$tmpeArr['shopprovince'],
+                            'ShopCountry' =>$tmpeArr['shopcountry'],
+                            'Idcard'      =>$tmpeArr['idcard'],
+                            'JustIdcard'  =>$tmpeArr['justidcard'],
+                            'BackIdcard'  =>$tmpeArr['backidcard'],
+                            'Language'    =>$tmpeArr['language'],
+                            'EnLastName'  =>$tmpeArr['enlastname'],
+                            'EnFirstName' =>$tmpeArr['enfirstname'],
+                            'EnMiddleName'=>$tmpeArr['enmiddlename'],
+                            'DeviceType'  =>$tmpeArr['devicetype'],
+                            'Browser'     =>$tmpeArr['browser'],
+                            'PaymentType' =>$tmpeArr['paymenttype'],
+                            'BankName'    =>$tmpeArr['bankname'],
+                            'BankAccount' =>$tmpeArr['bankaccount'],
+                            'BankProvince'=>$tmpeArr['bankprovince'],
+                            'BankCity'    =>$tmpeArr['bankcity'],
+                            'BankArea'    =>$tmpeArr['bankarea'],
+                            'SubName'     =>$tmpeArr['subname'],
+                            'AccountType' =>$tmpeArr['accounttype'],
+                            'CustomerID'  =>$CustomerID,
+                            'OrderDate'   =>date("m/d/Y h:i:s A"),
+                            'Number'      =>1,
+                            'MailingProvince'    =>$tmpeArr['mailingprovince'],
+                            'TermsAndConditions' =>1,
+                            'DeviceGeolocation'  =>$tmpeArr['devicegeolocation'],
+                            'BrowserVersion'     =>$tmpeArr['browserversion'],
+                            'DistributorType'    =>D('Product')->where(array('ipid'=>$order['ipid']))->getfield('ip_after_grade'),
+                            'JoinedOn'    => time(),
+                        );
+                        $update     = M('User')->add($tmpe);       
+                        $riuid      = $update;
+                        $OrderDate  = date("Y-m-d",strtotime("-1 month",time()));
+                        $userinfo= M('User')->where(array('CustomerID'=>$CustomerID))->find();
+                        $status  = array(
+                            'ir_status'  =>$ir_status,
+                            'rCustomerID'=>$CustomerID,
+                            'riuid'      =>$userinfo['iuid'],
+                            'ia_name'    =>$userinfo['lastname'].$userinfo['firstname'],
+                            'ia_name_en' =>$userinfo['enlastname'].$userinfo['enfirstname'],
+                            'ia_phone'   =>$userinfo['phone'],
+                            'ia_address' =>$userinfo['shopaddress1'],
+                            'ir_unpaid'  =>$sub,
+                            'ir_unpoint' =>$unp
+                        );
+                        //更新订单信息
+                        $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+                        // $usa    = new \Common\UsaApi\Usa;
+                        // $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
+                        // if(!empty($result['result'])){
+                        //     $log = addUsaLog($result['result']);
+                        //     $maps = json_decode($result['result'],true);
+                        //     $wv  = array(
+                        //                 'wvCustomerID' => $maps['wvCustomerID'],
+                        //                 'wvOrderID'    => $maps['wvOrderID']
+                        //             );
+                        //     $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
+                        //     if($res){
+                        //         $templateId ='164137';
+                        //         $params     = array();
+                        //         $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                        //         if($sms['errmsg'] == 'OK'){
+                        //             $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->find();
+                        //             $contents = array(
+                        //                         'acnumber' => $userinfo['acnumber'],
+                        //                         'phone' => $userinfo['phone'],
+                        //                         'operator' => '系统',
+                        //                         'addressee' => $status['ia_name'],
+                        //                         'product_name' => $receiptlist['product_name'],
+                        //                         'date' => time(),
+                        //                         'content' => '恭喜您注册成功，请注意查收邮件'
+                        //             );
+                        //             $logs = M('SmsLog')->add($contents);
+                        //         }
+                        //     }
+                        // }
                     }else{
-                        $OrderDate        = $userinfo['orderdate'];
+                        $userinfo   = D('User')->where(array('iuid'=>$order['riuid']))->find();
+                        //修改用户最近订单日期/是否通过/等级/数量
+                        $tmpe['iuid'] = $order['riuid'];
+                        //产品等级
+                        $tmpe['DistributorType'] = D('Product')->where(array('ipid'=>$order['ipid']))->getfield('ip_after_grade');
+                        //购买产品次数+1
+                        $tmpe['Number']          = $userinfo['number']+1;
+                        //number 购买产品的次数
+                        if($userinfo['number']==0){
+                            //支付日期
+                            $tmpe['OrderDate']= date("m/d/Y h:i:s A");
+                            $OrderDate        = date("Y-m-d",strtotime("-1 month",time()));
+                        }else{
+                            $OrderDate        = $userinfo['orderdate'];
+                        }
+                        //修改用户信息
+                        $update    = D('User')->save($tmpe);
+                        $riuid     = $order['riuid'];
+                        $status  = array(
+                            'ir_status'  =>$ir_status,
+                            'ir_unpaid'  =>$sub,
+                            'ir_unpoint' =>$unp
+                        );                   
+                        //更新订单信息
+                        $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
                     }
-                    $addactivation        = D('Activation')->addAtivation($OrderDate,$order['riuid'],$order['ir_receiptnum']);
-                    //修改用户信息
-                    $update    = D('User')->save($tmpe);
-                }
-                $status  = array(
-                    'ir_status'  =>$ir_status,
-                    'ir_unpaid'  =>$sub,
-                    'ir_unpoint' =>$unp
-                );
-                //更新订单信息
-                $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
-                if($upreceipt){
-                    echo 'success';
+                    if($upreceipt){    
+                        $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$order['ir_receiptnum']);
+                    }
+                }else{
+                    $status  = array(
+                        'ir_status'  =>$ir_status,
+                        'ir_unpaid'  =>$sub,
+                        'ir_unpoint' =>$unp
+                    );                   
+                    //更新订单信息
+                    $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
                 }
             }
 		}
