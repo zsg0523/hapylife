@@ -10,7 +10,7 @@ class ActivationModel extends BaseModel{
 	**/
 	public function addAtivation($OrderDate,$iuid,$receiptnum){
 		//查看是否有用户的激活记录
-        $activaDate = D('Activation')->where(array('iuid'=>$order['riuid'],'is_tick'=>1))->order('datetime desc')->getfield('datetime');
+        $activaDate = D('Activation')->where(array('iuid'=>$iuid,'is_tick'=>1))->order('datetime desc')->getfield('datetime');
         if(empty($activaDate)){
             $activa = $OrderDate;
         }else{
