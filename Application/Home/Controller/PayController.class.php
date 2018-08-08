@@ -15,33 +15,48 @@ class PayController extends HomeBaseController{
         $ir_price        = I('post.ir_unpaid');
         $pay_receiptnum  = date('YmdHis').rand(100000, 999999);
         $iuid            = D('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->getfield('riuid');
-        $mape            = array(
-            'ir_receiptnum'   =>$ir_receiptnum,
-            'ip_paytype'      =>$ip_paytype,
-            'ir_price'        =>$ir_price,
-            'pay_receiptnum'  =>$pay_receiptnum,
-            'riuid'           =>$iuid,
-            'cretime'         =>time()
-        );
+        if($ip_paytype == 2){
+            $ir_prices = bcmul($ir_price,100,2);
+            $mape            = array(
+                'ir_receiptnum'   =>$ir_receiptnum,
+                'ip_paytype'      =>$ip_paytype,
+                'ir_price'        =>$ir_prices,
+                'pay_receiptnum'  =>$pay_receiptnum,
+                'riuid'           =>$iuid,
+                'cretime'         =>time(),
+                'ir_point'        =>$ir_price
+            );
+        }else{
+            $ir_prices = bcdiv($ir_price,100,2);
+            $mape            = array(
+                'ir_receiptnum'   =>$ir_receiptnum,
+                'ip_paytype'      =>$ip_paytype,
+                'ir_price'        =>$ir_price,
+                'pay_receiptnum'  =>$pay_receiptnum,
+                'riuid'           =>$iuid,
+                'cretime'         =>time(),
+                'ir_point'        =>$ir_prices
+            );
+        }
         if($ir_price>0){
             $add = D('receiptson')->add($mape);
             if($add){
-             	if($ip_paytype==1){
-             		$this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
-             	}else if($ip_paytype==4){
-             		$this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
-             	}
-                // switch ($ip_paytype) {
-                //     case '1':
-                //         $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
-                //         break;
-                //     case '2':
-                //         $this->redirect('Home/Pay/payInt',array('ir_receiptnum'=>$pay_receiptnum)); 
-                //         break;
-                //     case '4':
-                //         $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
-                //         break;
-                // }
+             	// if($ip_paytype==1){
+             	// 	$this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
+             	// }else if($ip_paytype==4){
+             	// 	$this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
+             	// }
+                switch ($ip_paytype) {
+                    case '1':
+                        $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
+                        break;
+                    case '2':
+                        $this->redirect('Home/Pay/toCheckPoint',array('ir_receiptnum'=>$pay_receiptnum)); 
+                        break;
+                    case '4':
+                        $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
+                        break;
+                }
             }else{
                $this->error('系统超时,请重新提交'); 
             }
@@ -66,6 +81,13 @@ class PayController extends HomeBaseController{
         }
     }
 
+    public function toCheckPoint(){
+        $ir_receiptnum = I('get.ir_receiptnum');
+        $receipt = M('receiptson')->where(array('pay_receiptnum'=>$ir_receiptnum))->find();
+        $this->assign('data',$receipt);
+        $this->display();
+    }
+
     // 积分支付
     public function payInt(){
         $iuid = $_SESSION['user']['id'];
@@ -74,12 +96,10 @@ class PayController extends HomeBaseController{
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
         // 获取子订单信息
         $receiptson = M('Receiptson')->where(array('pay_receiptnum'=>$ir_receiptnum))->find();
-        // 计算子订单积分
-        $pointSon = $receiptson['ir_price']/100;
         // 获取父订单信息
         $receipt = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->find();
         // 用户剩余积分
-        $residue = bcsub($userinfo['iu_point'],$pointSon,2);
+        $residue = bcsub($userinfo['iu_point'],$receiptson['ir_point'],2);
         if($residue>0){
             //修改用户积分
             $message = array(
@@ -97,7 +117,7 @@ class PayController extends HomeBaseController{
                 $change_orderstatus = M('Receiptson')->where(array('pay_receiptnum'=>$ir_receiptnum))->save($map);
                 if($change_orderstatus){
                     //生成子订单日志记录
-                    $content = '订单:'.$ir_receiptnum.'支付成功,扣除Ep:'.$pointSon.',剩余Ep:'.$residue;
+                    $content = '订单:'.$ir_receiptnum.'支付成功,扣除Ep:'.$receiptson['ir_point'].',剩余Ep:'.$residue;
                     $log     = array(
                                 'iuid' => $iuid,
                                 'name' => $userinfo['customerid'],
@@ -110,7 +130,7 @@ class PayController extends HomeBaseController{
                     $addlog  = M('Log')->add($log);
                     if($addlog){
                         // 父订单待支付积分
-                        $ir_unpoint = bcsub($receipt['ir_point'],$pointSon,2);
+                        $ir_unpoint = bcsub($receipt['ir_point'],$receiptson['ir_point'],2);
                         // 父订单待支付金额
                         $ir_unpaid = bcsub($receipt['ir_price'],$receiptson['ir_price'],2);
                         // 修改父订单状态
