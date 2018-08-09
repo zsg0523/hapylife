@@ -19,7 +19,7 @@ class PayController extends HomeBaseController{
             $ir_prices = bcmul($ir_price,100,2);
             $mape            = array(
                 'ir_receiptnum'   =>$ir_receiptnum,
-                'ip_paytype'      =>$ip_paytype,
+                'ir_paytype'      =>$ip_paytype,
                 'ir_price'        =>$ir_prices,
                 'pay_receiptnum'  =>$pay_receiptnum,
                 'riuid'           =>$iuid,
@@ -30,7 +30,7 @@ class PayController extends HomeBaseController{
             $ir_prices = bcdiv($ir_price,100,2);
             $mape            = array(
                 'ir_receiptnum'   =>$ir_receiptnum,
-                'ip_paytype'      =>$ip_paytype,
+                'ir_paytype'      =>$ip_paytype,
                 'ir_price'        =>$ir_price,
                 'pay_receiptnum'  =>$pay_receiptnum,
                 'riuid'           =>$iuid,
