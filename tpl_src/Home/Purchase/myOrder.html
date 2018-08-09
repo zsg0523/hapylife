@@ -72,7 +72,8 @@
 							<li class="col-xs-12 col-sm-12  col-md-2">&nbsp;单价:<span>￥{$v.ip_price_rmb}</span></li>
 							<li class="col-xs-12 col-sm-12  col-md-2">&nbsp;数量:<span>{$v.product_num}</span></li>
 							<li class="col-xs-12 col-sm-12  col-md-2">&nbsp;总价:<span>￥{$v.ir_price}</span></li>
-							<li class="col-xs-12 col-sm-12  col-md-3">
+							<li class="col-xs-12 col-sm-12  col-md-2">&nbsp;待付款:<span>￥{$v.ir_unpaid}</span></li>
+							<li class="col-xs-12 col-sm-12  col-md-2">
 								&nbsp;
 							<if condition="$v['ir_status'] eq 0">交易状态:<span>待付款</span>
 		                        <elseif condition="$v['ir_status'] eq 1"/>交易状态:<span>待审核</span>
@@ -80,18 +81,18 @@
 		                        <elseif condition="$v['ir_status'] eq 3"/>交易状态:<span>已发货待收货</span>
 		                        <elseif condition="$v['ir_status'] eq 4"/>交易状态:<span>已收货待评价</span>
 		                        <elseif condition="$v['ir_status'] eq 5"/>交易状态:<span>已完成</span>
-		                        <elseif condition="$v['ir_status'] eq 202"/>交易状态:<span>未完成全部支付</span>
+		                        <elseif condition="$v['ir_status'] eq 202"/>交易状态:<span>未全额支付</span>
 		                        <else /><span>审核未通过</span>
 		                    </if>
 							</li>
 							<if condition="$v['ir_status'] eq 0 OR $v['ir_status'] eq 202">
 								<li class="col-xs-6 col-sm-6 col-md-1">
 									<if condition="$v['ir_ordertype'] eq 1">
-										<a href="{:U('Home/Pay/choosePay1',array('ir_unpoint'=>$v['ir_unpoint'],'ir_price'=>$v['ir_price'],'ir_point'=>$v['ir_point'],'ir_unpaid'=>$v['ir_unpaid'],'ir_receiptnum'=>$v['ir_receiptnum']))}" id="pay" target="_blank">
+										<a href="{:U('Home/Pay/choosePay1',array('ir_unpoint'=>$v['ir_unpoint'],'ir_price'=>$v['ir_price'],'ir_point'=>$v['ir_point'],'ir_unpaid'=>$v['ir_unpaid'],'ir_receiptnum'=>$v['ir_receiptnum']))}" id="pay">
 											去支付
 										</a>
 									<elseif condition="$v['ir_ordertype'] eq 3" />
-										<a href="{:U('Home/Pay/choosePay',array('ir_unpoint'=>$v['ir_unpoint'],'ir_price'=>$v['ir_price'],'ir_point'=>$v['ir_point'],'ir_unpaid'=>$v['ir_unpaid'],'ir_receiptnum'=>$v['ir_receiptnum']))}" id="pay" target="_blank">
+										<a href="{:U('Home/Pay/choosePay',array('ir_unpoint'=>$v['ir_unpoint'],'ir_price'=>$v['ir_price'],'ir_point'=>$v['ir_point'],'ir_unpaid'=>$v['ir_unpaid'],'ir_receiptnum'=>$v['ir_receiptnum']))}" id="pay" >
 											去支付
 										</a>
 									</if>
