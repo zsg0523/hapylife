@@ -18,7 +18,7 @@ class UserModel extends BaseModel{
         array('EnrollerID','require','推荐人不能为空！'), 
         array('Email','/^\w+([.]\w+)?[@]\w+[.]\w+([.]\w+)?$/','请输入正确的电子邮箱'),
         array('Phone','/(^(0[0-9]{2,3}\-)?([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$)|(^((\(\d{3}\))|(\d{3}\-))?(1[358]\d{9})$)/','请输入正确的电话号码'),
-        array('Phone','','该号码已被注册',0,'unique'),
+        // array('Phone','','该号码已被注册',0,'unique'),
         array('ShopProvince','require','请填写所在省'), 
         array('ShopCity','require','请填写所在市'), 
         array('ShopArea','require','请填写所在区'), 
