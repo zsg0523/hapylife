@@ -129,36 +129,68 @@ class PayController extends HomeBaseController{
                             );
                     $addlog  = M('Log')->add($log);
                     if($addlog){
-                        // 父订单待支付积分
-                        $ir_unpoint = bcsub($receipt['ir_point'],$receiptson['ir_point'],2);
-                        // 父订单待支付金额
-                        $ir_unpaid = bcsub($receipt['ir_price'],$receiptson['ir_price'],2);
-                        // 修改父订单状态
-                        if($ir_unpoint == 0 && $ir_unpaid == 0){
-                            $maps = array(
-                                'ir_unpoint' => $ir_unpoint,
-                                'ir_unpaid' => $ir_unpaid,
-                                'ir_status' => 2,
-                            );
-                            $change_receipt = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($maps);
-                            if($change_receipt){
-                                // 支付完成
-                                // $data['status'] = 1;
-                                // $this->ajaxreturn($data);
-                                $this->redirect('Home/Purchase/center');
-                            }
-                        }else{
-                            $maps = array(
-                                'ir_unpoint' => $ir_unpoint,
-                                'ir_unpaid' => $ir_unpaid,
-                                'ir_status' => 202,
-                            );
-                            $change_receipts = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($maps);
-                            if($change_receipts){
-                                // 支付完成一部分
-                                // $data['status'] = 3;
-                                // $this->ajaxreturn($data);
-                                $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum']));
+                        // 记录会员使用EP日志
+                        $content = $userinfo['customerid'].'在'.date('Y-m-d H:i:s').'时，消费出'.$receiptson['ir_point'].'EP到系统，剩EP余额'.$residue;
+                        $logs = array(
+                                    'pointNo' => $ir_receiptnum,
+                                    'iuid' => $iuid,
+                                    'hu_username' => $userinfo['lastname'].$userinfo['firstname'],
+                                    'hu_nickname' => $userinfo['customerid'],
+                                    'send' => $userinfo['customerid'],
+                                    'received' => '系统',
+                                    'getpoint' => $receiptson['ir_point'],
+                                    'pointtype' => 7,
+                                    'realpoint' => $receiptson['ir_point'],
+                                    'leftpoint' => $residue,
+                                    'date' => date('Y-m-d H:i:s'),
+                                    'handletime' => date('Y-m-d H:i:s'),
+                                    'content' => $content,
+                                    'status' => 2,
+                                    'whichApp' => 5,
+
+                                );
+                        $addlogs = M('Getpoint')->add($logs);
+                        if($addlogs){
+                            // 父订单待支付积分
+                            $ir_unpoint = bcsub($receipt['ir_unpoint'],$receiptson['ir_point'],2);
+                            // 父订单待支付金额
+                            $ir_unpaid = bcsub($receipt['ir_unpaid'],$receiptson['ir_price'],2);
+                            // 修改父订单状态
+                            if($ir_unpoint != 0 && $ir_unpaid != 0){
+                                $maps = array(
+                                    'ir_unpoint' => $ir_unpoint,
+                                    'ir_unpaid' => $ir_unpaid,
+                                    'ir_status' => 202,
+                                );
+                                $change_receipts = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($maps);
+                                if($change_receipts){
+                                    // 支付完成一部分
+                                    // $data['status'] = 3;
+                                    // $this->ajaxreturn($data);
+                                    // 获取产品类型
+                                    $ir_ordertype = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->getfield('ir_ordertype');
+                                    switch ($ir_ordertype) {
+                                        case '1':
+                                            $this->success('支付成功',U('Home/Pay/choosePay1',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
+                                            break;
+                                        case '3':
+                                            $this->success('支付成功',U('Home/Pay/choosePay',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
+                                            break;
+                                    }
+                                }
+                            }else{
+                                $maps = array(
+                                    'ir_unpoint' => $ir_unpoint,
+                                    'ir_unpaid' => $ir_unpaid,
+                                    'ir_status' => 2,
+                                );
+                                $change_receipt = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($maps);
+                                if($change_receipt){
+                                    // $data['status'] = 1;
+                                    // $this->ajaxreturn($data);
+                                    // 支付完成
+                                    $this->success('完成支付',U('Home/Purchase/center'));
+                                }
                             }
                         }
                     }
