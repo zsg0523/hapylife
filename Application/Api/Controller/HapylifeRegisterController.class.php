@@ -222,6 +222,10 @@ class HapylifeRegisterController extends HomeBaseController{
             'ir_price'=>$product['ip_price_rmb'],
             //订单总积分
             'ir_point'=>$product['ip_point'],
+            //订单待付款总金额
+            'ir_unpaid'=>$product['ip_price_rmb'],
+            //订单待付款总积分
+            'ir_unpoint'=>$product['ip_point'],
             //订单备注
             'ir_desc'=>$con,
             //订单类型
