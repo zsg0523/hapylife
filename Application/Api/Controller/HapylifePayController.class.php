@@ -273,15 +273,15 @@ class HapylifePayController extends HomeBaseController{
 				                        $OrderDate  = date("Y-m-d",strtotime("-1 month",time()));
 				                        $userinfo= M('User')->where(array('CustomerID'=>$CustomerID))->find();
 				                        $status  = array(
-				                            'ir_status'  =>$ir_status,
+				                            'ir_status'  =>$maps['ir_status'],
 				                            'rCustomerID'=>$CustomerID,
 				                            'riuid'      =>$userinfo['iuid'],
 				                            'ia_name'    =>$userinfo['lastname'].$userinfo['firstname'],
 				                            'ia_name_en' =>$userinfo['enlastname'].$userinfo['enfirstname'],
 				                            'ia_phone'   =>$userinfo['phone'],
 				                            'ia_address' =>$userinfo['shopaddress1'],
-				                            'ir_unpaid'  =>$sub,
-				                            'ir_unpoint' =>$unp
+				                            'ir_unpaid'  =>$maps['ir_unpaid'],
+                                            'ir_unpoint' =>$maps['ir_unpoint']
 				                        );
 				                        //更新订单信息
 				                        $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
@@ -308,7 +308,8 @@ class HapylifePayController extends HomeBaseController{
 				                                                'addressee' => $status['ia_name'],
 				                                                'product_name' => $receiptlist['product_name'],
 				                                                'date' => time(),
-				                                                'content' => '恭喜您注册成功，请注意查收邮件'
+				                                                'content' => '恭喜您注册成功，请注意查收邮件',
+				                                                'customerid' => $CustomerID
 				                                    );
 				                                    $logs = M('SmsLog')->add($contents);
 				                                }
