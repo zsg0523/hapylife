@@ -284,7 +284,7 @@ class HapylifePayController extends HomeBaseController{
                                             'ir_unpoint' =>$maps['ir_unpoint']
 				                        );
 				                        //更新订单信息
-				                        $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+				                        $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$order['ir_receiptnum']))->save($status);
 				                        $usa    = new \Common\UsaApi\Usa;
 				                        $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
 				                        if(!empty($result['result'])){
@@ -340,7 +340,7 @@ class HapylifePayController extends HomeBaseController{
 				                            'ir_unpoint' =>$unp
 				                        );                   
 				                        //更新订单信息
-				                        $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+				                        $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$order['ir_receiptnum']))->save($status);
 				                    }
 		                            if($upreceipt){
 		                                // 支付完成
@@ -747,8 +747,16 @@ class HapylifePayController extends HomeBaseController{
     public function registerSuccess(){
         $pay_receiptnum = I('post.pay_receiptnum');
         $ir_receiptnum  = M('Receiptson')->where(array('pay_receiptnum'=>$pay_receiptnum))->getfield('ir_receiptnum');
-        $data = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum,'ir_status'=>2))->find();
-        $this->ajaxreturn($data);
+        $receipt        = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
+        if($receipt['ir_status'] == 2){
+        	$data['status']        = 1;
+            $data                  = M('User')->where(array('CustomerID'=>$receipt['rcustomerid']))->find();
+            $data['ir_receiptnum'] = $ir_receiptnum; 
+            $this->ajaxreturn($data);
+        }else{
+            $data['status']        = 0;
+        	$this->ajaxreturn($data);
+        }
     }
 
 

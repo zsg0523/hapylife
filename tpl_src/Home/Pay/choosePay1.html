@@ -56,7 +56,6 @@
 					<div class="form-group">
 						<label for="">本次付款金额:</label>
 					    <input type="text" class="ir_unpaid" name="ir_unpaid" id="ir_unpaid"  value="{:I('get.ir_unpaid')}"/>
-					    <input type="text" class="ir_unpoint" name="ir_unpoint" id="ir_unpoint" value="{:I('get.ir_unpoint')}"/>
 					    <span class="priceunit" id="priceunit">RMB</span>
 					</div>
 				</div>
@@ -80,14 +79,18 @@
 		function changeRadio(val){
 			var inputs=$(val).find("input");
 			inputs[0].checked='checked';
-			if(inputs[0].value==4){
-				$('#priceunit').text('RMB');
-				$('#ir_unpaid').css('display','block');
-				$('#ir_unpoint').css('display','none');
+			var typevalue=$(":radio[name='ip_paytype']:checked").val();
+			if($('#priceunit').text()=='RMB'){
+				if(typevalue==2){
+					$('#priceunit').text('EP');
+					$("#ir_unpaid").val($("#ir_unpaid").val()/100.0);
+				}
 			}else{
-				$('#priceunit').text('EP');
-				$('#ir_unpaid').css('display','none');
-				$('#ir_unpoint').css('display','block');
+				if(typevalue==4){
+					$('#priceunit').text('RMB');
+					$("#ir_unpaid").val($("#ir_unpaid").val()*100);
+				}
+				
 			}
 		}
 		function topay(){
