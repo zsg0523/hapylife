@@ -19,7 +19,7 @@ class PayController extends HomeBaseController{
             $ir_prices = bcmul($ir_price,100,2);
             $mape            = array(
                 'ir_receiptnum'   =>$ir_receiptnum,
-                'ip_paytype'      =>$ip_paytype,
+                'ir_paytype'      =>$ip_paytype,
                 'ir_price'        =>$ir_prices,
                 'pay_receiptnum'  =>$pay_receiptnum,
                 'riuid'           =>$iuid,
@@ -30,7 +30,7 @@ class PayController extends HomeBaseController{
             $ir_prices = bcdiv($ir_price,100,2);
             $mape            = array(
                 'ir_receiptnum'   =>$ir_receiptnum,
-                'ip_paytype'      =>$ip_paytype,
+                'ir_paytype'      =>$ip_paytype,
                 'ir_price'        =>$ir_price,
                 'pay_receiptnum'  =>$pay_receiptnum,
                 'riuid'           =>$iuid,
@@ -282,6 +282,11 @@ class PayController extends HomeBaseController{
                                         );
                                         //更新订单信息
                                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+                                        // 添加激活记录
+                                        if($upreceipt){    
+                                            $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$receipt['ir_receiptnum']);
+                                        }
+                                        // 发送数据到usa
                                         $usa    = new \Common\UsaApi\Usa;
                                         $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
                                         if(!empty($result['result'])){
@@ -293,6 +298,7 @@ class PayController extends HomeBaseController{
                                                     );
                                             $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                                             if($res){
+                                                // 发送短信提示
                                                 $templateId ='164137';
                                                 $params     = array();
                                                 $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
@@ -305,9 +311,14 @@ class PayController extends HomeBaseController{
                                                                 'addressee' => $status['ia_name'],
                                                                 'product_name' => $receiptlist['product_name'],
                                                                 'date' => time(),
-                                                                'content' => '恭喜您注册成功，请注意查收邮件'
+                                                                'content' => '恭喜您注册成功，请注意查收邮件',
+                                                                'customerid' => $CustomerID
                                                     );
                                                     $logs = M('SmsLog')->add($contents);
+                                                    if($logs){
+                                                        // 支付完成
+                                                        $this->success('注册成功',U('Home/Register/new_regsuccess',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
+                                                    }
                                                 }
                                             }
                                         }
@@ -337,12 +348,12 @@ class PayController extends HomeBaseController{
                                         );                   
                                         //更新订单信息
                                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+                                        if($upreceipt){    
+                                            $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$receipt['ir_receiptnum']);
+                                        }
+                                        // 支付完成
+                                        $this->success('完成支付',U('Home/Purchase/center'));
                                     }
-                                    if($upreceipt){    
-                                        $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$receipt['ir_receiptnum']);
-                                    }
-                                    // 支付完成
-                                    $this->success('完成支付',U('Home/Purchase/center'));
                                 }
                             }
                         }
@@ -351,8 +362,15 @@ class PayController extends HomeBaseController{
             }
         }else{
             // 积分不足
-            $data['status'] = 0;
-            $this->ajaxreturn($data);
+            $ir_ordertype = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->getfield('ir_ordertype');
+            switch ($ir_ordertype) {
+                case '1':
+                    $this->error('积分不足',U('Home/Pay/choosePay1',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
+                    break;
+                case '3':
+                    $this->error('积分不足',U('Home/Pay/choosePay',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
+                    break;
+            }
         }
     }
 

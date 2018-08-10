@@ -25,6 +25,7 @@
     	.topay{width: 100%;height: 50px;border-top: 1px solid #DEDEDE;position: fixed;bottom: 0;left: 0;z-index: 2;background:#2490ed;color:#fff;
     	line-height: 50px;font-size: 16px;}
     	.ir_unpaid{width:30%;height: 30px;line-height: 30px;display: block;float: left;}
+    	.ir_unpoint{width:30%;height: 30px;line-height: 30px;display: none;float: left;}
     	.priceunit {width: 30%; height: 30px;line-height: 30px;display: block;float: left;text-align: left;}
     	
     	
@@ -55,7 +56,8 @@
 					</div>
 					<div class="form-group">
 						<label for="">本次付款金额:</label>
-					    <input type="text" class="ir_unpaid" name="ir_unpaid"  value="{:I('get.ir_unpaid')}"/>
+					    <input type="text" class="ir_unpaid" name="ir_unpaid" id="ir_unpaid" value="{:I('get.ir_unpaid')}"/>
+					    <input type="text" class="ir_unpoint" name="ir_unpoint" id="ir_unpoint" value="{:I('get.ir_unpoint')}"/>
 					    <span class="priceunit" id="priceunit">RMB</span>
 					</div>
 				</div>
@@ -82,8 +84,13 @@
 			inputs[0].checked='checked';
 			if(inputs[0].value==1){
 				$('#priceunit').text('RMB');
+				$('#ir_unpaid').css('display','block');
+				$('#ir_unpoint').css('display','none');
 			}else{
 				$('#priceunit').text('EP');
+				$('#ir_unpaid').css('display','none');
+				$('#ir_unpoint').css('display','block');
+
 			}
 		}
 		function topay(){

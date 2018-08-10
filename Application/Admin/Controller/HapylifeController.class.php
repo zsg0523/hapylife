@@ -875,15 +875,16 @@ class HapylifeController extends AdminBaseController{
 	public function send_sms(){
 		$data = I('post.');
 		$issend = I('post.is_send');
+		$remove = explode('-',$data['username']);
 		
 		if(!empty($issend)){
 			// 发送续费短信
 			$spotemplate = 146228;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
 			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
-			$spoparams = array($data['username'],$data['productnams']);
+			$spoparams = array($remove[0],$data['productnams']);
 		}
 
-        $sponsorSms    = D('Smscode')->sms($appid='1400096409',$appkey='fc1c7e21ab36fef1865b0a3110709c51',$data['phone'],$data['acnumber'],$spotemplate,$sposmsSign,$spoparams);
+        $sponsorSms    = D('Smscode')->sms($data['acnumber'],$data['phone'],$spoparams,$spotemplate);
         
         if($sponsorSms['errmsg']=='OK'){
         	if(!empty($issend)){
@@ -892,12 +893,13 @@ class HapylifeController extends AdminBaseController{
 				if($result){
 	        		$mape  = array(
 	                    'phone'   =>$data['phone'],
-	                    'content'    =>'亲爱的会员'.$data['username'].'，您购买的'.$data['productnams'].'物流信息出现问题，我们会有电话通知您，请留意接听。',
+	                    'content'    =>'亲爱的会员'.$remove[0].'，您购买的'.$data['productnams'].'物流信息出现问题，我们会有电话通知您，请留意接听。',
 	                    'acnumber'=>$data['acnumber'],
 	                    'date'    =>date('Y-m-d H:i:s'),
 	                    'operator' => $_SESSION['user']['username'],
 	                    'product_name' => $data['productnams'],
-	                    'addressee' => $data['username'],
+	                    'addressee' => $remove[0],
+	                    'customerid' => $remove[1]
 	                );
 	                $add = D('SmsLog')->add($mape);
 	                if($add){
@@ -942,31 +944,33 @@ class HapylifeController extends AdminBaseController{
 	// 发送短信
 	public function add_sends(){
 		$data = I('post.');
+		$remove = explode('-',$data['username']);
 		if($data['psd'] == 146228){
 			// 物流信息通知
 			$spotemplate = 146228;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
 			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
-			$spoparams = array($data['username'],$data['productnams']);
+			$spoparams = array($remove[0],$data['productnams']);
 		}
 
 		if($data['psd'] == 146227){
 			// 续费信息通知
 			$spotemplate = 146227;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
 			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
-			$spoparams = array($data['username'],$data['endtime']);
+			$spoparams = array($remove[0],$data['endtime']);
 		}
 
-        $sponsorSms    = D('Smscode')->sms($appid='1400096409',$appkey='fc1c7e21ab36fef1865b0a3110709c51',$data['phone'],$data['acnumber'],$spotemplate,$sposmsSign,$spoparams);
+        $sponsorSms    = D('Smscode')->sms($data['acnumber'],$data['phone'],$spoparams,$spotemplate);
         
         if($sponsorSms['errmsg']=='OK'){
         	if($data['psd'] == 146227){
 				$mape  = array(
                     'phone'   =>$data['phone'],
-                    'content'    =>'亲爱的会员'.$data['username'].'，这是系统提醒消息，请在'.$data['endtime'].'之前购买月费包。',
+                    'content'    =>'亲爱的会员'.$remove[0].'，这是系统提醒消息，请在'.$data['endtime'].'之前购买月费包。',
                     'acnumber'=>$data['acnumber'],
                     'date'    =>time(),
                     'operator' => $_SESSION['user']['username'],
-                    'addressee' => $data['username'],
+                    'addressee' => $remove[0],
+                    'customerid' => $remove[1]
                 );
                 $add = D('SmsLog')->add($mape);
                 if($add){
@@ -978,12 +982,13 @@ class HapylifeController extends AdminBaseController{
     		if($data['psd'] == 146228){
         		$mape  = array(
                     'phone'   =>$data['phone'],
-                    'content'    =>'亲爱的会员'.$data['username'].'，您购买的'.$data['productnams'].'物流信息出现问题，我们会有电话通知您，请留意接听。',
+                    'content'    =>'亲爱的会员'.$remove[0].'，您购买的'.$data['productnams'].'物流信息出现问题，我们会有电话通知您，请留意接听。',
                     'acnumber'=>$data['acnumber'],
                     'date'    =>time(),
                     'operator' => $_SESSION['user']['username'],
                     'product_name' => $data['productnams'],
-                    'addressee' => $data['username'],
+                    'addressee' => $remove[0],
+                    'customerid' => $remove[1]
                 );
                 $add = D('SmsLog')->add($mape);
                 if($add){
