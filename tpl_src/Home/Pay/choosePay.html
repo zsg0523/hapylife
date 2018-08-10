@@ -96,7 +96,12 @@
 		function topay(){
 			var form=$('#paymentInfo');
 			var ir_unpaid=$("input[name='ir_unpaid']").val();
+			var ir_unpoint=$("input[name='ir_unpoint']").val();
+			alert(ir_unpoint);
 			if(ir_unpaid>0&&ir_unpaid!=null){
+				form.submit();
+			}
+			if(ir_unpoint>0&&ir_unpoint!=null){
 				form.submit();
 			}
 		}

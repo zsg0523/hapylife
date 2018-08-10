@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<style>
+		body *{
+		    -webkit-tap-highlight-color: transparent;
+		     /*在一些手机上，如iphone，点击按钮等元素会出现点击态的背景色，设置为透明就看不出来了*/
+		    -webkit-user-select:none;
+		     /*设置元素内的文字及其子元素将不会被选中*/
+		}
+		html,body{margin: 0;padding: 0;}
+		.vifooter{height:50px;width:100%;/*background-color:#067bf5;*/margin: 0 auto;text-align: center;
+			display: flex;position: fixed;bottom: 0;left: 0;z-index: 20;}	
+		.vif p{color:#fff;font-size: 1em;flex: 1;} 
+    .vif2 p{width:100%;}  
+    .vif3 p{width:50%;}
+    .dpn{display:none;}
+        
+        
+        /*大屏幕*/
+		@media screen and (min-width:1200px){
+    	  .vifooter{width:1200px;text-align:center;left:18%;}
+    	}
+	</style>
+	<body>
+		<div class="vifooter vif vif3 btn">
+			<p class="send" condition="" onclick="csend()"></p> 
+			<p class="use"  is_used="" onclick="cuser()"></p> 
+			<p class="outdate"  isoutdate="" ></p>
+			
+			<input type="hidden" name="cu_id" id="cu_id" value="{$cu_id}"> 
+			<input type="hidden" name="iuid" id="iuid" value="{$iuid}">	
+			<div class="yname" hidden="hidden"></div>
+        </div>
+	</body>
+	<script type="text/javascript" src="__PUBLIC_JS__/jquery1.8.3.min.js" ></script>
+	<script>
+		//改变标题
+		function changeCommonFoot(name,status,used,yname,odate){
+			var btn=$(".btn");
+			var send=$(".send");
+			var use=$(".use");
+			var uid=$(".iuid");
+			var outdate=$(".outdate");
+    
+			send.attr("condition",status);
+			use.attr("is_used",used);
+			uid.attr("iuid",iuid);
+			outdate.attr("isoutdate",odate);
+        
+            $(".yname").html(yname);
+						
+		    if(status==0){
+				$(".vifooter").addClass("dpn");
+	        }else{
+	           send.html("转赠");
+	        }
+	        
+	        if(used==0){
+				$(".vifooter").removeClass("dpn"); 
+	            use.html("使用");
+	        }else if(used==1){
+				$(".vifooter").removeClass("dpn");
+	            use.html("已使用");
+	        }else{
+	            use.html("已转赠");
+	        }
+			    
+//			<!--1正常  2过期  3提前 -->
+			if(odate==1 || odate==3){
+										
+			}else{
+				outdate.html("已过期");
+			}
+					
+			if(odate==1 || odate == 3){		
+				if(name=='jfcoupon' || name=='zccoupon' ||name=='fwcoupon'||name=='zkcoupon'){ //积分券
+				    if(used==1||used==2){						 
+						if(status==0){  //把赠送按钮去掉						
+							send.addClass('dpn');
+							outdate.addClass('dpn');
+							btn.removeClass('vif3');
+							btn.addClass('vif2');
+						}
+						send.addClass('dpn');
+						outdate.addClass('dpn');
+						btn.removeClass('vif3');
+						btn.addClass('vif2');
+					}else{						 
+					  if(status==0){  //把赠送按钮去掉						
+					  	send.addClass('dpn');
+						outdate.addClass('dpn');
+					  	btn.removeClass('vif3');
+					  	btn.addClass('vif2');
+					  }
+					  outdate.addClass('dpn');
+							//显示两个按钮(转赠/使用)
+					}				
+				}else if(name=='cgcoupon'){
+					if(used==0){	 //未使用	
+						if(status==0){  //把赠送按钮去掉						
+							send.addClass('dpn');
+							outdate.addClass('dpn');
+							btn.removeClass('vif3');
+							btn.addClass('vif2');
+						}
+						send.addClass('dpn');
+						outdate.addClass('dpn');
+						btn.removeClass('vif3');
+						btn.addClass('vif2');					    
+					}else{  //已使用
+						send.addClass('dpn');
+						outdate.addClass('dpn');
+						btn.removeClass('vif3');
+						btn.addClass('vif2');
+					}	
+					
+				}else{  //其他券
+					if(used==0){	 //未使用	
+						if(status==0){
+					        $(".vifooter").addClass("dpn");
+							use.addClass('dpn');
+							outdate.addClass('dpn');
+							btn.removeClass('vif3');   
+							btn.addClass('vif2');         
+						}else{
+					        $(".vifooter").addClass("dpn");
+							use.addClass('dpn');
+							outdate.addClass('dpn');
+							btn.removeClass('vif3');   
+							btn.addClass('vif2');           
+						}
+					}else{  //已使用
+						send.addClass('dpn');
+						outdate.addClass('dpn');
+						btn.removeClass('vif3');
+						btn.addClass('vif2');
+					}		
+				}		
+			}else{		
+			    $(".vifooter").removeClass("dpn");
+				send.addClass('dpn');
+				use.addClass("dpn");
+				btn.removeClass('vif3');
+				btn.addClass('vif2');
+			}
+			
+			//页面最下面的按钮        
+	        if(name=='jfcoupon'){   //1.积分卷
+	            $(".vifooter").css('background-color','#067bf5');        
+	        }else if(name=='lpcoupon'){   //2.礼品卷
+	            $(".vifooter").css('background-color','#fd8d46');
+	        }else if(name=='rccoupon'){   //3.入场卷
+	            $(".vifooter").css('background-color','#ff6520');
+	        }else if(name=='xjcoupon'){   //4.现金卷
+	            $(".vifooter").css('background-color','#ffc900');
+	        }else if(name=='zkcoupon'){   //5.折扣卷
+	            $(".vifooter").css('background-color','#5613b8');
+	        }else if(name=='zccoupon'){   //7.註冊卷
+	            $(".vifooter").css('background-color','#3800b2');
+	        }else if(name=='fwcoupon'){   //8.服務卷
+	            $(".vifooter").css('background-color','#fd8444');
+	        }else if(name=='cgcoupon'){ //11.C01购买券
+	        	$(".vifooter").css('background-color','#000');
+	        }else{
+	        	
+	        }
+									
+		}
+		
+	    function csend(){
+        	var condition=$(".send").attr("condition");   
+        	var used=$(".use").attr("is_used");
+            var cu_id =  $('#cu_id').val();		
+		    var iuid =  $('#iuid').val();			
+			var yname=$(".yname").html();
+         
+        	if(used==0){
+	        	if(condition==1 ||condition==2){
+	                window.location.href="{:U('Home/Coupon/sendcoupondetail/iuid/"+iuid+"/cu_id/"+cu_id+"/yname/"+yname+"')}";
+	        	}else{
+	        		
+	        	}
+        	}else{
+        		alert("已使用");
+        	}
+      }
+        
+
+        function cuser(){
+          	var used=$(".use").attr("is_used");
+            var cu_id =  $('#cu_id').val();		
+            var iuid =  $('#iuid').val();	
+			var yname=$(".yname").html();
+            if(used==0){
+	            $.ajax({
+					type:"post",
+					url: "{:U('Home/Coupon/getName')}",
+					async:true, 
+					dataType: 'json',
+					data:{
+						iuid:iuid,
+					},
+					success:function(ret){
+						if(ret.status){
+							var zh=ret.hu_nickname;  //用户账号
+							var name=ret.hu_username_en; //用户名
+							var se=confirm(zh+" "+name+" "+"是否使用该券？");				
+							if (se==true){
+								$.ajax({
+									type:"post",
+									url: "{:U('Home/Coupon/back_message')}",
+									async:true, 
+									dataType: 'json',
+									data:{
+										iuid:uid,
+										cu_id:cid
+									},
+									success:function(ret){
+										if(ret.status==0){
+										return;
+									}
+									var type=ret.coupon_id;  
+									if(type==7||type==11){  //注册券							
+										$.ajax({
+											type:"post",
+											url: "{:U('Home/Coupon/back_message')}",
+											async:true, 
+											dataType: 'json',
+											data:{
+												iuid:uid,
+												cu_id:cid
+											},
+											success:function(ret){
+													if(ret.status==0){
+													return;
+												}
+												var ipid=ret.product_id;
+												if(type==7){
+													window.location.href="{:U('Home/Couponregister/new_purchaseInfo/ipid/"+ipid+"/iuid/"+iuid+"/cu_id/"+cu_id+"/yname/"+yname+"')}";
+
+												}else{
+													window.location.href="{:U('Home/HracGoods/productDetails/ipid/"+ipid+"/iuid/"+iuid+"/cu_id/"+cu_id+"/yname/"+yname+"')}";
+												}   
+											},
+											error:function(){
+												
+											}
+										});			
+									}else{
+										$.ajax({
+											type:"post",
+											url: "{:U('Home/Coupon/use_coupon')}",
+											async:true, 
+											dataType: 'json',
+											data:{
+												iuid:iuid,
+												cu_id:cu_id
+											},
+											success:function(ret){
+													if(ret.status){											
+														window.location.reload();  //刷新页面																
+													}else{
+														alert("使用失败");	
+													}
+											},
+											error:function(){
+												
+											}
+										});
+									}	
+									},
+									error:function(){}
+								});		
+							}	
+					}else{
+						 alert("用户不存在");	
+					}
+				},
+				error:function(){
+									
+	            }
+	        });
+	    }else{
+		     alert("已使用");
+	    }
+    }    
+				
+	//扫描之后刷新一下页面
+	var cid =  $('#cu_id').val();		
+	var uid =  $('#iuid').val();				
+	var t = setInterval(check,1000);				
+	function check(){	
+		var us=$(".use").attr("is_used");
+		if(us!=1){
+			$.ajax({
+				type:"post",
+				url: "{:U('Home/Coupon/check_coupon')}",
+				async:true, 
+				dataType: 'json',
+				data:{
+					iuid:uid,
+					cu_id:cid
+				},
+				success:function(ret){
+					if(ret.is_used==1){
+						clearInterval(t);   //清除定时器								
+							setTimeout(function(){
+							window.location.reload();
+						},2000);
+	
+		          //id的值分别为   1表示积分卷   2表示礼品券   3表示入场券   4表示现金券   5表示折扣券   6抽奖劵    7注册卷    8服务劵
+						var type=ret.coupon_id;
+						if(type==1){
+							
+						}else if(type==2){
+							
+						}else if(type==3){
+							
+						}else if(type==4){
+							
+						}else if(type==5){
+							
+						}else if(type==7){
+						     	
+						}else if(type==8){
+							   
+						}
+					}else{
+						  
+					}
+				},
+				error:function(){
+					
+				}
+			});	
+		}else{
+			clearInterval(t);   //清除定时器
+		}
+	}			
+        
+	</script>
+</html>
