@@ -714,13 +714,19 @@ class HapylifePayController extends HomeBaseController{
             $this->ajaxreturn($data);
         }
     }
+
     /**
     *支付成功后获取父订单信息
     **/
     public function receiptInfo(){
         $pay_receiptnum = I('post.pay_receiptnum');
-        $ir_receiptnum  = M('Receiptson')->where(array('pay_receiptnum'=>$pay_receiptnum))->getfield('ir_receiptnum');
-        $data = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
+        $isSon          = I('post.isSon');//是否子订单
+        if($isSon){
+	        $ir_receiptnum  = M('Receiptson')->where(array('pay_receiptnum'=>$pay_receiptnum))->getfield('ir_receiptnum');
+	        $data = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
+        }else{
+        	$data = M('Receipt')->where(array('ir_receiptnum'=>$pay_receiptnum))->find();
+        }
         switch ($data['ir_status']){
         	case '2':
         		$data['status'] = 1;

@@ -602,9 +602,9 @@ class HapylifeApiController extends HomeBaseController{
             //订单的状态(0待生成订单，1待支付订单，2已付款订单)
             'ir_status'=>0,
             //下单用户id
-            'iuid'=>$iuid,
+            'riuid'=>$iuid,
             //下单用户
-            'CustomerID'=>$userinfo['customerid'],
+            'rCustomerID'=>$userinfo['customerid'],
             //收货人
             'ia_name'=>$ia_name,
             //收货人电话
@@ -661,6 +661,8 @@ class HapylifeApiController extends HomeBaseController{
             $this->ajaxreturn($order);
         }
     }
+
+
     /**
     * 购买产品订单状态查询
     * @param ir_status 0待付款 1待审核 2已支付待发货 3已发货待收货 4已收货待评价 5已评价完成 6审核未通过

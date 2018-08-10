@@ -754,7 +754,11 @@ class PurchaseController extends HomeBaseController{
         $ir_receiptnum  = D('Receiptson')->where(array('pay_receiptnum'=>$pay_receiptnum))->getField('ir_receiptnum');
         $order          = D('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
         if($order['ir_unpaid']==0){
-            $this->redirect('Home/Purchase/center');
+            if($order['htid']){
+                $this->redirect('Home/Register/new_regsuccess',array('ir_receiptnum'=>$order['ir_receiptnum']));
+            }else{
+                $this->redirect('Home/Purchase/center');  
+            }
         }else{
             if($order['ir_ordertype'] == 1){
                 $this->redirect('Home/Pay/choosePay1',array('ir_unpoint'=>$order['ir_unpoint'],'ir_price'=>$order['ir_price'],'ir_point'=>$order['ir_point'],'ir_unpaid'=>$order['ir_unpaid'],'ir_receiptnum'=>$ir_receiptnum));
