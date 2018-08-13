@@ -187,7 +187,7 @@
         	}else{
         		alert("已使用");
         	}
-      }
+    	}
         
 
         function cuser(){
@@ -198,16 +198,17 @@
             if(used==0){
 	            $.ajax({
 					type:"post",
-					url: "{:U('Home/Coupon/getName')}",
+					url: "{:U('Home/Coupon/getNames')}",
 					async:true, 
 					dataType: 'json',
 					data:{
 						iuid:iuid,
 					},
 					success:function(ret){
-						if(ret.status){
+						console.log(ret);
+						if(ret.status == 1){
 							var zh=ret.hu_nickname;  //用户账号
-							var name=ret.hu_username_en; //用户名
+							var name=ret.hu_username; //用户名
 							var se=confirm(zh+" "+name+" "+"是否使用该券？");				
 							if (se==true){
 								$.ajax({
@@ -276,18 +277,18 @@
 									error:function(){}
 								});		
 							}	
-					}else{
-						 alert("用户不存在");	
-					}
-				},
-				error:function(){
-									
-	            }
-	        });
-	    }else{
-		     alert("已使用");
-	    }
-    }    
+						}else{
+							 alert("用户不存在");	
+						}
+					},
+					error:function(){
+										
+		            }
+	        	});
+		    }else{
+			    alert("已使用");
+		    }
+	    }    
 				
 	//扫描之后刷新一下页面
 	var cid =  $('#cu_id').val();		

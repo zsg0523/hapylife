@@ -25,12 +25,12 @@
 
 	<div class="wrap">
 		<div class="main2">
-			<input type="text" placeholder="请输入赠送人的账号" id="nickname" onblur="find()" />
+			<input type="text" placeholder="请输入赠送人的账号" id="nickname" onblur="find()" style="text-transform:uppercase;" />
 		</div>
 		<div class="main2" style="margin-top: 0;">
 			<input type="text" readonly="readonly" id="name"/>
 		</div>
-		<button class="btn" onclick="send();" disabled="disabled">确定</button>
+		<button class="btn" onclick="send();" disabled="disabled"">确定</button>
 	</div>
 	<input type="hidden" name="iuid" id="iuid" value="{$iuid}">
 	<input type="hidden" name="cu_id" id="cu_id" value="{$cu_id}"> 
@@ -48,7 +48,7 @@
   
     function find(){
     	var nickname=$("#nickname").val();
-			var iuid=$("#iuid").val();
+		var iuid=$("#iuid").val();
     	if(nickname!=""){
 			$.ajax({
 				type:"post",
@@ -59,22 +59,27 @@
 					iuid:iuid,
 					hu_nickname:nickname  //用户账号
 				},
+
 				success:function(ret){
-					if(ret.status){
-						 if(ret.status==2){
-							 return;
-						 }
-								var mz=ret.hu_username_en; //用户名
-								$("#name").val(mz);
-								$(".btn").removeAttr("disabled");
-								$(".btn").css("background-color","#2490ed");
-							}else{
-								$(".btn").attr("disabled","true");
-								$("#nickname").val("");
-								$("#name").val("");
-								$(".btn").css("background-color","");
-								alert("用户不存在");
-							}
+					console.log(ret);
+					if(ret.status == 0){
+						$(".btn").attr("disabled","true");
+						$("#nickname").val("");
+						$("#name").val("");
+						$(".btn").css("background-color","");
+						alert("用户不存在");
+					}else if(ret.status == 1){
+						var mz=ret.lastname+ret.firstname; //用户名
+						$("#name").val(mz);
+						$(".btn").removeAttr("disabled");
+						$(".btn").css("background-color","#2490ed");	
+					}else if(ret.status == 2){
+						$(".btn").attr("disabled","true");
+						$("#nickname").val("");
+						$("#name").val("");
+						$(".btn").css("background-color","");
+						alert("不能转赠给自己");
+					}
 		        }
 		    });	
     	}else{

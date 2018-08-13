@@ -358,7 +358,6 @@ class CouponController extends HomeBaseController{
 		$message['qrcode'] = qrcode_arr($content);
 		$result = M('CouponUser')->where(array('user_id'=>$iuid,'cu_id'=>$cu_id))->save($message);
 
-		
 		if($result){
 			$arr = array(
 					'iuid' => $iuid,
@@ -369,6 +368,7 @@ class CouponController extends HomeBaseController{
 					'date' => time(),
 					'type' => 0,
 					'content' => '用户'.$userinfo['lastname'].$userinfo['firstname'].'：'.'于'.date('Y-m-d H:i:s').'，使用了1张'.$coupon['coupon_name'].'，优惠券编码：'.$coupon['coupon_code'],
+					'cu_id' => $cu_id,
 				);
 			if($coupon['coupon_id'] == 1){
 				$list['iu_point'] = $userinfo['iu_point']+$coupon['discount_money']; 
@@ -463,6 +463,25 @@ class CouponController extends HomeBaseController{
 	* 获取用户账号
 	**/ 
 	public function getName(){
+		$iuid = I('post.iuid');
+		$hu_nickname = I('post.hu_nickname');
+		$data = M('User')->where(array('iuid'=>$hu_nickname))->find();
+		if(!empty($data) && $data['iuid'] != $iuid){
+			$data['status'] = 1;
+			$this->ajaxreturn($data);
+		}else if($data['iuid'] == $iuid){
+			$sample['status'] = 2;
+			$this->ajaxreturn($sample);
+		}else if(empty($data)){
+			$sample['status'] = 0;
+			$this->ajaxreturn($sample);
+		}
+	}
+
+	/**
+	* 获取用户账号
+	**/ 
+	public function getNames(){
 		$iuid = I('post.iuid');
 		$data = M('User')->where(array('iuid'=>$iuid))->find();
 		if($data){
