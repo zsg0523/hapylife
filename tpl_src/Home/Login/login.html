@@ -28,11 +28,27 @@
   			-webkit-box-shadow: 0 0 0px 30px white inset;
   			-webkit-text-fill-color: #333;
   		}
-  		/*大屏幕*/
-		@media screen and (min-width: 1200px){
-		  	.wrap{width: 1200px;margin: auto;}
-		  	.contents{width: 1200px;margin: auto;}    
-		}
+		/*手机*/
+        @media screen and (max-width: 768px){
+			.wrap{width: 100%;margin: auto;}
+		  	.contents{width: 100%;margin: auto;} 
+        }
+      	/*平板*/
+      	@media screen and (min-width: 768px){
+      		.wrap{width: 100%;margin: auto;}
+		  	.contents{width: 100%;margin: auto;}
+   
+      	}
+        /*中等屏幕*/
+      	@media screen and (min-width: 992px){
+        	.wrap{width: 100%;margin: auto;}
+		  	.contents{width: 100%;margin: auto;}
+      	}
+      	/*大屏幕*/
+      	@media screen and (min-width: 1200px){ 	
+        	.wrap{width: 1200px;margin: auto;}
+		  	.contents{width: 1200px;margin: auto;}
+      	}
 
     </style>
 	<body>
