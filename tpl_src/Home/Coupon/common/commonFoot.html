@@ -32,7 +32,7 @@
 			<p class="outdate"  isoutdate="" ></p>
 			
 			<input type="hidden" name="cu_id" id="cu_id" value="{$cu_id}"> 
-			<input type="hidden" name="iuid" id="iuid" value="{$iuid}">	
+			<input type="hidden" name="hu_nickname" id="hu_nickname" value="{$hu_nickname}">	
 			<div class="yname" hidden="hidden"></div>
         </div>
 	</body>
@@ -43,12 +43,12 @@
 			var btn=$(".btn");
 			var send=$(".send");
 			var use=$(".use");
-			var uid=$(".iuid");
+			var hu_nickname=$(".hu_nickname");
 			var outdate=$(".outdate");
     
 			send.attr("condition",status);
 			use.attr("is_used",used);
-			uid.attr("iuid",iuid);
+			hu_nickname.attr("hu_nickname",hu_nickname);
 			outdate.attr("isoutdate",odate);
         
             $(".yname").html(yname);
@@ -175,12 +175,12 @@
         	var condition=$(".send").attr("condition");   
         	var used=$(".use").attr("is_used");
             var cu_id =  $('#cu_id').val();		
-		    var iuid =  $('#iuid').val();			
+		    var hu_nickname =  $('#hu_nickname').val();			
 			var yname=$(".yname").html();
          
         	if(used==0){
 	        	if(condition==1 ||condition==2){
-	                window.location.href="{:U('Home/Coupon/sendcoupondetail/iuid/"+iuid+"/cu_id/"+cu_id+"/yname/"+yname+"')}";
+	                window.location.href="{:U('Home/Coupon/sendcoupondetail/hu_nickname/"+hu_nickname+"/cu_id/"+cu_id+"/yname/"+yname+"')}";
 	        	}else{
 	        		
 	        	}
@@ -193,7 +193,7 @@
         function cuser(){
           	var used=$(".use").attr("is_used");
             var cu_id =  $('#cu_id').val();		
-            var iuid =  $('#iuid').val();	
+            var hu_nickname =  $('#hu_nickname').val();	
 			var yname=$(".yname").html();
             if(used==0){
 	            $.ajax({
@@ -202,7 +202,7 @@
 					async:true, 
 					dataType: 'json',
 					data:{
-						iuid:iuid,
+						hu_nickname:hu_nickname,
 					},
 					success:function(ret){
 						console.log(ret);
@@ -217,7 +217,7 @@
 									async:true, 
 									dataType: 'json',
 									data:{
-										iuid:uid,
+										hu_nickname:hu_nickname,
 										cu_id:cid
 									},
 									success:function(ret){
@@ -232,7 +232,7 @@
 											async:true, 
 											dataType: 'json',
 											data:{
-												iuid:uid,
+												hu_nickname:hu_nickname,
 												cu_id:cid
 											},
 											success:function(ret){
@@ -241,10 +241,10 @@
 												}
 												var ipid=ret.product_id;
 												if(type==7){
-													window.location.href="{:U('Home/Couponregister/new_purchaseInfo/ipid/"+ipid+"/iuid/"+iuid+"/cu_id/"+cu_id+"/yname/"+yname+"')}";
+													window.location.href="{:U('Home/Couponregister/new_purchaseInfo/ipid/"+ipid+"/hu_nickname/"+hu_nickname+"/cu_id/"+cu_id+"/yname/"+yname+"')}";
 
 												}else{
-													window.location.href="{:U('Home/HracGoods/productDetails/ipid/"+ipid+"/iuid/"+iuid+"/cu_id/"+cu_id+"/yname/"+yname+"')}";
+													window.location.href="{:U('Home/HracGoods/productDetails/ipid/"+ipid+"/hu_nickname/"+hu_nickname+"/cu_id/"+cu_id+"/yname/"+yname+"')}";
 												}   
 											},
 											error:function(){
@@ -258,7 +258,7 @@
 											async:true, 
 											dataType: 'json',
 											data:{
-												iuid:iuid,
+												hu_nickname:hu_nickname,
 												cu_id:cu_id
 											},
 											success:function(ret){
@@ -292,7 +292,7 @@
 				
 	//扫描之后刷新一下页面
 	var cid =  $('#cu_id').val();		
-	var uid =  $('#iuid').val();				
+	var hu_nickname =  $('#hu_nickname').val();				
 	var t = setInterval(check,1000);				
 	function check(){	
 		var us=$(".use").attr("is_used");
@@ -303,7 +303,7 @@
 				async:true, 
 				dataType: 'json',
 				data:{
-					iuid:uid,
+					hu_nickname:hu_nickname,
 					cu_id:cid
 				},
 				success:function(ret){

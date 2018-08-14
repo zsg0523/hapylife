@@ -25,7 +25,7 @@
 		<div class="ch-back" onclick="back();"></div>
 		
 		
-		<input type="hidden" name="iuid"  id="iuid" value="{:I('get.iuid')}">
+		<input type="hidden" name="hu_nickname"  id="hu_nickname" value="{:I('get.hu_nickname')}">
 		<input type="hidden" name="cu_id" id="cu_id" value="{:I('get.cu_id')}">
 		<p hidden="hidden" id="title"></p>
 		<p hidden="hidden" class="mname"></p>
@@ -39,8 +39,8 @@
 	    if(isiOS==true){
 	        $(".ch-back").css("top","4%");
 	    }else{
-				  $(".ch-back").css("top","0");
-			}
+			$(".ch-back").css("top","0");
+		}
 	    
 		    apiready = function(){
 	        var header = $api.byId('header');
@@ -57,15 +57,16 @@
 		
 		//返回
 		function back(){
-            var iuid=$("#iuid").val();
+            var hu_nickname=$("#hu_nickname").val();
+            alert(hu_nickname);
             var cu_id=$("#cu_id").val();
             var title=$("#title").html();   //优惠券名称
             var mname=$(".mname").html();   //地址栏上的方法名
 
             if(title=="转赠"){  
-              	window.location.href="{:U('Home/Coupon/"+mname+"/iuid/"+iuid+"/cu_id/"+cu_id+"')}";
+              	window.location.href="{:U('Home/Coupon/"+mname+"/hu_nickname/"+hu_nickname+"/cu_id/"+cu_id+"')}";
             }else{
-                window.location.href="{:U('Home/Coupon/coupons/iuid/"+iuid+"')}";
+                window.location.href="{:U('Home/Coupon/coupons/hu_nickname/"+hu_nickname+"')}";
             }
 		}
 

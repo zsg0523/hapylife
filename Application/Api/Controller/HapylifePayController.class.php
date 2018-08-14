@@ -759,6 +759,27 @@ class HapylifePayController extends HomeBaseController{
         }
     }
 
+    /**
+    * 购买成功显示页面
+    **/ 
+    public function paySuccess(){
+        $pay_receiptnum = I('post.pay_receiptnum');
+        $receiptlist  = M('Receiptson')
+        						->alias('rs')
+        						->join('hapylife_receipt AS r ON rs.ir_receiptnum = r.ir_receiptnum')
+        						->join('hapylife_receiptlist AS rl ON rs.ir_receiptnum = rl.ir_receiptnum')
+        						->where(array('pay_receiptnum'=>$pay_receiptnum,'r.ir_status'=>2))
+        						->find();
+        if($receiptlist){
+        	$data['status']        = 1;
+            $this->ajaxreturn($receiptlist);
+        }else{
+            $data['status']        = 0;
+        	$this->ajaxreturn($data);
+        }
+    }
+
+
 
 
 

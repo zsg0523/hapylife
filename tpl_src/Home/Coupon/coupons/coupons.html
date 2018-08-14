@@ -64,7 +64,7 @@
 	      <include file="Coupon/common/commonHead1"/>
     </div> 
     <div class="cps-nav">
-    	<form class="sel" id="sel" action="{:U('Home/Coupon/coupons',array('iuid'=>$iuid))}" method="post"> 
+    	<form class="sel" id="sel" action="{:U('Home/Coupon/coupons',array('hu_nickname'=>$hu_nickname))}" method="post"> 
     		<span>类型</span>
     		<select class="fr" coupontype="{$coupon_id}" name="coupon_id"  id="coupontype">
 	          <option value="0">全部</option>
@@ -97,7 +97,7 @@
 		    </div> 
 	    </foreach>	  
     </div>
-    <input type="hidden" name="iuid" id="iuid" value="{$iuid}">	
+    <input type="hidden" name="hu_nickname" id="hu_nickname" value="{$hu_nickname}">	
 </body>
 <script type="text/javascript" src="__PUBLIC_JS__/jquery1.8.3.min.js" ></script>
 <script>
@@ -133,29 +133,27 @@
     function couponinfo(obj){
        var couponid=$(obj).attr('couponid');  //类型
        var cuid=$(obj).attr('cuid');   //优惠券id
-       var iuid = $('#iuid').val();
+       var hu_nickname = $('#hu_nickname').val();
        
        if(couponid==1){
-       	  window.location.href="{:U('Home/Coupon/jfcoupondetail/iuid/"+iuid+"/cu_id/"+cuid+"')}";
+       	  window.location.href="{:U('Home/Coupon/jfcoupondetail/hu_nickname/"+hu_nickname+"/cu_id/"+cuid+"')}";
        }else if(couponid==2){
-       	  window.location.href="{:U('Home/Coupon/lpcoupondetail/iuid/"+iuid+"/cu_id/"+cuid+"')}";
+       	  window.location.href="{:U('Home/Coupon/lpcoupondetail/hu_nickname/"+hu_nickname+"/cu_id/"+cuid+"')}";
        }else if(couponid==3){
-       	  window.location.href="{:U('Home/Coupon/rccoupondetail/iuid/"+iuid+"/cu_id/"+cuid+"')}";
+       	  window.location.href="{:U('Home/Coupon/rccoupondetail/hu_nickname/"+hu_nickname+"/cu_id/"+cuid+"')}";
        }else if(couponid==4){
-       	  window.location.href="{:U('Home/Coupon/xjcoupondetail/iuid/"+iuid+"/cu_id/"+cuid+"')}";
+       	  window.location.href="{:U('Home/Coupon/xjcoupondetail/hu_nickname/"+hu_nickname+"/cu_id/"+cuid+"')}";
        }else if(couponid==5){
-       	  window.location.href="{:U('Home/Coupon/zkcoupondetail/iuid/"+iuid+"/cu_id/"+cuid+"')}";
+       	  window.location.href="{:U('Home/Coupon/zkcoupondetail/hu_nickname/"+hu_nickname+"/cu_id/"+cuid+"')}";
        }else if(couponid==6){   //抽奖券
 //     	  window.location.href="";
        }else if(couponid==7){
-//      	  window.location.href="{:U('Home/HracGoods/productDetails/ipid/"+ipid+"/iuid/"+iuid+"/cu_id/"+cu_id+"/yname/"+yname+"')}";
-     	  window.location.href="{:U('Home/Coupon/zccoupondetail/iuid/"+iuid+"/cu_id/"+cuid+"')}";
+//      	  window.location.href="{:U('Home/HracGoods/productDetails/ipid/"+ipid+"/hu_nickname/"+hu_nickname+"/cu_id/"+cu_id+"/yname/"+yname+"')}";
+     	  window.location.href="{:U('Home/Coupon/zccoupondetail/hu_nickname/"+hu_nickname+"/cu_id/"+cuid+"')}";
        }else if(couponid==8){
-       	  window.location.href="{:U('Home/Coupon/fwcoupondetail/iuid/"+iuid+"/cu_id/"+cuid+"')}";
+       	  window.location.href="{:U('Home/Coupon/fwcoupondetail/hu_nickname/"+hu_nickname+"/cu_id/"+cuid+"')}";
        }else if(couponid==11){
-       	  window.location.href="{:U('Home/Coupon/cgcoupondetail/iuid/"+iuid+"/cu_id/"+cuid+"')}";
-       }else if(couponid==12){
-       	  window.location.href="{:U('Home/Coupon/zccoupondetail/iuid/"+iuid+"/cu_id/"+cuid+"')}";
+       	  window.location.href="{:U('Home/Coupon/cgcoupondetail/hu_nickname/"+hu_nickname+"/cu_id/"+cuid+"')}";
        }
        
     }

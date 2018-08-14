@@ -38,8 +38,6 @@ function post_json_data($url, $data_string) {
         'Content-Length: ' . strlen($data_string))
     );
     ob_start();
-    p($ch);
-    die;
     curl_exec($ch);
     $return_content = ob_get_contents();
     ob_end_clean();

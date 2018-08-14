@@ -280,16 +280,12 @@ class PayController extends HomeBaseController{
                                             'ir_unpaid'  =>$maps['ir_unpaid'],
                                             'ir_unpoint' =>$maps['ir_unpoint']
                                         );
-                                        p($status);
                                         //更新订单信息
                                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
-                                        p($upreceipt);
                                         // 添加激活记录
                                         if($upreceipt){    
                                             $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$receipt['ir_receiptnum']);
                                         }
-                                        p($addactivation);
-                                        die;
                                         // 发送数据到usa
                                         $usa    = new \Common\UsaApi\Usa;
                                         $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
@@ -319,11 +315,9 @@ class PayController extends HomeBaseController{
                                                                 'customerid' => $CustomerID
                                                     );
                                                     $logs = M('SmsLog')->add($contents);
-                                                    if($logs){
-                                                        // 支付完成
-                                                        $this->success('注册成功',U('Home/Register/new_regsuccess',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
-                                                    }
                                                 }
+                                                // 支付完成
+                                                $this->success('注册成功',U('Home/Register/new_regsuccess',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
                                             }
                                         }
                                     }else{
