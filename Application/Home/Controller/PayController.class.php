@@ -315,11 +315,9 @@ class PayController extends HomeBaseController{
                                                                 'customerid' => $CustomerID
                                                     );
                                                     $logs = M('SmsLog')->add($contents);
-                                                    if($logs){
-                                                        // 支付完成
-                                                        $this->success('注册成功',U('Home/Register/new_regsuccess',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
-                                                    }
                                                 }
+                                                // 支付完成
+                                                $this->success('注册成功',U('Home/Register/new_regsuccess',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
                                             }
                                         }
                                     }else{
@@ -341,16 +339,7 @@ class PayController extends HomeBaseController{
                                         //修改用户信息
                                         $update    = D('User')->save($tmpe);
                                         $riuid     = $receipt['riuid'];
-                                        $status  = array(
-                                            'ir_status'  =>$maps['ir_status'],
-                                            'ir_unpaid'  =>$maps['ir_unpaid'],
-                                            'ir_unpoint' =>$maps['ir_unpoint']
-                                        );                   
-                                        //更新订单信息
-                                        $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
-                                        if($upreceipt){    
-                                            $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$receipt['ir_receiptnum']);
-                                        }
+                                        $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$receipt['ir_receiptnum']);
                                         // 支付完成
                                         $this->success('完成支付',U('Home/Purchase/center'));
                                     }

@@ -1,0 +1,64 @@
+<!DOCTYPE html>  
+<html lang="zh-cn">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">  
+    <title>图片轮播</title>  
+    <link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css">
+    <link rel="stylesheet" href="__PUBLIC_CSS__/common.css" />  
+    <style>
+    	#myCarousel{width: 100%; margin: auto;}
+  		.item>img{width: 100%;padding: 0;margin: 0;}
+  		@media only screen and (min-width: 1200px){
+  			#myCarousel{width: 1200px;}
+  		}
+    </style>  
+</head>  
+<body >  
+      
+    <div id="myCarousel" class="carousel slide">  
+        <ol class="carousel-indicators">
+            <foreach name="lunbo" item="v" key="k">
+                <if condition="$k eq 0">
+                    <li data-target="#myCarousel" data-slide-to="{$k}" class="active"> </li>  
+                <else />
+                    <li data-target="#myCarousel" data-slide-to="{$k}"> </li>  
+                </if>
+            </foreach>      
+        </ol>   
+        <div class="carousel-inner">  
+            <foreach name="lunbo" item="v" key="k">
+                <if condition="$k eq 0">
+                    <div class="item active">  
+                        <img src="{$v['show_picture']}"/>  
+                    </div>
+                <else />
+                    <div class="item">  
+                        <img src="{$v['show_picture']}"/>  
+                    </div>
+                </if>
+            </foreach>
+        </div>  
+      
+        <a href="#myCarousel" data-slide="prev" class="carousel-control left">  
+            <span class="glyphicon glyphicon-chevron-left"> </span>  
+        </a>  
+        <a href="#myCarousel" data-slide="next" class="carousel-control right">  
+            <span class="glyphicon glyphicon-chevron-right"> </span>  
+        </a>  
+    </div>  
+  
+
+<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script> 
+<script type="text/javascript">  
+
+        //自动播放  
+        $("#myCarousel").carousel({  
+            interval :3000,  
+        });  
+          
+  
+</script>  
+</body>  
+</html>  

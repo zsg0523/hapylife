@@ -13,7 +13,7 @@ class HapylifeReceiptController extends HomeBaseController{
 		$iuid      = I('post.iuid');
 		$map  = array(
 				'riuid'=>$iuid,
-                'ir_status'=>array('in','2,3,4,5')
+                'ir_status'=>array('in','2,3,4,5,202')
 			);
 		$receipt = M('Receipt')
 					->alias('r')

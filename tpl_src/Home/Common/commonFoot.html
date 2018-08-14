@@ -1,0 +1,48 @@
+<!DOCTYPE html>  
+<html lang="zh-cn">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">  
+    <title>公共底部</title>  
+    <link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css">
+    <link rel="stylesheet" href="__PUBLIC_CSS__/common.css" />
+    <style type="text/css">
+    	#commonFoot{width: 100%;background-color: #eee;height: 55px;border-top:1px #fff solid;}
+    	.menu>li{margin-top: 5px;}
+    	.menu>li>img{width: 25px;}
+    	.menu>li>span{width:100%;height:20px;display: block;}
+    	@media screen and (min-width:1200px) {
+    		#commonFoot{width: 1200px;margin: auto;}
+    	}
+    </style>
+</head>  
+<body >    
+    <div class=" container-fluid" id="commonFoot">  
+  		<ul class="menu row">
+  			<li class="col-lg-3 col-md-3 col-xs-3 tc" onclick='changeCommonFoot(0);window.location.href="{:U('Home/Main/home')}";'><img class="footicon" src="__PUBLIC_IMAGE__/img/main.png"/><span class="foottitle">首页</span></li>
+  			<li class="col-lg-3 col-md-3 col-xs-3 tc" onclick='changeCommonFoot(1);window.location.href="{:U('Home/Purchase/purchase')}";'><img class="footicon" src="__PUBLIC_IMAGE__/img/purchase.png"/><span class="foottitle">商店</span></li>
+  			<li class="col-lg-3 col-md-3 col-xs-3 tc" onclick='changeCommonFoot(2);window.location.href="{:U('Home/Cart/cart')}";'><img class="footicon" src="__PUBLIC_IMAGE__/img/cart.png"/><span class="foottitle">购物车</span ></li>
+  			<li class="col-lg-3 col-md-3 col-xs-3 tc" onclick='changeCommonFoot(3);window.location.href="{:U('Home/PersonalCenter/personalCenter')}";'><img class="footicon" src="__PUBLIC_IMAGE__/img/profile.png"/><span class="foottitle">我</span></li>
+  		</ul>	
+    </div>  
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		//改变底部
+		function changeCommonFoot(j){
+			var str='_on.png';
+			var str1='.png';
+			var imgs=document.getElementsByClassName('footicon');
+			var foottitle=document.getElementsByClassName('foottitle');
+			for(var i=0;i<imgs.length;i++){
+				imgs[i].src=imgs[i].src.replace(str,str1);
+				foottitle[i].style.color='#000';
+			}
+			imgs[j].src=imgs[j].src.replace(str1,str);
+			foottitle[j].style.color='#0099d9';
+			
+			
+		}
+	</script>  
+</body>  
+</html>  
