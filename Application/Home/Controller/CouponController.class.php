@@ -47,6 +47,8 @@ class CouponController extends HomeBaseController{
 		$passTo = strtoupper(trim(I('post.customerid')));
 		if(substr($passTo,0,3) == 'HPL'){
 			$userinfo = M('User')->where(array('CustomerID'=>$passTo))->find();
+		}
+		if(substr($hu_nickname,0,3) == 'HPL'){
 			$userinfos = M('User')->where(array('CustomerID'=>$hu_nickname))->find();
 		}
 		$data = array(
