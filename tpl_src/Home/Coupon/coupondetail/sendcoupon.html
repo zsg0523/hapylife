@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>     
+ <head lang="zh-CN">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>转赠</title>
+	<style type="text/css">
+		html,body{background-color:#eeeef0;margin: 0;padding: 0;}	
+		.wrap{margin: 0 auto;background: #fff;}
+		.main2{width:100%;height: 60px;line-height: 60px;border-bottom: 1px solid #ccc;/*margin-bottom: 4px;*/}	
+		.main2>input{height: 45px;border:none;width: 95%;text-indent: 1em;font-size: 1em;margin-left: 10px;}
+		.wrap>.btn{font-size:1em;display:block;margin:0 auto;outline:none;border:0;width: 90%;background: #ccc;height: 50px;border-radius: 8px;line-height: 50px;text-align: center;color: #fff;margin-top:20px;}
+		
+		/*大屏幕*/
+		@media screen and (min-width:1200px){
+		   .wrap{width: 1200px;}	
+		}	    
+	</style>
+</head>
+<body>	
+	<div class="commonHead">
+  		<include file="Coupon/common/commonHead"/>
+  	</div> 
+
+	<div class="wrap">
+		<div class="main2">
+			<input type="text" placeholder="请输入赠送人的账号" id="nickname" onblur="find()" style="text-transform:uppercase;" />
+		</div>
+		<div class="main2" style="margin-top: 0;">
+			<input type="text" readonly="readonly" id="name"/>
+		</div>
+		<button class="btn" onclick="send();" disabled="disabled"">确定</button>
+	</div>
+	<input type="hidden" name="iuid" id="iuid" value="{$iuid}">
+	<input type="hidden" name="cu_id" id="cu_id" value="{$cu_id}"> 
+	<input type="hidden" name="yname" class="yname2" value="{$yname}"> 
+	<div id="used" isused="1" hidden></div>
+</body>
+<script type="text/javascript" src="__PUBLIC_JS__/jquery1.8.3.min.js" ></script>
+<script type="text/javascript" src="__PUBLIC_JS__/coupon.js" ></script>
+<script>
+	  $(function(){ 
+		  var yname=$(".yname2").val();  
+			var used=$('#used').attr('isused');  //获取是否使用
+		  changeCommonHead('转赠',yname,used);  
+    });
+  
+    function find(){
+    	var nickname=$("#nickname").val();
+		var iuid=$("#iuid").val();
+    	if(nickname!=""){
+			$.ajax({
+				type:"post",
+				url: "{:U('Home/Coupon/getName')}",
+				async:true, 
+				dataType: 'json',
+				data:{
+					iuid:iuid,
+					hu_nickname:nickname  //用户账号
+				},
+
+				success:function(ret){
+					console.log(ret);
+					if(ret.status == 0){
+						$(".btn").attr("disabled","true");
+						$("#nickname").val("");
+						$("#name").val("");
+						$(".btn").css("background-color","");
+						alert("用户不存在");
+					}else if(ret.status == 1){
+						var mz=ret.lastname+ret.firstname; //用户名
+						$("#name").val(mz);
+						$(".btn").removeAttr("disabled");
+						$(".btn").css("background-color","#2490ed");	
+					}else if(ret.status == 2){
+						$(".btn").attr("disabled","true");
+						$("#nickname").val("");
+						$("#name").val("");
+						$(".btn").css("background-color","");
+						alert("不能转赠给自己");
+					}
+		        }
+		    });	
+    	}else{
+    		 //alert("请输入赠送人的账号");
+    	}
+    }
+    
+    function send(){
+    	var iuid=$("#iuid").val();
+    	var cu_id=$("#cu_id").val();
+    	var nickname=$("#nickname").val();
+    	$.ajax({
+				type:"post",
+				url: "{:U('Home/Coupon/pass_coupon')}",
+				async:true, 
+				dataType: 'json',
+				data:{
+					iuid:iuid,
+					cu_id:cu_id,
+					custormid:nickname
+				},
+				success:function(ret){
+					if(ret.status){
+							window.location.href="{:U('Home/Coupon/coupons/iuid/"+iuid+"')}";
+					}else{
+						 alert("转赠失败");	
+					}
+				},
+				error:function(){
+					
+				}
+		  });
+    }
+</script>
+</html>

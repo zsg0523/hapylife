@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>     
+ <head lang="zh-CN">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>{$data['coupon_name']}</title>
+	<link rel="stylesheet" href="__PUBLIC_CSS__/coupon.css" />
+	<style type="text/css">
+		html,body{background-color: #fbc735;}	
+		.main{margin-top: 50px !important;}	
+		.cd-tdiv{background:url(__PUBLIC_IMAGE__/coupon/centercode.png);}                   
+		.cd-content{box-shadow:0 0 20px #f4ab30;margin-bottom: 80px !important;padding-bottom: 100px;}
+		.cd-sm{color:#fbbf30;}	
+		.fr{float:right !important;}
+		.cd-jf{height:30px;line-height: 30px;border-bottom: 1px solid #e8e8e8;}
+		.cd-sm{border-bottom:none;}
+		
+		.cd-imgv{position: relative;z-index: 2;margin-top:25px;margin-bottom: 12px;margin-left:25%;}
+		.cd-img2{width:360px;height:360px;}
+
+		/*小手机*/	
+		@media screen and (max-width: 350px){
+	 		.main>.cd-tdiv{top:240px;}
+	 		.main>.cd-content{top:440px;left:4.5%;}
+			
+			.main>.cd-imgv{top:460px;margin-top:-15px;margin-bottom: 40px;margin-left:25%;}
+			.cd-lpimg2>.cd-img2{width:160px;height:160px;}
+	   	}
+	   	/*中手机*/	
+		@media screen and (min-width: 350px){
+	 		.main>.cd-tdiv{top:280px;}	
+	 		.main>.cd-content{top:510px;left:4.5%;}
+			
+			.main>.cd-imgv{top:510px;margin-top:0px;margin-bottom: 30px;margin-left:25%;}
+			.cd-lpimg2>.cd-img2{width:180px;height:180px;}
+	   	}	
+		/*手机*/
+	  	@media screen and (min-width:400px){
+	 	    .main>.cd-tdiv{top:310px;}
+ 		    .main>.cd-content{top:570px;left:6%;}
+				
+				.main>.cd-imgv{top:560px;margin-top:10px;margin-bottom: 20px;margin-left:25%;}
+				.cd-lpimg2>.cd-img2{width:200px;height:200px;}
+	   	}
+	    /*平板*/
+	    @media screen and (min-width: 768px){
+	 	    .main>.cd-tdiv{top:570px;}
+ 		    .main>.cd-content{top:1040px;left:6%;}
+				
+				.main>.cd-imgv{top:1040px;margin-bottom: 60px;margin-left:25%;}
+				.cd-lpimg2>.cd-img2{width:380px;height:380px;}
+	    }
+	    /*中等屏幕*/
+	    @media screen and (min-width: 992px){
+	 	   .main>.cd-tdiv{top:520px;}
+ 		   .main>.cd-content{top:960px;left:6%;}
+			 
+			 .main>.cd-imgv{top:960px;margin-top:20px;margin-left:25%;}
+			 .cd-lpimg2>.cd-img2{width:356px;height:356px;}
+	    }
+	    /*大屏幕*/
+	    @media screen and (min-width: 1200px){
+	 	   .main>.cd-tdiv{top:520px;}
+ 		   .main>.cd-content{top:960px;left:6%;}
+			 
+			 .main>.cd-imgv{top:940px;margin-top:25px;margin-bottom: 25px;margin-left:25%;}
+			 .cd-lpimg2>.cd-img2{width:360px;height:360px;}
+	    }	     
+	</style>
+</head>
+<body>
+	<div class="commonHead">
+  		<include file="Coupon/common/commonHead"/>
+  	</div> 
+  	<div class="commonFoot">
+  		<include file="Coupon/common/commonFoot"/>
+  	</div> 
+	<div class="wrap">
+		<div class="main">
+			      <img src="__PUBLIC_IMAGE__/coupon/center.png">			
+			     <div class="cd-tdiv cd-td brs">	            
+	            <span class="cd-title">请把二维码给相关人员扫一扫</span>
+	            <div class="cd-code"><img src="{$data['qrcode']}"/></div>	           
+	        </div> 	       
+					<div class="cd-imgv">
+						<div class="cd-lpimg2"><img src="{$data['pro_img']}" pro_img="{$data['pro_img']}" class="cd-img2" onclick="photoBrowser(this)"></div>
+					</div>
+	        <div class="cd-content">		 
+	           <div class="cd-jf">券名称<span class="fr">{$data['c_name']}</span></div>             		               
+	           <div class="cd-jf">优惠券编号<span class="fr">{$data['c_number']}</span></div>		               
+	           <!--<div class="cd-lpimg">活动图：<img src="{$data['pro_img']}" pro_img="{$data['pro_img']}" class="cd-img" onclick="photoBrowser(this)"></div>-->
+	           <div class="cd-jf">入场地址<span id="map" cmap="{$data['location']}" onclick="couponmap(this)"><span class="fr">{$data['location']}</span></span></div>	          
+	           <div class="cd-jf">有效日期<span class="fr">{$data['start_time']}至{$data['end_time']}</span></div>
+	           <div class="cd-jf" id="condition" condition="{$data['condition']}" hidden></div>   <!-- 1赠送  0不可赠送-->
+	           <div class="cd-jf" id="used" isused="{$data['is_used']}" hidden></div> <!-- 0未使用  1已使用   2已转赠 -->
+						 <div class="cd-jf" id="odate" isodate="{$data['status']}" hidden></div> <!--1正常  2过期  3提前 -->
+	           <div class="cd-jf cd-sm">详细说明</div>
+	           <div class="cd-value">{$data['description']}</div>
+						 <div class="cname" mname="{$data['coupon_name']}" hidden="hidden"></div>
+	        </div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="__PUBLIC_JS__/jquery1.8.3.min.js" ></script>
+<script type="text/javascript" src="__PUBLIC_JS__/coupon.js" ></script>
+<script type="text/javascript" src="__PUBLIC_JS__/api.js" ></script>
+<script>
+	 $(function(){ 
+	  var mname=$(".cname").attr("mname");
+		changeCommonHead(mname);
+		
+		var condition=$('#condition').attr('condition');  //获取是否赠送
+		var used=$('#used').attr('isused');  //获取是否使用
+		var odate=$('#odate').attr('isodate');  //获取是否过期
+
+		changeCommonFoot("rccoupon",condition,used,mname,odate);
+    });
+    
+    function photoBrowser(obj){
+	 var imgSrc = $api.attr(obj,'pro_img');
+	 
+	 var photoBrowser = api.require('photoBrowser');
+		photoBrowser.open({
+			images:[imgSrc],
+			placeholderImg: 'widget://res/img/apicloud.png',
+			bgColor: '#000'
+		}, function(ret, err) {
+			if (ret) {
+				 console.log(JSON.stringify(ret));
+				 if(ret.eventType=="click"){
+						photoBrowser.close();
+					}
+				} else {
+					 console.log(JSON.stringify(err));
+				}
+			});
+	}
+    
+    function couponmap(obj){
+//      var map=$('#map').attr('cmap');
+//  	window.location.href="{:U('Home/Coupon/map/location/"+map+"')}";
+
+//		var baiduLocation = api.require('baiduLocation');
+//		baiduLocation.getLocation(function(ret, err) {
+//		    if (ret) {
+//		        alert(JSON.stringify(ret));
+//		    } else {
+//		        alert(JSON.stringify(err));
+//		    }
+//		});
+    }
+    
+</script>
+</html>

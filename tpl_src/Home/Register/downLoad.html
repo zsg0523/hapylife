@@ -1,0 +1,116 @@
+<!DOCTYPE html>  
+<html lang="zh-cn">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">  
+    <title>APP下载</title>  
+    <link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+    	*{margin: 0;padding: 0;}
+			ul,li{list-style:none;padding: 0;margin: 0;}
+			a{ 
+				text-decoration:none; 
+				color:#333; 
+			}
+		a:hover{text-decoration:none; }
+    	.main{width:100%;min-height:300px;margin:50px auto 0 auto;background-image: url(__PUBLIC_IMAGE__/bg.png);background-size:100%;}
+    	
+    	.head{width: 100%;}
+    	.head>img{width: 100%;}
+    	
+		.links{width:96%;min-height: 300px;z-index: 2;font-weight: bold;padding: 0;margin-left: 2%;margin-top: 30px;background-color: #fff;border-radius: 5px;}
+		#title{width: 100%; height:50px;text-align:center;line-height: 50px;font-size: 18px;display: block;color: #000;}
+		.links>li{width: 33%;display: block;float: left;background-color: #fff;text-align: center;margin-bottom: 10px;}
+		.links>li>img{width:55px;display: block;margin: auto;}
+		.links>li>div{width:100%;height: 40px; line-height: 40px;display: block;float: left;}
+		.links>li>div>a{width: 90px;height: 30px;line-height: 30px;display: block;color: #118bfa;border-radius: 15px;border: 1px solid #118bfa;margin: auto;margin-top: 5px;}
+		
+    	.commonHead{width:100%;position: fixed;top: 0;left: 0;z-index: 20;}
+    	@media screen and (min-width:1200px) {
+			.main{width: 1200px;}
+		}
+    </style>
+</head>  
+<body >  
+    <div class="commonHead">
+  			<include file="Common/commonHead1" />
+  	</div>
+    <div class="main">
+    	<div class="head">
+    		<img src="__PUBLIC_IMAGE__/bg1.png"/>
+    	</div>
+    	<div class="">
+    		<ul class="links">
+				<span id="title">APP下载</span>
+				<li onclick="">
+					<img src="__PUBLIC_IMAGE__/apple.png"/>
+					<div>
+						<a style="color: #00c7fe;border: 1px solid #00c7fe;" href="https://itunes.apple.com/cn/app/hapylife/id1332226817?mt=8">苹果商店</a>
+					</div>
+				</li>
+				<li>
+					<img src="__PUBLIC_IMAGE__/huawei.png"/>
+					<div>
+						<a style="color: #28c0c5;border: 1px solid #28c0c5;" href="http://app.hicloud.com/app/C100210855">华为应用市场</a>
+					</div>
+				</li>
+				<!--<li>
+					<img src="__PUBLIC_IMAGE__/geogle.png"/>
+					<a href="https://play.google.com/store/apps/details?id=com.t837437211.aoj">谷歌</a>
+				</li>-->
+				<li>
+					<img src="__PUBLIC_IMAGE__/ali.png"/>
+					<div>
+						<a style="color: #ee6c14;border: 1px solid #ee6c14;" href="https://www.25pp.com/android/detail_7704633/">阿里平台</a>
+					</div>
+				</li>
+				<!--<li>
+					<img src="__PUBLIC_IMAGE__/vivo.png"/>
+					<a href="http://appdetailh5.vivo.com.cn/detail/2054484?source=7">VIVO</a>
+				</li>-->
+				<li>
+					<img src="__PUBLIC_IMAGE__/360.png"/>
+					<div>
+						<a style="color: #54d85b;border: 1px solid #54d85b;" href="http://zhushou.360.cn/detail/index/soft_id/3971331?recrefer=SE_D_hapylife">360应用平台</a>
+					</div>
+				</li>
+				<!--<li>
+					<img src="__PUBLIC_IMAGE__/xiaomi.png"/>
+					<a href="http://app.mi.com/details?id=com.t837437211.aoj&ref=search">小米</a>
+				</li>-->
+				<li>
+					<img src="__PUBLIC_IMAGE__/tenc.png"/>
+					<div>
+						<a style="color: #d41b28;border: 1px solid #d41b28;" href="http://sj.qq.com/myapp/detail.htm?apkName=com.k837437211.xkb">腾讯应用宝</a>
+					</div>					
+				</li>
+				<li>
+					<img src="__PUBLIC_IMAGE__/load.png"/>
+					<div>
+						<a style="color: #118bfa;border: 1px solid #118bfa;" href="http://apps.hapy-life.com/hapylife/tpl_src/Public/hapylife.apk">本地下载</a>
+					</div>
+					<!--<a href="__PUBLIC__/hapylife.apk">本地</a>-->
+				</li>
+			</ul>
+    	</div>
+		
+    </div>  
+    
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
+	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>  
+	<script type="text/javascript">  
+    $(document).ready(function(){
+    	changeCommonHead('APP下载');
+		var height=$('.main').height();
+		if(height<=$(window).height()){
+			$('.main').height($(window).height());
+		}
+    });
+    function back(){
+        window.location.href ="{:U('Home/Index/index')}";
+   	}
+   
+	  
+	</script>  
+</body>  
+</html>  

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+	<title>我的订单</title>
+	<link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
+	<style type="text/css">
+		ul,li{list-style: none;float: left;}
+		body,html{margin: 0;padding: 0;background-color: #F0F0F0;}
+		a{text-decoration: none;color: #fff;}
+		a:hover{cursor: pointer;text-decoration: none;color: #fff;}
+		.main{height: auto;margin: auto;background-color: #F0F0F0;}
+      	.commonHead{width: 100%;height: auto;}
+  	
+		
+		.order_list{width: 100%;height: auto;margin: auto;}
+		.order_list>ul{margin: 0px;padding: 0px;margin-top: 5px;width: 100%;}
+		.order_list>ul>li{height: 30px;font-size: 14px;text-align: left;line-height: 30px;}
+		.order_list>ul>li:first-child{height: 60px;}
+		.order_list>ul>li>span{width: auto;height: 30px;display: block;float: right;margin-right: 5px;line-height: 30px;}
+		#pay{width:60px;height:28px;line-height:28px;font-size: 14px;border-radius: 5px;float: left;text-align:center;display: block;background: #439DFE;color:#fff;}
+		.order_list>ul>li img{width: 60px;height: 60px;}
+		.del{width: 60px;height: 28px;line-height: 28px;text-align:center;border-radius: 5px;display: block;background: #439DFE;color:#FFF;float: right;}
+
+		/*手机*/
+      @media screen and (max-width: 768px){
+     .main,.title{width:100%;}
+    
+      }
+      /*平板*/
+      @media screen and (min-width: 768px){
+       .main,.title{width:100%;}
+      
+      }
+        /*中等屏幕*/
+      @media screen and (min-width: 992px){
+         .main,.title{width:100%;} 
+        
+      }
+      /*大屏幕*/
+      @media screen and (min-width: 1200px){
+        .main,.title{width:1200px;margin: auto;}
+        
+      }
+	</style>
+</head>
+	<body class="">
+		<div class="commonHead">
+  			<include file="Common/commonHead1" />
+		</div>
+		
+		<div class="main container">
+			<div class="order_list">
+				<if condition="$Think.session.user.status eq 1">
+					<volist name='data' id='v'>
+						<ul class="row panel panel-default">
+							<li class="col-xs-4 col-sm-4  col-md-1"><img src="{$v.ip_picture_zh}"></li>
+							<li class="col-xs-8 col-sm-8  col-md-3">&nbsp;<span>{$v.product_name}</span></li>
+							<li class="col-xs-8 col-sm-8  col-md-2">
+								&nbsp;
+								<if 	condition="$v['ir_ordertype'] eq 1" ><span>首购单</span>
+		                        <elseif condition="$v['ir_ordertype'] eq 2"/><span>升级单</span>
+		                        <elseif condition="$v['ir_ordertype'] eq 3"/><span>月费单</span>
+		                        <else />
+		                       </if>
+							</li>
+							<li class="col-xs-12 col-sm-12  col-md-3">&nbsp;时间:<span>{:date('Y-m-d H:i:s',$v['ir_date'])}</span></li>
+							<li class="col-xs-12 col-sm-12  col-md-3">&nbsp;订单号:<span>{$v.ir_receiptnum}</span></li>
+							<li class="col-xs-12 col-sm-12  col-md-2">&nbsp;单价:<span>￥{$v.ip_price_rmb}</span></li>
+							<li class="col-xs-12 col-sm-12  col-md-2">&nbsp;数量:<span>{$v.product_num}</span></li>
+							<li class="col-xs-12 col-sm-12  col-md-2">&nbsp;总价:<span>￥{$v.ir_price}</span></li>
+							<li class="col-xs-12 col-sm-12  col-md-2">&nbsp;待付款:<span>￥{$v.ir_unpaid}</span></li>
+							<li class="col-xs-12 col-sm-12  col-md-2">
+								&nbsp;
+							<if condition="$v['ir_status'] eq 0">交易状态:<span>待付款</span>
+		                        <elseif condition="$v['ir_status'] eq 1"/>交易状态:<span>待审核</span>
+		                        <elseif condition="$v['ir_status'] eq 2"/>交易状态:<span>已支付待发货</span>
+		                        <elseif condition="$v['ir_status'] eq 3"/>交易状态:<span>已发货待收货</span>
+		                        <elseif condition="$v['ir_status'] eq 4"/>交易状态:<span>已收货待评价</span>
+		                        <elseif condition="$v['ir_status'] eq 5"/>交易状态:<span>已完成</span>
+		                        <elseif condition="$v['ir_status'] eq 202"/>交易状态:<span>未全额支付</span>
+		                        <else /><span>审核未通过</span>
+		                    </if>
+							</li>
+							<if condition="$v['ir_status'] eq 0 OR $v['ir_status'] eq 202">
+								<li class="col-xs-6 col-sm-6 col-md-1">
+									<if condition="$v['ir_ordertype'] eq 1">
+										<a href="{:U('Home/Pay/choosePay1',array('ir_unpoint'=>$v['ir_unpoint'],'ir_price'=>$v['ir_price'],'ir_point'=>$v['ir_point'],'ir_unpaid'=>$v['ir_unpaid'],'ir_receiptnum'=>$v['ir_receiptnum']))}" id="pay">
+											去支付
+										</a>
+									<elseif condition="$v['ir_ordertype'] eq 3" />
+										<a href="{:U('Home/Pay/choosePay',array('ir_unpoint'=>$v['ir_unpoint'],'ir_price'=>$v['ir_price'],'ir_point'=>$v['ir_point'],'ir_unpaid'=>$v['ir_unpaid'],'ir_receiptnum'=>$v['ir_receiptnum']))}" id="pay" >
+											去支付
+										</a>
+									</if>
+								</li>
+							</if>
+							<if condition="$v['ir_status'] eq 0">
+								<li class="col-xs-6 col-sm-6  col-md-1">
+									<a class="del" href="{:U('Home/Purchase/delete_order',array('ir_receiptnum'=>$v['ir_receiptnum']))}" >删除</a>
+								</li>
+							</if>
+							
+						</ul>
+				    </volist>
+				<else />
+				</if>
+			</div>
+		</div>
+
+		<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
+		<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
+		
+		<script type="text/javascript">
+		$(document).ready(function(){
+	   		changeCommonHead('我的订单');
+		});
+		function back(){
+        	window.location.href ="{:U('Home/Purchase/center')}";
+   		}
+		</script>
+	    
+	</body>
+</html>

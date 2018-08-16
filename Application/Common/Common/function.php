@@ -19,6 +19,33 @@ function p($data){
     echo $str;
 }
 
+/*
+* post 发送JSON 格式数据
+* @param $url string URL
+* @param $data_string string 请求的具体内容
+* @return array
+*   code 状态码
+*   result 返回结果
+*/
+function post_json_data($url, $data_string) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false); //  PHP 5.6.0 后必须开启
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json; charset=utf-8',
+        'Content-Length: ' . strlen($data_string))
+    );
+    ob_start();
+    curl_exec($ch);
+    $return_content = ob_get_contents();
+    ob_end_clean();
+    $return_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    return array('code'=>$return_code, 'result'=>$return_content);
+}
+
+
 /**
  * app 图片上传
  * @return string 上传后的图片名
@@ -64,6 +91,12 @@ function new_oss(){
 function logTest($data){
     $log  = date('Y-m-d H:i:s').'**********'.$data.'**********'.PHP_EOL;
     $add  = file_put_contents('./log.txt', $log,FILE_APPEND);
+    return;
+}
+
+function addUsaLog($data){
+    $log  = date('Y-m-d H:i:s').'**********'.$data.'**********'.PHP_EOL;
+    $add  = file_put_contents('./usa.txt', $log,FILE_APPEND);
     return;
 }
 
@@ -684,7 +717,7 @@ function post_upload($path='file',$format='empty',$maxSize='3145728000'){
     // 去除两边的/
     $path=trim($path,'/');
     // 添加Upload根目录
-    $path=strtolower(substr($path, 0,6))==='Upload' ? ucfirst($path) : 'Upload/'.$path;
+    $path=strtolower(substr($path, 0,6)) ==='Upload' ? ucfirst($path) : 'Upload/'.$path;
     // 上传文件类型控制
     $ext_arr= array(
             'image' => array('gif', 'jpg', 'jpeg', 'png', 'bmp'),
@@ -695,13 +728,13 @@ function post_upload($path='file',$format='empty',$maxSize='3145728000'){
         );
     if(!empty($_FILES)){
         // 上传文件配置
-        $config=array(
+        $config = array(
                 'maxSize'   =>  $maxSize,               //上传文件最大为50M
                 'rootPath'  =>  './',                   //文件上传保存的根路径
                 'savePath'  =>  './'.$path.'/',         //文件上传的保存路径（相对于根路径）
                 'saveName'  =>  array('uniqid',''),     //上传文件的保存规则，支持数组和字符串方式定义
                 'autoSub'   =>  true,                  //自动使用子目录保存上传文件 默认为true
-                'exts'    =>    isset($ext_arr[$format])?$ext_arr[$format]:'',
+                'exts'      =>  isset($ext_arr[$format])?$ext_arr[$format]:'',
             );
         // 实例化上传
         $upload=new \Think\Upload($config);
@@ -1308,6 +1341,54 @@ function qrcode($url,$size=4){
     Vendor('Phpqrcode.phpqrcode');
     QRcode::png($url,false,QR_ECLEVEL_L,$size,2,false,0xFFFFFF,0x000000);
 }
+
+/**
+* 功能：生成二维码
+* @param string $qr_data   手机扫描后要跳转的网址
+* @param string $qr_level  默认纠错比例 分为L、M、Q、H四个等级，H代表最高纠错能力
+* @param string $qr_size   二维码图大小，1－10可选，数字越大图片尺寸越大
+* @param string $save_path 图片存储路径
+* @param string $save_prefix 图片名称前缀
+*/
+function createQRcode($save_path,$qr_data,$qr_level='L',$qr_size=4,$save_prefix='qrcode'){
+    if(!isset($save_path)) return '';
+    //设置生成png图片的路径
+    $PNG_TEMP_DIR = & $save_path;
+    //导入二维码核心程序
+
+    vendor('Phpqrcode.phpqrcode');  //注意这里的大小写哦，不然会出现找不到类，Phpqrcode是文件夹名字，class#phpqrcode就代表class.phpqrcode.php文件名
+
+    //检测并创建生成文件夹
+    if (!file_exists($PNG_TEMP_DIR)){
+        mkdir($PNG_TEMP_DIR);
+    }
+    $filename = $PNG_TEMP_DIR.'test.png';
+    $errorCorrectionLevel = 'L';
+    if (isset($qr_level) && in_array($qr_level, array('L','M','Q','H'))){
+        $errorCorrectionLevel = & $qr_level;
+    }
+    $matrixPointSize = 4;
+    if (isset($qr_size)){
+        $matrixPointSize = & min(max((int)$qr_size, 1), 10);
+    }
+    if (isset($qr_data)) {
+        if (trim($qr_data) == ''){
+            die('data cannot be empty!');
+        }
+        //生成文件名 文件路径+图片名字前缀+md5(名称)+.png
+        $filename = $PNG_TEMP_DIR.$save_prefix.md5($qr_data.'|'.$errorCorrectionLevel.'|'.$matrixPointSize).'.png';
+        //开始生成
+        QRcode::png($qr_data, $filename, $errorCorrectionLevel, $matrixPointSize, 2);
+    } else {
+        //默认生成
+        QRcode::png('PHP QR Code :)', $filename, $errorCorrectionLevel, $matrixPointSize, 2);
+    }
+    if(file_exists($PNG_TEMP_DIR.basename($filename)))
+        return basename($filename);
+    else
+        return FALSE;
+}
+
 
 /**
  * 数组转xls格式的excel文件
@@ -1988,53 +2069,6 @@ function ibos360_GetReturnOrders($data,$pageModel){
     $ibos360_result = doCurlPostRequest($ibos360_url,$ibos360_userdata);
     $ibos360_result = json_decode($ibos360_result,true);
     return $ibos360_result;
-}
-
- /**
- * 功能：生成二维码
- * @param string $qr_data   手机扫描后要跳转的网址
- * @param string $qr_level  默认纠错比例 分为L、M、Q、H四个等级，H代表最高纠错能力
- * @param string $qr_size   二维码图大小，1－10可选，数字越大图片尺寸越大
- * @param string $save_path 图片存储路径
- * @param string $save_prefix 图片名称前缀
- */
-function createQRcode($save_path,$qr_data,$qr_level='L',$qr_size=4,$save_prefix='qrcode'){
-    if(!isset($save_path)) return '';
-    //设置生成png图片的路径
-    $PNG_TEMP_DIR = & $save_path;
-    //导入二维码核心程序
-
-    vendor('Phpqrcode.phpqrcode');  //注意这里的大小写哦，不然会出现找不到类，Phpqrcode是文件夹名字，class#phpqrcode就代表class.phpqrcode.php文件名
-
-    //检测并创建生成文件夹
-    if (!file_exists($PNG_TEMP_DIR)){
-        mkdir($PNG_TEMP_DIR);
-    }
-    $filename = $PNG_TEMP_DIR.'test.png';
-    $errorCorrectionLevel = 'L';
-    if (isset($qr_level) && in_array($qr_level, array('L','M','Q','H'))){
-        $errorCorrectionLevel = & $qr_level;
-    }
-    $matrixPointSize = 4;
-    if (isset($qr_size)){
-        $matrixPointSize = & min(max((int)$qr_size, 1), 10);
-    }
-    if (isset($qr_data)) {
-        if (trim($qr_data) == ''){
-            die('data cannot be empty!');
-        }
-        //生成文件名 文件路径+图片名字前缀+md5(名称)+.png
-        $filename = $PNG_TEMP_DIR.$save_prefix.md5($qr_data.'|'.$errorCorrectionLevel.'|'.$matrixPointSize).'.png';
-        //开始生成
-        QRcode::png($qr_data, $filename, $errorCorrectionLevel, $matrixPointSize, 2);
-    } else {
-        //默认生成
-        QRcode::png('PHP QR Code :)', $filename, $errorCorrectionLevel, $matrixPointSize, 2);
-    }
-    if(file_exists($PNG_TEMP_DIR.basename($filename)))
-        return basename($filename);
-    else
-        return FALSE;
 }
 
 /**
@@ -2731,3 +2765,53 @@ function rsaVerify($postData)
         return "true";
     }
 }
+/**去掉字符串前后所有空格*/
+function trimall($str)//删除空格
+{   
+    $oldchar=array(" ","　","\t","\n","\r");
+
+    $newchar=array("","","","","");
+
+    return str_replace($oldchar,$newchar,$str);
+
+}
+
+// 当前的毫秒时间戳  
+function msectime(){  
+    $arr = explode(' ', microtime());  
+    $tmp1 = $arr[0];  
+    $tmp2 = $arr[1];  
+    return (float)sprintf('%.0f', (floatval($tmp1) + floatval($tmp2)) * 1000);  
+}  
+// 10进制转62进制  
+function dec62($dec){  
+    $base = 62;  
+    $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';  
+    $ret = '';  
+    for($t = floor(log10($dec) / log10($base)); $t >= 0; $t--){  
+        $a = floor($dec / pow($base, $t));  
+        $ret .= substr($chars, $a, 1);  
+        $dec -= $a * pow($base, $t);  
+    }  
+    return $ret;  
+} 
+// 随机字符  
+function rand_char(){  
+    $base = 62;  
+    $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';  
+    return $chars[mt_rand(1, $base) - 1];  
+}
+
+/**
+* 生成二维码
+* @param url 链接
+* @param qrcodeName 二维码名称
+**/
+function createCode($url,$qrcodeName){
+    $renderer = new \BaconQrCode\Renderer\Image\Png();
+    $renderer->setHeight(256);
+    $renderer->setWidth(256);
+    $writer = new \BaconQrCode\Writer($renderer);
+    $writer->writeFile($url,$qrcodeName);
+}
+

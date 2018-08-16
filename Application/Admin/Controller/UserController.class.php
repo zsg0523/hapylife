@@ -7,8 +7,25 @@ use Common\Controller\AdminBaseController;
 class UserController extends AdminBaseController{
 
 	public function index(){
+<<<<<<< HEAD
 		$keyword = I('get.keyword');
 		$assign  = D('User')->getAllData(D('User'),$keyword,$order='uid',$limit=50,$field='');
+=======
+		// //账户昵称搜索
+		$word = I('post.word');
+		if(empty($word)){
+			$map=array();
+		}else{
+			$map=array(
+				'hu_nickname'=>$word
+			);
+		}
+		$assign=D('IbosUsers')->getAllData(D('IbosUsers'),$map,$order="hu_nickname");
+		// p($assign);die;
+		// //hrac门店信息
+		$HracShop   =D('HracShop')->select();
+		$HracGrage 	=D('HracGrade')->select();
+>>>>>>> 7ed6b25b539db50e041b7dcaadcf41748b9ebfa2
 		$this->assign($assign);
 		$this->assign('keyword',$keyword);
 		$this->display();

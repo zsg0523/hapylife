@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>地址管理</title>
+    <link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
+	<!--	<link rel="stylesheet" type="text/css" href="__PUBLIC_BOOTSTRAP__/css/daimabiji-demo.css">-->
+    <style type="text/css">
+      *{margin: 0;padding: 0;font-size: 14px;}
+    	ul,li{list-style: none;display: block;margin: 0;}
+    	a{text-decoration: none;color: #000;font-weight: bold;}
+		a:hover{text-decoration: none;cursor: pointer;}
+		button{outline:none;border: none;background: #fff;}
+		input[type="radio"], input[type="checkbox"] {margin: 7px 5px 0 5px;}
+		p{margin: 0;padding: 0;}
+    	.wrap{width: 100%;position: relative;background: #f0f0f0;}
+    	
+    	#addAddress{width: 100%;height: 40px;line-height:40px;text-align: center; border-radius: 5px;position: fixed;z-index: 10;
+			font-size: 16px;bottom: 0;left: 0;  color: #FFFFFF; background-color: #2491EE;margin: 0;}
+    	
+		.main{height: auto;margin: auto;}
+      	.commonHead{width: 100%;height: auto;}
+     	.title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
+      
+		.main>button{width: 100px;height: 40px;line-height:40px;text-align: center; border-radius: 8px;margin-left: 10%;}
+		.addressInfo{width: 100%;height: 110px;border: 1px solid #DEDEDE;margin-top: 10px;background: #fff;border-radius: 5px;}
+		.addressInfo>ul{width: 65%;height: 110px;border-bottom: 1px #DEDEDE solid;margin-bottom: 0px;display: block;float: left;}
+		.addressInfo>ul>li{width: 100%;height: 27px;}
+		.addressInfo>ul>li>div{width:95%;height: 25px;line-height: 25px;text-align: ;float: left;margin-left: 5px; }
+		.addressInfo>form{width: 80px;height: 106px;display: block; float: right; text-align: center;line-height: 29px;background: #fff;color: #000;margin-left: 5px;margin-right: 5px;}
+		.defa{width: 50px;height: 25px;line-height: 25px;font-size: 12px; display: block;float: right;text-align: center;color: #ffb1bb;background: #fff;border:1px solid #ffb1bb; border-radius: 10px;margin-top: 8px;}
+		.edit{width:50px;height: 25px;line-height: 25px;font-size: 12px; float: right;color: #fff;text-align: center;background: #439DFE;border-radius: 10px;margin-top: 8px;display: inline-block;}
+		.dele{width: 50px;height: 25px;line-height: 25px;font-size: 12px; display: block;float: right;text-align: center;background:#439DFE ; color:#fff;border-radius: 10px;margin-top: 8px;}
+		
+		.w_50{width: 50%;}
+		.fl{float: left;}
+		.fr{float: right;}
+		.btn-info{background-color: #439DFE;}
+						
+		#save{width: 100%;}
+      /*手机*/
+      @media screen and (max-width: 768px){
+				.main,.title{width:100%;}
+      	#addAddress{width: 96%;margin-left: 2%;}
+      }
+      /*平板*/
+      @media screen and (min-width: 768px){
+      	.main,.title{width:100%;}
+      	#addAddress{width: 96%;margin-left: 2%;}
+   
+      }
+        /*中等屏幕*/
+      @media screen and (min-width: 992px){
+        .main,.title{width:100%;}
+        #addAddress{width: 96%;margin-left: 2%;}
+      }
+      /*大屏幕*/
+      @media screen and (min-width: 1200px){ 	
+        .main,.title{width:1200px;}
+        #addAddress{width: 1200px;left: 50%;margin-left:-600px;}
+      }
+    </style>
+  </head>
+  <body onload="">
+  		<div class="wrap">
+  			<div class="commonHead">
+  				<include file="Common/commonHead1" />
+				</div>
+  			<div class="main">
+  				<foreach name="data" item="v">
+	  				<div class="addressInfo">
+	  					<ul>
+	  						<li><div>{$v['ia_name']}</div></li>
+	  						<li><div>{$v['ia_phone']}</div></li>
+	  						<li><div>{$v['ia_province']}{$v['ia_town']}{$v['ia_region']}</div></li>
+	  						<li><div style="overflow: hidden;">{$v['ia_road']}</div></li>
+	  					</ul>
+
+	  					<form class="btnform" name="form" action="{:U('Home/Purchase/addressEdit')}" method="post">
+	  						<input type="hidden" name="iaid" value="{$v['iaid']}">
+	  						<if 	condition="$v['is_address_show'] eq 1" >
+	  						<button name="is_address_show" value="1" type="submit" class="defa" onclick='' disabled='disabled'; >默认</button>
+	  						<else />
+		             <button name="is_address_show" value="1" type="submit" class="defa" onclick='' style="width: 80px;color: #666;background: #fff;border:1px solid #666;">设为默认</button>          
+	  						</if>
+	  						<button type="button" class="dele" data-iaid='{$v['iaid']}' data-toggle="modal" data-target="#myModal3">删除</button>
+	  						<button data-iaid='{$v['iaid']}' data-name='{$v['ia_name']}' data-province='{$v['ia_province']}' data-town='{$v['ia_town']}' data-region='{$v['ia_region']}' data-road='{$v['ia_road']}' data-phone='{$v['ia_phone']}' type="button" class="edit" data-toggle="modal" data-target="#myModal2" >编辑</button>
+	  					</form>
+	  				</div>
+	  			</foreach>
+  				
+  				<div style="height:50px;width: 100%;"></div>
+  				
+  			<!-- Modal -->
+				<div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				  <div class="modal-dialog" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				      	<span>删除收货地址:</span>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				      </div>
+				      <div class="modal-body daimabiji-container">
+									<form name="form" action="#" method="post">
+										<input type="hidden" name="iaid">
+										<div class="form-group" style="font-size: 18px;">是否删除地址？</div>
+										<div class="form-group">
+										  <button type="submit" class="btn btn-danger" onclick='form.action="{:U('Home/Purchase/addressDelect')}";form.submit();'>删除</button>
+										  <button type="button" class="btn btn-info"  data-dismiss="modal" aria-label="Close" style="float: right;">取消</button>
+										</div>
+									  
+									</form>
+				      </div>
+				    
+				    </div>
+				  </div>
+				</div>
+  			
+  				
+  				<!-- Modal -->
+				<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				  <div class="modal-dialog" role="document">
+				    <div class="modal-content"> 
+				      <div class="modal-header">
+				      	<span>编辑收货地址:</span>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				      </div>
+				      <div class="modal-body daimabiji-container">
+									<form action="{:U('Home/Purchase/addressEdit')}" method="post">
+										<input type="hidden" name="iaid">
+									  <div class="form-group">
+									    <label for=""><sup style="color: red;">*</sup>收货人:</label>
+									    <input name="ia_name" type="text" class="form-control" id=""  placeholder="收货人姓名">
+									  </div>
+									  <div class="form-group">
+									    <label for=""><sup style="color: red;">*</sup>联系电话:</label>
+									    <input name="ia_phone" type="tel" class="form-control" id=""  placeholder="联系电话">
+									  </div>
+									  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>所在省:</label>
+										    <!--<input name="ia_province" type="text" class="form-control"  placeholder="所在省" >-->
+										    <input name="ia_province" type="text" class="form-control"  placeholder="所在省"     >
+
+										   	
+										  </div>
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>所在市:</label>
+										    <!--<input name="ia_town" type="text" class="form-control"  placeholder="所在市">-->
+										    <input name="ia_town" type="text" class="form-control"  placeholder="所在市"    >
+										  </div>
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>所在区/县:</label>
+										    <!--<input name="ia_region" type="text" class="form-control"  placeholder="所在区/县">-->
+										    <input name="ia_region" type="text" class="form-control"  placeholder="所在区/县"    >	
+										    
+										  </div>
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>详细地址:</label>
+										    <!--<input name="ia_road" type="text" class="form-control"  placeholder="详细地址">-->
+										    <input name="ia_road" type="text" class="form-control"  placeholder="详细地址"    >	
+										  </div>
+									  <div class="form-group">
+										  <button type="submit" class="btn btn-info" id="save">保存</button>
+										</div>
+									</form>
+				      </div>
+				    
+				    </div>
+				  </div>
+				</div>
+				
+  		</div>
+  			
+  		<button type="button" id="addAddress" data-toggle="modal" data-target="#myModal1">添加新收货地址</button> 				
+	  			<!-- Modal -->
+					<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+					  <div class="modal-dialog" role="document">
+					    <div class="modal-content">
+					      <div class="modal-header">
+					      	<span>新建收货地址:</span>
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					      </div>
+					      <div class="modal-body daimabiji-container">
+										<form action="{:U('Home/Purchase/addressAdd')}" method="post">
+											<input type="hidden" name="iuid" value="{$Think.session.user.id}">
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>收货人:</label>
+										    <input name="ia_name" type="text" class="form-control"  placeholder="收货人姓名">
+										  </div>
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>联系电话:</label>
+										    <input name="ia_phone" type="tel" class="form-control"  placeholder="联系电话">
+										  </div>
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>所在省:</label>
+										    <!--<input name="ia_province" type="text" class="form-control"  placeholder="所在省">-->
+										    <input name="ia_province" type="text" class="form-control"  placeholder="所在省"    >										   	
+
+										  </div>
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>所在市:</label>
+										    <!--<input name="ia_town" type="text" class="form-control" placeholder="所在市">-->
+										    <input name="ia_town" type="text" class="form-control" placeholder="所在市"    >
+										  </div>
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>所在区/县:</label>
+										    <!--<input name="ia_region" type="text" class="form-control"  placeholder="所在区/县">-->
+										    	<input name="ia_region" type="text" class="form-control"  placeholder="所在区/县"    >
+										  </div>
+										  <div class="form-group">
+										    <label for=""><sup style="color: red;">*</sup>详细地址:</label>
+										    <!--<input name="ia_road" type="text" class="form-control"  placeholder="详细地址">-->
+										    <input name="ia_road" type="text" class="form-control"  placeholder="详细地址"    >
+										  </div>
+										  <div class="form-group">
+										  	<button type="submit" class="btn btn-info" id="save">添加</button>
+										  </div>
+										</form>
+					      </div>
+					    </div>
+					  </div>
+					</div>
+  		</div>
+
+		<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
+    <script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+
+		$(document).ready(function(){			
+	   		changeCommonHead('地址管理');
+		});
+		function back(){
+        	window.location.href ="{:U('Home/Purchase/center')}";
+   	}
+	  //去特殊字符
+    $('input').blur(function(){
+			if($(this).val()!=$(this).val().replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')){
+				$(this).val($(this).val().replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,''));
+//				alert($(this).val());
+			}	
+    });
+    
+		$('#myModal2').on('show.bs.modal', function (event) {
+		  var button=$(event.relatedTarget);
+ 			var iaid=button.data('iaid');
+ 			var name=button.data('name');
+ 			var phone=button.data('phone');
+ 			var province=button.data('province');
+ 			var town=button.data('town');
+ 			var region=button.data('region');
+ 			var road=button.data('road');
+		  	
+		  	$("input[name='iaid']").val(iaid);
+		  	$("input[name='ia_name']").val(name);
+		  	$("input[name='ia_phone']").val(phone);
+		  	$("input[name='ia_province']").val(province);
+		  	$("input[name='ia_town']").val(town);
+		  	$("input[name='ia_region']").val(region);
+		  	$("input[name='ia_road']").val(road);
+		});
+		$('#myModal3').on('shown.bs.modal', function (event) {
+//		$('#myInput').focus()
+			var button=$(event.relatedTarget);
+	 		var iaid=button.data('iaid');
+	 		$("input[name='iaid']").val(iaid);
+		});
+		$('#myModal1').on('shown.bs.modal', function (event) {
+		  	$("input[name='ia_name']").val('');
+		  	$("input[name='ia_phone']").val('');
+		  	$("input[name='ia_province']").val('');
+		  	$("input[name='ia_town']").val('');
+		  	$("input[name='ia_region']").val('');
+		  	$("input[name='ia_road']").val('');
+		});
+
+    </script>
+
+  </body>
+</html>

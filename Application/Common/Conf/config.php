@@ -21,6 +21,7 @@ return array(
         '__PUBLIC_BOOTSTRAP__'      => __ROOT__.trim(TMPL_PATH,'.').'Public/bootstrap',
         '__PUBLIC_AMAZEUI__'      => __ROOT__.trim(TMPL_PATH,'.').'Public/AmazeUI',
         '__PUBLIC_BASIC__'      => __ROOT__.trim(TMPL_PATH,'.').'Public/basic',
+
         '__PUBLIC_IMAGE__'  => __ROOT__.trim(TMPL_PATH,'.').'Public/images',
         
         '__USER_CSS__'       => __ROOT__.trim(TMPL_PATH,'.').'User/Public/css',
