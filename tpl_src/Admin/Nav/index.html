@@ -1,22 +1,22 @@
 <extend name="Public:base" />
 
-<block name="title">菜单管理</block>
+<block name="title">Menu Management</block>
 <block name="content">
     <!-- 导航栏开始 -->
     <div class="page-header">
         <h1>
-            <i class="fa fa-home"></i>首页
-            &gt;菜单管理
+            <i class="fa fa-home"></i>Home
+            &gt;Menu Management
         </h1>
     </div>
     <div class="col-xs-12">
         <div class="tabbable">
             <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
                 <li class="active">
-                    <a href="#home" data-toggle="tab">菜单列表</a>
+                    <a href="#home" data-toggle="tab">Menu List</a>
                 </li>
                 <li>
-                    <a href="javascript:;" onclick="add()">添加菜单</a>
+                    <a href="javascript:;" onclick="add()">Add Menu</a>
                 </li>
             </ul>
 
@@ -24,10 +24,10 @@
                 <form class="" action="{:U('Admin/Nav/order')}" method="post">
                     <table class="table table-striped table-bordered table-hover table-condensed">
                         <tr>
-                            <th width="5%">排序</th>
-                            <th>菜单名</th>
-                            <th>连接</th>
-                            <th>操作</th>
+                            <th width="5%">Sort</th>
+                            <th>List Name</th>
+                            <th>Link</th>
+                            <th>Operation</th>
                         </tr>
                         <foreach name="data" item="v">
                             <tr>
@@ -37,15 +37,15 @@
                                 <td>{$v['_name']}</td>
                                 <td>{$v['mca']}</td>
                                 <td>
-                                    <a href="javascript:;" navId="{$v['id']}" navName="{$v['name']}"  onclick="add_child(this)">添加子菜单</a> |
-                                    <a href="javascript:;" navId="{$v['id']}" navName="{$v['name']}" navMca="{$v['mca']}" navIco="{$v['ico']}" onclick="edit(this)">修改</a> |
-                                    <a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Nav/delete',array('id'=>$v['id']))}'">删除</a>
+                                    <a href="javascript:;" navId="{$v['id']}" navName="{$v['name']}"  onclick="add_child(this)">Add Submenu</a> |
+                                    <a href="javascript:;" navId="{$v['id']}" navName="{$v['name']}" navMca="{$v['mca']}" navIco="{$v['ico']}" onclick="edit(this)">Modify</a> |
+                                    <a href="javascript:if(confirm('Are you sure you want to delete ?'))location='{:U('Admin/Nav/delete',array('id'=>$v['id']))}'">Delete</a>
                                 </td>
                             </tr>
                         </foreach>
                         <tr>
                             <th>
-                                <input class="btn btn-success" type="submit" value="排序">
+                                <input class="btn btn-success" type="submit" value="Sort">
                             </th>
                             <td></td>
                             <td></td>
@@ -65,7 +65,7 @@
                         &times;
                     </button>
                     <h4 class="modal-title" id="myModalLabel">
-                        添加菜单
+                        Add Menu
                     </h4>
                 </div>
                 <div class="modal-body">
@@ -73,28 +73,28 @@
                         <input type="hidden" name="pid" value="0">
                         <table class="table table-striped table-bordered table-hover table-condensed">
                             <tr>
-                                <th width="12%">菜单名：</th>
+                                <th width="12%">Menu Name :</th>
                                 <td>
                                     <input class="input-medium" type="text" name="name">
                                 </td>
                             </tr>
                             <tr>
-                                <th>连接：</th>
+                                <th>Link :</th>
                                 <td>
-                                    <input class="input-medium" type="text" name="mca"> 输入模块/控制器/方法即可 例如 Admin/Nav/index
+                                    <input class="input-medium" type="text" name="mca"> Model/Controller/Method E.g : Admin/Nav/index
                                 </td>
                             </tr>
                             <tr>
-                                <th>图标：</th>
+                                <th>Icon :</th>
                                 <td>
                                     <input class="input-medium" type="text" name="ico">
-                                    font-awesome图标 输入fa fa- 后边的即可
+                                    <!-- font-awesome图标 输入fa fa- 后边的即可 -->
                                 </td>
                             </tr>
                             <tr>
                                 <th></th>
                                 <td>
-                                    <input class="btn btn-success" type="submit" value="添加">
+                                    <input class="btn btn-success" type="submit" value="Add">
                                 </td>
                             </tr>
                         </table>
@@ -114,7 +114,7 @@
                         &times;
                     </button>
                     <h4 class="modal-title" id="myModalLabel">
-                        修改菜单
+                        Modify menu
                     </h4>
                 </div>
                 <div class="modal-body">
@@ -122,28 +122,28 @@
                         <input type="hidden" name="id">
                         <table class="table table-striped table-bordered table-hover table-condensed">
                             <tr>
-                                <th width="12%">菜单名：</th>
+                                <th width="12%">Menu Name :</th>
                                 <td>
                                     <input class="input-medium" type="text" name="name">
                                 </td>
                             </tr>
                             <tr>
-                                <th>连接：</th>
+                                <th>Link :</th>
                                 <td>
-                                    <input class="input-medium" type="text" name="mca"> 输入模块/控制器/方法即可 例如 Admin/Nav/index
+                                    <input class="input-medium" type="text" name="mca"> Model/Controller/Method E.g : Admin/Nav/index
                                 </td>
                             </tr>
                             <tr>
-                                <th>图标：</th>
+                                <th>Icon :</th>
                                 <td>
                                     <input class="input-medium" type="text" name="ico">
-                                    font-awesome图标 输入fa fa- 后边的即可
+                                    <!-- font-awesome图标 输入fa fa- 后边的即可 -->
                                 </td>
                             </tr>
                             <tr>
                                 <th></th>
                                 <td>
-                                    <input class="btn btn-success" type="submit" value="修改">
+                                    <input class="btn btn-success" type="submit" value="Modify">
                                 </td>
                             </tr>
                         </table>

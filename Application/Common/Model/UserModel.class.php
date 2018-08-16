@@ -2,45 +2,28 @@
 namespace Common\Model;
 use Common\Model\BaseModel;
 /**
-* Hapylife用户model
+* 用户model
 **/
 class UserModel extends BaseModel{
-	public function getAllData($model,$map,$word='',$order='',$limit=50,$field=''){
+	public function getAllData($model,$keyword,$order='',$limit=50,$field=''){
 		$count=$model
-			  ->where($map)
+			  ->where(array('account|phone|email|sex|name'=>array('like','%'.$keyword.'%')))
 			  ->count();
 		$page=new_page($count,$limit);
-		
-		if(empty($word)){
-			if(empty($field)){
-				$list=$model
-					->where($map)
-					->order($order)
-					->limit($page->firstRow.','.$page->listRows)
-					->select();
-			}else{
-				$list=$model
-					->where($map)
-					->field($field)
-					->order($order)
-					->limit($page->firstRow.','.$page->listRows)
-					->select();
-			}
+		//获取分页数据
+		if(empty($field)){
+			$list=$model
+				->where(array('account|phone|email|sex|name'=>array('like','%'.$keyword.'%')))
+				->order($order)
+				->limit($page->firstRow.','.$page->listRows)
+				->select();
 		}else{
-			if(empty($field)){
-				$list=$model
-					->where($map)
-					->order($order)
-					->limit($page->firstRow.','.$page->listRows)
-					->select();
-			}else{
-				$list=$model
-					->where($map)
-					->field($field)
-					->order($order)
-					->limit($page->firstRow.','.$page->listRows)
-					->select();
-			}
+			$list=$model
+				->field($field)
+				->where(array('account|phone|email|sex|name'=>array('like','%'.$keyword.'%')))
+				->order($order)
+				->limit($page->firstRow.','.$page->listRows)
+				->select();
 		}
 		$data=array(
 			'data'=>$list,

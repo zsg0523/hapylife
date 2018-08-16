@@ -1,7 +1,7 @@
 <?php
 return array(
 //*************************************附加设置***********************************
-    'WEB_URL'                => 'http://192.168.33.10/data/hapylife',    //上传文件前缀               
+    'WEB_URL'                => '192.168.33.10/data/testnulife',    //上传文件前缀               
     'SHOW_PAGE_TRACE'        => false,                           // 是否显示调试面板
     'URL_CASE_INSENSITIVE'   => false,                           // url区分大小写
     'TAGLIB_BUILD_IN'        => 'Cx,Common\Tag\My',              // 加载自定义标签
@@ -16,10 +16,13 @@ return array(
         '__ADMIN_JS__'       => __ROOT__.trim(TMPL_PATH,'.').'Admin/Public/js',
         '__ADMIN_IMAGES__'   => OSS_URL.trim(TMPL_PATH,'.').'Admin/Public/images',
         '__ADMIN_ACEADMIN__' => OSS_URL.__ROOT__.'/Public/statics/aceadmin',
-        '__PUBLIC_CSS__'     => __ROOT__.trim(TMPL_PATH,'.').'Public/css',
+		'__PUBLIC_CSS__'     => __ROOT__.trim(TMPL_PATH,'.').'Public/css',
         '__PUBLIC_JS__'      => __ROOT__.trim(TMPL_PATH,'.').'Public/js',
-        '__PUBLIC_IMAGES__'  => OSS_URL.trim(TMPL_PATH,'.').'Public/images',
+        '__PUBLIC_BOOTSTRAP__'      => __ROOT__.trim(TMPL_PATH,'.').'Public/bootstrap',
+        '__PUBLIC_AMAZEUI__'      => __ROOT__.trim(TMPL_PATH,'.').'Public/AmazeUI',
+        '__PUBLIC_BASIC__'      => __ROOT__.trim(TMPL_PATH,'.').'Public/basic',
         '__PUBLIC_IMAGE__'  => __ROOT__.trim(TMPL_PATH,'.').'Public/images',
+        
         '__USER_CSS__'       => __ROOT__.trim(TMPL_PATH,'.').'User/Public/css',
         '__USER_JS__'        => __ROOT__.trim(TMPL_PATH,'.').'User/Public/js',
         '__USER_IMAGES__'    => OSS_URL.trim(TMPL_PATH,'.').'User/Public/images',
@@ -28,12 +31,12 @@ return array(
         '__APP_IMAGES__'     => OSS_URL.trim(TMPL_PATH,'.').'App/Public/images'
     ),
 //***********************************URL设置**************************************
-    'MODULE_ALLOW_LIST'      => array('Home','Admin','Api','User','App'), //允许访问列表
+    'MODULE_ALLOW_LIST'      => array('Home','Admin','Api','User','FrontPage'), //允许访问列表
     'URL_HTML_SUFFIX'        => '',  // URL伪静态后缀设置
     'URL_MODEL'              => 1,  //启用rewrite
 //***********************************SESSION设置**********************************
     'SESSION_OPTIONS'        => array(
-        'name'               => 'Hapylife',//设置session名
+        'name'               => 'Nulife',//设置session名
         'expire'             => 24*3600*15, //SESSION保存15天
         'use_trans_sid'      => 1,//跨页传递
         'use_only_cookies'   => 0,//是否只开启基于cookies的session的会话方式
@@ -44,7 +47,7 @@ return array(
     'TMPL_ACTION_SUCCESS'    => TMPL_PATH.'/Public/dispatch_jump.tpl', // 默认成功跳转对应的模板文件
 //***********************************auth设置**********************************
     'AUTH_CONFIG'            => array(
-            'AUTH_USER'      => 'user'                         //用户信息表
+            'AUTH_USER'      => 'users'                         //用户信息表
         ),
 //***********************************邮件服务器**********************************
     'EMAIL_FROM_NAME'        => '',   // 发件人
@@ -107,4 +110,10 @@ return array(
         'APPSECRET'          => '',  //公众帐号secert
         'NOTIFY_URL'         => 'http://baijunyao.com/Api/WeixPay/notify/order_number/', // 接收支付状态的连接
         ),
+//***********************************语言包设置**********************************
+    'LANG_SWITCH_ON' => true, // 开启语言包功能
+    'LANG_AUTO_DETECT' => true, // 自动侦测语言 开启多功能语言功能后有效
+    'LANG_LIST' =>  'zh-cn,en-us', // 允许切换的语言列表，用逗号分隔
+    'VAR_LANGUAGE' => 'LANG', // 默认语言切换功能
+
 );

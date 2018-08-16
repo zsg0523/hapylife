@@ -2,25 +2,25 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>Hapylife管理系统</title>
+		<title>Idyiashop Background Management</title>
 <style>
 	 body,ul,li,a,img,span{margin:0;padding:0;}
 body{margin:0 auto;width:100%;background:#d6dee0; }
 a{text-decoration:none;}
 li{list-style:none;}
 /*登录界面*/
-#box{background:url(__PUBLIC_IMAGE__/enter_bg.jpg) no-repeat;position:relative;}
+#box{background:url(__PUBLIC_IMAGE__/enter_bg.png) no-repeat;position:relative;}
 #box,#box_1{width:1024px;height:600px;border:1px solid darkgray;margin:70px auto;border-radius:15px;-moz-border-radius: 15px; -webkit-border-radius: 15px;-webkit-box-shadow:0 0 16px gray; -moz-box-shadow:0 0 16px gray;  box-shadow:0 0 16px gray;}
-#logo{position:absolute;border:1px solid #d6dee0;width:300px;height:180px;top:236px;right:325px;border-radius:8px;-moz-border-radius:8px; -webkit-border-radius: 8px;-webkit-box-shadow:inset 0 0 20px lightgrey;-moz-box-shadow:inset 0 0 20px lightgrey;box-shadow:inset 0 0 20px lightgrey;}
-#logo table{margin-top:20px;}
-#logo .Td{font-size:16px;font-family:"楷体";color:#000000;height:30px;}
-#logo .text{width:180px;height:24px;}
-#logo .Tr{padding:30px;border:1px solid red;}
+#logo{position:absolute;border:1px solid #d6dee0;width:300px;height:180px;top:236px;right:370px;border-radius:8px;-moz-border-radius:8px; -webkit-border-radius: 8px;}
+#logo table{margin-top:20px;width: 100%;height: auto;}
+#logo .Td{font-size:16px;font-family:"楷体";color:#000000;height:30px;padding-left: 10px;}
+#logo .text{width:200px;height:24px;}
+#logo .Tr{border:1px solid red;}
 #logo .Tr a{color:blue;font-size:14px;font-family: "楷体";}
 #logo .Tr a:hover{color:black;}
 #logo .Checkbox,#logo .Radio{color:grey;font-size:12px;font-family: "楷体";}
 #logo #btn{width:120px;margin-top:10px;margin-left:100px;}
-#logo #button{width:120px;border:none;text-align:center;background:url(__PUBLIC_IMAGE__/login.png) no-repeat;height:21px;}
+#logo #button{width:120px;border:none;text-align:center;background:#3793d4;height:30px;text-align: center;color: #fff;border-radius: 5px;}
 .code{ font-family:Arial,宋体; font-style:italic; color:blanchedalmond; border:0; padding:2px 3px; letter-spacing:3px; font-weight:bolder;background:lightskyblue; }
 	
 </style>
@@ -28,16 +28,16 @@ li{list-style:none;}
 	<body>
 		<div id="box">
 			<div id="logo">
-				<form method="post">
+				<form method="post" style="margin-top: 35px;">
 					<table>
 						<tr class="Tr">
-							<td class="Td">登录名</td>
-							<td><input name=username type="text" class="text"/></td>
+							<td class="Td">Account</td>
+							<td><input name="username" type="text" class="text"/></td>
 							<!-- <td><a href="#">立即注册</a></td> -->
 						</tr>
-						<tr class="Tr">
-							<td class="Td">密码</td>
-							<td><input name=password type="text" class="text"/></td>	
+						<tr class="Tr" style="padding-top: 20px;">
+							<td class="Td">Password</td>
+							<td><input name="password" type="password" class="text"/></td>	
 							<!-- <td><a href="#">忘记密码</a></td> -->
 						</tr>
 						<!-- <tr>
@@ -55,7 +55,7 @@ li{list-style:none;}
 							<td></td>
 						</tr> -->
 					</table>
-					<div id="btn"><input type="submit" value="" id="button"/></div>
+					<div id="btn"><input type="submit" value="Sign in" id="button"/></div>
 				</form>
 			</div>
 		</div>
