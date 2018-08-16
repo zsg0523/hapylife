@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
+<<<<<<< HEAD
+	<name>shop</name>
+=======
 	<name>hapylife</name>
+>>>>>>> 7ed6b25b539db50e041b7dcaadcf41748b9ebfa2
 	<comment></comment>
 	<projects>
 	</projects>
@@ -16,6 +20,9 @@
 	</natures>
 	<filteredResources>
 		<filter>
+<<<<<<< HEAD
+			<id>1531380493228</id>
+=======
 			<id>1526030128183</id>
 			<name></name>
 			<type>26</type>
@@ -44,6 +51,7 @@
 		</filter>
 		<filter>
 			<id>1533108564546</id>
+>>>>>>> 7ed6b25b539db50e041b7dcaadcf41748b9ebfa2
 			<name></name>
 			<type>26</type>
 			<matcher>

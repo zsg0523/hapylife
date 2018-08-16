@@ -382,6 +382,7 @@ class HapylifeController extends AdminBaseController{
 				'ip_name_zh'=>$word
 			);
 		}
+
 		$assign=D('Product')->getAllData(D('Product'),$map);
 		$this->assign('catList',$catList);
 		$this->assign($assign);
@@ -501,7 +502,8 @@ class HapylifeController extends AdminBaseController{
 		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$starttime,$endtime,$status,$order='ir_date desc',$timeType);
 		//导出excel
 		if($excel == 'excel'){
-			$export_excel = D('Receipt')->export_excel($assign['data']);
+			$data = D('Receiptson')->getSendPageSonE(D('Receiptson'));
+			$export_excel = D('Receiptson')->export_excel($data['data']);
 		}else{
 			$this->assign($assign);
 			$this->assign('status',I('get.status'));
@@ -511,7 +513,14 @@ class HapylifeController extends AdminBaseController{
 			$this->assign('endtime',I('get.endtime'));
 			$this->display();
 		}
-		
+	}
+	//查看订单明细
+	public function receiptSon(){
+		$ir_receiptnum = I('get.ir_receiptnum');
+		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum);
+		// p($assign);
+		$this->assign($assign);
+		$this->display();
 	}
 
 	/**
@@ -793,6 +802,15 @@ class HapylifeController extends AdminBaseController{
 			$this->assign('code',$code);
 			$this->display();
 		}
+	}
+
+	//查看订单明细
+	public function sendReceiptSon(){
+		$ir_receiptnum = I('get.ir_receiptnum');
+		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum);
+		// p($assign);
+		$this->assign($assign);
+		$this->display();
 	}
 
 

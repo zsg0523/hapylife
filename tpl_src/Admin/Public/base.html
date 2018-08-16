@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title><block name="title"></block> - Nulife</title>
+
+    <title><block name="title"></block> - idealshop</title>
     <meta name="keywords" content="" />
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -93,7 +94,9 @@
             <a href="#" class="navbar-brand">
                 <small>
                     <i class="icon-leaf"></i>
-                    Nulife管理后台
+
+                    idealshop system
+
                 </small>
             </a><!-- /.brand -->
         </div>
@@ -103,7 +106,7 @@
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
                         <img class="nav-user-photo" src="__ADMIN_ACEADMIN__/avatars/user.jpg" alt="Jason's Photo" />
                         <span class="user-info">
-                            <small>欢迎光临,</small>
+                            <small>Welcome,</small>
                             {$_SESSION['user']['username']}
                         </span>
                         <i class="icon-caret-down"></i>
@@ -115,7 +118,7 @@
                         <li>
                             <a href="{:U('Home/Index/logout')}">
                                 <i class="icon-off"></i>
-                                退出
+                                logout
                             </a>
                         </li>
                     </ul>
@@ -172,7 +175,7 @@
                 <foreach name="nav_data" item="v">
                     <empty name="v['_data']">
                         <li class="b-nav-li">
-                            <a href="{:U($v['mca'])}" target="right_content">
+                            <a href="{:U($v['mca'])}" target="_self"><!-- right_content -->
                                 <i class="fa fa-{$v['ico']} icon-test"></i>
                                 <span class="menu-text"> {$v['name']} </span>
                             </a>
@@ -188,7 +191,7 @@
                             <ul class="submenu">
                                 <foreach name="v['_data']" item="n">
                                     <li class="b-nav-li">
-                                        <a href="{:U($n['mca'])}" target="right_content">
+                                        <a href="{:U($n['mca'])}" target="_self">
                                             <i class="icon-double-angle-right"></i>
                                             {$n['name']}
                                         </a>

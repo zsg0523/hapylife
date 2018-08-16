@@ -1,0 +1,151 @@
+<extend name="Public:base" />
+
+<block name="title">Specifications</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            <a href="{:U('Admin/Product/index')}">Product List</a>
+            &gt;
+			{$product_number}
+			&gt;
+			Specifications
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+			  	<li class="active">
+					<a href="#home" data-toggle="tab">Specifications</a>
+			    </li>
+			    <li>
+					<a href="javascript:;" onclick="add()">Add Specifications</a>
+				</li>
+            </ul>
+            <div class="tab-content">
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<tr>
+						<th>Parameter</th>
+						<th>Value</th>
+						<th>action</th>
+					</tr>
+					<foreach name="data" item="v">
+						<tr>
+							<th>{$v['prams']}</th>
+							<td>{$v['value']}</td>
+							<td>
+								<a href="javascript:;" id="{$v['id']}" prams="{$v['prams']}" value="{$v['value']}"  onclick="edit(this)">Edit</a> |
+								<a href="javascript:if(confirm('confirm delete'))location='{:U('Admin/Product/deleteSpecifications',array('id'=>$v['id']))}'">Delete</a>
+							</td>
+						</tr>
+					</foreach>
+				</table>
+            </div>
+        </div>
+    </div>
+    <!-- 添加菜单模态框开始 -->
+	<div class="modal fade" id="bjy-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						Add Specifications
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Product/addSpecifications')}" method="post" enctype="multipart/form-data">
+						<input type="hidden" name="sku" value="{$product_number}">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="15%">Parameter：</th>
+								<td>
+									<input class="input-medium" type="text" name="prams">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">Value：</th>
+								<td>
+									<input class="input-medium" type="text" name="value">
+								</td>
+							</tr>
+							
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="Add">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加菜单模态框结束 -->
+
+	<!-- 修改菜单模态框开始 -->
+	<div class="modal fade" id="bjy-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" enctype="multipart/form-data">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						Edit Product
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Product/editSpecifications')}" method="post" enctype="multipart/form-data">
+						<input type="hidden" name="id">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="15%">Parameter：</th>
+								<td>
+									<input class="input-medium" type="text" name="prams">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">Value：</th>
+								<td>
+									<input class="input-medium" type="text" name="value">
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="Edit">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 修改菜单模态框结束 -->
+</block>
+<block name="js">
+	<script>
+	// 添加菜单
+	function add(){
+		$("input[name='title']").val('');
+		$('#bjy-add').modal('show');
+	}
+
+	// 修改菜单
+	function edit(obj){
+		var id    =$(obj).attr('id');
+		var prams =$(obj).attr('prams');
+		var value =$(obj).attr('value');
+		$("input[name='id']").val(id);
+		$("input[name='prams']").val(prams);
+		$("input[name='value']").val(value);
+		
+		$('#bjy-edit').modal('show');
+	}
+	</script>
+</block>
