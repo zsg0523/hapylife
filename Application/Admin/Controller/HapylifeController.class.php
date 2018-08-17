@@ -518,8 +518,7 @@ class HapylifeController extends AdminBaseController{
 	public function receiptSon(){
 		$ir_receiptnum = I('get.ir_receiptnum');
 		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum);
-		// p($assign);
-		$this->assign($assign);
+		$this->assign('data',$assign['data']);
 		$this->display();
 	}
 
