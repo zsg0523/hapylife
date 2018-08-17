@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<meta http-equiv="X-UA-Compatible" content="IE=9" />
+		<title>新用户注册</title>		
+
+	<!--<link rel="stylesheet" href="css/bootstrap.min.css" />-->
+		<link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
+	<style>
+		/*上传身份证css*/
+		.content {
+			display: flex;
+		}
+		.img-area {
+			flex: 1
+		}
+		.container2 {
+			position: relative;	
+		}
+		.container2 div {
+			text-align: center;
+			background-color: #e7e7e7;
+			padding-top:20px;
+			padding-bottom: 10px;
+		}
+		.container2 input {
+			opacity: 0;
+			filter: alpha(opacity=0);
+			height: 100%;
+			width: 100%;
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 9;
+		}
+		.container2 p {
+			font-size: 0.9rem;
+			color: #999
+		}
+		*{margin: 0;padding: 0;}
+    	ul,li{list-style: none;display: block;}
+    	a{text-decoration: none;color: #000;font-weight: bold;}
+      	a:hover{text-decoration: none;cursor: pointer;}
+	    p{margin: 0;padding: 0;}
+    	
+    
+    	
+		
+		.main{height: auto;margin: auto;}
+      	.commonHead{width: 100%;height: auto;}
+      	.title{height: 40px;font-size: 16px; line-height:40px;text-align: center;color: #2491ee;font-weight: bold;border-bottom: 1px solid #DEDEDE;margin: auto;}
+      
+		.err{color:#FF0000;font-size: 14px;text-align:center;}
+		.btn-info{background-color: #439DFE;}
+		
+		.form-horizontal .form-group{margin-left: 15px;margin-right: 15px;}
+		.form-horizontal .control-label{text-align: left;}
+		
+      /*手机*/
+      @media screen and (max-width: 768px){
+     .main,.title{width:100%;}
+        .head{width: 100%;}
+        
+      }
+      /*平板*/
+      @media screen and (min-width: 768px){
+       .main,.title{width:100%;}
+
+   
+      }
+        /*中等屏幕*/
+      @media screen and (min-width: 992px){
+        .main,.title{width:100%;}
+
+
+      }
+      /*大屏幕*/
+      @media screen and (min-width: 1200px){
+
+		.main,.title{width:1200px;}
+        
+      }
+	</style>
+	</style>
+	</head>
+	<body class="container-fluid">
+		<div class="commonHead">
+  			<include file="Common/commonHead1" />
+		</div>
+		<div class="main">
+			<div class="rg-div">
+				<form class="form-horizontal" method="post" action="{:U('Home/Register/new_registerInfo')}" enctype="multipart/form-data" onsubmit="return checkform();">
+					<!--<input type="hidden" name="acnumber" value="{:I('get.acnumber')}" />
+					<input type="hidden" name="Phone"  value="{:I('get.phoneNumber')}" />
+					<input type="hidden" name="acid" value="{:I('get.acid')}" />-->
+					<div class="form-group" onclick="hiden(this);" style="margin-top: 10px;">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>中文姓:</label>
+						<div class="col-lg-10 col-md-10 col-xs-8">
+							<input type="text" class="form-control"  name="LastName" placeholder="中文姓" value="{$data['LastName']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['LastName']}</div>
+					</div>
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>中文名:</label>
+						<div class="col-lg-10 col-md-10 col-xs-8">
+							<input type="text" class="form-control"   name="FirstName" placeholder="中文名" value="{$data['FirstName']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['FirstName']}</div>
+					</div>
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>英文姓:</label>
+						<div class="col-lg-10 col-md-10 col-xs-8">
+							<input type="text" class="form-control"   name="EnLastName" placeholder="英文姓" value="{$data['EnLastName']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnLastName']}</div>
+					</div>
+					<div class="form-group" onclick="hiden(this);"> 
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>英文名:</label>
+						<div class="col-lg-10 col-md-10 col-xs-8">
+							<input type="text" class="form-control"   name="EnFirstName" placeholder="英文名" value="{$data['EnFirstName']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnFirstName']}</div>
+					</div>
+					
+					
+					
+					
+					<div class="form-group" onclick="hiden(this);"> 
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>手机区号:</label>
+						<div class="col-lg-10 col-md-10 col-xs-8">
+							<input type="hidden" name="acid" id="acid" value="" />
+							<select class="form-control" name="acnumber" id="acnumber">
+						    	<foreach name="dat" item="v">
+						    		<option  class="opt" value="{$v['acnumber']}" acid="{$v['acid']}" >{$v['name']}</option>						    			
+						    	</foreach>
+						    </select>
+						</div>
+						
+					</div>
+					<div class="form-group" onclick="hiden(this);"> 
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>手机号码:</label>
+						<div class="col-lg-10 col-md-10 col-xs-8">
+							<input type="text" name="Phone" id="phoneNumber" class="form-control" value="{$data['Phone']}" placeholder="请输入手机号码" aria-describedby="basic-addon1" oninput="getAcid();" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">	
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['Phone']}</div>
+					</div>
+					
+					
+					
+					
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>密码:</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">
+							<input type="password" class="form-control" id="passWord1" name="PassWord" autocomplete="new-password" placeholder="必须填写七位以上的密码" oninput="valiPassword();" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')"/>
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err" id="judgePassword1">{$error['PassWord']}</div>
+
+					</div>
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>确认密码:</label>
+						<div class="col-lg-10 col-md-10 col-xs-8">
+							<input type="password" class="form-control" id="passWord2" autocomplete="new-password" name="ConfirmPassWord" placeholder="必须和上面密码一致"    onblur="validate();" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')"/>
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err" id="judgePassword2">{$error['ConfirmPassWord']}</div>
+					</div>
+
+
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>推荐人姓名:</label>
+						<div class="col-lg-10 col-md-10 col-xs-8">
+							<input type="hidden" name="teamCode" value="">
+							<input type="text" class="form-control" name="EnrollerNameCn" disabled="disabled" value="{$Think.session.user.name_cn}" >
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnrollerID']}</div>
+					</div>
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>推荐人ID:</label>
+						<div class="col-lg-10 col-md-10 col-xs-8">
+							<input type="text" class="form-control"   name="EnrollerID" placeholder="HPL开头或纯数字号码" value="{$Think.session.user.username}"/>
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnrollerIDd']}</div>
+					</div>
+					
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>性别:</label>
+						<if condition="$data['Sex'] eq true">
+							<if condition="$data['Sex'] eq 男">
+								<div class="col-lg-5 col-md-5 col-xs-4">
+									<input type="radio" name="Sex" id="man" value="男" checked="checked">男
+								</div>
+								<div class="col-lg-5 col-md-5 col-xs-4">
+									<input type="radio" name="Sex" id="woman" value="女">女
+								</div>
+							<else />
+								<div class="col-lg-5 col-md-5 col-xs-4">
+									<input type="radio" name="Sex" id="man" value="男">男
+								</div>
+								<div class="col-lg-5 col-md-5 col-xs-4">
+									<input type="radio" name="nSex" id="woman" value="女" checked="checked">女
+								</div>
+							</if>
+						<else />
+							<div class="col-lg-5 col-md-5 col-xs-4">
+								<input type="radio" name="Sex" id="man" value="男" checked="checked">男
+							</div>
+							<div class="col-lg-5 col-md-5 col-xs-4">
+								<input type="radio" name="Sex" id="woman" value="女">女
+							</div>
+						</if>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['Sex']}</div>
+					</div>					
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>电子邮箱:</label>
+						<div class="col-lg-10 col-md-10 col-xs-8">
+							<input type="text" class="form-control"   name="Email" placeholder="电子邮箱" value="{$data['Email']}">
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['Email']}</div>
+					</div>
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>销售类型:</label>
+						<if condition="$data['AccountType'] eq true">
+							<if condition="$data['AccountType'] eq 个人">
+								<div class="col-lg-5 col-md-5 col-xs-4">
+								    <input type="radio" name="AccountType" id="person" value="个人" checked="checked">个人
+								</div>
+								<div class="col-lg-5 col-md-5 col-xs-4">
+									<input type="radio" name="AccountType" id="company" value="公司")>公司
+								</div>
+							<else />
+								<div class="col-lg-5 col-md-5 col-xs-4">
+								    <input type="radio" name="AccountType" id="person" value="个人">个人
+								</div>
+								<div class="col-lg-5 col-md-5 col-xs-4">
+									<input type="radio" name="AccountType" id="company" value="公司" checked="checked">公司
+								</div>
+							</if>
+						<else />
+							<div class="col-lg-5 col-md-5 col-xs-4">
+							    <input type="radio" name="AccountType" id="person" value="个人" checked="checked">个人
+							</div>
+							<div class="col-lg-5 col-md-5 col-xs-4">
+								<input type="radio" name="AccountType" id="company" value="公司">公司
+							</div>
+						</if>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['AccountType']}</div>
+					</div>	
+					<div class="form-group">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>语言选择:</label>
+						<div class="col-lg-10 col-md-10 col-xs-8">
+							<select name="Language" style="width: 100%;padding: 9px;border-radius: 5px;">
+								<option value="简体中文">简体中文</option>
+								<option value="英文">英文</option>
+							</select>
+						</div>
+					</div>
+					<hr />
+					<div class="form-group">
+						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>收货地址</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">
+							
+						</div>
+					</div>
+				    <div class="form-group" >
+						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>国家:</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">
+							<input type="" class="form-control"   name="ShopCountry" placeholder="" value="中国" readonly="readonly">
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopCountry']}</div>
+					</div>
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>省:</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">
+							<!--<input type="text" class="form-control"   name="ShopProvince" placeholder="地址-省" value="{$data['ShopProvince']}">-->
+							<input type="text" class="form-control"   name="ShopProvince" placeholder="地址-省" value="{$data['ShopProvince']}"    >
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopProvince']}</div>
+					</div>
+					
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>市:</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">
+							<!--<input type="text" class="form-control"   name="ShopCity" placeholder="地址-市" value="{$data['ShopCity']}">-->
+							<input type="text" class="form-control"   name="ShopCity" placeholder="地址-市" value="{$data['ShopCity']}"    >
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopCity']}</div>
+					</div>
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>区:</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">
+							<!--<input type="text" class="form-control"   name="ShopArea" placeholder="地址-区" value="{$data['ShopArea']}">-->
+							<input type="text" class="form-control"   name="ShopArea" placeholder="地址-区" value="{$data['ShopArea']}"    >
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopArea']}</div>
+					</div>
+					<div class="form-group" onclick="hiden(this);">
+						<label for="text" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>详细地址:</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">	
+							<!--<input type="" class="form-control"   name="ShopAddress1" placeholder="街道-巷-小区-栋-层-室" value="{$data['ShopAddress1']}">-->
+							<input type="" class="form-control"   name="ShopAddress1" placeholder="街道-巷-小区-栋-层-室" value="{$data['ShopAddress1']}"    >
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopAddress1']}</div>
+					</div>
+					<hr />
+					<div class="form-group">
+						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>银行信息</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">
+							<!--<input type="" class="form-control"   name="" placeholder="">-->
+						</div>
+					</div>
+					
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>银行名称:</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">
+							<input type="" class="form-control"   name="BankName" placeholder="银行名称" value="{$data['BankName']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['BankName']}</div>
+					</div>
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>银行账号:</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">
+							<input type="" class="form-control"   name="BankAccount" placeholder="银行账号" value="{$data['BankAccount']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
+						</div>
+						<div  class="col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['BankAccount']}</div>
+					</div>
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>银行所在省:</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">
+							<!--<input type="" class="form-control"   name="BankProvince" placeholder="银行所在省" value="{$data['BankProvince']}">-->
+							<input type="" class="form-control"   name="BankProvince" placeholder="银行所在省" value="{$data['BankProvince']}"    >
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['BankProvince']}</div>
+					</div>
+					
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>银行所在市:</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">
+							<!--<input type="" class="form-control"   name="BankCity" placeholder="银行所在市" value="{$data['BankCity']}">-->
+							<input type="" class="form-control"   name="BankCity" placeholder="银行所在市" value="{$data['BankCity']}"    >
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['BankCity']}</div>
+					</div>
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>银行所在区:</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">
+							<!--<input type="" class="form-control"   name="BankArea" placeholder="银行所在区" value="{$data['BankArea']}">-->
+							<input type="" class="form-control"   name="BankArea" placeholder="银行所在区" value="{$data['BankArea']}"    >
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['BankArea']}</div>
+					</div>
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>支行名称:</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">
+							<input type="" class="form-control"   name="SubName" placeholder="支行名称" value="{$data['SubName']}" onblur="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" onpaste="value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')" oncontextmenu = "value=value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,'')">
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['SubName']}</div>
+					</div>
+					<hr />
+					<div class="form-group" onclick="hiden(this);">
+						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>身份证号码:</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">
+							<input type="" class="form-control"   name="Idcard" placeholder="身份证号码" value="{$data['Idcard']}" onblur="judgeIdcard();">
+						</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err" id="idcardage">{$error['Idcard']}</div>
+					</div>
+					
+					<div class="form-group" >
+						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><!--<span style="color: red;">*</span>-->身份证正面:</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">
+							<div class="content">
+								<div class="img-area">					
+									<div class="container2"> 
+										<input type="file" id='id-face' name='name[]' accept="image/*" />
+										<div id='face-empty-result'> 
+											<img style='width:4rem;' src="__PUBLIC_IMAGE__/camera.png" alt="">
+											<!--<img style='width:4rem;' src="images/camera.png" alt="">-->
+										    <p style="padding-top: 10px;">身份证正面照</p>
+										</div> 
+										<img style='width: 100px;margin: auto;' id='face-result' /> 
+									</div>
+								</div>				
+							</div>
+						</div>
+						<!-- <div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['img']}</div> -->
+					</div>
+					<div class="form-group"> 
+						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><!--<span style="color: red;">*</span>-->身份证反面:</label>
+						<div class="col-lg-10  col-md-10 col-xs-8">
+							<div class="content">
+								<div class="img-area">					
+									<div class="container2" style='margin-top:0.5rem;'> 
+										<input type="file" id='id-back' name='name[]' accept="image/*" />
+										<div id='back-empty-result'> 
+											<img style='width:4rem;margin: auto;' src="__PUBLIC_IMAGE__/camera.png" alt="">
+												<!--<img style='width:4rem;margin: auto;' src="images/camera.png" alt="">-->
+										    <p style="padding-top: 10px;">身份证反面照</p>
+										</div>
+										<img style='width: 100px;margin: auto;' id='back-result' /> 
+									</div>
+								</div>				
+							</div>
+						</div>
+						<!-- <div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['img']}</div> -->
+					</div>
+
+					<div class="form-group">
+						<div class=" col-md-12 col-xs-12">
+							<button type="submit" class="btn  btn-block  btn-info">注册</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</body>
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript" src="__PUBLIC_JS__/index.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+   		changeCommonHead('新代理注册');
+	});
+	function back(){
+		window.location.href ="{:U('Home/Purchase/center')}";
+   }
+	  //获取所有的input并监听blur时间
+    $('input').blur(function(){
+    	
+		if($(this).attr('name')=='Email'){
+			$(this).val($(this).val().replace(/[^a-zA-Z0-9\u4E00-\u9FA5\@\.]/g,''));
+		}else if($(this).attr('name')=='EnrollerID'){
+			$(this).val($(this).val().replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,''));
+			var EnrollerID=$("input[name='EnrollerID']").val();
+			if(EnrollerID != ''){
+				$.ajax({
+					type:"post",
+					url:"checkName",
+					async:false,
+					dataType:'json',
+					data:{
+						EnrollerID:EnrollerID
+					},
+					success:function(data){
+		//				console.log(12123);
+		//				console.log(data);
+						if(data.status == 0){
+							$("input[name='EnrollerNameCn']").val("请输入正确的推荐人ID！");
+						}else{
+							$("input[name='EnrollerNameCn']").val(data.lastname+data.firstname);
+							$("input[name='teamCode']").val(data.teamcode);
+						}
+						
+					},
+					error:function(){
+						alert('ajax请求错误~！');
+						
+					},
+				});
+			}
+		}else{
+			$(this).val($(this).val().replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,''));
+		}	
+    });
+	var i=1;
+    function showSetting(){
+    	var setting=document.getElementById('setting');
+	  	var des=document.getElementById('design');
+			if(i==1){
+				setting.style.display="block";
+			  i=0;
+			}else{
+				setting.style.display="none";
+			  i=1;
+			}
+    }
+		
+		function valiPassword(){
+			 var pwd1 = document.getElementById("passWord1").value;
+			 if(pwd1.length<7){
+			 	document.getElementById("judgePassword1").innerHTML="<span style='color: red;'>密码长度至少7位以上！</span>";
+			 }else{
+			 	document.getElementById("judgePassword1").innerHTML="";
+			 }
+		}
+		function validate() {
+              var pwd1 = document.getElementById("passWord1").value;
+              var pwd2 = document.getElementById("passWord2").value;
+		// 对比两次输入的密码
+              if(pwd1 == pwd2&&pwd1!="") {
+                  document.getElementById("judgePassword2").innerHTML="两次密码一致";
+                   document.getElementById("judgePassword2").style.color="#3E8F3E";
+              }
+              else if(pwd1==""){
+                  document.getElementById("judgePassword2").innerHTML="";
+              }else{
+              	  document.getElementById("judgePassword2").innerHTML="两次密码不一致";
+              	  document.getElementById("judgePassword2").style.color="red";
+              }
+        }
+		function hiden(val){
+			var list=val.getElementsByClassName('err');
+			if(list[0].innerText!=''){
+				list[0].innerText='';
+			}
+			
+		}
+		function getAcid(){
+			var acid=$("#acnumber").find("option:selected").attr("acid");
+			$("input[name='acid']").val(acid);
+		}
+		var judge=true;
+		function judgeIdcard(){
+			var idcard=$("input[name='Idcard']").val();
+			if(idcard.length==18){	
+				var reg =/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(idcard);
+				if(reg){
+					var year=parseInt(idcard.substring(6,10));
+					var myDate = new Date();
+					if((myDate.getFullYear()-year)>=22){
+						$("#idcardage").text("您的年龄为"+(myDate.getFullYear()-year)+"周岁！！");
+						$("#idcardage").css('color','#3E8F3E');
+					}else{
+						judge=false;
+						alert('您的年龄不足22周岁不能注册！');
+					}
+					
+//					alert(year+"+"+(myDate.getFullYear()-year));
+				}else{
+					alert('请输入正确的身份证!');
+				}
+			
+			}
+			
+		}
+		function checkform(){
+			if(judge==false){
+				alert('您的年龄不足22周岁不能注册！');		
+			}
+			return judge;
+		}
+		
+	</script>
+</html>

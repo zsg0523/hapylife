@@ -1,0 +1,478 @@
+<extend name="Public:base" />
+
+<block name="title">房间管理</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            首页
+            &gt;
+            Hapylife
+            &gt;
+			房间管理
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+			  	<li class="active">
+					<a href="#home" data-toggle="tab">房间列表</a>
+			    </li>
+			    <li>
+					<a href="javascript:;" onclick="add()">添加房间</a>
+				</li>
+				<li>
+					<form action="{:U('Admin/Hapylife/room')}" method="get">
+						<select name="cid">
+	                            <option value="0">所有旅游</option>                       
+	                            <volist name='travel' id='t'>
+	                                <option value="{$t.tid}" <?php if($cid == $t['tid']){echo "selected='selected'";}?>>{$t.travel_title}</option>  
+	                            </volist>
+	                        </select>
+                        <input name="keyword" type="text" placeholder="名称" value="{$keyword}" size="20" />
+                        <input type="submit" value="筛选" />
+	                </form>
+				</li>
+            </ul>
+            <div class="tab-content">
+            	<form class="" action="{:U('Admin/Hapylife/order_room')}" method="post">
+					<table class="table table-striped table-bordered table-hover table-condensed">
+						<tr>
+							<th>所属旅游</th>
+							<th>名称</th>
+							<th>类型说明</th>
+							<th>adult人数</th>
+							<th>基本价格</th>
+							<th>单人套餐</th>
+							<th>双人套餐</th>
+							<th>三人套餐</th>
+							<th>四人套餐</th>
+							<th>五人套餐</th>
+							<th>六人套餐</th>
+							<th>七人套餐</th>
+							<th>八人套餐</th>
+							<th>九人套餐</th>
+							<th>十人套餐</th>
+							<th>十一人套餐</th>
+							<th>十二人套餐</th>
+							<th>child人数</th>
+							<th>该年龄免费</th>
+							<th>小孩价格</th>
+							<th>房间数</th>
+							<th>操作</th>
+						</tr>
+						<foreach name="data" item="v">
+							<tr>
+								<td>{$v['travel_title']}</td>
+								<td>{$v['name']}</td>
+								<td>{$v['rtype']}</td>
+								<td>{$v['adultnum']}</td>
+								<td>{$v['adult0']}</td>
+								<td>{$v['adult1']}</td>
+								<td>{$v['adult2']}</td>
+								<td>{$v['adult3']}</td>
+								<td>{$v['adult4']}</td>
+								<td>{$v['adult5']}</td>
+								<td>{$v['adult6']}</td>
+								<td>{$v['adult7']}</td>
+								<td>{$v['adult8']}</td>
+								<td>{$v['adult9']}</td>
+								<td>{$v['adult10']}</td>
+								<td>{$v['adult11']}</td>
+								<td>{$v['adult12']}</td>
+								<td>{$v['childnum']}</td>
+								<td>{$v['age']}</td>
+								<td>{$v['child']}</td>
+								<td>{$v['number']}</td>
+								<td>
+									<a href="javascript:;" Rid="{$v['rid']}" Name="{$v['name']}" Tid="{$v['tid']}" Ttitle="{$v['travel_title']}" Rtype="{$v['rtype']}" AdultNum="{$v['adultnum']}" AdultA="{$v['adult0']}" AdultB="{$v['adult1']}" AdultC="{$v['adult2']}" AdultD="{$v['adult3']}" AdultE="{$v['adult4']}" AdultF="{$v['adult5']}" AdultG="{$v['adult6']}" AdultH="{$v['adult7']}" AdultI="{$v['adult8']}" AdultJ="{$v['adult9']}" AdultK="{$v['adult10']}" AdultL="{$v['adult11']}" AdultM="{$v['adult12']}" ChildNum="{$v['childnum']}" Age="{$v['age']}" Child="{$v['child']}" NumBer="{$v['number']}" onclick="edit(this)">修改</a> |
+									<a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Hapylife/delete_room',array('id'=>$v['hcid']))}'">删除</a> 
+								</td>
+							</tr>
+						</foreach>
+					</table>
+				</form>
+				<div class='page'>
+					{$page}
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- 添加菜单模态框开始 -->
+	<div class="modal fade" id="bjy-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						添加房间
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Hapylife/add_room')}" method="post" enctype="multipart/form-data">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="15%">所属旅游</th>
+								<td>
+									<select name="tid">
+	                                    <volist name="travel" id="t">
+                                        	<option value="{$t.tid}">{$t.travel_title}</option>
+                                    	</volist>
+	                                </select>
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">名称：</th>
+								<td>
+									<input class="input-medium" type="text" name="name">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">类型说明：</th>
+								<td>
+									<input class="input-medium" type="text" name="rtype">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">adult人数：</th>
+								<td>
+									<input class="input-medium" type="text" name="adultnum">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">基本价格：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult0">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">单人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult1">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">双人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult2">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">三人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult3">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">四人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult4">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">五人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult5">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">六人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult6">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">七人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult7">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">八人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult8">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">九人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult9">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">十人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult10">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">十一人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult11">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">十二人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult12">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">child人数：</th>
+								<td>
+									<input class="input-medium" type="text" name="childnum">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">该年龄免费：</th>
+								<td>
+									<input class="input-medium" type="text" name="age">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">小孩价格：</th>
+								<td>
+									<input class="input-medium" type="text" name="child">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">房间数：</th>
+								<td>
+									<input class="input-medium" type="text" name="number">
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="添加">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加菜单模态框结束 -->
+
+	<!-- 修改菜单模态框开始 -->
+	<div class="modal fade" id="bjy-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						编辑房间
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Hapylife/edit_room')}" method="post" enctype="multipart/form-data">
+						<input type="hidden" name="rid">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="15%">所属旅游</th>
+								<td>
+									<select name="tid">
+	                                    <volist name="travel" id="t">
+                                        	<option value="{$t.tid}">{$t.travel_title}</option>
+                                    	</volist>
+	                                </select>
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">名称：</th>
+								<td>
+									<input class="input-medium" type="text" name="name">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">类型说明：</th>
+								<td>
+									<input class="input-medium" type="text" name="rtype">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">adult人数：</th>
+								<td>
+									<input class="input-medium" type="text" name="adultnum">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">基本价格：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult0">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">单人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult1">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">双人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult2">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">三人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult3">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">四人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult4">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">五人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult5">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">六人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult6">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">七人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult7">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">八人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult8">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">九人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult9">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">十人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult10">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">十一人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult11">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">十二人套餐：</th>
+								<td>
+									<input class="input-medium" type="text" name="adult12">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">child人数：</th>
+								<td>
+									<input class="input-medium" type="text" name="childnum">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">该年龄免费：</th>
+								<td>
+									<input class="input-medium" type="text" name="age">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">小孩价格：</th>
+								<td>
+									<input class="input-medium" type="text" name="child">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">房间数：</th>
+								<td>
+									<input class="input-medium" type="text" name="number">
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="修改">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 修改菜单模态框结束 -->
+</block>
+<block name="js">
+	<script>
+	// 添加菜单
+	function add(){
+		$("input[name='title']").val('');
+		$('#bjy-add').modal('show');
+	}
+	// 修改菜单
+	function edit(obj){
+		var Rid   =$(obj).attr('Rid');
+		var Name   =$(obj).attr('Name');
+		var Tid   =$(obj).attr('Tid');
+		var Ttitle=$(obj).attr('Ttitle');
+		var Rtype =$(obj).attr('Rtype');
+		var AdultNum=$(obj).attr('AdultNum');
+		var AdultA=$(obj).attr('AdultA');
+		var AdultB=$(obj).attr('AdultB');
+		var AdultC=$(obj).attr('AdultC');
+		var AdultD=$(obj).attr('AdultD');
+		var AdultE=$(obj).attr('AdultE');
+		var AdultF=$(obj).attr('AdultF');
+		var AdultG=$(obj).attr('AdultG');
+		var AdultH=$(obj).attr('AdultH');
+		var AdultI=$(obj).attr('AdultI');
+		var AdultJ=$(obj).attr('AdultJ');
+		var AdultK=$(obj).attr('AdultK');
+		var AdultL=$(obj).attr('AdultL');
+		var AdultM=$(obj).attr('AdultM');
+		var ChildNum=$(obj).attr('ChildNum');
+		var Age=$(obj).attr('Age');
+		var Child=$(obj).attr('Child');
+		var NumBer=$(obj).attr('NumBer');
+		$("input[name='rid']").val(Rid);
+		$("input[name='name']").val(Name);
+		$("input[name='tid']").val(Tid);
+		$("input[name='hcid']").val(Ttitle);
+		$("input[name='rtype']").val(Rtype);
+		$("input[name='adultnum']").val(AdultNum);
+		$("input[name='adult0']").val(AdultA);
+		$("input[name='adult1']").val(AdultB);
+		$("input[name='adult2']").val(AdultC);
+		$("input[name='adult3']").val(AdultD);
+		$("input[name='adult4']").val(AdultE);
+		$("input[name='adult5']").val(AdultF);
+		$("input[name='adult6']").val(AdultG);
+		$("input[name='adult7']").val(AdultH);
+		$("input[name='adult8']").val(AdultI);
+		$("input[name='adult9']").val(AdultJ);
+		$("input[name='adult10']").val(AdultK);
+		$("input[name='adult11']").val(AdultL);
+		$("input[name='adult12']").val(AdultM);
+		$("input[name='childnum']").val(ChildNum);
+		$("input[name='age']").val(Age);
+		$("input[name='child']").val(Child);
+		$("input[name='number']").val(NumBer);
+		$('#bjy-edit').modal('show');
+	}
+	</script>
+</block>

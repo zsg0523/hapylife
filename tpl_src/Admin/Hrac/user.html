@@ -1,0 +1,145 @@
+<extend name="Public:base" />
+
+<block name="title">用户列表</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            首页
+            &gt;
+            Hrac
+            &gt;
+			用户列表
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+			  	<li class="active">
+					<a href="#home" data-toggle="tab">用户列表</a>
+			    </li>
+			    <li class="active">
+					<a href="{:U('Admin/Hrac/upuser')}">上传用户(Excel)</a>
+			    </li>
+				<li>
+					<form action="{:U('Admin/Hrac/user')}" method="get">
+                        <input name="keyword" type="text" placeholder="账户" value="{$keyword}" size="20" />
+                        <input type="submit"  value="筛选" />
+	                </form>
+				</li>
+            </ul>
+            <div class="tab-content">
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<tr>
+						<th>账户</th>
+						<th>姓名</th>
+						<th>二维码</th>
+						<th>类型</th>
+						<th>状态</th>
+						<th>上线(0为无上线)</th>
+						<th>是否合伙人</th>
+						<th>开始</th>
+						<th>结束</th>
+						<th>余额</th>
+						<th>公司名称</th>
+						<th>注册号</th>
+						<th>法定人</th>
+						<th>营业执照</th>
+						<th>成立日期</th>
+						<th>公司类型</th>
+						<th>操作</th>
+					</tr>
+					<foreach name="data" item="v">
+						<tr>
+							<td>{$v['hu_nickname']}</td>
+							<td>{$v['hu_username']}</td>
+							<td align="center"><img src="{$v['hu_codepic']}" width='25' height='25' alt=""></td>
+							<td>
+								<?php 
+									if($v['hu_type']==0){
+										echo '用户';
+									}else if($v['hu_type']==1){
+										echo '前台';
+									}else if($v['hu_type']==2){
+										echo '顾问';
+									}else if($v['hu_type']==3){
+										echo '主管';
+									} 
+								?>
+							</td>
+							<td>{$v['is_fine']?'冻结':'可用'}</td>
+							<td>
+							    {$v['hu_hpname']}
+							</td>
+							<td align="center">{$v['is_vip']?'是':'否'}</td>
+							<td>{$v['vipstart']}</td>
+							<td>{$v['vipend']}</td>
+							<td>{$v['hu_balance']}</td>
+							<td>{$v['hu_comname']}</td>
+							<td>{$v['hu_comres']}</td>
+							<td>{$v['hu_comper']}</td>
+							<td align="center"><img src="{$v['hu_comphoto']}" width='25' height='25' alt=""></td>
+							<td>{$v['hu_comestablish']}</td>
+							<td>{$v['hu_comtype']}</td>
+							</td>
+							<td>
+								<a href="javascript:;" usersId="{$v['huid']}" usersType="{$v['hu_type']}" onclick="edit(this)">修改</a> | 
+								<a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Hrac/delete_user',array('id'=>$v['huid']))}'">删除</a> 
+							</td>
+						</tr>
+					</foreach>
+				</table>
+				<div class='page'>
+					{$page}
+				</div>
+            </div>
+        </div>
+    </div>
+    	<!-- 修改菜单模态框开始 -->
+	<div class="modal fade" id="bjy-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						修改会员
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Hrac/edit_user')}" method="post" enctype="multipart/form-data">
+						<input type="hidden" name="id">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="12%">类型：</th>
+								<td>
+									<input class="input-medium" type="text" name="hu_type">(0-用户,1-CSD,2-顾问,3-主管)
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="修改">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</block>
+<block name="js">
+	<script>
+
+	// 修改菜单
+	function edit(obj){
+		var usersId=$(obj).attr('usersId');
+		var usersType=$(obj).attr('usersType');
+		$("input[name='id']").val(usersId);
+		$("input[name='hu_type']").val(usersType);
+		$('#bjy-edit').modal('show');
+	}
+	</script>
+</block>

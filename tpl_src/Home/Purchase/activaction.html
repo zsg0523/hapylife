@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>会籍激活</title>
+	<style type="text/css">
+		.head{width: 100%;height: 45px;border-bottom: 1px #ddd solid;}
+		.head>div{width: 33%;height: 45px;font-size: 14px;line-height: 45px;text-align:center;float: left;}
+		.content{width: 100%;height: 45px;border-bottom: 1px #ddd solid;}
+		.content>div{width: 33%;height: 45px;font-size: 14px;line-height: 45px;text-align:center;float: left;}
+		.content>div:last-child{color: #2AABD2;}
+	</style>
+</head>
+<body>
+	<div class="header">
+		
+	</div>
+	<div class="main">
+		<div class="head">
+			<div>开始日期</div>
+			<div>截止日期</div>
+			<div>状态</div>
+		</div>
+		<volist name='data' id='v'>
+			<div class="content">
+				<div>{$v.hatime}</div>
+				<div>{$v.endtime}</div>
+				<div>{$v['is_tick']?已开启:未开启}</div>
+			</div>
+		</volist>
+	</div>
+	
+</body>
+</html>

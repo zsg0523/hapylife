@@ -1,0 +1,157 @@
+<extend name="Public:base" />
+
+<block name="title">短信管理</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            首页
+            &gt;
+			短信管理
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+            	<li class="active">
+					<a href="#home" data-toggle="tab">短信列表</a>
+			    </li>
+			    <li>
+					<a href="javascript:;" onclick="add(this)">发送短信</a>
+				</li>
+			    <li>
+			    	<form action="{:U('Admin/Hapylife/sends')}" method="get">
+			    		<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
+				    	<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
+                        <input name="word" type="text" placeholder="关键词" value="{$word}" size="20" />
+                        <input class='btn btn-sm' type="submit" value="筛选" />
+                        <!-- <input class='btn btn-sm' type="submit" name='excel' value="excel" /> -->
+                	</form>
+			    </li>
+            </ul>
+		</div>
+            <div class="tab-content">
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<tr>
+						<th >编号</th>
+						<th >会员账号</th>
+						<th >区号</th>
+						<th >手机号码</th>
+						<th >收信人</th>
+						<th >产品名称</th>
+						<th >操作人</th>
+                        <th >操作时间</th>
+                        <th >发送内容</th>
+					</tr>
+					<foreach name="data" item="v">
+						<tr>
+							<td>{$v['slid']}</td>
+							<td>{$v['customerid']}</td>
+							<td>{$v['acnumber']}</td>
+							<td>{$v['phone']}</td>
+							<td>{$v['addressee']}</td>
+							<td>{$v['product_name']}</td>
+							<td>{$v['operator']}</td>
+							<td>{:date('Y-m-d H:i:s',$v['date'])}</td>
+							<td>{$v['content']}</td>
+						</tr>
+					</foreach>
+				</table>
+				<div class='page'>
+					{$page}
+				</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加菜单模态框开始 -->
+	<div class="modal fade" id="bjy-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						发送短信
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Hapylife/add_sends')}" method="post" enctype="multipart/form-data">
+						<table class="table table-striped table-bordered table-hover table-condensed" id="table">
+							<tr>
+								<th width="15%">号码归属地：</th>
+								<td>
+									<select class="input-medium" name="acnumber" id="acnumber">
+								    	<foreach name="code" item="v">
+								    		<option  class="input-medium" value="{$v['acnumber']}" acid="{$v['acid']}" >{$v['name']}</option>	
+								    	</foreach>
+								    </select>
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">手机号码：</th>
+								<td>
+									<input class="input-medium" type="text" name="phone">
+								</td>
+							</tr>
+							<tr id="tr">
+								<th width="15%">选择模板：</th>
+								<td>
+									<select class="input-medium" name="psd" id="psd">
+										<option class="input-medium" value="0">请选择模板</option>
+								    	<option class="input-medium" value="146227">续费信息通知</option>	
+								    	<option class="input-medium" value="146228">物流信息通知</option>	
+								    </select>
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="发送">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 添加菜单模态框结束 -->
+</block>
+<block name="js">
+	<script>
+	// 添加菜单
+	function add(){
+        $('#psd').change(function(){
+        	//获得下拉框的节点对象；
+	        var select = document.getElementById("psd");
+	        //获得该下拉框所有的option的节点对象
+	        var options = select.options;
+	        //获得当前选中的option的索引？
+	        var index = select.selectedIndex;
+	        //获得第几个option的value值?比如我要获取第一option的value,可以这样：
+	        var value1 = options[index].value;
+
+	        $msm = $("<tr><th width='15%'>模板内容：</th><td>亲爱的会员{1}，您购买的{2}物流信息出现问题，我们会有电话通知您，请留意接听。</td></tr><tr><th width='15%'>{1}：</th><td><input class='input-medium' type='text' name='username' placeholder='姓名-会员账号' style='text-transform:uppercase;'></td></tr><tr><th width='15%'>{2}：</th><td><input class='input-medium' type='text' name='productnams' placeholder='产品名称'></td></tr>");
+	        $sms = $("<tr><th width='15%'>模板内容：</th><td>亲爱的会员{1}，这是系统提醒消息，请在{2}之前购买月费包。</td></tr><tr><th width='15%'>{1}:</th><td><input class='input-medium' type='text' name='username' placeholder='姓名-会员账号' style='text-transform:uppercase;'></td></tr><tr><th width='15%'>{2}：</th><td><input class='input-medium' type='text' name='endtime' placeholder='会籍到期时间'>例如：2001-01-01</td></tr>");
+	        $send = $("<tr><th></th><td><input class='btn btn-success' type='submit' value='发送'></td></tr>");
+        	if(value1 == 146228){
+        		$(this).parents('tr').nextAll().remove();
+        		$('#table #tr').after($send);
+        		$('#table #tr').after($msm);
+        	}else if(value1 == 146227){
+        		$(this).parents('tr').nextAll().remove();
+        		$('#table #tr').after($send);
+        		$('#table #tr').after($sms);
+        	}else if(value1 == 0){
+        		$(this).parents('tr').nextAll().remove();
+        		$('#table #tr').after($send);
+        	}
+        });
+		$('#bjy-add').modal('show');
+	}
+
+	</script>
+</block>

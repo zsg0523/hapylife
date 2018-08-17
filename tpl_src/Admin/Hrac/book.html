@@ -1,0 +1,61 @@
+<extend name="Public:base" />
+
+<block name="title">排班时间管理</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            首页
+            &gt;
+            Hrac
+            &gt;
+			排班时间管理
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+			  	<li class="active">
+					<a href="#home" data-toggle="tab">排班时间列表</a>
+			    </li>
+			    <li class="active">
+				    <form action="{:U('Admin/Hrac/book')}" method="get">
+	                        <select name="cid">
+	                            <option value="0">所有门店</option>                       
+	                            <volist name='hracshop' id='s'>
+	                                <option value="{$s.sid}" <?php if($cid == $s['sid']){echo "selected='selected'";}?>>{$s.s_name}</option>  
+	                            </volist>
+	                        </select>
+	                        <input name="keyword" type="text" placeholder="营养师" value="{$keyword}" size="20" />
+	                        <input type="submit" value="筛选" />
+	                </form>
+                </li>
+            </ul>
+            <div class="tab-content">
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<tr>
+                        <th>门店</th>
+                        <th>营养师</th>
+                        <th>预约日期</th>
+                        <th>预约起始时间</th>
+                        <th>预约结束时间</th>
+                        <th>是否被预约</th>
+					</tr>
+					<foreach name="data" item="v">
+						<tr>
+	                        <td align="center">{$v.s_name}</td>
+	                        <td align="center">{$v.hd_name}</td>
+	                        <td align="center">{$v.hb_date}</td>
+	                        <td align="center">{$v.hb_starttime}</td>
+	                        <td align="center">{$v.hb_endtime}</td>
+	                        <td align="center"><a href='{:U("Admin/Hrac/is_book",array("is_booking"=>$v["is_booking"],"hbid"=>$v["hbid"]))}'>{$v['is_booking']?已预约:空闲}</a></td>
+						</tr>
+					</foreach>
+				</table>
+				<div class='page'>
+					{$page}
+				</div>
+            </div>
+        </div>
+    </div>
+</block>

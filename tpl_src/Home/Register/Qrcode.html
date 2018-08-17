@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>微信二维码支付</title>
+	<link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
+	<style type="text/css">
+		body,html{margin: 0;padding: 0;width: 100%;}
+		      *{margin: 0;padding: 0;}
+    	ul,li{list-style: none;display: block;}
+    	a{text-decoration: none;color: #000;font-weight: bold;}
+      a:hover{text-decoration: none;cursor: pointer;}
+      p{margin: 0;padding: 0;}
+      
+		.main{width: 100%;height:auto;}
+		.pageDetial{width: 100%;height:auto;position: relative;}
+		.icon{width: 120px;height: 120px;}
+		.icon>img{height: 120px;position: absolute;left: 50%;margin-left: -60px;}
+		.title{height: 80px;font-size:14px;display: block;}
+		.title>span{width:100%;height: 40px;display:block;text-align: center;float: left;line-height: 40px;}
+		.title>i{width:100%;height: 40px;display:block;font-style:normal;text-align: center;float: left;line-height: 40px;}
+		.link{width: 100%;height: 40px;position: relative;margin-top: 40px;}
+		.link>a{height: 40px;font-size: 15px;text-align:center;display: block;line-height:40px;background-color: #439DFE;color:#fff;}
+		
+		
+      /*手机*/
+      @media screen and (max-width: 768px){
+        .icon>img{width: 120px;position: absolute;left: 50%;margin-left: -60px;}
+        .title{width: 100%;}
+        .link>a{width: 100%;}
+      }
+      /*平板*/
+      @media screen and (min-width: 768px){
+      	
+        
+        .icon>img{width: 120px;}
+        .title{width: 360px; position: absolute;left: 50%;margin-left: -180px;}
+        .link>a{width: 360px;position: absolute;left: 50%;margin-left: -180px;}
+        
+      }
+        /*中等屏幕*/
+      @media screen and (min-width: 992px){
+   
+        .icon>img{width: 120px;}
+        .title{width: 360px; position: absolute;left: 50%;margin-left: -180px;}
+        .link>a{width: 360px;position: absolute;left: 50%;margin-left: -180px;}
+       
+
+      }
+      /*大屏幕*/
+      @media screen and (min-width: 1200px){
+   
+        .icon>img{width:120px;}
+        .title{width: 360px;}
+        .link>a{width: 360px;position: absolute;left: 50%;margin-left: -180px;}
+   
+     
+        }
+	</style>
+</head>
+<body>
+	
+	<div class="main container-fluid ">	
+			<h5 style="color: #000;text-align: center;margin-top: 100px;">注:请使用微信扫码支付！！！</h3>
+			<input type="hidden" id="userid" value="{$Think.session.user.id}" />
+			<input type="hidden" id="ir_receiptnum" value="{:I('get.ir_receiptnum')}" />
+			<div class="pageDetial">
+				<div class="icon">
+					<img id="qrcode"  src="">
+				</div>
+				<div class="title">
+					<span id="orderId">订单号：{$data.ip_name_zh}</span>
+					<i id="money">订单金额：￥{$data.ip_price_rmb}</i>
+				</div>
+			</div>		
+	</div>
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
+    <script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
+   <script type="text/javascript">
+		$(document).ready(function(){
+		    $.ajax({
+				type:"post",
+				url:"http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/ipsPayment",
+				async:false,
+				dataType:'json',
+				data:{
+					iuid:$('#userid').val(),
+					ir_receiptnum:$('#ir_receiptnum').val()
+				},
+				success:function(ret){
+					
+					if(ret!=null){
+						var url = "http://paysdk.weixin.qq.com/example/qrcode.php?data=" + ret.code_url;   //二维码地址  
+						$("#qrcode").attr('src',url); 
+						$('#orderId').text("订单号:"+ret.orderId);
+						$('#money').text("金额:￥"+ret.amount);
+						setTimeout(function() { judgeOK() },1000);
+					}
+					
+				}
+			});
+			
+		});
+		function judgeOK(){
+			$.ajax({
+				type:"post",
+				url:"http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/checkreceipt",
+				async:false,
+				dataType:'json',
+				data:{
+					ir_receiptnum:$('#ir_receiptnum').val()
+				},
+				success:function(ret){
+					
+					if(ret.status==1){
+						console.log(ret.msg);
+						window.location.href="{:U('Home/Purchase/purchase')}";
+					}else{
+						console.log(ret.msg);
+						setTimeout(function() { judgeOK(); },1000);
+
+					}
+					
+				}
+			});
+
+		}
+
+   </script>
+</body>
+</html>
