@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Purchase Order</title>
+	</head>
+	<style>
+		*{margin:0;padding:0;}
+		.container{width:1000px;height:100%;margin:0 auto;}
+		.po-box1{width:100%;height:160px;}
+		.po-box1-left{width:30%;height:100%;}
+		.po-box1-right{width:60%;height:100%;}
+		.fl{float:left;}
+		.fr{float:right;}
+		.po-addr{margin-top:6px;}
+		.po-box1-left span{font-size:1.1em;}
+		.po-box1-right>span{display:inline-block;width:100%;font-weight:bold;font-size:1.7em;color:#7A8FC7;}
+		.tr{text-align:right;}
+		.tc{text-align:center;}
+		.po-date{display:inline-block;width:40%;border:1px solid black;margin-left:8px;}
+		.bn{border-bottom:none;}
+
+		.po-box2{width:100%;}
+		.po-box2-left{width:40%;height:100%;}
+		.po-box2-right{width:40%;height:100%;margin-bottom:50px;}
+		.po-box-head{height:40px;line-height:40px;color:#fff;text-indent:1em;background:#3B4E87;}
+		
+		.po-box3{width:100%;margin-bottom:30px;}
+		.po-table{width:100%;border-collapse:collapse;}
+		.po-table tr th{background:#3B4E87;border:none;color:#fff;height:30px;line-height:30px;}
+		.po-table tr td{border:2px solid #000;}
+		.po-td-bottom>tr>td{border-bottom:1px solid #ccc;}
+		
+		.po-box4{width:100%;}
+		
+		.po-box5{width:100%;}
+		.po-box5-left{margin-top:30px;width:60%;height:180px;border:1px solid #ccc;}
+		.po-box5-head{height:30px;line-height:30px;text-indent:1em;background:#BFBFBF;}
+		.po-box5-right{width:30%;height:180px;}		
+		.po-box5-xleft{width:50%;}
+		.po-box5-xright{width:50%;}
+		.po-double{border:1px double black;height:1px;border-left:none;border-right:none;}
+		.po-box5-xright-num{background:#F2F2F2;padding-right: 10px;}
+		.po-box5-value{width:98.5%;height:20px;line-height: 20px;border:1px solid #ccc;border-bottom: none;}
+		.po-box5-xright-total{background: #A7AED4;font-weight:bold;}
+		.po-box5-xright-sign{width:20%;display: inline-block;}
+		.po-box5-xright-all{width:70%;display: inline-block;}
+				
+		.clearfix{clear: both;}
+		.po-box6{width:100%;height:100px;padding-top:40px;font-size:0.8em;}
+	</style>
+	<body>
+		<div class="container">
+			<div class="po-box1">
+				<div class="po-box1-left fl">
+					<span>[Company Name]</span>
+					<div class="po-addr">
+						<p>[Street Address]</p>
+						<p>[City,ST ZIP]</p>
+						<p>Phone:(000)000-000 0</p>
+						<p>Fax:(000)000-000 0</p>
+						<p>Website:</p>
+					</div>
+				</div>
+				<div class="po-box1-right fr">
+					<span class="tr">PURCHASE ORDER</span>
+					<p class="tr">DATE<span class="po-date tc bn">{:date('d/m/Y',$po['po_create_date'])}</span></p>
+					<p class="tr">PO#<span class="po-date tc">{$po.po_order_item}</span></p>
+				</div>
+			</div>
+			
+			<div class="po-box2">
+				<div class="po-box2-left fl">
+		            <div class="po-box-head">
+		            	<span>VENDOR</span>
+		            </div>  
+					<p>[Company Name]&nbsp;&nbsp;&nbsp;&nbsp;{$po.vendor_name}</p>
+					<p>[Contact or Department]&nbsp;&nbsp;&nbsp;&nbsp;{$po.contact}</p>
+					<p>[Street Address]&nbsp;&nbsp;&nbsp;&nbsp;{$po.street}</p>
+					<p>[City,ST ZIP]&nbsp;&nbsp;&nbsp;&nbsp;{$po.city}</p>
+					<p>Phone:{$po.phone}</p>
+					<p>Fax:{$po.fax}</p>
+				</div>
+				<div class="po-box2-right fr">
+                    <div class="po-box-head">
+		            	<span>SHIPTO</span>
+		            </div>    
+		            <p>[Name]</p>
+		            <p>[Company Name]</p>
+		            <p>[Street Address]</p>
+					<p>[City,ST ZIP]</p>
+					<p>[Phone]</p>
+				</div>
+			</div>
+			
+			<div class="po-box3">
+				<table border="1" class="po-table">
+					<tr>
+						<th>REQUISITIONER</th>
+						<th style="width:25%;">SHIP VIA</th>
+						<th style="width:15%;">F.O.B.</th>
+						<th style="width:40%;">SHIPPING TERMS</th>
+					</tr>
+					<tr>
+						<td></td>
+						<td>{$po.po_ship_way}</td>
+						<td>{$po.vendor_name}</td>
+						<td>{:date('d/m/Y',$po['po_eta_date'])}</td>
+					</tr>
+				</table>				
+			</div>
+			
+			<div class="po-box4">
+				<table border="1"  class="po-table po-td-bottom">
+					<tr>
+						<th>ITEM#</th>
+						<th style="width:40%;">DESCRIPTION</th>
+						<th style="width:10%;">QTY</th>
+						<th style="width:15%;">UNIT PRICE</th>
+						<th style="width:15%;">TOTAL</th>
+					</tr>
+					<!-- <tr>
+						<td>[234234234]</td>
+						<td>Product XYZ</td>
+						<td align="center">15</td>
+						<td align="right" style="padding-right: 10px;">150.00</td>
+						<td align="right" bgcolor="#fcfcfc" style="padding-right: 10px;">2,250.00</td>
+					</tr>
+					<tr>
+						<td>[456456456]</td>
+						<td>Product ABC</td>
+						<td align="center">1</td>
+						<td align="right" style="padding-right: 10px;">75.00</td>
+						<td align="right" bgcolor="#fcfcfc" style="padding-right: 10px;">75.00</td>
+					</tr> -->
+					<foreach name="data" item="v">
+						<tr>
+							<td>{$v.po_lid}</td>
+							<td>{$v.v_ship_way}</td>
+							<td align="center">{$v.po_product_quantity}</td>
+							<td align="right" style="padding-right: 10px;">{$v.product_price}</td>
+							<td align="right" bgcolor="#fcfcfc" style="padding-right: 10px;">{$v.total_price}</td>
+						</tr>
+					</foreach>
+				</table>				
+			</div>
+			
+			<div class="po-box5">
+				<div class="po-box5-left fl">
+					<div class="po-box5-head">
+		            	<span>Comments or Special Instructions</span>
+		            </div>
+		            <p>special comments</p> 
+			    </div>	
+				<div class="po-box5-right fr">
+					<div class="po-box5-xleft fl">
+						<p>SUBTOTAL</p>
+						<p>TAX</p>
+						<p>SHIPPING</p>
+						<p>OTHER</p>
+						<p class="po-double"></p>
+						<p style="font-weight:bold;">TOTAL</p>
+					</div>
+					<div class="po-box5-xright fr">
+						<div class="po-box5-xright-num tr">{$po.po_total_price}</div>
+						<p class="po-box5-value tr"></p>
+						<p class="po-box5-value tr"></p>
+						<p class="po-box5-value tr"></p>
+						<p class="po-double"></p>
+						<div class="po-box5-xright-total">
+							<p class="po-box5-xright-sign tl">$</p>
+							<p class="po-box5-xright-all tr">{$po.po_total_price}</p>
+						</div>
+					</div>
+			    </div>		
+			</div>
+			
+			<div class="po-box6 clearfix tc">
+				<p>If you have any questions about this purchase order,please contact</p>			
+				<p>[Name,Phone#,E-mail]</p>
+			</div>			
+		</div>
+	</body>
+</html>

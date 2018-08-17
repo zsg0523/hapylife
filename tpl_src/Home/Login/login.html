@@ -54,38 +54,38 @@
 	<body>
 		<div class="contents">
 			<div class="wrap">
-			<div class="head">
-				<img src="__PUBLIC_IMAGE__/reghead.png"/>
+				<div class="head">
+					<img src="__PUBLIC_IMAGE__/reghead.png"/>
+				</div>
+				<form method="post" action="{:U('Home/Index/login')}" >
+					<div class="lg-input">
+						<img src="__PUBLIC_IMAGE__/regperson_icon.png"/>
+					    <input type="text" placeholder="请输入账号" name="CustomerID" />
+					</div>
+					<div class="lg-input">
+						<img src="__PUBLIC_IMAGE__/regpsd_icon.png"/>
+					    <input type="password" placeholder="请输入密码" name="PassWord" />
+					</div>
+					
+					<div style="margin-top: 30px;">
+						<button type="submit" style="color: #fff;" class="btn btn-block btn-blue">登录</button>
+						<!--<button type="button" onclick='window.location.href="{:U('Home/Register/downLoad')}";' class="btn btn-block btn-write">注册</button>-->
+						<button type="button"  onclick='window.location.href="{:U('Home/Register/downLoad')}";' class="btn btn-block btn-write">APP下载</button>
+					</div>
+				</form>	
+				<div class="marker">
+					<div class="imgdiv">
+						<span>推送消息</span>
+						<img src="__PUBLIC_IMAGE__/特惠升级.jpg"/>
+						<!--<img src="__PUBLIC_IMAGE__/pro1.jpg"/>-->
+						<!--<img src="__PUBLIC_IMAGE__/pro2.jpg"/>-->
+					</div>
+					
+					<div class="closed">
+						关闭
+					</div>
+				</div>
 			</div>
-			<form method="post" action="{:U('Home/Index/login')}" >
-				<div class="lg-input">
-					<img src="__PUBLIC_IMAGE__/regperson_icon.png"/>
-				    <input type="text" placeholder="请输入账号" name="CustomerID" />
-				</div>
-				<div class="lg-input">
-					<img src="__PUBLIC_IMAGE__/regpsd_icon.png"/>
-				    <input type="password" placeholder="请输入密码" name="PassWord" />
-				</div>
-				
-				<div style="margin-top: 30px;">
-					<button type="submit" style="color: #fff;" class="btn btn-block btn-blue">登录</button>
-					<!--<button type="button" onclick='window.location.href="{:U('Home/Register/downLoad')}";' class="btn btn-block btn-write">注册</button>-->
-					<button type="button"  onclick='window.location.href="{:U('Home/Register/downLoad')}";' class="btn btn-block btn-write">APP下载</button>
-				</div>
-			</form>	
-			<div class="marker">
-				<div class="imgdiv">
-					<span>推送消息</span>
-					<img src="__PUBLIC_IMAGE__/特惠升级.jpg"/>
-					<!--<img src="__PUBLIC_IMAGE__/pro1.jpg"/>-->
-					<!--<img src="__PUBLIC_IMAGE__/pro2.jpg"/>-->
-				</div>
-				
-				<div class="closed">
-					关闭
-				</div>
-			</div>
-		</div>
 		</div>
 		
 
