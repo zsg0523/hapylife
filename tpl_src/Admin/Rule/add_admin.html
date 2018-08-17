@@ -1,0 +1,89 @@
+<extend name="Public:base" />
+
+<block name="title">Add Administrator</block>
+<block name="css">
+    <icheckcss />
+</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            <i class="fa fa-home"></i> Home
+            &gt;
+            Authority Management
+            &gt;
+            Add Administrator
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+                <li>
+                    <a href="{:U('Admin/Rule/admin_user_list')}">Administrator List</a>
+                </li>
+                <li class="active">
+                    <a href="{:U('Admin/Rule/add_admin')}">Add Administrator</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <form class="form-inline" method="post">
+                    <table class="table table-striped table-bordered table-hover table-condensed">
+                        <tr>
+                            <th>Administrator Group</th>
+                            <td>
+                                <foreach name="data" item="v">
+                                    {$v['title']}
+                                    <input class="xb-icheck" type="checkbox" name="group_ids[]" value="{$v['id']}">
+                                    &emsp;
+                                </foreach>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Name</th>
+                            <td>
+                                <input class="input-medium" type="text" name="username">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Phone</th>
+                            <td>
+                                <input class="input-medium" type="text" name="phone">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td>
+                                <input class="input-medium" type="text" name="email">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Password</th>
+                            <td>
+                                <input class="input-medium" type="text" name="password">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Status</th>
+                            <td>
+                                <span class="inputword">Allowed to login</span>
+                                <input class="xb-icheck" type="radio" name="status" value="1" checked="checked">
+                                &emsp;
+                                <span class="inputword">Not allowed to login</span>
+                                <input class="xb-icheck" type="radio" name="status" value="0">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <td>
+                                <input class="btn btn-success" type="submit" value="Add">
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</block>
+<block name="js">
+    <icheckjs color="blue" />
+</block>

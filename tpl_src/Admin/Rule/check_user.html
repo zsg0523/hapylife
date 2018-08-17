@@ -1,0 +1,48 @@
+<extend name="Public:base" />
+
+<block name="title">Add User</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            Home&gt;
+            User Group List&gt;
+			Add User
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+			<table class="table table-striped table-bordered table-hover table-condensed">
+				<tr>
+					<th width="10%">
+						Search User Name
+					</th>
+					<td>
+						<form class="form-inline" action="">
+							<input class="input-medium" type="text" name="username" value="{$Think.get.username}">
+							<input class="btn btn-sm btn-success" type="submit" value="Search">
+						</form>
+					</td>
+				</tr>
+			</table>
+			<table class="table table-striped table-bordered table-hover table-condensed">
+				<tr>
+					<th width="10%">User Name</th>
+					<th>Operation</th>
+				</tr>
+				<foreach name="user_data" item="v">
+					<tr>
+						<th>{$v['username']}</th>
+						<td>
+							<if condition="in_array($v['id'],$uids)">
+								already is in {$group_name}
+							<else/>
+								<a href="{:U('Admin/Rule/add_user_to_group',array('uid'=>$v['id'],'group_id'=>$_GET['group_id'],'username'=>$_GET['username']))}">join {$group_name}</a>
+							</if>
+						</td>
+					</tr>
+				</foreach>
+			</table>
+        </div>
+    </div>
+</block>

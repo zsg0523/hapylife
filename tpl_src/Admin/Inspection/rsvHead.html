@@ -1,0 +1,205 @@
+<extend name="Public:base" />
+
+<block name="title">Inspection List Management</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            Home
+            &gt;
+			Inspection List Management
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+			  	<li class="active">
+					<a href="#home" data-toggle="tab">Inspection List</a>
+			    </li>
+			    <li>
+			    	<form action="{:U('Admin/Inspection/rsvHead')}" method="get">
+				    		<input type="text" name='starttime' value="{$starttime}" placeholder="Starttime,Y-M-D">
+					    	<input type="text" name='endtime'   value="{$endtime}" placeholder="Endtime,Y-M-D">
+	                        <input name="word" type="text" placeholder="Keyword" value="{$word}" size="20" />
+	                        <input class='btn btn-sm' type="submit" value="Filter" />
+	                        <input class='btn btn-sm' type="submit" name='excel' value="excel" />
+	                </form>
+			    </li>
+			    <li>
+					<a href="javascript:;" onclick="add()">Add Inspection Head</a>
+				</li>
+            </ul>
+            <div class="tab-content">
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<tr>
+						<th>rsv item</th>
+						<th>po item</th>
+						<th>total quantity</th>
+						<th>rsv quantity</th>
+						<th>wh</th>
+						<th>wh_address</th>
+						<th>create time</th>
+						<!-- <th>update time</th> -->
+						<th>Action</th>
+					</tr>
+					<foreach name="data" item="v">
+						<tr>
+							<td>{$v['rs_item']}</td>
+							<td>{$v['rs_po_item']}</td>
+							<td>{$v['po_quantity_total']}</td>
+							<td>{$v['rsv_quantity_total']}</td>
+							<td>{$v['wh_number']}</td>
+							<td>{$v['wh_address']}</td>
+							<td>{:date('Y-m-d',$v['rs_create_time'])}</td>
+							<td>
+								<a href="{:U('Admin/Inspection/rsvLine',array('rs_po_item'=>$v['rs_po_item'],'rs_item'=>$v['rs_item']))}">Detail</a> |
+								<!-- <a href="javascript:;" id="{$v['rs_hid']}" onclick="edit(this)">修改</a> | -->
+								<a href="javascript:if(confirm('Are you sure you want to delete ?'))location='{:U('Admin/Inspection/deleteRsvHead',array('id'=>$v['rs_hid']))}'">delete</a>
+							</td>
+						</tr>
+					</foreach>
+				</table>
+            </div>
+        </div>
+    </div>
+    <!-- 添加菜单模态框开始 -->
+	<div class="modal fade" id="bjy-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						Add Inspection Head
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Inspection/addRsvHead')}" method="post">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="15%">Po item：</th>
+								<td>
+									<select name="item">
+										<volist name='itemList' id='v'>
+	                                    	<option value="{$v.po_order_item}">{$v.po_order_item}:{$v.po_order_description}</option>
+	                                    </volist>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="Add">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加菜单模态框结束 -->
+
+	<!-- 修改菜单模态框开始 -->
+	<div class="modal fade" id="bjy-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						Edit Inspection Head
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Po/editPoHead')}" method="post">
+						<input type="hidden" name="id">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="15%">description：</th>
+								<td>
+									<input class="input-medium" type="text" name="po_order_description">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">buyer：</th>
+								<td>
+									<input class="input-medium" type="text" name="po_order_buyer">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">receiver：</th>
+								<td>
+									<input class="input-medium" type="text" name="po_order_receiver">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">eta date：</th>
+								<td>
+									<input class="input-medium" type="text" name="po_eta_date">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">rec date：</th>
+								<td>
+									<input class="input-medium" type="text" name="po_rec_date">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">quantity：</th>
+								<td>
+									<input class="input-medium" type="text" name="po_quantity_total">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">wh：</th>
+								<td>
+									<input class="input-medium" type="text" name="po_wh_number">
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="Edit">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 修改菜单模态框结束 -->
+</block>
+<block name="js">
+	<script>
+	// 添加菜单
+	function add(){
+		$("input[name='title']").val('');
+		$('#bjy-add').modal('show');
+	}
+
+	// 修改菜单
+	function edit(obj){
+		var id                   =$(obj).attr('id');
+		var po_order_description =$(obj).attr('desc');
+		var po_order_buyer       =$(obj).attr('buyer');
+		var po_order_receiver    =$(obj).attr('receiver');
+		var po_eta_date          =$(obj).attr('eta');
+		var po_rec_date          =$(obj).attr('rec');
+		var po_quantity_total    =$(obj).attr('quantity');
+		var po_wh_number         =$(obj).attr('wh');
+		$("input[name='id']").val(id);
+		$("input[name='po_order_description']").val(po_order_description);
+		$("input[name='po_order_buyer']").val(po_order_buyer);
+		$("input[name='po_order_receiver']").val(po_order_receiver);
+		$("input[name='po_eta_date']").val(po_eta_date);
+		$("input[name='po_rec_date']").val(po_rec_date);
+		$("input[name='po_quantity_total']").val(po_quantity_total);
+		$("input[name='po_wh_number']").val(po_wh_number);
+		$('#bjy-edit').modal('show');
+	}
+	</script>
+</block>

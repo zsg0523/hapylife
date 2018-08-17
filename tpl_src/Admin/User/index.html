@@ -1,0 +1,225 @@
+<extend name="Public:base" />
+
+<block name="title">User List</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            Home
+            &gt;
+			User List
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+			  	<li class="active">
+					<a href="#home" data-toggle="tab">User List</a>
+			    </li>
+			    <li>
+					<a href="javascript:;" onclick="add()">Add User</a>
+				</li>
+				<li>
+					<form action="{:U('Admin/User/index')}" method="get">
+	                        <input name="keyword" type="text" placeholder="" value="{$keyword}" size="20" />
+	                        <input type="submit" value="Filter" />
+	                </form>
+				</li>
+            </ul>
+            <div class="tab-content">
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<tr>
+						<th><p align="center">Uid</p></th>
+						<th><p align="center">Account</th>
+						<!-- <th>Password</th> -->
+						<th><p align="center">Sex</p></th>
+						<th><p align="center">Name</p></th>
+						<th><p align="center">Phone</p></th>
+						<th><p align="center">Email</p></th>
+						<th><p align="center">Action</p></th>
+					</tr>
+					<foreach name="data" item="v">
+						<tr>
+							<td align="center">{$v.uid}</td>
+                            <td align="center">{$v.account}</td>
+                            <!-- <td align="center">{$v.password}</td> -->
+                            <td align="center">{$v.sex}</td>
+                            <td align="center">{$v.name}</td>
+                            <td align="center">{$v.phone}</td>
+							<td align="center">{$v.email}</td>
+							<td>
+								<a href="javascript:;" id="{$v['uid']}" account="{$v['account']}" sex="{$v['sex']}" name="{$v['name']}" phone="{$v['phone']}" email="{$v['email']}"  onclick="edit(this)">Edit</a> |
+								<a href="javascript:if(confirm('confirm delete?'))location='{:U('Admin/User/deleteUser',array('id'=>$v['uid']))}'">Delete</a>
+								<!--<a href="javascript:;" onclick="deleteUser()">Delete</a>-->
+							</td>
+						</tr>
+					</foreach>
+				</table>
+				<div class='page'>
+					{$page}
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- 添加菜单模态框开始 -->
+	<div class="modal fade" id="bjy-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						Add User
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/User/addUser')}" method="post" enctype="multipart/form-data">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="15%">account：</th>
+								<td>
+									<input class="input-medium" type="text" name="account">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">password：</th>
+								<td>
+	                                <input class="input-medium" type="text" name="password">
+                                </td>
+							</tr>
+							<tr>
+								<th width="15%">name：</th>
+								<td>
+									<input class="input-medium" type="text" name="name">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">sex：</th>
+								<td>
+									<input class="input-medium" type="text" name="sex">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">phone：</th>
+								<td>
+									<input class="input-medium" type="text" name="phone">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">email：</th>
+								<td>
+									<input class="input-medium" type="text" name="email">
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input  class="btn btn-success" type="submit" value="Add">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 添加菜单模态框结束 -->
+
+	<!-- 修改菜单模态框开始 -->
+	<div class="modal fade" id="bjy-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" enctype="multipart/form-data">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						Edit User
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/User/editUser')}" method="post" enctype="multipart/form-data">
+						<input type="hidden" name="id">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="15%">account：</th>
+								<td>
+									<input class="input-medium" type="text" name="account">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">password：</th>
+								<td>
+	                                <input class="input-medium" type="text" name="password">
+                                </td>
+							</tr>
+							<tr>
+								<th width="15%">name：</th>
+								<td>
+									<input class="input-medium" type="text" name="name">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">sex：</th>
+								<td>
+									<input class="input-medium" type="text" name="sex">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">phone：</th>
+								<td>
+									<input class="input-medium" type="text" name="phone">
+								</td>
+							</tr>
+							<tr>
+								<th width="15%">email：</th>
+								<td>
+									<input class="input-medium" type="text" name="email">
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="Edit">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 修改菜单模态框结束 -->
+</block>
+<block name="js">
+	<script>
+	// 添加菜单
+	function add(){
+		$("input[name='title']").val('');
+		$('#bjy-add').modal('show');
+	}
+/*
+	function deleteUser(){
+		$.post('Admin/User/deleteUser',{'id':3});
+	}
+*/
+	// 修改菜单
+	function edit(obj){
+		var id      =$(obj).attr('id');
+		// var id     =$(obj).attr('uid');
+		var account =$(obj).attr('account');
+		var sex     =$(obj).attr('sex');
+		var name    =$(obj).attr('name');
+		var phone   =$(obj).attr('phone');
+		var email   =$(obj).attr('email');
+		$("input[name='id']").val(id);
+		$("input[name='account']").val(account);
+		$("input[name='sex']").val(sex);
+		$("input[name='name']").val(name);
+		$("input[name='phone']").val(phone);
+		$("input[name='email']").val(email);
+		$('#bjy-edit').modal('show');
+	}
+	</script>
+</block>
