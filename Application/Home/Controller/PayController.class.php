@@ -180,6 +180,7 @@ class PayController extends HomeBaseController{
                                     'ir_unpoint' => $ir_unpoint,
                                     'ir_unpaid' => $ir_unpaid,
                                     'ir_status' => 2,
+                                    'ir_paytime' => time(),
                                 );
                                 $change_receipt = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($maps);
                                 if($change_receipt){
