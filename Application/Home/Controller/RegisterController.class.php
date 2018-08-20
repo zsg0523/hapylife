@@ -188,8 +188,6 @@ class RegisterController extends HomeBaseController{
                 $this->assign($assign);
                 $this->display('Register/new_register');
             }else{
-                $data['iuid'] = $_SESSION['user']['id'];
-                $_SESSION['user']['password'] = trim(I('post.PassWord'));
     			if(isset($upload['name'])){
     				$data['JustIdcard']=C('WEB_URL').$upload['name'][0];
     				$data['BackIdcard']=C('WEB_URL').$upload['name'][1];
@@ -199,6 +197,7 @@ class RegisterController extends HomeBaseController{
                 $data['FirstName'] = trimall(I('post.FirstName'));
                 $data['EnLastName'] = trimall(I('post.EnLastName'));
                 $data['EnFirstName'] = trimall(I('post.EnFirstName'));
+                $data['WvPass'] = $data['PassWord'];
                 $add = D('Tempuser')->add($data);
                 if($add){
     		        $this->assign('userinfo',$data);
@@ -483,6 +482,7 @@ class RegisterController extends HomeBaseController{
                             'BrowserVersion'     =>$tmpeArr['browserversion'],
                             'DistributorType'    =>D('Product')->where(array('ipid'=>$order['ipid']))->getfield('ip_after_grade'),
                             'JoinedOn'    => time(),
+                            'WvPass' => $tmpeArr['password'],
                         );
                         $update     = M('User')->add($tmpe);       
                         $riuid      = $update;
@@ -502,6 +502,38 @@ class RegisterController extends HomeBaseController{
                         );
                         //更新订单信息
                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+                    }else{
+                        $userinfo   = D('User')->where(array('iuid'=>$order['riuid']))->find();
+                        //修改用户最近订单日期/是否通过/等级/数量
+                        $tmpe['iuid'] = $order['riuid'];
+                        //产品等级
+                        $tmpe['DistributorType'] = D('Product')->where(array('ipid'=>$order['ipid']))->getfield('ip_after_grade');
+                        //购买产品次数+1
+                        $tmpe['Number']          = $userinfo['number']+1;
+                        //number 购买产品的次数
+                        if($userinfo['number']==0){
+                            //支付日期
+                            $tmpe['OrderDate']= date("m/d/Y h:i:s A");
+                            $OrderDate        = date("Y-m-d",strtotime("-1 month",time()));
+                        }else{
+                            $OrderDate        = $userinfo['orderdate'];
+                        }
+                        //修改用户信息
+                        $update    = D('User')->save($tmpe);
+                        $riuid     = $order['riuid'];
+                        $status  = array(
+                            'ir_status'  =>$ir_status,
+                            'ir_unpaid'  =>$sub,
+                            'ir_unpoint' =>$unp,
+                            'ir_paytime' =>$ir_paytime,
+                        );                   
+                        //更新订单信息
+                        $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+                        $tmpeArr['password'] = $userinfo['wvpass'];
+                        $status['ia_name']   = $userinfo['shopaddress1'];
+                    }
+                    if($upreceipt){    
+                        $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$order['ir_receiptnum']);
                         $usa    = new \Common\UsaApi\Usa;
                         $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
                         if(!empty($result['result'])){
@@ -531,36 +563,6 @@ class RegisterController extends HomeBaseController{
                                 }
                             }
                         }
-                    }else{
-                        $userinfo   = D('User')->where(array('iuid'=>$order['riuid']))->find();
-                        //修改用户最近订单日期/是否通过/等级/数量
-                        $tmpe['iuid'] = $order['riuid'];
-                        //产品等级
-                        $tmpe['DistributorType'] = D('Product')->where(array('ipid'=>$order['ipid']))->getfield('ip_after_grade');
-                        //购买产品次数+1
-                        $tmpe['Number']          = $userinfo['number']+1;
-                        //number 购买产品的次数
-                        if($userinfo['number']==0){
-                            //支付日期
-                            $tmpe['OrderDate']= date("m/d/Y h:i:s A");
-                            $OrderDate        = date("Y-m-d",strtotime("-1 month",time()));
-                        }else{
-                            $OrderDate        = $userinfo['orderdate'];
-                        }
-                        //修改用户信息
-                        $update    = D('User')->save($tmpe);
-                        $riuid     = $order['riuid'];
-                        $status  = array(
-                            'ir_status'  =>$ir_status,
-                            'ir_unpaid'  =>$sub,
-                            'ir_unpoint' =>$unp,
-                            'ir_paytime' =>$ir_paytime,
-                        );                   
-                        //更新订单信息
-                        $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
-                    }
-                    if($upreceipt){    
-                        $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$order['ir_receiptnum']);
                     }
                 }else{
                     $status  = array(
@@ -822,6 +824,7 @@ class RegisterController extends HomeBaseController{
                         $data['JustIdcard']=C('WEB_URL').$upload['name'][0];
                         $data['BackIdcard']=C('WEB_URL').$upload['name'][1];
                     }
+                    $data['WvPass'] = $data['PassWord'];
                     $data['PassWord'] = md5($data['PassWord']);
                     $data['JoinedOn'] = time();
                     $data['CustomerID'] = strtoupper($data['CustomerID']);
