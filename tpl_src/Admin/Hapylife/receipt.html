@@ -41,10 +41,10 @@
 					<if condition="$_SESSION['user']['username'] eq mary || $_SESSION['user']['username'] eq admin2">
 						<tr>
 							<th >订单编号</th>
-							<th >畅捷编号</th>
+							<!-- <th >畅捷编号</th>
 							<th >畅捷订单状态</th>
 							<th >IPS编号</th>
-							<th >IPS订单状态</th>
+							<th >IPS订单状态</th> -->
 							<th >会员</th>
 							<th >姓</th>
 							<th >名</th>
@@ -57,10 +57,10 @@
 					<else />
 						<tr>
 							<th >订单编号</th>
-							<th >畅捷编号</th>
+							<!-- <th >畅捷编号</th>
 							<th >畅捷订单状态</th>
 							<th >IPS编号</th>
-							<th >IPS订单状态</th>
+							<th >IPS订单状态</th> -->
 							<th >会员</th>
 							<th >姓</th>
 							<th >名</th>
@@ -71,17 +71,18 @@
 	                        <th >收货电话</th>
 	                        <th >收货地址</th>
 	                        <th >创建日期</th>
-	                        <th >支付日期</th>
+	                        <!-- <th >支付日期</th> -->
+	                        <th >查看明细</th>
 							<th>操作</th>
 						</tr>
 					</if>
 					<foreach name="data" item="v">
 						<tr>
 							<td>{$v['ir_receiptnum']}</td>
-							<td>{$v['inner_trade_no']}</td>
+							<!-- <td>{$v['inner_trade_no']}</td>
 							<td>{$v['trade_status']}</td>
 							<td>{$v['ips_trade_no']}</td>
-							<td>{$v['ips_trade_status']}</td>
+							<td>{$v['ips_trade_status']}</td> -->
 							<td>{$v['customerid']}</td>
 							<td>{$v['lastname']}</td>
 							<td>{$v['firstname']}</td>
@@ -100,11 +101,12 @@
 							<td>{$v['ia_phone']}</td>
 							<td>{$v.shopprovince}{$v.shopcity}{$v.shoparea}{$v['ia_address']}</td>
 							<td>{:date('Y-m-d H:i:s',$v['ir_date'])}</td>
-							<td>
+							<!-- <td>
 								<if condition="$v['ir_paytime'] eq 0">
 								<else/>{:date('Y-m-d H:i:s',$v['ir_paytime'])}
 								</if>
-							</td>
+							</td> -->
+							<td><a href="{:U('Admin/Hapylife/receiptSon',array('ir_receiptnum'=>$v['ir_receiptnum']))}">查看明细</td>
 							<if condition="$_SESSION['user']['username'] eq mary || $_SESSION['user']['username'] eq admin2">
 							<else />
 								<td>

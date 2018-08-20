@@ -488,12 +488,10 @@ class HapylifePayController extends HomeBaseController{
                         $sub      = 0;
                         $unp      = 0;
                         $ir_status= 2;
-                        $ir_paytime = time();
                     }else{
                         $sub      = $subnum;
                         $unp      = bcdiv($sub,100,4);
                         $ir_status= 202;
-                        $ir_paytime = 0;
                     }
                     if($sub==0){
                         $addactivation     = D('Activation')->addAtivation($OrderDate,$receipt['riuid'],$receipt['ir_receiptnum']);
@@ -501,8 +499,7 @@ class HapylifePayController extends HomeBaseController{
                     $status  = array(
                         'ir_status'  =>$ir_status,
                         'ir_unpaid'  =>$sub,
-                        'ir_unpoint' =>$unp,
-                        'ir_paytime' =>$ir_paytime,
+                        'ir_unpoint' =>$unp
                     );
                     //更新订单信息
                     $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
@@ -555,12 +552,10 @@ class HapylifePayController extends HomeBaseController{
                     $sub      = 0;
                     $unp      = 0;
                     $ir_status= 2;
-                    $ir_paytime = time();
                 }else{  
                     $sub      = $subnum;
                     $unp      = bcdiv($sub,100,4);
                     $ir_status= 202;
-                    $ir_paytime = 0;
                 }
                 if($sub==0){
                     //判断是否新代理注册
@@ -658,8 +653,7 @@ class HapylifePayController extends HomeBaseController{
                             'ia_phone'   =>$userinfo['phone'],
                             'ia_address' =>$userinfo['shopaddress1'],
                             'ir_unpaid'  =>$sub,
-                            'ir_unpoint' =>$unp,
-                            'ir_paytime' =>$ir_paytime,
+                            'ir_unpoint' =>$unp
                         );
                         //更新订单信息
                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
@@ -714,8 +708,7 @@ class HapylifePayController extends HomeBaseController{
                         $status  = array(
                             'ir_status'  =>$ir_status,
                             'ir_unpaid'  =>$sub,
-                            'ir_unpoint' =>$unp,
-                            'ir_paytime' =>$ir_paytime,
+                            'ir_unpoint' =>$unp
                         );                   
                         //更新订单信息
                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);

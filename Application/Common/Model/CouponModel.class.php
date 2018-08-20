@@ -41,6 +41,7 @@ class CouponModel extends BaseModel{
                 ->limit($page->firstRow.','.$page->listRows)
                 ->select();         
         }
+        // p($status);
         // p($list);die;
         $data=array(
             'data'=>$list,

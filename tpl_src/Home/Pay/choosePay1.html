@@ -60,7 +60,7 @@
 					</div>
 				</div>
 				<p class="tc">合计:&nbsp;&nbsp;￥<i id="money">{:I('get.ir_price')}</i>&nbsp;&nbsp;EP&nbsp;<span id="point">{:I('get.ir_point')}</span></p>				
-				<p class="tc">待付款:&nbsp;&nbsp;￥<i id="unmoney">{:I('get.ir_unpaid')}</i>&nbsp;&nbsp;EP&nbsp;<span id="unpoint">{:I('get.ir_unpoint')}</span></p>
+				<p class="tc">待付款:&nbsp;&nbsp;￥<i id="money">{:I('get.ir_unpaid')}</i>&nbsp;&nbsp;EP&nbsp;<span id="point">{:I('get.ir_unpoint')}</span></p>
 			</div>
 			<div class="addCart tc" onclick="topay()">去付款</div>
 		</form>
@@ -88,7 +88,7 @@
 			}else{
 				if(typevalue==4){
 					$('#priceunit').text('RMB');
-					$("#ir_unpaid").val(($("#ir_unpaid").val()*100).toFixed(2));
+					$("#ir_unpaid").val($("#ir_unpaid").val()*100);
 				}
 				
 			}
@@ -96,20 +96,8 @@
 		function topay(){
 			var form=$('#paymentInfo');
 			var ir_unpaid=$("input[name='ir_unpaid']").val();
-			var typevalue=$(":radio[name='ip_paytype']:checked").val();
-			var money=$('#unmoney').text();
-			if(typevalue==2){
-				if(ir_unpaid>=(money/100.0)){
-					form.submit();
-				}else{
-					alert('付款金额须大于未付款的10%')
-				}
-			}else{
-				if(ir_unpaid>=money){
-					form.submit();
-				}else{
-					alert('付款金额须大于未付款的10%')
-				}
+			if(ir_unpaid>0&&ir_unpaid!=null){
+				form.submit();
 			}
 		}
 

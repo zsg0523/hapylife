@@ -128,6 +128,17 @@ class RewardController extends HomeBaseController{
     }
 
 
+    /**
+    * 导出用户信息
+    **/
+    public function user_excel(){
+    	$title = array('CustomerID','Placement','EnrollerID','SponsorID','CustomerType','DistributorType','LastName','FirstName','Phone','CustomerStatus','City','State','Country');
+    	$data = M('user')->field('CustomerID,Placement,EnrollerID,SponsorID,CustomerType,DistributorType,LastName,FirstName,Phone,CustomerStatus,City,State,Country')->where(array('PassWord'=>array('neq','')))->select();
+    	// p($data);die;
+    	create_csv($data,$title);    	
+    }
+
+
     
     
 
