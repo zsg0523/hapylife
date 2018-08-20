@@ -5,10 +5,10 @@ use Common\Controller\HomeBaseController;
  * 商城首页Controller
  */
 class IndexController extends HomeBaseController{
-	/**
-	 * 后台登录首页
-	 */
-	public function admin(){
+    /**
+     * 后台登录首页
+     */
+    public function admin(){
         if(IS_POST){
             // 做一个简单的登录 组合where数组条件 
             $map=I('post.');
@@ -32,54 +32,47 @@ class IndexController extends HomeBaseController{
             $this->assign($assign);
             $this->display();
         }
-	}
+    }
 
     /**
-    * 前台登录
-    **/
-    public function index(){
-        if(IS_POST){
-            $tmpe = I('post.');
-            if(strlen($tmpe['CustomerID'])==8){
-                $this->error('账号格式错误');  
-            }else{
-                $where= array(
-                    'CustomerID'=>trim($tmpe['CustomerID']),
-                    'PassWord'  =>md5($tmpe['PassWord'])
-                );
-                $data = D('User')->where($where)->find();
-                if (empty($data)) {
-                    $this->error('账号或密码错误');
-                }else{
-                    if(substr($data['customerid'],0,3) == 'HPL'){
-                        $_SESSION['user']=array(
-                                            'id'       =>$data['iuid'],
-                                            'username' =>$data['customerid'],
-                                            'name_cn'  =>$data['lastname'].$data['firstname'],
-                                            'status'   =>1,
-                                            'address'  =>0,
-                                            'bank'     =>0,
-                                        );
-                    }else{
-                        $_SESSION['user']=array(
-                                'id'       =>$data['iuid'],
-                                'username' =>$data['customerid'],
-                                'name_cn'  =>$data['lastname'].$data['firstname'],
-                            );
-                    }
-                   
-                    $this->redirect('Home/Purchase/center');
+     * [checkAccount 验证新旧用户,显示不同界面]
+     * @param  [type] $CustomerID [会员id]
+     * @return [type]             [description]
+     * testAccount 71429994
+     */
+    public function checkAccount(){
+        $CustomerID = trim(I('post.CustomerID'));
+        $checkAccount = D('User')->where(array('CustomerID'=>$CustomerID))->find();
+        switch ($checkAccount) {
+            case null:
+                //核对usa 账号是否正确存在
+                $usa    = new \Common\UsaApi\Usa;
+                $result = $usa->validateHpl($CustomerID);
+                switch ($result['isActive']) {
+                    case true:
+                        $data = array(
+                            'status'=>2,
+                            'message'=>'正确旧用户，旧用户界面登录'
+                        );
+                        $this->ajaxreturn($data);
+                        break;
+                    default:
+                        $data = array(
+                            'status'=>0,
+                            'message'=>'输入账号有误'
+                        );
+                        $this->ajaxreturn($data);
+                        break;
                 }
-            }
-        }else{
-            $data=check_login();
-            if($data){
-                $this->redirect('Home/Purchase/center');
-            }else{
-                $this->display('Login/login');
-            }
+            default:
+                $data = array(
+                    'status'=>1,
+                    'message'=>'账号已存在，直接登录'
+                );
+                $this->ajaxreturn($data);
         }
     }
+
     
     /**
     * 前台登录
@@ -111,10 +104,8 @@ class IndexController extends HomeBaseController{
                 $tmpe = I('post.');
                 if(strlen($tmpe['CustomerID'])==8){
                     //检查WV api用户信息
-                    $key      = "Z131MZ8ZV29H5EQ9LGVH";
-                    $url      = "https://signupapi.wvhservices.com/api/Account/ValidateHpl?customerId=".$tmpe['CustomerID']."&"."key=".$key;
-                    $wv       = file_get_contents($url);
-                    $userinfo = json_decode($wv,true);
+                    $usa      = new \Common\UsaApi\Usa;
+                    $userinfo = $usa->validateHpl($tmpe['CustomerID']);
                     //检查wv是否存在该账号 Y创建该账号  N登录失败
                     switch ($userinfo['isActive']) {
                         case 'true':
@@ -215,6 +206,7 @@ class IndexController extends HomeBaseController{
         session('user',null);
         $this->redirect('Home/Index/login');
     }
+
 
 
 
