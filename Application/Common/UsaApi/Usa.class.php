@@ -26,14 +26,13 @@ class usa
 	* @param customerId: id to validate
 	* @param key: your secret key
 	**/
-	function validateHpl(){
-		$map      = I('post.');
+	function validateHpl($CustomerId){
 		$key      = $this->key;
 		$url      = $this->url;
-		$data     = $url."/api/Account/ValidateHpl?customerId=".$map['CustomerID']."&"."key=".$key;
+		$data     = $url."/api/Hpl/Validate?customerId=".$CustomerId."&"."key=".$key;
 		$wv       = file_get_contents($data);
 		$userinfo = json_decode($wv,true);
-        $this->ajaxreturn($userinfo);
+        return $userinfo;
 	}
 
 	/**
@@ -61,29 +60,7 @@ class usa
 		return $result;
 	}
 
-	/**
-	* UPDATE CUSTOMER
-	**/
-	function updateCustomer(){
-		$map  = I('post.');
-		$key  = $this->key;
-		$url  = $this->url;
-		$data = array(
-			'happyLifeID'  =>$map['happyLifeID'],
-            'password'     =>$map['password'],
-            'sponsorID'    =>$map['sponsorID'],
-            'firstName_EN' =>$map['firstName_EN'],
-            'lastName_EN'  =>$map['lastName_EN'],
-            'emailAddress' =>$map['emailAddress'],
-            'phone'        =>$map['phone'],
-            'dob'          =>$map['dob'],
-            'key'          =>$key
-		);
-		$data    = json_encode($data);
-		$sendUrl = $url."/api/Hpl/UpdateCustomer";
-		$result  = post_json_data($sendUrl,$data);
-		print_r($result);
-	}
+
 
 
 
