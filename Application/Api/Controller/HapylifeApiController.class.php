@@ -572,14 +572,8 @@ class HapylifeApiController extends HomeBaseController{
         $order_num = date('YmdHis').rand(10000, 99999);
         switch ($product['ip_type']) {
             case '1':
-                $list= D('Receipt')->where(array('ir_ordertype'=>$product['ip_type'],'iuid'=>$iuid,'is_delete'=>0))->select();
-                if($list){
-                    $order['status'] = 2;
-                    $order['msg']    = '订单已存在,请付款或删除重新下单';
-                    $this->ajaxreturn($order);
-                }else{
-                    $con = '首购单';
-                }
+                $list= D('Receipt')->where(array('ir_ordertype'=>$product['ip_type'],'riuid'=>$iuid))->setField('is_delete',1);
+                $con = '首购单';
                 break;
             case '2':
                 $con = '升级单';
