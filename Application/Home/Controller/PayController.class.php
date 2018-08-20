@@ -180,6 +180,7 @@ class PayController extends HomeBaseController{
                                     'ir_unpoint' => $ir_unpoint,
                                     'ir_unpaid' => $ir_unpaid,
                                     'ir_status' => 2,
+                                    'ir_paytime' => time(),
                                 );
                                 $change_receipt = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($maps);
                                 if($change_receipt){
@@ -315,11 +316,9 @@ class PayController extends HomeBaseController{
                                                                 'customerid' => $CustomerID
                                                     );
                                                     $logs = M('SmsLog')->add($contents);
-                                                    if($logs){
-                                                        // 支付完成
-                                                        $this->success('注册成功',U('Home/Register/new_regsuccess',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
-                                                    }
                                                 }
+                                                // 支付完成
+                                                $this->success('注册成功',U('Home/Register/new_regsuccess',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
                                             }
                                         }
                                     }else{
@@ -341,16 +340,7 @@ class PayController extends HomeBaseController{
                                         //修改用户信息
                                         $update    = D('User')->save($tmpe);
                                         $riuid     = $receipt['riuid'];
-                                        $status  = array(
-                                            'ir_status'  =>$maps['ir_status'],
-                                            'ir_unpaid'  =>$maps['ir_unpaid'],
-                                            'ir_unpoint' =>$maps['ir_unpoint']
-                                        );                   
-                                        //更新订单信息
-                                        $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
-                                        if($upreceipt){    
-                                            $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$receipt['ir_receiptnum']);
-                                        }
+                                        $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$receipt['ir_receiptnum']);
                                         // 支付完成
                                         $this->success('完成支付',U('Home/Purchase/center'));
                                     }

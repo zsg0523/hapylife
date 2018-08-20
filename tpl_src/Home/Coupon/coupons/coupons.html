@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title></title>
+</head>
+<style>	
+	html,body{background: #eeeef0;margin:0;padding:0}
+	#wrap{width:100%;/*background-color: #fff;*/margin: 0 auto;}
+	
+	.commonHead{width:100%;position: fixed;top: 0;left: 0;z-index: 20;}
+	.cps-nav{margin:0px auto;width:100%;height:40px;line-height: 40px;margin-bottom: 10px;background-color: #fff;text-indent: 0.6em;margin-top: 50px;}
+	
+	.sel{width: 100%;height: 40px;line-height: 40px;}
+	.sel>select{display: block;width:75px;height:30px;margin-top:5px;margin-right:8px;background-color: #fff;}
+	
+	  .fr{float: right;}
+    .main{/*width:100%;*/height:100px;font-size: 15px;/*background-color: #fff;*//*margin: 1px auto;*//*border-bottom: 1px solid #DDDDDD;*/
+		background: url(__PUBLIC_IMAGE__/coupon/couponbg.png) no-repeat;background-size:100% 95%;}
+    
+    .coupon_left{width: 76px;height:76px;float:left;margin:10px 7px;}
+    .coupon_icon{width: 76px;height:76px;}
+    
+    .coupon_center{width:37%;height:90px;float: left;margin-left:10px;font-size: 1em;overflow: hidden;margin-top: 8px;}	
+    .left_title{height:30px;line-height:30px;text-overflow:ellipsis;overflow:hidden;}
+    .left_des{height:30px;line-height:30px;font-size:0.875em;text-overflow:ellipsis;overflow:hidden;color:gray;}    
+    
+    .coupon_right{width:76px;height:76px;float: right;margin: 7px;position: relative;}
+    .coupon_right>div{height:76px;line-height: 76px;text-align: center;color: black;font-size: 14px;}
+     .coupon_right>.coupon_wuse{color:#Fd9700;}
+     .coupon_right>.coupon_yuse{color:gray;}
+		 .coupon_name{border-radius: 10px;background: #Fd9700;padding: 2px 6px;font-size:14px;color: #fff;margin-right: 5px;}
+    
+	  /*小手机*/	
+		@media screen and (max-width: 350px){
+			.coupon_right{left:1%;}
+		}
+  	/*手机*/
+		@media screen and (min-width:400px){	 	    
+			 .coupon_right{right:1%;}
+		}
+		/*平板*/
+		@media screen and (min-width: 768px){
+			.coupon_right{right:7%;}
+		}
+		/*中等屏幕*/
+		@media screen and (min-width: 992px){
+		  .coupon_right{right:9%;}
+		}
+		/*中手机*/	
+		@media screen and (min-width: 350px){
+			.coupon_center{width:40%;}
+		}	   	
+			/*大屏幕*/
+		@media screen and (min-width:1200px){
+			#wrap{width: 1200px;}
+			.cps-nav{width: 1200px;}	   
+			.coupon_right{right:8%;}
+		}	    
+</style>	
+<body>
+	  <div class="commonHead">
+	      <include file="Coupon/common/commonHead1"/>
+    </div> 
+    <div class="cps-nav">
+    	<form class="sel" id="sel" action="{:U('Home/Coupon/coupons',array('hu_nickname'=>$hu_nickname))}" method="post"> 
+    		<span>类型</span>
+    		<select class="fr" coupontype="{$coupon_id}" name="coupon_id"  id="coupontype">
+	          <option value="0">全部</option>
+	          <foreach name="type" item="v">
+	          	 <option value="{$v['id']}">{$v['name']}</option>
+	          </foreach>
+    	    </select>
+    	</form>
+    </div>
+	<div id="wrap">
+		<foreach name="data" item="v">
+		    <div class="main" couponid="{$v['coupon_id']}" cuid="{$v['cu_id']}" onclick="couponinfo(this);" >		
+				<div class="coupon_left">
+					<img class="coupon_icon" src="{$v['img']}"/>
+				</div>
+				<div class="coupon_center">
+					<div class="left_title">
+						<span class="coupon_name">{$v['coupon_name']}</span>	
+						{$v['c_name']}
+					</div>
+					<div class="left_des">{:date('Y.m.d',$v['start_time'])}-{:date('Y.m.d',$v['end_time'])}</div>
+				</div>
+				<div class="coupon_right">
+					<if condition="$v['is_used'] eq 1 || $v['status'] eq 2">
+						<div class="coupon_yuse">查看</div>   	 
+					<else />	
+					  <div class="coupon_wuse">查看</div>
+					</if>
+				</div>
+		    </div> 
+	    </foreach>	  
+    </div>
+    <input type="hidden" name="hu_nickname" id="hu_nickname" value="{$hu_nickname}">	
+</body>
+<script type="text/javascript" src="__PUBLIC_JS__/jquery1.8.3.min.js" ></script>
+<script>
+
+	var u = navigator.userAgent; //判断什么类型的手机
+	var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+	var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+
+    if(isiOS==true){
+        $(".cps-nav").css("margin-top","70px");
+    }
+ 
+	  $(function(){ 
+		  changeCommonHead('通用券');
+    });
+ 
+    //提交表单
+    $('#coupontype').change(function(){
+    	var form=$('#sel');
+    	form.submit();
+    });
+    
+    //绑定值
+    var coupontype=$('#coupontype').attr('coupontype');  //获取被选择的值
+    var options=$('option');
+    for(var i=0;i<options.length;i++){
+	    if (options[i].value==coupontype){
+	      options[i].selected = true;
+	    }
+    }
+    
+    //id的值分别为   1表示积分卷   2表示礼品券   3表示入场券   4表示现金券   5表示折扣券   6抽奖劵    7注册卷    8服务劵
+    function couponinfo(obj){
+       var couponid=$(obj).attr('couponid');  //类型
+       var cuid=$(obj).attr('cuid');   //优惠券id
+       var hu_nickname = $('#hu_nickname').val();
+       
+       if(couponid==1){
+       	  window.location.href="{:U('Home/Coupon/jfcoupondetail/hu_nickname/"+hu_nickname+"/cu_id/"+cuid+"')}";
+       }else if(couponid==2){
+       	  window.location.href="{:U('Home/Coupon/lpcoupondetail/hu_nickname/"+hu_nickname+"/cu_id/"+cuid+"')}";
+       }else if(couponid==3){
+       	  window.location.href="{:U('Home/Coupon/rccoupondetail/hu_nickname/"+hu_nickname+"/cu_id/"+cuid+"')}";
+       }else if(couponid==4){
+       	  window.location.href="{:U('Home/Coupon/xjcoupondetail/hu_nickname/"+hu_nickname+"/cu_id/"+cuid+"')}";
+       }else if(couponid==5){
+       	  window.location.href="{:U('Home/Coupon/zkcoupondetail/hu_nickname/"+hu_nickname+"/cu_id/"+cuid+"')}";
+       }else if(couponid==6){   //抽奖券
+//     	  window.location.href="";
+       }else if(couponid==7){
+//      	  window.location.href="{:U('Home/HracGoods/productDetails/ipid/"+ipid+"/hu_nickname/"+hu_nickname+"/cu_id/"+cu_id+"/yname/"+yname+"')}";
+     	  window.location.href="{:U('Home/Coupon/zccoupondetail/hu_nickname/"+hu_nickname+"/cu_id/"+cuid+"')}";
+       }else if(couponid==8){
+       	  window.location.href="{:U('Home/Coupon/fwcoupondetail/hu_nickname/"+hu_nickname+"/cu_id/"+cuid+"')}";
+       }else if(couponid==11){
+       	  window.location.href="{:U('Home/Coupon/cgcoupondetail/hu_nickname/"+hu_nickname+"/cu_id/"+cuid+"')}";
+       }
+       
+    }
+</script>	
+</html>

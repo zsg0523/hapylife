@@ -36,12 +36,11 @@
 </head>  
 <body >  
     <div class="main">
-    	<div class="head" onclick='window.location.href="{:U('Home/Purchase/myProfile')}";'>
+    	<div class="head" >
     		<span>HAPYLIFE<sup>TM</sup></span>
     		<p>{$Think.session.user.username},您好!</p>
     		<img src="__PUBLIC_IMAGE__/特惠升级.jpg"/>
     	</div>
-    	
 		<ul class="links">
 			<li onclick='window.location.href="{:U('Home/Purchase/purchase')}";'>
 				<img src="__PUBLIC_IMAGE__/购买.png"/>
@@ -55,12 +54,12 @@
 					<a style="color: #ffc574;border: 1px solid #ffc574;" href="{:U('Home/Purchase/myOrder')}">我的订单</a>
 				</div>
 			</li>
-			<!--<li onclick='window.location.href="{:U('Home/Register/new_register')}";'>
+			<li onclick='window.location.href="{:U('Home/Register/new_register')}";'>
 				<img src="__PUBLIC_IMAGE__/新代理.png"/>
 				<div>
 					<a style="color: #44f492;border: 1px solid #44f492;" href="{:U('Home/Register/new_register')}">新代理注册</a>
 				</div>
-			</li>-->
+			</li>
 			<li onclick='window.location.href="{:U('Home/Purchase/addressList')}";'>
 				<img src="__PUBLIC_IMAGE__/地址.png"/>
 				<div>
@@ -73,10 +72,11 @@
 					<a style="color: #737aff;border: 1px solid #737aff;" href="{:U('Home/Pay/toCheckPassword')}">我的积分</a>
 				</div>
 			</li>
-			<li onclick='window.location.href="http://apps.nulifeshop.com/nulife/index.php/Home/Coupon/coupons/iuid/{$Think.session.user.id}";'>
+			<input type="hidden" name="username" value="{$Think.session.user.username}">
+			<li onclick="tocoupon();">
 				<img src="__PUBLIC_IMAGE__/优惠券.png"/>
 				<div>
-					<a style="color: #737aff;border: 1px solid #737aff;" href="http://apps.nulifeshop.com/nulife/index.php/Home/Coupon/coupons/iuid/{$Think.session.user.id}">通用券</a>
+					<a style="color: #737aff;border: 1px solid #737aff;" onclick="tocoupon();">通用券</a>
 				</div>
 			</li>
 			<li onclick='window.location.href="{:U('Home/Purchase/bankList')}";'>
@@ -95,6 +95,12 @@
 				<img src="__PUBLIC_IMAGE__/意见反馈.png"/>
 				<div>
 					<a style="color: #2cb7ef;border: 1px solid #2cb7ef;" href="{:U('Home/FeedBack/feedbackList')}">意见反馈</a>
+				</div>
+			</li>
+			<li onclick='window.location.href="{:U('Home/Purchase/myProfile')}";'>
+				<img src="__PUBLIC_IMAGE__/资料.png"/>
+				<div>
+					<a style="color: #f7674d;border: 1px solid #f7674d;" href="{:U('Home/Purchase/myProfile')}">个人资料</a>
 				</div>
 			</li>
 			<li onclick='window.location.href="{:U('Home/Purchase/changePassword')}";'>
@@ -125,7 +131,11 @@
 			$('.main').height($(window).height());
 		}
     });
-    
+    function tocoupon(){
+    	var username=$("input[name='username']").val();
+    	var isApp=200;
+    	window.location.href="http://apps.nulifeshop.com/nulife/index.php/Home/Coupon/coupons/hu_nickname/"+username+"/whichApp/"+5+"/isApp/"+isApp+"";
+    }
    
 	  
 	</script>  

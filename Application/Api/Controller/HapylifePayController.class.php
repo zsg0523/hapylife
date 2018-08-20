@@ -223,6 +223,7 @@ class HapylifePayController extends HomeBaseController{
 		                                    'ir_unpoint' => $ir_unpoint,
 		                                    'ir_unpaid' => $ir_unpaid,
 		                                    'ir_status' => 2,
+		                                    'ir_paytime' => time(),
 		                                );
 		                                $change_receipt = M('Receipt')->where(array('ir_receiptnum'=>$order['ir_receiptnum']))->save($maps);
 		                                if($change_receipt){
@@ -487,10 +488,12 @@ class HapylifePayController extends HomeBaseController{
                         $sub      = 0;
                         $unp      = 0;
                         $ir_status= 2;
+                        $ir_paytime = time();
                     }else{
                         $sub      = $subnum;
                         $unp      = bcdiv($sub,100,4);
                         $ir_status= 202;
+                        $ir_paytime = 0;
                     }
                     if($sub==0){
                         $addactivation     = D('Activation')->addAtivation($OrderDate,$receipt['riuid'],$receipt['ir_receiptnum']);
@@ -498,7 +501,8 @@ class HapylifePayController extends HomeBaseController{
                     $status  = array(
                         'ir_status'  =>$ir_status,
                         'ir_unpaid'  =>$sub,
-                        'ir_unpoint' =>$unp
+                        'ir_unpoint' =>$unp,
+                        'ir_paytime' =>$ir_paytime,
                     );
                     //更新订单信息
                     $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
@@ -551,10 +555,12 @@ class HapylifePayController extends HomeBaseController{
                     $sub      = 0;
                     $unp      = 0;
                     $ir_status= 2;
+                    $ir_paytime = time();
                 }else{  
                     $sub      = $subnum;
                     $unp      = bcdiv($sub,100,4);
                     $ir_status= 202;
+                    $ir_paytime = 0;
                 }
                 if($sub==0){
                     //判断是否新代理注册
@@ -652,7 +658,8 @@ class HapylifePayController extends HomeBaseController{
                             'ia_phone'   =>$userinfo['phone'],
                             'ia_address' =>$userinfo['shopaddress1'],
                             'ir_unpaid'  =>$sub,
-                            'ir_unpoint' =>$unp
+                            'ir_unpoint' =>$unp,
+                            'ir_paytime' =>$ir_paytime,
                         );
                         //更新订单信息
                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
@@ -707,7 +714,8 @@ class HapylifePayController extends HomeBaseController{
                         $status  = array(
                             'ir_status'  =>$ir_status,
                             'ir_unpaid'  =>$sub,
-                            'ir_unpoint' =>$unp
+                            'ir_unpoint' =>$unp,
+                            'ir_paytime' =>$ir_paytime,
                         );                   
                         //更新订单信息
                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
@@ -790,6 +798,25 @@ class HapylifePayController extends HomeBaseController{
         }
     }
 
+    /**
+    * 购买成功显示页面
+    **/ 
+    public function paySuccess(){
+        $pay_receiptnum = I('post.pay_receiptnum');
+        $receiptlist  = M('Receiptson')
+        						->alias('rs')
+        						->join('hapylife_receipt AS r ON rs.ir_receiptnum = r.ir_receiptnum')
+        						->join('hapylife_receiptlist AS rl ON rs.ir_receiptnum = rl.ir_receiptnum')
+        						->where(array('pay_receiptnum'=>$pay_receiptnum,'r.ir_status'=>2))
+        						->find();
+        if($receiptlist){
+        	$data['status']        = 1;
+            $this->ajaxreturn($receiptlist);
+        }else{
+            $data['status']        = 0;
+        	$this->ajaxreturn($data);
+        }
+    }
 
 
 

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title></title>
+	</head>
+	<style>	
+		html,body{margin: 0;padding: 0;}
+		.ch-head{display: flex;height: 50px;line-height: 50px;width:100%;background: #000;margin: 0 auto;}
+    	.ch-head span{font-size: 16px;color:#fff;width:100%;height:50px;text-align: center;font-weight: bold;}
+    	.ch-back{width: 40px;height: 50px;line-height: 50px;background: url(__PUBLIC_IMAGE__/coupon/tmall_btn_bar_back.png) no-repeat center center;
+    	background-size: 12px 18px;position: fixed;top:0;left: 0;z-index: 22;}
+   
+		/*大屏幕*/
+		@media screen and (min-width:1200px){
+    	  #header{width: 1200px;}
+    	  .ch-back{position: fixed;top:0;left:19%;}
+    	}
+	</style>
+	<body>	
+		<div class="ch-head" id="header">	
+			<span id="title"></span>	
+		</div>
+		<div class="ch-back" onclick="api.closeWin();"></div>
+	</body>
+	<script type="text/javascript" src="__PUBLIC_JS__/jquery1.8.3.min.js" ></script>
+	<script type="text/javascript" src="__PUBLIC_JS__/api.js" ></script>
+	<script>	
+		var u = navigator.userAgent; //判断什么类型的手机
+		var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+		var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+	
+	    if(isiOS==true){
+//	        $(".ch-back").css("top","4%");
+	    }else{
+				  $(".ch-back").css("top","0");
+			}
+	    
+		apiready = function(){
+				var header = $api.byId('header');
+				$api.fixIos7Bar(header);
+    }
+	
+		//改变标题	
+		function changeCommonHead(title){
+			var head=document.getElementById('title');
+			head.innerText=title;
+		}
+	</script>
+</html>
+

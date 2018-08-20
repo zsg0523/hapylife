@@ -265,9 +265,6 @@ class PurchaseController extends HomeBaseController{
             case '3':
                 $con = '月费单';
                 break;
-            case '4' :
-                $con = '重销单';
-                break;
         }
         if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
             $this->error('请先填写个人信息的地区和详细地址');
@@ -451,10 +448,12 @@ class PurchaseController extends HomeBaseController{
                         $sub      = 0;
                         $unp      = 0;
                         $ir_status= 2;
+                        $ir_paytime= time();
                     }else{
                         $sub      = $subnum;
                         $unp      = bcdiv($sub,100,4);
                         $ir_status= 202;
+                        $ir_paytime= 0;
                     }
                     if($sub==0){
                         $addactivation     = D('Activation')->addAtivation($OrderDate,$receipt['riuid'],$receipt['ir_receiptnum']);
@@ -462,7 +461,8 @@ class PurchaseController extends HomeBaseController{
                     $status  = array(
                         'ir_status'  =>$ir_status,
                         'ir_unpaid'  =>$sub,
-                        'ir_unpoint' =>$unp
+                        'ir_unpoint' =>$unp,
+                        'ir_paytime' =>$ir_paytime,
                     );
                     //更新订单信息
                     $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
@@ -570,10 +570,12 @@ class PurchaseController extends HomeBaseController{
                     $sub      = 0;
                     $unp      = 0;
                     $ir_status= 2;
+                    $ir_paytime = time();
                 }else{  
                     $sub      = $subnum;
                     $unp      = bcdiv($sub,100,4);
                     $ir_status= 202;
+                    $ir_paytime = 0;
                 }
                 if($sub==0){
                     //判断是否新代理注册
@@ -671,7 +673,8 @@ class PurchaseController extends HomeBaseController{
                             'ia_phone'   =>$userinfo['phone'],
                             'ia_address' =>$userinfo['shopaddress1'],
                             'ir_unpaid'  =>$sub,
-                            'ir_unpoint' =>$unp
+                            'ir_unpoint' =>$unp,
+                            'ir_paytime' =>$ir_paytime,
                         );
                         //更新订单信息
                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
@@ -726,7 +729,8 @@ class PurchaseController extends HomeBaseController{
                         $status  = array(
                             'ir_status'  =>$ir_status,
                             'ir_unpaid'  =>$sub,
-                            'ir_unpoint' =>$unp
+                            'ir_unpoint' =>$unp,
+                            'ir_paytime' =>$ir_paytime,
                         );                   
                         //更新订单信息
                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);

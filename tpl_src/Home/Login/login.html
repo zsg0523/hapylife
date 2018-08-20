@@ -20,59 +20,72 @@
 		.btn{margin-bottom: 10px;}
 		.btn-write{background-color: #fff;color: #2491ee;border: 1px solid #2491ee;}
 		.marker{width: 100%;background:url(__PUBLIC_IMAGE__/bg_b.png);position: absolute;z-index: 3;top: 0;}
-		.imgdiv{width: 270px;height: auto;margin: auto;}
+		.imgdiv{width: 94%;height: auto;margin: auto;}
 		.imgdiv>span{width: 100%;height: 40px;line-height: 40px;color: #fff;text-align: center;display: block;font-size: 18px;font-weight: bold;}
-		.imgdiv>img{width: 100%;margin-top: 120px;}
+		.imgdiv>img{width: 100%;margin-top: 120px;border-radius: 10px;}
 		.closed{width:94%;height: 30px;margin-left: 3%;line-height: 30px;font-weight: bold; color: #fff;border: 2px solid #fff;border-radius: 5px;text-align: center;position: absolute;bottom: 30px;z-index: 5;}
  		input:-webkit-autofill {
   			-webkit-box-shadow: 0 0 0px 30px white inset;
   			-webkit-text-fill-color: #333;
   		}
-  		/*大屏幕*/
-		@media screen and (min-width: 1200px){
-		  	.wrap{width: 1200px;margin: auto;}
+		/*手机*/
+        @media screen and (max-width: 768px){
+			.wrap{width: 100%;margin: auto;}
+		  	.contents{width: 100%;margin: auto;} 
+        }
+      	/*平板*/
+      	@media screen and (min-width: 768px){
+      		.wrap{width: 100%;margin: auto;}
+		  	.contents{width: 100%;margin: auto;}
+   
+      	}
+        /*中等屏幕*/
+      	@media screen and (min-width: 992px){
+        	.wrap{width: 100%;margin: auto;}
+		  	.contents{width: 100%;margin: auto;}
+      	}
+      	/*大屏幕*/
+      	@media screen and (min-width: 1200px){ 	
+        	.wrap{width: 1200px;margin: auto;}
 		  	.contents{width: 1200px;margin: auto;}
-		
-		    
-		 }
-
+      	}
 
     </style>
 	<body>
 		<div class="contents">
 			<div class="wrap">
-			<div class="head">
-				<img src="__PUBLIC_IMAGE__/reghead.png"/>
+				<div class="head">
+					<img src="__PUBLIC_IMAGE__/reghead.png"/>
+				</div>
+				<form method="post" action="{:U('Home/Index/login')}" >
+					<div class="lg-input">
+						<img src="__PUBLIC_IMAGE__/regperson_icon.png"/>
+					    <input type="text" placeholder="请输入账号" name="CustomerID" />
+					</div>
+					<div class="lg-input">
+						<img src="__PUBLIC_IMAGE__/regpsd_icon.png"/>
+					    <input type="password" placeholder="请输入密码" name="PassWord" />
+					</div>
+					
+					<div style="margin-top: 30px;">
+						<button type="submit" style="color: #fff;" class="btn btn-block btn-blue">登录</button>
+						<button type="button" onclick='window.location.href="{:U('Home/Register/register')}";' class="btn btn-block btn-write">注册</button>
+						<button type="button"  onclick='window.location.href="{:U('Home/Register/downLoad')}";' class="btn btn-block btn-write">APP下载</button>
+					</div>
+				</form>	
+				<div class="marker">
+					<div class="imgdiv">
+						<span>推送消息</span>
+						<img src="__PUBLIC_IMAGE__/特惠升级.jpg"/>
+						<!--<img src="__PUBLIC_IMAGE__/pro1.jpg"/>-->
+						<!--<img src="__PUBLIC_IMAGE__/pro2.jpg"/>-->
+					</div>
+					
+					<div class="closed">
+						关闭
+					</div>
+				</div>
 			</div>
-			<form method="post" action="{:U('Home/index/login')}" >
-				<div class="lg-input">
-					<img src="__PUBLIC_IMAGE__/regperson_icon.png"/>
-				    <input type="text" placeholder="请输入账号" name="CustomerID" />
-				</div>
-				<div class="lg-input">
-					<img src="__PUBLIC_IMAGE__/regpsd_icon.png"/>
-				    <input type="password" placeholder="请输入密码" name="PassWord" />
-				</div>
-				
-				<div style="margin-top: 30px;">
-					<button type="submit" style="color: #fff;" class="btn btn-block btn-blue">登录</button>
-					<!--<button type="button" onclick='window.location.href="{:U('Home/Register/downLoad')}";' class="btn btn-block btn-write">注册</button>-->
-					<button type="button"  onclick='window.location.href="{:U('Home/Register/downLoad')}";' class="btn btn-block btn-write">APP下载</button>
-				</div>
-			</form>	
-			<div class="marker">
-				<div class="imgdiv">
-					<span>推送消息</span>
-					<img src="__PUBLIC_IMAGE__/特惠升级.jpg"/>
-					<!--<img src="__PUBLIC_IMAGE__/pro1.jpg"/>-->
-					<!--<img src="__PUBLIC_IMAGE__/pro2.jpg"/>-->
-				</div>
-				
-				<div class="closed">
-					关闭
-				</div>
-			</div>
-		</div>
 		</div>
 		
 
