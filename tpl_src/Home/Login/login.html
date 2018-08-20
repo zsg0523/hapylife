@@ -107,45 +107,42 @@
 	  		});
 	  		$("input[name='CustomerID']").blur(function(){
 	  			var CustomerID=$("input[name='CustomerID']").val();
-	  			
-				$.ajax({
-					type:"post",
-					url:"{:U('Home/Index/checkAccount')}",
-					async:false,
-					dataType:'json',
-					data:{
-						CustomerID:CustomerID
-					},
-					success:function(data){
-						console.log(data.message);
-						if(data.status == 1){
-							$('.checkPsd').css('display','block');
+	  			if(CustomerID!=''){
+	  				$.ajax({
+						type:"post",
+						url:"{:U('Home/Index/checkAccount')}",
+						async:false,
+						dataType:'json',
+						data:{
+							CustomerID:CustomerID
+						},
+						success:function(data){
+							console.log(data.message);
+							if(data.status == 2){
+								$('.checkPsd').css('display','block');
+							}else {	
+								$('.checkPsd').css('display','none');
+							}
 							
-						}else {	
-							$('.checkPsd').css('display','none');
-						}
-						
-					},
-					error:function(){
-//						alert('ajax请求错误~！');
-						
-					},
-				});
+						},
+						error:function(){
+	//						alert('ajax请求错误~！');							
+						},
+					});
+	  			}
+				
 	  		});
 	  		function tocheckPsd(){
-	  			var disp=$('.checkPsd').css('display');
-	  			alert(disp);
 	  			if($('.checkPsd').css('display')=='block'){
 	  				if($("input[name='password']").val()==$("input[name='password1']").val()){
-	  					return false;
+	  					return true;
 	  				}else{
 	  					alert('两次密码不一致!');
 	  					return false;
 	  				}
 	  			}else{
-	  				return false;
+	  				return true;
 	  			}
-	  			
 	  		}
 		</script> 
 	</body>
