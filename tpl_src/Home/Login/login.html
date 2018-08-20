@@ -107,32 +107,30 @@
 	  		});
 	  		$("input[name='CustomerID']").blur(function(){
 	  			var CustomerID=$("input[name='CustomerID']").val();
-	  			if(CustomerID.length==8){
-	  				$('.checkPsd').css('display','block');
-	  			}else{
-	  				$('.checkPsd').css('display','none');
-	  			}
-//				$.ajax({
-//					type:"post",
-//					url:"checkaAccount",
-//					async:false,
-//					dataType:'json',
-//					data:{
-//						CustomerID:CustomerID
-//					},
-//					success:function(data){
-//						if(data.status == 0){
-//							$('.checkPsd').css('display','none');
-//						}else{
-//							$('.checkPsd').css('display','block');
-//						}
-//						
-//					},
-//					error:function(){
+	  			
+				$.ajax({
+					type:"post",
+					url:"{:U('Home/Index/checkAccount')}",
+					async:false,
+					dataType:'json',
+					data:{
+						CustomerID:CustomerID
+					},
+					success:function(data){
+						console.log(data.message);
+						if(data.status == 1){
+							$('.checkPsd').css('display','block');
+							
+						}else {	
+							$('.checkPsd').css('display','none');
+						}
+						
+					},
+					error:function(){
 //						alert('ajax请求错误~！');
-//						
-//					},
-//				});
+						
+					},
+				});
 	  		});
 	  		function tocheckPsd(){
 	  			var disp=$('.checkPsd').css('display');
