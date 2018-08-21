@@ -69,7 +69,8 @@ class HapylifeCouponController extends HomeBaseController{
 	    //写入服务器日志文件
 	    // $log     = addUsaLog($jsonStr);
 	    $data    = json_decode($jsonStr,true);
-        $addlog  = M('Log')->add($data);
+        $addlog  = M('Log')->add($data['log']);
+
 	    if($addlog){
 	    	$result['status'] = 1;
 	    	$this->ajaxreturn($result);
@@ -84,7 +85,21 @@ class HapylifeCouponController extends HomeBaseController{
 	    //写入服务器日志文件
 	    // $log     = addUsaLog($jsonStr);
 	    $data    = json_decode($jsonStr,true);
-        $addlogs = M('Getpoint')->add($data);
+        $addlogs = M('Getpoint')->add($data['logs']);
+        if($addlogs){
+	    	$result['status'] = 1;
+	    	$this->ajaxreturn($result);
+	    }
+	}
+
+	/**
+	* 给nulife传送产品信息
+	**/ 
+	public function sendPro(){
+		$data = M('Product')->where(array('is_pull'=>1))->select();
+		if($data){
+	    	$this->ajaxreturn($data);
+		}
 	}
 
  
