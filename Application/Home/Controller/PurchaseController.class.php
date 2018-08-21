@@ -183,15 +183,16 @@ class PurchaseController extends HomeBaseController{
 	* 订单详情
 	**/
 	public function myOrderInfo(){
-        $ir_receiptnum = I('post.ir_receiptnum'); 
-		$data = M('Receipt')
-				->alias('r')
-				->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
-				->join('hapylife_product hp on hr.ipid=hp.ipid')
-				->where(array('ir_receiptnum'=>$ir_receiptnum))
-				->select();
+        $ir_receiptnum = I('get.ir_receiptnum'); 
+        $data = M('Receipt')
+                ->alias('r')
+                ->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
+                ->join('hapylife_product hp on hr.ipid=hp.ipid')
+                ->where(array('r.ir_receiptnum'=>$ir_receiptnum))
+                ->find();
         $data['receiptson'] = D('Receiptson')->where(array('status'=>2,'ir_receiptnum'=>$ir_receiptnum))->select();
 		$this->assign('data',$data);
+//		p($data);
 		$this->display();
 	}
 
