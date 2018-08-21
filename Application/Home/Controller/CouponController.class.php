@@ -25,7 +25,7 @@ class CouponController extends HomeBaseController{
 					'userinfo' => $userinfo,
 				);
 		$data    = json_encode($data);
-		$sendUrl = "localhost/testnulife/Api/Couponapi/use_coupon";
+		$sendUrl = "http://apps.nulifeshop.com/nulife/index.php/Api/Couponapi/use_coupon";
 		$result  = post_json_data($sendUrl,$data);
 		if($result['result'] == 1){
 			$sample['status'] = 1;
@@ -59,7 +59,7 @@ class CouponController extends HomeBaseController{
 				'userinfos' => $userinfos,
 				);
 		$data    = json_encode($data);
-		$sendUrl = "localhost/testnulife/Api/Couponapi/pass_coupon";
+		$sendUrl = "http://apps.nulifeshop.com/nulife/index.php/Api/Couponapi/pass_coupon";
 		$result  = post_json_data($sendUrl,$data);
 
 		if($result['result'] == 1){
@@ -91,7 +91,7 @@ class CouponController extends HomeBaseController{
 					'userinfo' => $userinfo,
 				);
 		$data    = json_encode($data);
-		$sendUrl = "localhost/testnulife/Api/Couponapi/getName";
+		$sendUrl = "http://apps.nulifeshop.com/nulife/index.php/Api/Couponapi/getName";
 		$result  = post_json_data($sendUrl,$data);
 		$back_result = json_decode($result['result'],true);
 
@@ -125,7 +125,7 @@ class CouponController extends HomeBaseController{
 					'userinfo' => $userinfo,
 				);
 		$data    = json_encode($data);
-		$sendUrl = "localhost/testnulife/Api/Couponapi/getNames";
+		$sendUrl = "http://apps.nulifeshop.com/nulife/index.php/Api/Couponapi/getNames";
 		$result  = post_json_data($sendUrl,$data);
 		$this->ajaxreturn(json_decode($result['result']));
 	}
