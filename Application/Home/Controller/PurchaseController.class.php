@@ -161,21 +161,36 @@ class PurchaseController extends HomeBaseController{
 
 
 	/**
-	* 我的订单列表
-	**/
-	public function myOrder(){
-		$iuid = $_SESSION['user']['id'];
+    * 我的订单列表
+    **/
+    public function myOrder(){
+        $iuid = $_SESSION['user']['id'];
         $data['status'] = $_SESSION['user']['status'];
         $map  = array(
-				'riuid'=>$iuid,
+                'riuid'=>$iuid,
                 'ir_status'=>array('in','2,3,4,5,202')
-			);
+            );
+        $data = M('Receipt')
+                ->alias('r')
+                ->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
+                ->join('hapylife_product hp on hr.ipid=hp.ipid')
+                ->where($map)
+                ->select();
+        $this->assign('data',$data);
+        $this->display();
+    }
+    /**
+	* 订单详情
+	**/
+	public function myOrderInfo(){
+        $ir_receiptnum = I('post.ir_receiptnum'); 
 		$data = M('Receipt')
 				->alias('r')
 				->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
 				->join('hapylife_product hp on hr.ipid=hp.ipid')
-				->where($map)
+				->where(array('ir_receiptnum'=>$ir_receiptnum))
 				->select();
+        $data['receiptson'] = D('Receiptson')->where(array('status'=>2,'ir_receiptnum'=>$ir_receiptnum))->select();
 		$this->assign('data',$data);
 		$this->display();
 	}
