@@ -1,0 +1,41 @@
+body {
+	margin: 0
+}
+
+/*上传身份证css*/
+.content {
+	display: flex;
+}
+.img-area {
+	flex: 1
+}
+.container2 {
+	background-color: #e7e7e7;
+	position: relative;	
+}
+.container2 div {
+	text-align: center;
+}
+.container2 input {
+	opacity: 0;
+	filter: alpha(opacity=0);
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 9;
+}
+
+.container2 p {
+	font-size: 0.9rem;
+	color: #999
+}
+
+/*注册*/
+.rg-name{
+	margin-top: 10px;
+	color: #2491ee;
+	font-size:3vw;
+	text-align: center;
+}

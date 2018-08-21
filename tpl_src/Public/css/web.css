@@ -1,0 +1,136 @@
+/*首页*/
+em{font-style: normal;}
+li{list-style:none;}
+.top_img{width:100%;background:#f5f5f5;max-width: 100%;}
+.top_img img{width: 100%; height: auto; }
+.visible-on{background:#f5f5f5;margin:0px;padding: 0px;}
+.col-sm-3{height:150px;box-shadow:1px -1px 1px #e8e8e8, -1px 1px 1px #e8e8e8;border-bottom:1px solid #f7f7f7;border-right:1px solid #f7f7f7;}
+.ban_content{width:86%;height:50px;margin:40px auto;padding:0px;overflow: hidden;}
+.ban_content div{float:left;}
+.ban_content span{display:inline-block;width:60%;height:50px;line-height:50px;float:left;margin-left:10px;overflow: hidden;color:#252c25;font-size:16px;}
+.col-sm-3 p{height:40px;line-height:40px;width:86%;margin:-40px auto;color:#888;font-size:14px;}
+
+.content{width:100%;max-width: 100%;background:#f5f5f5;}
+.content_list{width:100%;height:300px;border-top:1px solid #f5f5f5;}
+.Introduction{float:left;width:45%;height:220px;margin-left:5%;margin-top:40px;overflow: hidden;}
+.Introduction h2{width:100%;font-size:20px;font-weight:bold;}
+.Introduction p{width:100%;font-size:18px;font-weight:100;height:40px;line-height:40px;}
+.Introduction p em{width:70%;display:inline-block;overflow: hidden;}
+.Introduction p a{float:right;background:#14b1bb;color:#fff;padding:0.1em 0.5em;height:34px;line-height:34px;border-top-left-radius:10px;border-bottom-right-radius:10px;font-size:16px;}
+.description,.description_travel{color:#606060;display:block;width:100%;height:60px;line-height:20px;text-overflow:ellipsis;overflow:hidden;margin-top:-2px;word-break:break-all;word-wrap:break-word;margin-bottom:26px; }
+.understandMore{background:#14b1bb;padding:0.5em 1em;color:#fff;font-size:12px;border-radius:4px;}
+.product,.rovia_logo{float:right;width:50%;height:100%;}
+.product div{height:220px;margin-top:60px;width:100%;}
+.product div img{display:block;margin:0px auto;height:200px;width:auto;}
+
+.distance{border-top:2px solid #fff;}
+.description_travel{height:40px;line-height:20px;margin-bottom:2px;}
+.rovia_logo div{height:88px;margin-top:106px;width:100%;}
+.rovia_logo div img{display:block;margin:0px auto;height:88px;width:auto;}
+
+.tourism{width:100%;border-top:1px solid #f5f5f5;position:relative}
+.tourism img{width:100%;z-index:1;min-height:300px;}
+.tourism_box{z-index:9999;position:absolute;top:0px;left:0px;text-align:center;height:70%;width:46%;margin:7% 27%;border:2px solid #14b1bb;}
+.tourism_box p{height:50%;padding-top:18%;font-size:36px;color:#fff;text-align:center;overflow: hidden;width:80%;margin:0px auto;}
+.tourism_box div{color:#fff;font-size:18px;width:80%;margin:0px auto;height:60px;overflow: hidden;}
+.tourism_box div span{line-height:30px;display:block;width:100%;text-align:center;}
+
+#footer{width: 100%;background-color: #303030;max-width: 100%;height:340px;margin-top:18px;position:relative}
+#footer .top{width:90%;margin: 0 auto;}
+#footer h2{font-size: 16px;font-weight: normal;padding:26px 0px 14px 0px;color:#fff;}
+#footer .block{width:25%;height:280px;text-align: left;color: #ccc;vertical-align: top;display: block;float: left;margin:0px 1%;}
+#footer ul{width:100%;padding:0px;margin:0px;}
+#footer li{width:100%;height:50px;padding:0px;margin:7px 0px;}
+#footer li img{display:inline-block;float:left;margin-top:4px;}
+#footer li a{color:#ccc;height:50px;width:76%;line-height:25px;display:inline-block;margin-left:4px;font-size:14px;text-align:left;}
+#footer li:last-child a:last-child{line-height:50px;}
+
+.Two{width:26%;}
+.Two ul li a i{color:#14b1bb;font-style: normal;}
+#footer .three {width:14%;margin-left:5%;}
+#footer .three li{list-style-type:square;height:22px;line-height:22px;margin-left:10%;width:90%;}
+#footer .three li:last-child a:last-child,#footer .Two li:last-child a:last-child{line-height:22px;}
+#footer .bottom{bottom:0px;left:0px;width:100%;background:#000;height:60px;line-height:60px;text-align:center;color:#fff;position:absolute;}
+#footer .four{float:right;margin-right:0px;width:20%;}
+#footer .four div{width:100%;height:48px;line-height:24px;overflow: hidden;}
+#footer .four input{height:36px;border:none;width:100%;margin:18px 0px;border-radius:4px;text-indent:1em;}
+#footer .four button{border:none;background:#14b1bb;height:40px;line-height:40px;color:#fff;font-size:12px;border-radius:4px;padding:0px 0.5em;}
+::-webkit-input-placeholder { /* WebKit browsers */
+    color:    #ccc;font-size:12px;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:    #ccc;font-size:12px;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:    #ccc;font-size:12px;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:    #ccc;font-size:12px;
+}
+
+/*关于我们*/
+.aboutIntroduction{float:left;width:45%;height:300px;margin-left:5%;margin-top:70px;overflow: hidden;}
+.about_picture{float:right;width:50%;height:100%;}
+.about_picture div{height:300px;margin-top:70px;width:100%;}
+.about_picture div img{display:block;margin:0px auto;height:300px;width:auto;}
+.aboutdescription{margin-bottom:80px;}
+
+.center_banner{width:100%;height:180px;background:rgba(0,0,0,0.8);}
+.center_banner ul{width:100%;height:100%;margin:0px;padding:0px;}
+.center_banner ul li{width:25%;float:left;height:120px;margin:30px auto;padding:0px;}
+.center_banner ul li img{display:block;margin-top:19px;float:left;margin-left:15%;}
+.center_banner ul li div{float:right;width:50%;height:100%;}
+.center_banner ul li div p{width:100%;color:#14b4c0;height:70px;line-height:98px;font-size:20px;}
+.center_banner ul li div a{display:block;width:100%;height:36px;line-height:20px;margin-top:-10px;font-size:14px;color:#fff;}
+
+.presentation{width:100%;background:#f5f5f5;height:430px;}
+.presentation_box{width:86%;height:400px;margin:40px auto;}
+.presentation_box_title{width:100%;height:60px;line-height:60px;text-align:center;font-size:22px;font-weight:bold;padding-top:10px;}
+.barStyle{width:74px;height:4px;background:#eee;margin:0px auto;border-radius:1px;}
+.barStyle span,.barStyle_left span{display:inline-block;width:12px;height:4px;float:left}
+.barStyle span:nth-child(2),.barStyle_left span:nth-child(2){width:50px;background:#14b1bb;}
+.presentation_box_depict{width:100%;height:40px;line-height:40px;text-align:center;overflow: hidden;color:#606060;}
+
+
+.col-xs-4{height:240px;margin-top:26px;}
+.col-xs-4 img{display:block;margin:2px auto;}
+.col_box{width:80%;margin:4px auto;height:110px;}
+.col_box p{width:100%;height:46px;line-height:50px;text-align:center;overflow: hidden;font-size:18px;}
+.col_box span{height:54px;line-height:27px;font-size:14px;overflow: hidden;display:block;width:100%;text-align:center;color:#606060;}
+
+.presentation .col-xs-3{height:200px;margin-top:40px;}
+.presentation .col-xs-3 img{height:200px;width:auto;display:block;margin:0px auto;z-index:1;position:relative;}
+/*.presentation_bg{background:rgba(254,254,254,0.5);position:absolute;height:200px;z-index:999;top:0px;width:100%;}
+.presentation_bg div{height:40px;height:60px;}*/
+
+.client_box{width:86%;height:650px;margin:40px auto;}
+.client{width:100%;background:#f5f5f5;height:750px;border-top:8px solid #fff;}
+.client_comment{width:100%;height:400px;background:#14b1bb;margin:20px auto;border-radius:6px;}
+.client_comment p:nth-child(1){height:120px;line-height:240px;font-size:140px;text-align:center;color:#fff;}
+.client_comment p:nth-child(2){width:100%;height:52px;line-height:52px;text-align:center;color:#fff;font-size:14px;}
+.client_comment_name{width:200px;height:60px;margin:0px auto;}
+.client_comment_name span{display:block;width:100%;height:26px;color:#fff;text-align:center;}
+.client_comment_img{width:100%;height:135px;margin:0px auto;}
+.client_comment_img img{display:block;margin:0px auto;padding-top:68px;}
+.client_list{width:170px;height:4px;margin:100px auto;}
+.client_list a{display:inline-block;width:50px;height:4px;float:left;background:#bec6c3;}
+.client_list a:nth-child(1){margin-right:10px;background:#14b1bb;}
+.client_list a:nth-child(2){margin-right:10px;}
+
+/*联系我们*/
+.contactUs{width:100%;height:700px;background:#fff;}
+.contactUs_list{width:80%;height:600px;margin:100px auto;}
+.contactUs_left{width:59%;height:580px;float:left; box-shadow: 0 0 28px #e4e4e4;}
+.contactUs_left p{height:60px;line-height:60px;font-size:24px;margin-top:50px;text-align:center;}
+.input_box{width:80%;height:340px;margin:40px auto;}
+.input_box input{width:80%;height:40px;margin-left:10%;margin-top:20px;border:1px solid #ddd;text-indent:1em;}
+.input_box textarea{width:80%;height:90px;margin-left:10%;margin-top:30px;text-indent:1em;resize: none;border:1px solid #ddd;}
+.input_box p{width:120px;height:40px;line-height:40px;margin:28px auto;font-size:14px;background:#14b1bb;color:#fff;border-radius:6px;}
+.contactUs_right{width:36%;height:380px;float:right;margin-top:100px;}
+.contactUs_right p{height:60px;line-height:80px;font-size:24px;font-weight:bold;}
+.barStyle_left{width:74px;height:4px;background:#eee;float:left;border-radius:1px;}
+.contactUs_block{width:100%;height:240px;margin-top:100px;}
+.contactUs_block ul{margin:0px;padding:0px;}
+.contactUs_block li{width:100%;height:80px;float:left;margin:0px;padding:0px;line-height:40px;word-break:break-all;}
+.contactUs_block ul li img{float:left;}
+.contactUs_block ul li a{display:block;width:70%;margin-left:20px;color:#606060;float:left;margin-left:word-break:break-all;}

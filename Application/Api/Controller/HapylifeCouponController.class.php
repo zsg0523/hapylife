@@ -70,6 +70,7 @@ class HapylifeCouponController extends HomeBaseController{
 	    // $log     = addUsaLog($jsonStr);
 	    $data    = json_decode($jsonStr,true);
         $addlog  = M('Log')->add($data['log']);
+
 	    if($addlog){
 	    	$result['status'] = 1;
 	    	$this->ajaxreturn($result);
@@ -100,5 +101,6 @@ class HapylifeCouponController extends HomeBaseController{
 	    	$this->ajaxreturn($data);
 		}
 	}
+
  
 }

@@ -149,7 +149,7 @@ class CouponController extends AdminBaseController{
 	}
 
 	/**
-	* 给用户优惠券
+	* 给用户删除优惠券
 	**/
 	public function delect_coupons(){
 		$cu_id = I('get.cu_id');
@@ -484,10 +484,10 @@ class CouponController extends AdminBaseController{
 	public function couponlist(){
 		$coupon = D('Coupon')->select();
 		//1积分券,2礼品券,3入场券,4现金券,5折扣券,6抽奖券,7注册券,8服务券,12首购券
-		$id = I('get.id');
+		$id = I('get.id',0);
 		if($id == 0){
 			//所有订单
-			$status = '1,2,3,4,5,6,7,8,12';
+			$status = '1,2,3,4,5,6,7,8,11,12';
 		}else{
 			$status = (string)$id;
 		}
@@ -497,7 +497,6 @@ class CouponController extends AdminBaseController{
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
 		
 		$assign = D('Coupon')->getPage(D('Coupon'),$word,$starttime,$endtime,$status);
-		$data = M('Coupon')->alias('c')->join('hapylife_coupon_groups AS g ON c.id = g.cid')->select();
 
 		$this->assign($assign);
 		$this->assign('status',I('get.status'));

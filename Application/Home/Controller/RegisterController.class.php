@@ -138,9 +138,9 @@ class RegisterController extends HomeBaseController{
                     $this->ajaxreturn($data);           
                 }
             }else{
-                $key  = "KDHE5011CVFO1KJEP1A0S";
-                $url  = "https://signupapi.wvhservices.com/api/Hpl/Validate?customerId=".$customerid."&"."key=".$key;
-                $wv   = file_get_contents($url);
+                $key      = "KDHE5011CVFO1KJEP1A0S";
+                $url      = "https://signupapi.wvhservices.com/api/Hpl/Validate?customerId=".$customerid."&"."key=".$key;
+                $wv       = file_get_contents($url);
                 $data = json_decode($wv,true);
                 if(empty($data['error'])){
                     $data['lastname'] = $data['lastName'];
