@@ -183,7 +183,7 @@ class PurchaseController extends HomeBaseController{
 	* 订单详情
 	**/
 	public function myOrderInfo(){
-        $ir_receiptnum = I('post.ir_receiptnum');
+        $ir_receiptnum = I('post.ir_receiptnum'); 
 		$data = M('Receipt')
 				->alias('r')
 				->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
