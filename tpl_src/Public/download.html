@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Hapylife</title>
+    <style>
+    	body,html,.link{
+    		width:100%;height:100%;background-color:#fff;padding:0;margin: 0;
+    	}
+    	a{text-decoration:none;}
+    	body{}
+    	/*flex-box*/
+		.flex-wrap{display: -webkit-flex;	display: flex; } /*弹性盒子*/
+		.flex-vertical{ -webkit-box-orient: vertical;-webkit-flex-flow: column;flex-flow: column;}  /*水平*/
+		.flex-horizontal {box-orient: horizontal;-webkit-box-orient: horizontal;}  /*垂直*/
+		.flex-1{-webkit-box-flex: 1;-webkit-flex: 1;flex: 1;} /*一排*/
+		.flex-2 {-webkit-box-flex: 2;-webkit-flex: 2;flex: 2;} /* 两排*/
+		.flexwrap{flex-wrap:wrap;-webkit-flex-wrap:wrap;}
+		.flex-center {
+		  justify-content: flex-start
+		}
+		.space-between {
+		  justify-content:space-between;justify-content:-webkit-space-between;justify-content:-o-space-between;justify-content:-moz-space-between;
+		}
+		.align-items{align-items:center;-webkit-align-items:center;} /*水平居中*/
+		.align-items-end{align-items:flex-end;-webkit-align-items:flex-end;} /*靠下*/
+		.justify-content{justify-content:center;-webkit-justify-content:center;} /*垂直居中*/
+		.absolute-center{align-items:center; -webkit-align-items:center;  justify-content:center; -webkit-justify-content:center;}  /*绝对居中*/
+    	.link0{height:30%;}
+    	.link1{height:25%;}
+    	.link2{height:25%;}
+    	.link3{height:20%; z-index: 999;}
+    	.link1sImg{height:80%;/* background:url(../../image/icon150x150.png) no-repeat center center; background-size:auto 80%;*/}
+    	.link1sImg img{height:80%;}
+    	.link1sText{height:20%;}
+    	.link2Text a{width:60%; height:50%; background-color:#2490ed; color:#fff; border-radius:5px; text-align:center; font-size:1.2em;}
+        
+        .uploadbg{width:100%;height:100%; position: absolute; z-index: 1; top:0; left: 0;right:0;bottom:0;}
+        .link3 a{width:45%; height:30%; background-color:#1b85b7; font-size:1.2em; color: #fff; border-radius:30px; font-weight: bold;text-decoration:none;}
+    </style>
+</head>
+<body>
+    <img class="uploadbg" src="./images/downloadbg.jpg"/>
+	<div class="link flex-wrap flex-vertical flex-1">
+	  <div class="link0"></div>
+	  <div class="link1">
+	     <div class="link1sImg flex-wrap flex-vertical absolute-center"></div>
+	     <div class="link1sText flex-wrap flex-vertical flex-1 absolute-center"></div>
+	  </div>
+	  <div class="link2 flex-wrap flex-vertical flex-1">
+	     <div class=" flex-wrap flex-vertical flex-1 absolute-center"></div>
+	     <div class="link2Text flex-wrap flex-vertical flex-1 absolute-center"></div>
+	  </div>
+	  <div class="link3 flex-wrap flex-vertical flex-1 absolute-center"><a class="flex-wrap  absolute-center" href="http://apps.hapy-life.com/hapylife/hapylife.apk">下&nbsp;&nbsp;&nbsp;&nbsp;载</a></div>
+	</div>
+</body>
+<script type="text/javascript">
+	apiready = function(){
+		
+	};
+</script>
+</html>

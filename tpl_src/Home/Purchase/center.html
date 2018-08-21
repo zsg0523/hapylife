@@ -41,6 +41,7 @@
     		<p>{$Think.session.user.username},您好!</p>
     		<img src="__PUBLIC_IMAGE__/特惠升级.jpg"/>
     	</div>
+    	
 		<ul class="links">
 			<li onclick='window.location.href="{:U('Home/Purchase/purchase')}";'>
 				<img src="__PUBLIC_IMAGE__/购买.png"/>
@@ -73,10 +74,10 @@
 				</div>
 			</li>
 			<input type="hidden" name="username" value="{$Think.session.user.username}">
-			<li onclick="tocoupon();">
+			<li onclick='tocoupon();'}>
 				<img src="__PUBLIC_IMAGE__/优惠券.png"/>
 				<div>
-					<a style="color: #737aff;border: 1px solid #737aff;" onclick="tocoupon();">通用券</a>
+					<a style="color: #737aff;border: 1px solid #737aff;" onclick="tocoupon()">通用券</a>
 				</div>
 			</li>
 			<li onclick="tocouponlist();">
@@ -149,6 +150,7 @@
 //  	window.location.href="http://apps.nulifeshop.com/nulife/index.php/Home/Coupon/couponlist/hu_nickname/"+username+"/whichApp/"+5+"/isApp/"+isApp+"";
     	window.location.href="http://localhost/testnulife/index.php/Home/Coupon/couponlist/hu_nickname/"+username+"/whichApp/"+5+"/isApp/"+isApp+"";
     }
+    
    
 	  
 	</script>  

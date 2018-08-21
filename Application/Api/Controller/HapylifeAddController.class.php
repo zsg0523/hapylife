@@ -155,6 +155,131 @@ class HapylifeAddController extends HomeBaseController{
         }
     }
 
+    /**
+     * [wvBonus description]
+     * @param  [type] $customerid [description]
+     * @param  [type] $serial     [description]
+     * @param  [type] $amount     [description]
+     * @return [type]             [description]
+     * 
+        [
+            {"customerid":"HPL00003","serial":"2018-8-17","amount":"10000"},
+            {"customerid":"HPL00003","serial":"2018-8-17","amount":"10000"},
+            {"customerid":"HPL00003","serial":"2018-8-17","amount":"10000"},
+            {"customerid":"HPL00003","serial":"2018-8-17","amount":"10000"}
+        ]
+     */
+    public function wvBonus(){
+        $jsonStr = file_get_contents("php://input");
+        //写入服务器日志文件
+        $log     = addUsaLog($jsonStr);
+        $data    = json_decode($jsonStr,true);
+        //开启事务
+        M('wvBonus')->startTrans();
+        $catch_result = true;
+        try {
+            //异常处理
+            foreach($data as $key=>$value){
+                //添加bonus记录
+                $res = M('wvBonus')->add($value);
+                if(!$res){
+                    E("错误信息");
+                }
+            }
+        } catch (\Exception $e) {
+            $catch_result = false;
+            // dump($e);
+        }
+
+        if($catch_result === false){
+            //事务回滚
+            M('wvBonus')->rollback();
+            //添加失败
+            $sample = array(
+                        'code'=> 400,
+                        'info'=>'false',
+                        'data'=>array(
+                            'message'=>'Add bonus failure'
+                        )
+                );
+            $this->ajaxreturn($sample);
+        }else{
+            //事务提交
+            M('wvBonus')->commit();
+            //添加成功
+            $sample = array(
+                        'code'=> 200,
+                        'info'=>'true',
+                        'data'=>array(
+                            'message'=>'Add bonus Success'
+                        )
+                );
+            $this->ajaxreturn($sample);
+        }
+    }
+
+    /**
+     * [wvNotificication description]
+     * @param  [type] $customerid [description]
+     * @param  [type] $date       [description]
+     * @param  [type] $content    [description]
+     * @return [type]             [description]
+     * [
+        {"customerid":"HPL00001","date":"2018-8-17","content":"请今天购买月费"},
+        {"customerid":"HPL00002","date":"2018-8-17","content":"请今天购买月费"},
+        {"customerid":"HPL00003","date":"2018-8-17","content":"请今天购买月费"},
+        {"customerid":"HPL00004","date":"2018-8-17","content":"请今天购买月费"}
+        ]
+     */
+    public function wvNotification(){
+        $jsonStr = file_get_contents("php://input");
+        //写入服务器日志文件
+        $log     = addUsaLog($jsonStr);
+        $data    = json_decode($jsonStr,true);
+        //开启事务
+        M('wvBonus')->startTrans();
+        $catch_result = true;
+        try {
+            //异常处理
+            foreach($data as $key=>$value){
+                //添加bonus记录
+                $res = M('wvNotification')->add($value);
+                if(!$res){
+                    E("错误信息");
+                }
+            }
+        } catch (\Exception $e) {
+            $catch_result = false;
+            // dump($e);
+        }
+
+        if($catch_result === false){
+            //事务回滚
+            M('wvBonus')->rollback();
+            //添加失败
+            $sample = array(
+                        'code'=> 400,
+                        'info'=>'false',
+                        'data'=>array(
+                            'message'=>'Add notification failure'
+                        )
+                );
+            $this->ajaxreturn($sample);
+        }else{
+            //事务提交
+            M('wvBonus')->commit();
+            //添加成功
+            $sample = array(
+                        'code'=> 200,
+                        'info'=>'true',
+                        'data'=>array(
+                            'message'=>'Add notification Success'
+                        )
+                );
+            $this->ajaxreturn($sample);
+        }
+    }
+
 
 
 

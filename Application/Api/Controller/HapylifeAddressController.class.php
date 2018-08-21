@@ -15,15 +15,17 @@ class HapylifeAddressController extends HomeBaseController{
             $this->ajaxreturn($data);
         }else{
             //获取用户iuid,收件人姓名、地址，电话
-            $iuid           = trimall(I('post.iuid'));
-            $ia_name        = trimall(I('post.ia_name'));
-            $ia_phone       = trimall(I('post.ia_phone'));
-            $ia_province    = trimall(I('post.ia_province'));
-            $ia_town       = trimall(I('post.ia_town'));
-            $ia_region     = trimall(I('post.ia_region'));
-            $ia_road       = trimall(I('post.ia_road'));
+            $iuid           = I('post.iuid');
+            $ia_name        = I('post.ia_name');
+            $ia_phone       = I('post.ia_phone');
+            $ia_province       = I('post.ia_province');
+            $ia_town       = I('post.ia_town');
+            $ia_region       = I('post.ia_region');
+            $ia_road       = I('post.ia_road');
 
-            $arr  = M('Address')->where(array('iuid'=>$iuid))->select();
+            $arr  = M('Address')
+                  ->where(array('iuid'=>$iuid))
+                  ->select();
             //判断是否存在地址。有则is_show为0，没有则为1
             if($arr){
                 $tmp        = array(
@@ -50,7 +52,7 @@ class HapylifeAddressController extends HomeBaseController{
             }
             //添加
             $result       = M('Address')->add($tmp);
-            if($data){
+            if($result){
                 $data['status'] = 1;
                 $this->ajaxreturn($data);
             }
@@ -206,13 +208,13 @@ class HapylifeAddressController extends HomeBaseController{
             $this->ajaxreturn($data);
         }else{
             //收件人姓名、地址，电话,地址id
-            $iaid           = trimall(I('post.iaid'));
-            $ia_name        = trimall(I('post.ia_name'));
-            $ia_phone       = trimall(I('post.ia_phone'));
-            $ia_province       = trimall(I('post.ia_province'));
-            $ia_town       = trimall(I('post.ia_town'));
-            $ia_region       = trimall(I('post.ia_region'));
-            $ia_road       = trimall(I('post.ia_road'));
+            $iaid           = I('post.iaid');
+            $ia_name        = I('post.ia_name');
+            $ia_phone       = I('post.ia_phone');
+            $ia_province       = I('post.ia_province');
+            $ia_town       = I('post.ia_town');
+            $ia_region       = I('post.ia_region');
+            $ia_road       = I('post.ia_road');
 
             $tmp            = array(
                 'ia_name'   =>$ia_name,
