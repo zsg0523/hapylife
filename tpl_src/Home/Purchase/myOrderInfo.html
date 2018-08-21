@@ -1,0 +1,209 @@
+<!DOCTYPE html>  
+<html lang="zh-cn">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">  
+    <title>我的订单</title>  
+    <link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css">
+    <link rel="stylesheet" href="__PUBLIC_CSS__/common.css" />
+    <style type="text/css">
+    	select{outline: none;}
+    	.main{width:100%;min-height:300px;margin:50px auto;}
+    	.commonHead{width:100%;position: fixed;top: 0;left: 0;z-index: 20;}
+    	
+    	.sel{width: 100%;height: 55px;line-height: 50px;border-bottom: 5px solid #EEEEF0;background: #2490ed;color: #fff;}
+    	.sel>span{display: block;width: auto;height: 50px;font-weight: bold;}
+    	
+    	.direction{width: 100%;height: 85px;border-bottom: 5px solid #EEEEF0;}
+    	.direction>li{width: 100%;height: 40px;line-height: 40px; }
+    	.direction>li>span{width: auto;height: 40px;display: block;}
+    	
+    	.orderlist{width: 100%;height: 95px;border-bottom: 5px solid #EEEEF0;}
+    	.orderlist>li{width: 100%;min-height: 30px; border-bottom: 1px #dedede solid;}
+    	.orderlist>li>span{width: auto;height: 30px;line-height: 30px;display: block;}
+    	
+    	.productInfo{width: 100%;height: 100px;border-bottom: 1px #ccc solid;background-color:#fff;}
+    	.productInfo>input{width: 15px;height: 80px;margin-top: 10px;margin-left: 5px;float: left;}
+    	.productInfo>img{width: 50px;max-height: 80px;margin-top: 25px;vertical-align: baseline;margin-left: 5px;float: left;}
+    	.intro{width: 40%;height: 80px;margin-top: 10px;float: left;margin-left: 5px;}
+    	.intro>p{width: 100%;height: 30px;line-height: 30px;display: block;}
+    	.intro>i{width: 100%;height: 20px;line-height: 20px;display: block;font-size: 12px;color: #999;}
+    	.intro>span{width: 100%;height: 30px;line-height: 30px;display: block;color: #FF6600;}
+    	
+    	.cart_total{width: 100%;height: 40px;background-color:#fff;display: block;position: fixed;bottom: 0;left: 0;border-top: 1px #dedede solid;}
+    	.cart_total>p{width: 50%;height: 40px;line-height: 40px;margin-left: 5px;color: #FF6600;font-size: 14px;display:inline-block;}
+    	.cart_total>button{width:30%;height: 40px;float: left;border: none;outline: none;color:#fff;background: #2491EE;display: block;float: right;}
+
+    	.point{font-size: 12px;color: #FF6600;}
+    	
+    	.amount{width: auto;height: 80px;margin-top: 10px;float: right;margin-right: 5px;}
+    	.amount>span{min-width: 60px;height: 30px;line-height: 30px;display: block;}
+    	
+    	.paymentInfo{width: 100%;position: fixed;top: 0;left: 0;z-index: 25;display: none;}
+    	.mask{width: 100%;height: 65%;background:#000;opacity:0.4;}
+    	.payCheck{width: 100%;height: 35%;background: #fff;color: #000;}
+    	.payCheck>span{width: 100%;height: 25%;display: block;line-height: 50px;font-size: 16px;font-weight: bold;}
+    	.radioBox{width: 90%;height: 35%; margin-left: 5%;font-size: 14px;display: block;}
+    	.form-group{width: 100%;height:30%;}
+    	.form-group>label{font-weight: normal;}
+    	.form-group>input{width: 16px;height: 16px;}
+    	.payCheck>p{width: 90%;height: 15%;font-size: 12px;color: #FF6600;display: block;margin-left: 5%;}
+    	.topay{width: 100%;height: 50px;border-top: 1px solid #DEDEDE;position: fixed;bottom: 0;left: 0;z-index: 2;background:#2490ed;color:#fff;
+    	line-height: 50px;font-size: 16px;}
+    	
+    	@media screen and (min-width:1200px) {
+			.main{width: 1200px;}
+			.cart_total{width: 1200px;margin-left: -600px;left: 50%;}
+			.topay{width: 1200px;margin-left: -600px;left: 50%;}
+			.paymentInfo{width: 1200px;margin-left: -600px;left: 50%;}
+		}
+    </style>
+</head>  
+<body>  
+    <div class="commonHead">
+  			<include file="Common/commonHead1" />
+  	</div> 
+    <div class="main">
+    	<div class="sel">
+    		<span class="fl">&nbsp;类型</span>
+    		<!-- <span class="fr">待付款&nbsp;</span> -->
+    		<if condition="$receipt['ir_status'] eq 0">
+				<span class="fr">待付款&nbsp;</span>
+			<elseif condition="$receipt['ir_status'] eq 1"/>
+				<span class="fr">待审核&nbsp;</span>  
+			<elseif condition="($receipt['ir_status'] eq 20) or ($receipt['ir_status'] eq 2)"/>
+				<span class="fr">已支付待发货&nbsp;</span>
+			<elseif condition="$receipt['ir_status'] eq 3"/>
+				<span class="fr">已发货待收货&nbsp;</span>
+			<elseif condition="$receipt['ir_status'] eq 4"/>
+				<span class="fr">已收货待评价&nbsp;</span>
+			<elseif condition="$receipt['ir_status'] eq 5"/>
+				<span class="fr">已完成&nbsp;</span>
+			<else />
+				<span class="fr">审核未通过&nbsp;</span>
+			</if>
+    	</div>
+		
+		<ul class="orderlist">
+			
+			<li class="productInfo">
+				<img src="__PUBLIC_IMAGE__/360.png"/>
+	  			<div class="intro">
+	  				<p>首购单</p>
+	  				<i>产品编号#{$v['productno']}</i>
+	  				<span>未付款￥<i class="money">9999999</i>&nbsp;&nbsp;</span>
+	  			</div>
+	  			<div class="amount">
+	  				
+	  				<span style="color: #FF6600;">总价:￥999999</span>
+	  				<span style="color: #FF6600;height: 20px;line-height: 20px;font-size: 12px;">总EP:99999</span>
+	  				<span>已付款:99999</span>
+  				</div>
+			</li>
+			
+			<li><span class="fl">&nbsp;支付状态:</span>
+				<!-- <span class="fr">待付款&nbsp;</span> -->
+				<if condition="$receipt['ir_status'] eq 0">
+					<span class="fr">待付款&nbsp;</span>
+				<elseif condition="$receipt['ir_status'] eq 1"/>
+					<span class="fr">待审核&nbsp;</span>  
+				<elseif condition="($receipt['ir_status'] eq 20) or ($receipt['ir_status'] eq 2)"/>
+					<span class="fr">已支付&nbsp;</span>
+				<elseif condition="$receipt['ir_status'] eq 3"/>
+					<span class="fr">已发货&nbsp;</span>
+				<elseif condition="$receipt['ir_status'] eq 4"/>
+					<span class="fr">已收货&nbsp;</span>
+				<elseif condition="$receipt['ir_status'] eq 5"/>
+					<span class="fr">已完成&nbsp;</span>
+				<else />
+					<span class="fr">审核未通过&nbsp;</span>
+				</if>
+			</li>
+			<li><span class="fl">&nbsp;父订单号:</span><span class="fr">123132132132132&nbsp;</span></li>
+			<if condition="$receipt['ir_status'] eq 0">
+				<li><span class="fl">&nbsp;下单时间:</span><span class="fr">11111111111111111111111&nbsp;</span></li>
+			<else />
+				<li><span class="fl">&nbsp;成交时间:</span><span class="fr">11111111111111111111111&nbsp;</span></li>
+			</if>
+			<li><span class="fl">&nbsp;子订单号:</span><span class="fr">123132132132132&nbsp;</span></li>
+			<if condition="$receipt['ir_status'] eq 0">
+				<li><span class="fl">&nbsp;下单时间:</span><span class="fr">11111111111111111111111&nbsp;</span></li>
+			<else />
+				<li><span class="fl">&nbsp;成交时间:</span><span class="fr">11111111111111111111111&nbsp;</span></li>
+			</if>
+			<li><span class="fl">&nbsp;子订单号:</span><span class="fr">23132132132132&nbsp;</span></li>
+			<if condition="$receipt['ir_status'] eq 0">
+				<li><span class="fl">&nbsp;下单时间:</span><span class="fr">11111111111111111111111&nbsp;</span></li>
+			<else />
+				<li><span class="fl">&nbsp;成交时间:</span><span class="fr">11111111111111111111111&nbsp;</span></li>
+			</if>
+			
+			<div style="width: 100%;height: 40px;"></div>
+
+		</ul>
+		
+		<input type="hidden" name="ir_receiptnum" value="{$ir_receiptnum}">
+    </div>  
+  
+  
+  
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>  
+	<script type="text/javascript">  
+	
+	    $(document).ready(function(){ 
+			changeCommonHead('订单详情');
+			$('#paymentInfo').height($(window).height());
+	    });
+	    //显示蒙版
+	    $('#mask').click(function(){
+	    var paymentInfo=document.getElementById('paymentInfo');
+	    paymentInfo.style.display='none';
+		});
+		//显示支付选择
+		$('#addCart').click(function(){
+		    var paymentInfo=document.getElementById('paymentInfo');
+		    paymentInfo.style.display='block';
+		});
+		//选择支付方式
+		function changeRadio(val){
+			var inputs=$(val).find("input");
+			inputs[0].checked='checked';
+		}
+		//展示订单详情
+	    function showProduct(val){
+	    	var classify1=document.getElementById('classify1');
+	    	var classify2=document.getElementById('classify2');
+	    	var spans=document.getElementsByClassName('cbtn');
+	    	for(var j=0;j<2;j++){
+	    		spans[j].style.color='#000';
+	    	}
+	    	val.style.color='#259fd9';
+	    	if($(val).attr("id")=='cbtn1'){
+	    		classify1.style.display="block";
+	    		classify2.style.display="none";
+	    	
+	    	}else if($(val).attr("id")=='cbtn2'){
+	    		classify1.style.display="none";
+	    		classify2.style.display="block";
+	    	
+	    	}
+	  		
+	    }
+	    
+	    //判断支付类型跳转支付
+	    function topay(){
+	    	var radio=$('input[name="paytype"]:checked');
+	    	var ir_paytype=radio[0].value;
+	    	
+	    	var ir_receiptnum1 = $('input[name="ir_receiptnum"]').val();
+			if(ir_paytype==2){
+				// alert(ir_paytype);
+	    		window.location.href="{:U('IbosWeb/Pay/payPoint/ir_receiptnum/"+ir_receiptnum1+"')}";
+		    }else if(ir_paytype==1){	    		
+		    		window.location.href="{:U('IbosWeb/Pay/Qrcode/ir_receiptnum/"+ir_receiptnum1+"')}";
+	    	}	   	
+		}
+	</script>  
+</body>  
+</html>  
