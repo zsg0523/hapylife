@@ -188,7 +188,7 @@ class PurchaseController extends HomeBaseController{
 				->alias('r')
 				->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
 				->join('hapylife_product hp on hr.ipid=hp.ipid')
-				->where(array('ir_receiptnum'=>$ir_receiptnum))
+				->where(array('r.ir_receiptnum'=>$ir_receiptnum))
 				->select();
         $data['receiptson'] = D('Receiptson')->where(array('status'=>2,'ir_receiptnum'=>$ir_receiptnum))->select();
 		$this->assign('data',$data);
