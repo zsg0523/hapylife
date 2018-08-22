@@ -901,7 +901,25 @@ class RegisterController extends HomeBaseController{
 	public function regsuccess(){
 		$iuid = I('get.iuid');
 		$data = D('User')->where(array('iuid'=>$iuid))->find();
-
+        if($data){
+            // 发送短信提示
+            $templateId ='164137';
+            $params     = array();
+            $sms        = D('Smscode')->sms($data['acnumber'],$data['phone'],$params,$templateId);
+            if($sms['errmsg'] == 'OK'){
+                $contents = array(
+                            'acnumber' => $data['acnumber'],
+                            'phone' => $data['phone'],
+                            'operator' => '系统',
+                            'addressee' => $data['lastname'].$data['firstname'],
+                            'product_name' => '',
+                            'date' => time(),
+                            'content' => '恭喜您注册成功，请注意查收邮件',
+                            'customerid' => $data['customerid']
+                );
+                $logs = M('SmsLog')->add($contents);
+            }
+        }
 		$assign = array(
 						'data' => $data,
                         'iuid' => $iuid,
