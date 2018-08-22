@@ -90,7 +90,8 @@ class PayController extends HomeBaseController{
 
     // 积分支付
     public function payInt(){
-        $iuid = $_SESSION['user']['id'];
+        // $iuid = $_SESSION['user']['id'];
+        $iuid = I('get.iuid');
         $ir_receiptnum = I('get.ir_receiptnum');
         // 获取用户信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
@@ -102,6 +103,7 @@ class PayController extends HomeBaseController{
         $residue = bcsub($userinfo['iu_point'],$receiptson['ir_point'],2);
         // 获取订单状态
         $ir_ordertype = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->getfield('ir_ordertype');
+
         if($residue>0){
             //修改用户积分
             $message = array(
@@ -185,6 +187,24 @@ class PayController extends HomeBaseController{
                                 );
                                 $change_receipt = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($maps);
                                 if($change_receipt){
+                                    if($ir_ordertype = 4){
+                                        // 添加通用券
+                                        $product = M('Receipt')
+                                                        ->alias('r')
+                                                        ->join('hapylife_product AS p ON r.ipid = p.ipid')
+                                                        ->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))
+                                                        ->find();
+                                        $data = array(
+                                                'product' => $product,
+                                                'userinfo' => $userinfo,
+                                            );
+                                        $data    = json_encode($data);
+                                        // $sendUrl = "http://apps.nulifeshop.com/nulife/index.php/Api/Couponapi/addCoupon";
+                                        $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/addCoupon";
+                                        $result  = post_json_data($sendUrl,$data);
+                                        p($result);
+                                        die;
+                                    }
                                     // 存在htid，生成新账号
                                     if($receipt['htid']){
                                         $tmpeArr = M('Tempuser')->where(array('htid'=>$receipt['htid']))->find();

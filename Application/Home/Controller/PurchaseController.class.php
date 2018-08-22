@@ -280,6 +280,8 @@ class PurchaseController extends HomeBaseController{
                 break;
             case '3':
                 $con = '月费单';
+            case '4':
+                $con = '买四送一单';
                 break;
         }
         if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
