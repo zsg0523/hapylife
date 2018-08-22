@@ -90,8 +90,7 @@ class PayController extends HomeBaseController{
 
     // 积分支付
     public function payInt(){
-        // $iuid = $_SESSION['user']['id'];
-        $iuid = I('get.iuid');
+        $iuid = $_SESSION['user']['id'];
         $ir_receiptnum = I('get.ir_receiptnum');
         // 获取用户信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
@@ -103,7 +102,8 @@ class PayController extends HomeBaseController{
         $residue = bcsub($userinfo['iu_point'],$receiptson['ir_point'],2);
         // 获取订单状态
         $ir_ordertype = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->getfield('ir_ordertype');
-
+        // 获取产品名称
+        $product_name = M('Receiptlist')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('product_name');
         if($residue>0){
             //修改用户积分
             $message = array(
@@ -159,6 +159,8 @@ class PayController extends HomeBaseController{
                             $ir_unpoint = bcsub($receipt['ir_unpoint'],$receiptson['ir_point'],2);
                             // 父订单待支付金额
                             $ir_unpaid = bcsub($receipt['ir_unpaid'],$receiptson['ir_price'],2);
+                            // 总共已经支付金额
+                            $total = bcsub($receipt['ir_price'],$receipt['ir_unpaid'],2);
                             // 修改父订单状态
                             if($ir_unpoint != 0 && $ir_unpaid != 0){
                                 $maps = array(
@@ -168,6 +170,23 @@ class PayController extends HomeBaseController{
                                 );
                                 $change_receipts = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($maps);
                                 if($change_receipts){
+                                    // 发送短信提示
+                                    $templateId ='178957';
+                                    $params     = array($receipt['ir_receiptnum'],$receiptson['ir_price'],$total,$ir_unpaid);
+                                    $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                                    if($sms['errmsg'] == 'OK'){
+                                        $contents = array(
+                                                    'acnumber' => $userinfo['acnumber'],
+                                                    'phone' => $userinfo['phone'],
+                                                    'operator' => '系统',
+                                                    'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                                    'product_name' => '',
+                                                    'date' => time(),
+                                                    'content' => '订单编号：'.$receipt['ir_receiptnum'].'，收到付款'.$receiptson['ir_price'].'，总共已支付'.$total.'剩余需支付'.$ir_unpaid,
+                                                    'customerid' => $userinfo['customerid']
+                                        );
+                                        $logs = M('SmsLog')->add($contents);
+                                    }
                                     // 支付完成一部分，获取产品类型
                                     switch ($ir_ordertype) {
                                         case '1':
@@ -187,23 +206,22 @@ class PayController extends HomeBaseController{
                                 );
                                 $change_receipt = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($maps);
                                 if($change_receipt){
-                                    if($ir_ordertype = 4){
-                                        // 添加通用券
-                                        $product = M('Receipt')
-                                                        ->alias('r')
-                                                        ->join('hapylife_product AS p ON r.ipid = p.ipid')
-                                                        ->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))
-                                                        ->find();
-                                        $data = array(
-                                                'product' => $product,
-                                                'userinfo' => $userinfo,
-                                            );
-                                        $data    = json_encode($data);
-                                        // $sendUrl = "http://apps.nulifeshop.com/nulife/index.php/Api/Couponapi/addCoupon";
-                                        $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/addCoupon";
-                                        $result  = post_json_data($sendUrl,$data);
-                                        p($result);
-                                        die;
+                                    // 发送短信提示
+                                    $templateId ='178959';
+                                    $params     = array($receipt['ir_receiptnum'],$product_name);
+                                    $sms        = D('Smscode')->sms($data['acnumber'],$data['phone'],$params,$templateId);
+                                    if($sms['errmsg'] == 'OK'){
+                                        $contents = array(
+                                                    'acnumber' => $data['acnumber'],
+                                                    'phone' => $data['phone'],
+                                                    'operator' => '系统',
+                                                    'addressee' => $data['lastname'].$data['firstname'],
+                                                    'product_name' => '',
+                                                    'date' => time(),
+                                                    'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
+                                                    'customerid' => $data['customerid']
+                                        );
+                                        $logs = M('SmsLog')->add($contents);
                                     }
                                     // 存在htid，生成新账号
                                     if($receipt['htid']){
@@ -334,6 +352,26 @@ class PayController extends HomeBaseController{
                                                 // 支付完成
                                                 $this->success('注册成功',U('Home/Register/new_regsuccess',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
                                             }
+                                        }
+                                    }else if($ir_ordertype = 4){
+                                       // 添加通用券
+                                        $product = M('Receipt')
+                                                        ->alias('r')
+                                                        ->join('hapylife_product AS p ON r.ipid = p.ipid')
+                                                        ->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))
+                                                        ->find();
+                                        $data = array(
+                                                'product' => $product,
+                                                'userinfo' => $userinfo,
+                                            );
+                                        $data    = json_encode($data);
+                                        $sendUrl = "http://apps.nulifeshop.com/nulife/index.php/Api/Couponapi/addCoupon";
+                                        // $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/addCoupon";
+                                        $result  = post_json_data($sendUrl,$data);
+                                        $back_msg = json_decode($result['result'],true);
+                                        if($back_msg){
+                                            p($back_msg);
+                                            die;
                                         }
                                     }else{
                                         $userinfo   = D('User')->where(array('iuid'=>$receipt['riuid']))->find();

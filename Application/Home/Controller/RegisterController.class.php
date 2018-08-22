@@ -903,8 +903,8 @@ class RegisterController extends HomeBaseController{
 		$data = D('User')->where(array('iuid'=>$iuid))->find();
         if($data){
             // 发送短信提示
-            $templateId ='164137';
-            $params     = array();
+            $templateId ='178952';
+            $params     = array($data['customerid']);
             $sms        = D('Smscode')->sms($data['acnumber'],$data['phone'],$params,$templateId);
             if($sms['errmsg'] == 'OK'){
                 $contents = array(
@@ -914,7 +914,7 @@ class RegisterController extends HomeBaseController{
                             'addressee' => $data['lastname'].$data['firstname'],
                             'product_name' => '',
                             'date' => time(),
-                            'content' => '恭喜您注册成功，请注意查收邮件',
+                            'content' => '恭喜您创建成功，您的会员号码是'.$data['customerid'].'，同时注意查收Rovia邮件。',
                             'customerid' => $data['customerid']
                 );
                 $logs = M('SmsLog')->add($contents);
