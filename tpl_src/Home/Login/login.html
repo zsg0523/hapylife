@@ -58,7 +58,7 @@
 				<div class="head">
 					<img src="__PUBLIC_IMAGE__/reghead.png"/>
 				</div>
-				<form method="post" action="{:U('Home/Index/login')}" onsubmit="return tocheckPsd();">
+				<form method="post" action="{:U('Home/Index/login')}" id="loginform">
 					<div class="lg-input">
 						<img src="__PUBLIC_IMAGE__/regperson_icon.png"/>
 					    <input type="text" placeholder="请输入账号" name="CustomerID" />
@@ -73,7 +73,7 @@
 					</div>
 					
 					<div style="margin-top: 30px;">
-						<button type="submit" style="color: #fff;" class="btn btn-block btn-blue">登录</button>
+						<button type="button" style="color: #fff;" class="btn btn-block btn-blue" onclick="tocheckPsd();">登录</button>
 						<button type="button" onclick='window.location.href="{:U('Home/Register/register')}";' class="btn btn-block btn-write">注册</button>
 						<button type="button"  onclick='window.location.href="{:U('Home/Register/downLoad')}";' class="btn btn-block btn-write">APP下载</button>
 					</div>
@@ -133,15 +133,20 @@
 				
 	  		});
 	  		function tocheckPsd(){
+	  			var loginform=$('#loginform');
+	  			var passwords=$("input[name='PassWord']").val();
 	  			if($('.checkPsd').css('display')=='block'){
-	  				if($("input[name='password']").val()==$("input[name='password1']").val()){
-	  					return true;
+	  				if(passwords.length>=6){
+	  					if($("input[name='PassWord']").val()==$("input[name='PassWord1']").val()){
+		  					loginform.submit();
+		  				}else{
+		  					alert('两次密码不一致!');
+		  				}
 	  				}else{
-	  					alert('两次密码不一致!');
-	  					return false;
+	  					alert('请输入正确的密码!');	
 	  				}
 	  			}else{
-	  				return true;
+	  				loginform.submit();
 	  			}
 	  		}
 		</script> 
