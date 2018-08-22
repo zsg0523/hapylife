@@ -369,7 +369,7 @@ class PayController extends HomeBaseController{
                                         // $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/addCoupon";
                                         $result  = post_json_data($sendUrl,$data);
                                         $back_msg = json_decode($result['result'],true);
-                                        if($back_msg){
+                                        if($back_msg['status']){
                                             $this->success('完成支付',U('Home/Purchase/center'));
                                         }
                                     }else{
