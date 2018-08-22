@@ -100,6 +100,8 @@ class PayController extends HomeBaseController{
         $receipt = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->find();
         // 用户剩余积分
         $residue = bcsub($userinfo['iu_point'],$receiptson['ir_point'],2);
+//		获取订单状态
+		$ir_ordertype = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->getfield('ir_ordertype');
         if($residue>0){
             //修改用户积分
             $message = array(
@@ -164,8 +166,7 @@ class PayController extends HomeBaseController{
                                 );
                                 $change_receipts = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($maps);
                                 if($change_receipts){
-                                    // 支付完成一部分，获取产品类型
-                                    $ir_ordertype = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->getfield('ir_ordertype');
+                                    // 支付完成一部分，获取产品类型                                    
                                     switch ($ir_ordertype) {
                                         case '1':
                                             $this->success('支付成功',U('Home/Pay/choosePay1',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
@@ -283,11 +284,6 @@ class PayController extends HomeBaseController{
                                         );
                                         //更新订单信息
                                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
-                                        // 添加激活记录
-                                        if($upreceipt){    
-                                            $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$receipt['ir_receiptnum']);
-                                        }
-                                        // 发送数据到usa
                                         $usa    = new \Common\UsaApi\Usa;
                                         $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
                                         if(!empty($result['result'])){
@@ -299,7 +295,6 @@ class PayController extends HomeBaseController{
                                                     );
                                             $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                                             if($res){
-                                                // 发送短信提示
                                                 $templateId ='164137';
                                                 $params     = array();
                                                 $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
@@ -312,8 +307,7 @@ class PayController extends HomeBaseController{
                                                                 'addressee' => $status['ia_name'],
                                                                 'product_name' => $receiptlist['product_name'],
                                                                 'date' => time(),
-                                                                'content' => '恭喜您注册成功，请注意查收邮件',
-                                                                'customerid' => $CustomerID
+                                                                'content' => '恭喜您注册成功，请注意查收邮件'
                                                     );
                                                     $logs = M('SmsLog')->add($contents);
                                                 }
@@ -352,15 +346,15 @@ class PayController extends HomeBaseController{
             }
         }else{
             // 积分不足
-            $ir_ordertype = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->getfield('ir_ordertype');
             switch ($ir_ordertype) {
                 case '1':
-                    $this->error('积分不足',U('Home/Pay/choosePay1',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
+                    $this->error('积分不足',U('Home/Pay/choosePay1',array('ir_unpoint'=>$receipt['ir_unpoint'],'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$receipt['ir_unpaid'],'ir_receiptnum'=>$receipt['ir_receiptnum'])));
                     break;
                 case '3':
-                    $this->error('积分不足',U('Home/Pay/choosePay',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
+                    $this->error('积分不足',U('Home/Pay/choosePay',array('ir_unpoint'=>$receipt['ir_unpoint'],'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$receipt['ir_unpaid'],'ir_receiptnum'=>$receipt['ir_receiptnum'])));
                     break;
             }
+
         }
     }
 

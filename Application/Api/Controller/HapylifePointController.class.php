@@ -407,6 +407,7 @@ class HapylifePointController extends HomeBaseController{
         $CustomerID = M('User')->where(array('iuid'=>$iuid))->getfield('CustomerID');
         $date        = I('post.date');
         $dates = substr($date,0,7);
+        $type = '1,2,3,4,5,6,7,8';
         $assign      = D('Getpoint')->getAllPointInfo(D('Getpoint'),$type,$date,$CustomerID);
         foreach ($assign['data'] as $key => $value) {
             $data[$key]['date']  = $value['date'];
@@ -451,8 +452,6 @@ class HapylifePointController extends HomeBaseController{
                     'data' => $data,
                     'dates' => $dates
                     );
-        p($assign);
-        die;
         if(!empty($assign['data'])){
             $assign['status'] = 1;
             $this->ajaxreturn($assign);

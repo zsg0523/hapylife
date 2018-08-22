@@ -120,7 +120,8 @@ class IndexController extends HomeBaseController{
                                             'WvPass'      =>$tmpe['PassWord'],
                                             'LastName'    =>$userinfo['lastName'],
                                             'FirstName'   =>$userinfo['firstName'],
-                                            'isActive'    =>$userinfo['isActive']
+                                            'isActive'    =>$userinfo['isActive'],
+                                            'WvPass'      =>$tmpe['PassWord'],
                                         );
                                     $createUser = D('User')->add($map);
                                     break;
@@ -131,7 +132,8 @@ class IndexController extends HomeBaseController{
                                             'WvPass'      =>$tmpe['PassWord'],
                                             'LastName'    =>$userinfo['lastName'],
                                             'FirstName'   =>$userinfo['firstName'],
-                                            'isActive'    =>$userinfo['isActive']
+                                            'isActive'    =>$userinfo['isActive'],
+                                            'WvPass'      =>$tmpe['PassWord'],
                                         );
                                     $createUser = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->save($map);
                                     break;

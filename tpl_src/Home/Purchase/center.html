@@ -41,6 +41,7 @@
     		<p>{$Think.session.user.username},您好!</p>
     		<img src="__PUBLIC_IMAGE__/特惠升级.jpg"/>
     	</div>
+    	
 		<ul class="links">
 			<li onclick='window.location.href="{:U('Home/Purchase/purchase')}";'>
 				<img src="__PUBLIC_IMAGE__/购买.png"/>
@@ -51,7 +52,7 @@
 			<li onclick='window.location.href="{:U('Home/Purchase/myOrder')}";'>
 				<img src="__PUBLIC_IMAGE__/订单.png"/>
 				<div>
-					<a style="color: #ffc574;border: 1px solid #ffc574;" href="{:U('Home/Purchase/myOrder')}">我的订单</a>
+					<a style="color: #ffc574;border: 1px solid #ffc574;" href="{:U('Home/Purchase/myOrder')}">订单</a>
 				</div>
 			</li>
 			<li onclick='window.location.href="{:U('Home/Register/new_register')}";'>
@@ -69,14 +70,20 @@
 			<li onclick='window.location.href="{:U('Home/Pay/toCheckPassword')}";'>
 				<img src="__PUBLIC_IMAGE__/积分.png"/>
 				<div>
-					<a style="color: #737aff;border: 1px solid #737aff;" href="{:U('Home/Pay/toCheckPassword')}">我的积分</a>
+					<a style="color: #737aff;border: 1px solid #737aff;" href="{:U('Home/Pay/toCheckPassword')}">积分</a>
 				</div>
 			</li>
 			<input type="hidden" name="username" value="{$Think.session.user.username}">
-			<li onclick="tocoupon();">
+			<li onclick='tocoupon();'}>
 				<img src="__PUBLIC_IMAGE__/优惠券.png"/>
 				<div>
-					<a style="color: #737aff;border: 1px solid #737aff;" onclick="tocoupon();">通用券</a>
+					<a style="color: #737aff;border: 1px solid #737aff;" onclick="tocoupon()">通用券</a>
+				</div>
+			</li>
+			<li onclick="tocouponlist();">
+				<img src="__PUBLIC_IMAGE__/优惠券.png"/>
+				<div>
+					<a style="color: #737aff;border: 1px solid #737aff;" onclick="tocouponlist();">购买产品</a>
 				</div>
 			</li>
 			<li onclick='window.location.href="{:U('Home/Purchase/bankList')}";'>
@@ -88,7 +95,7 @@
 			<li onclick='window.location.href="{:U('Home/Purchase/recommenderList')}";'>
 				<img src="__PUBLIC_IMAGE__/推荐.png"/>
 				<div>
-					<a style="color: #ff64c7;border: 1px solid #ff64c7;" href="{:U('Home/Purchase/recommenderList')}">我的推荐</a>
+					<a style="color: #ff64c7;border: 1px solid #ff64c7;" href="{:U('Home/Purchase/recommenderList')}">推荐</a>
 				</div>
 			</li>
 			<li onclick='window.location.href="{:U('Home/FeedBack/feedbackList')}";'>
@@ -134,8 +141,16 @@
     function tocoupon(){
     	var username=$("input[name='username']").val();
     	var isApp=200;
-    	window.location.href="http://apps.nulifeshop.com/nulife/index.php/Home/Coupon/coupons/hu_nickname/"+username+"/whichApp/"+5+"/isApp/"+isApp+"";
+//  	window.location.href="http://apps.nulifeshop.com/nulife/index.php/Home/Coupon/couponlist/hu_nickname/"+username+"/whichApp/"+5+"/isApp/"+isApp+"";
+    	window.location.href="http://localhost/testnulife/index.php/Home/Coupon/couponlist/hu_nickname/"+username+"/whichApp/"+5+"/isApp/"+isApp+"";
     }
+    function tocouponlist(){
+    	var username=$("input[name='username']").val();
+    	var isApp=200;
+//  	window.location.href="http://apps.nulifeshop.com/nulife/index.php/Home/Coupon/couponlist/hu_nickname/"+username+"/whichApp/"+5+"/isApp/"+isApp+"";
+    	window.location.href="http://localhost/testnulife/index.php/Home/Coupon/couponlist/hu_nickname/"+username+"/whichApp/"+5+"/isApp/"+isApp+"";
+    }
+    
    
 	  
 	</script>  

@@ -60,5 +60,47 @@ class HapylifeCouponController extends HomeBaseController{
 	    	$this->ajaxreturn($result);
 	    }
 	}
+
+	/**
+	* 前台接收数据，生成子订单日志记录
+	**/ 
+	public function addLog(){
+		$jsonStr = file_get_contents("php://input");
+	    //写入服务器日志文件
+	    // $log     = addUsaLog($jsonStr);
+	    $data    = json_decode($jsonStr,true);
+        $addlog  = M('Log')->add($data['log']);
+
+	    if($addlog){
+	    	$result['status'] = 1;
+	    	$this->ajaxreturn($result);
+	    }
+	}
+
+	/**
+	* 前台接收数据，记录会员使用EP日志
+	**/ 
+	public function addLogs(){
+		$jsonStr = file_get_contents("php://input");
+	    //写入服务器日志文件
+	    // $log     = addUsaLog($jsonStr);
+	    $data    = json_decode($jsonStr,true);
+        $addlogs = M('Getpoint')->add($data['logs']);
+        if($addlogs){
+	    	$result['status'] = 1;
+	    	$this->ajaxreturn($result);
+	    }
+	}
+
+	/**
+	* 给nulife传送产品信息
+	**/ 
+	public function sendPro(){
+		$data = M('Product')->where(array('is_pull'=>1))->select();
+		if($data){
+	    	$this->ajaxreturn($data);
+		}
+	}
+
  
 }
