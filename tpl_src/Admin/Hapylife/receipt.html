@@ -41,14 +41,11 @@
 					<if condition="$_SESSION['user']['username'] eq mary || $_SESSION['user']['username'] eq admin2">
 						<tr>
 							<th >订单编号</th>
-							<!-- <th >畅捷编号</th>
-							<th >畅捷订单状态</th>
-							<th >IPS编号</th>
-							<th >IPS订单状态</th> -->
 							<th >会员</th>
 							<th >姓</th>
 							<th >名</th>
 	                        <th >订单总金额</th>
+	                        <th >订单未支付金额</th>
 	                        <th >订单备注</th>
 	                        <th >订单状态</th>
 	                        <th >送货地址</th>
@@ -57,21 +54,17 @@
 					<else />
 						<tr>
 							<th >订单编号</th>
-							<!-- <th >畅捷编号</th>
-							<th >畅捷订单状态</th>
-							<th >IPS编号</th>
-							<th >IPS订单状态</th> -->
 							<th >会员</th>
 							<th >姓</th>
 							<th >名</th>
 	                        <th >订单总金额</th>
+	                        <th >订单未支付金额</th>
 	                        <th >订单备注</th>
 	                        <th >订单状态</th>
 	                        <th >收货人</th>
 	                        <th >收货电话</th>
 	                        <th >收货地址</th>
 	                        <th >创建日期</th>
-	                        <!-- <th >支付日期</th> -->
 	                        <th >查看明细</th>
 							<th>操作</th>
 						</tr>
@@ -79,14 +72,11 @@
 					<foreach name="data" item="v">
 						<tr>
 							<td>{$v['ir_receiptnum']}</td>
-							<!-- <td>{$v['inner_trade_no']}</td>
-							<td>{$v['trade_status']}</td>
-							<td>{$v['ips_trade_no']}</td>
-							<td>{$v['ips_trade_status']}</td> -->
 							<td>{$v['customerid']}</td>
 							<td>{$v['lastname']}</td>
 							<td>{$v['firstname']}</td>
 							<td>{$v['ir_price']}</td>
+							<td>{$v['ir_unpaid']}</td>
 							<td>{$v['ir_desc']}</td>
 							<td>
 								<if condition="$v['ir_status'] eq 2">已支付
@@ -95,22 +85,17 @@
                                 <elseif condition="$v['ir_status'] eq 5"/>申请退货
                                 <elseif condition="$v['ir_status'] eq 7 || $v['ir_status'] eq 0"/>待付款
                                 <elseif condition="$v['ir_status'] eq 8"/>已退货
+                                <elseif condition="$v['ir_status'] eq 202"/>未全额支付
                                 </if>
 							</td>
 							<td>{$v['ia_name']}</td>
 							<td>{$v['ia_phone']}</td>
 							<td>{$v.shopprovince}{$v.shopcity}{$v.shoparea}{$v['ia_address']}</td>
 							<td>{:date('Y-m-d H:i:s',$v['ir_date'])}</td>
-							<!-- <td>
-								<if condition="$v['ir_paytime'] eq 0">
-								<else/>{:date('Y-m-d H:i:s',$v['ir_paytime'])}
-								</if>
-							</td> -->
 							<td><a href="{:U('Admin/Hapylife/receiptSon',array('ir_receiptnum'=>$v['ir_receiptnum']))}">查看明细</td>
 							<if condition="$_SESSION['user']['username'] eq mary || $_SESSION['user']['username'] eq admin2">
 							<else />
 								<td>
-									<!-- <a href="javascript:;" receiptId="{$v['irid']}" receiptNum="{$v['ir_receiptnum']}" receiptDate="{$v['ir_date']}" receiptPrice="{$v[ir_price]}" receiptUser="{$v['customerid']}" receiptPhone="{$v[ia_phone]}" receiptAddress="{$v['ia_address']}" receiptPoint="{$v[ir_point]}" receiptBanknumber="{$v['ir_banknumber']}" receiptBankreceipt="{$v['ir_bankreceipt']}" receiptStatus="{$v[ir_status]}" receiptDesc="{$v['ir_desc']}" onclick="edit(this)">查看</a> | -->
 									<a href="javascript:if(confirm('确定删除{$v['customerid']}的订单？'))location='{:U('Admin/Hapylife/delete_receipt',array('id'=>$v['irid']))}'">删除</a> 
 								</td>
 							</if>
