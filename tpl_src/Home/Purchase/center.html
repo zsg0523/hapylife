@@ -44,7 +44,7 @@
     	
 		<ul class="links">
 			<li onclick='window.location.href="{:U('Home/Purchase/purchase')}";'>
-				<img src="__PUBLIC_IMAGE__/购买.png"/>
+				<img src="__PUBLIC_IMAGE__/购买产品.png"/>
 				<div>
 					<a style="color: #ff8b9a;border: 1px solid #ff8b9a;" href="{:U('Home/Purchase/purchase')}">购买礼包</a>
 				</div>
@@ -56,7 +56,7 @@
 				</div>
 			</li>
 			<li onclick='window.location.href="{:U('Home/Register/new_register')}";'>
-				<img src="__PUBLIC_IMAGE__/新代理.png"/>
+				<img src="__PUBLIC_IMAGE__/注册.png"/>
 				<div>
 					<a style="color: #44f492;border: 1px solid #44f492;" href="{:U('Home/Register/new_register')}">新代理注册</a>
 				</div>
@@ -75,19 +75,13 @@
 			</li>
 			<input type="hidden" name="username" value="{$Think.session.user.username}">
 			<li onclick='tocoupon();'}>
-				<img src="__PUBLIC_IMAGE__/优惠券.png"/>
+				<img src="__PUBLIC_IMAGE__/通用券.png"/>
 				<div>
 					<a style="color: #737aff;border: 1px solid #737aff;" onclick="tocoupon()">通用券</a>
 				</div>
 			</li>
-			<li onclick="tocouponlist();">
-				<img src="__PUBLIC_IMAGE__/优惠券.png"/>
-				<div>
-					<a style="color: #737aff;border: 1px solid #737aff;" onclick="tocouponlist();">购买产品</a>
-				</div>
-			</li>
 			<li onclick='window.location.href="{:U('Home/Purchase/bankList')}";'>
-				<img src="__PUBLIC_IMAGE__/银行.png"/>
+				<img src="__PUBLIC_IMAGE__/银行卡.png"/>
 				<div>
 					<a style="color: #9e7fff;border: 1px solid #9e7fff;" href="{:U('Home/Purchase/bankList')}">银行管理</a>
 				</div>
@@ -139,12 +133,6 @@
 		}
     });
     function tocoupon(){
-    	var username=$("input[name='username']").val();
-    	var isApp=200;
-//  	window.location.href="http://apps.nulifeshop.com/nulife/index.php/Home/Coupon/couponlist/hu_nickname/"+username+"/whichApp/"+5+"/isApp/"+isApp+"";
-    	window.location.href="http://localhost/testnulife/index.php/Home/Coupon/couponlist/hu_nickname/"+username+"/whichApp/"+5+"/isApp/"+isApp+"";
-    }
-    function tocouponlist(){
     	var username=$("input[name='username']").val();
     	var isApp=200;
 //  	window.location.href="http://apps.nulifeshop.com/nulife/index.php/Home/Coupon/couponlist/hu_nickname/"+username+"/whichApp/"+5+"/isApp/"+isApp+"";
