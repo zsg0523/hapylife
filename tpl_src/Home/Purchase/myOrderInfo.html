@@ -31,31 +31,17 @@
     	.intro>span{width: 100%;height: 30px;line-height: 30px;display: block;color: #FF6600;}
     	
     	.cart_total{width: 100%;height: 40px;background-color:#fff;display: block;position: fixed;bottom: 0;left: 0;border-top: 1px #dedede solid;}
-    	.cart_total>p{width: 50%;height: 40px;line-height: 40px;margin-left: 5px;color: #FF6600;font-size: 14px;display:inline-block;}
-    	.cart_total>button{width:30%;height: 40px;float: left;border: none;outline: none;color:#fff;background: #2491EE;display: block;float: right;}
-
+    	.cart_total>a{width:100%;height: 40px;border: none;outline: none;color:#fff;background: #2491EE;display: block;text-align: center;line-height: 40px;}
+		.cart_total>a:hover{color: #fff;text-decoration: none;}
     	.point{font-size: 12px;color: #FF6600;}
     	
     	.amount{width: auto;height: 80px;margin-top: 10px;float: right;margin-right: 5px;}
     	.amount>span{min-width: 60px;height: 30px;line-height: 30px;display: block;}
     	
-    	.paymentInfo{width: 100%;position: fixed;top: 0;left: 0;z-index: 25;display: none;}
-    	.mask{width: 100%;height: 65%;background:#000;opacity:0.4;}
-    	.payCheck{width: 100%;height: 35%;background: #fff;color: #000;}
-    	.payCheck>span{width: 100%;height: 25%;display: block;line-height: 50px;font-size: 16px;font-weight: bold;}
-    	.radioBox{width: 90%;height: 35%; margin-left: 5%;font-size: 14px;display: block;}
-    	.form-group{width: 100%;height:30%;}
-    	.form-group>label{font-weight: normal;}
-    	.form-group>input{width: 16px;height: 16px;}
-    	.payCheck>p{width: 90%;height: 15%;font-size: 12px;color: #FF6600;display: block;margin-left: 5%;}
-    	.topay{width: 100%;height: 50px;border-top: 1px solid #DEDEDE;position: fixed;bottom: 0;left: 0;z-index: 2;background:#2490ed;color:#fff;
-    	line-height: 50px;font-size: 16px;}
     	
     	@media screen and (min-width:1200px) {
 			.main{width: 1200px;}
 			.cart_total{width: 1200px;margin-left: -600px;left: 50%;}
-			.topay{width: 1200px;margin-left: -600px;left: 50%;}
-			.paymentInfo{width: 1200px;margin-left: -600px;left: 50%;}
 		}
     </style>
 </head>  
@@ -67,72 +53,73 @@
     	<div class="sel">
     		<span class="fl">&nbsp;类型</span>
     		<!-- <span class="fr">待付款&nbsp;</span> -->
-    		<if condition="$receipt['ir_status'] eq 0">
-				<span class="fr">待付款&nbsp;</span>
-			<elseif condition="$receipt['ir_status'] eq 1"/>
-				<span class="fr">待审核&nbsp;</span>  
-			<elseif condition="($receipt['ir_status'] eq 20) or ($receipt['ir_status'] eq 2)"/>
-				<span class="fr">已支付待发货&nbsp;</span>
-			<elseif condition="$receipt['ir_status'] eq 3"/>
-				<span class="fr">已发货待收货&nbsp;</span>
-			<elseif condition="$receipt['ir_status'] eq 4"/>
-				<span class="fr">已收货待评价&nbsp;</span>
-			<elseif condition="$receipt['ir_status'] eq 5"/>
-				<span class="fr">已完成&nbsp;</span>
-			<else />
-				<span class="fr">审核未通过&nbsp;</span>
-			</if>
+    		<if condition="$data['ir_status'] eq 0"><span class="fr">待付款&nbsp;</span>
+                <elseif condition="$data['ir_status'] eq 1"/><span class="fr">待审核&nbsp;</span>
+                <elseif condition="$data['ir_status'] eq 202"/><span class="fr">未全额支付&nbsp;</span>
+                <elseif condition="$data['ir_status'] eq 2"/><span class="fr">已支付&nbsp;</span>
+                <elseif condition="$data['ir_status'] eq 3"/><span class="fr">已发货&nbsp;</span>
+                <elseif condition="$data['ir_status'] eq 4"/><span class="fr">已到达&nbsp;</span>
+                <elseif condition="$dat['ir_status'] eq 5"/><span class="fr">待评价&nbsp;</span>
+                <else /><span class="fr">已评价&nbsp;</span>
+            </if>
     	</div>
 		
 		<ul class="orderlist">
-			<volist name='data' id='v'>
-				<li class="productInfo">
-					<img src="__PUBLIC_IMAGE__/360.png"/>
-		  			<div class="intro">
-		  				<p>首购单</p>
-		  				<i>产品编号#{$v['productno']}</i>
-		  				<span>未付款￥<i class="money">9999999</i>&nbsp;&nbsp;</span>
-		  			</div>
-		  			<div class="amount">
-		  				
-		  				<span style="color: #FF6600;">总价:￥999999</span>
-		  				<span style="color: #FF6600;height: 20px;line-height: 20px;font-size: 12px;">总EP:99999</span>
-		  				<span>已付款:99999</span>
-	  				</div>
-				</li>
-				<li><span class="fl">&nbsp;订单号:</span><span class="fr">123132132132132&nbsp;</span></li>
-				<if condition="$receipt['ir_status'] eq 0">
-					<li><span class="fl">&nbsp;下单时间:</span><span class="fr">11111111111111111111111&nbsp;</span></li>
-				<else />
-					<li><span class="fl">&nbsp;成交时间:</span><span class="fr">11111111111111111111111&nbsp;</span></li>
-				</if>
-				<li><span class="fl">&nbsp;支付状态:</span>
-					<!-- <span class="fr">待付款&nbsp;</span> -->
-					<if condition="$receipt['ir_status'] eq 0">
-						<span class="fr">待付款&nbsp;</span>
-					<elseif condition="$receipt['ir_status'] eq 1"/>
-						<span class="fr">待审核&nbsp;</span>  
-					<elseif condition="($receipt['ir_status'] eq 20) or ($receipt['ir_status'] eq 2)"/>
-						<span class="fr">已支付&nbsp;</span>
-					<elseif condition="$receipt['ir_status'] eq 3"/>
-						<span class="fr">已发货&nbsp;</span>
-					<elseif condition="$receipt['ir_status'] eq 4"/>
-						<span class="fr">已收货&nbsp;</span>
-					<elseif condition="$receipt['ir_status'] eq 5"/>
-						<span class="fr">已完成&nbsp;</span>
-					<else />
-						<span class="fr">审核未通过&nbsp;</span>
-					</if>
-				</li>
-					<volist name='v' id='vv'>
-						<li><span class="fl">&nbsp;流水号:</span><span class="fr">123132132132132&nbsp;</span></li>
-						<li><span class="fl">&nbsp;支付时间:</span><span class="fr">11111111111111111111111&nbsp;</span></li>
-					</volist>
-				<div style="width: 100%;height: 40px;"></div>
-			</volist>
+			<li class="productInfo">
+				<img src="__PUBLIC_IMAGE__/360.png"/>
+	  			<div class="intro">
+	  				<p>首购单</p>
+	  				<i>产品编号#{$data['productno']}</i>
+	  				<span>未付款￥<i class="money">{$data['ir_unpaid']}</i>&nbsp;&nbsp;</span>
+	  			</div>
+	  			<div class="amount">
+	  				<span>数量:{$data['ir_productnum']}</span>
+	  				<span style="color: #FF6600;">总价:￥{$data['ir_price']}</span>
+	  				<span style="color: #FF6600;height: 20px;line-height: 20px;font-size: 12px;">总EP:{$data['ir_point']}</span>
+	  				
+  				</div>
+			</li>
+			<li><span class="fl">&nbsp;订单号:</span><span class="fr">{$data['ir_receiptnum']}&nbsp;</span></li>
+			<li><span class="fl">&nbsp;下单时间:</span><span class="fr">{:date('Y-m-d H:i:s',$data['ir_date'])}&nbsp;</span></li>
+			<li style="border-bottom: 5px solid #DEDEDE;"><span class="fl">&nbsp;支付状态:</span>
+				<if condition="$data['ir_status'] eq 0"><span class="fr">待付款&nbsp;</span>
+                    <elseif condition="$data['ir_status'] eq 1"/><span class="fr">待审核&nbsp;</span>
+                    <elseif condition="$data['ir_status'] eq 202"/><span class="fr">未全额支付&nbsp;</span>
+                    <elseif condition="$data['ir_status'] eq 2"/><span class="fr">已支付&nbsp;</span>
+                    <elseif condition="$data['ir_status'] eq 3"/><span class="fr">已发货&nbsp;</span>
+                    <elseif condition="$data['ir_status'] eq 4"/><span class="fr">已到达&nbsp;</span>
+                    <elseif condition="$dat['ir_status'] eq 5"/><span class="fr">待评价&nbsp;</span>
+                    <else /><span class="fr">已评价&nbsp;</span>
+                </if>
+			</li>
+				<foreach name="data['receiptson']" item='v'>
+					<li><span class="fl">&nbsp;流水号:</span><span class="fr">{$v.pay_receiptnum}&nbsp;</span></li>
+					<li><span class="fl">&nbsp;流水金额:</span><span class="fr">{$v.ir_price}&nbsp;</span></li>
+					<li><span class="fl">&nbsp;支付时间:</span><span class="fr">{:date('Y-m-d H:i:s',$v['paytime'])}&nbsp;</span></li>
+				</foreach>
+			<div style="width: 100%;height: 40px;"></div>
 		</ul>
 		
-		<input type="hidden" name="ir_receiptnum" value="{$ir_receiptnum}">
+		<if condition="$data['ir_status'] eq 0 OR $data['ir_status'] eq 202">
+							
+			<if condition="$data['ir_ordertype'] eq 1">
+				<div class="cart_total">
+					<a href="{:U('Home/Pay/choosePay1',array('ir_unpoint'=>$data['ir_unpoint'],'ir_price'=>$data['ir_price'],'ir_point'=>$data['ir_point'],'ir_unpaid'=>$data['ir_unpaid'],'ir_receiptnum'=>$data['ir_receiptnum']))}" id="pay">
+					 	继续支付
+					</a>
+				</div>
+			<elseif condition="$data['ir_ordertype'] eq 3" />
+				<div class="cart_total">
+					<a href="{:U('Home/Pay/choosePay',array('ir_unpoint'=>$data['ir_unpoint'],'ir_price'=>$data['ir_price'],'ir_point'=>$data['ir_point'],'ir_unpaid'=>$data['ir_unpaid'],'ir_receiptnum'=>$data['ir_receiptnum']))}" id="pay" >
+						继续支付
+					</a>
+				</div>
+			</if>
+		
+		</if>
+
+  	
+
     </div>  
   
   
@@ -146,54 +133,7 @@
 			$('#paymentInfo').height($(window).height());
 	    });
 	    //显示蒙版
-	    $('#mask').click(function(){
-	    var paymentInfo=document.getElementById('paymentInfo');
-	    paymentInfo.style.display='none';
-		});
-		//显示支付选择
-		$('#addCart').click(function(){
-		    var paymentInfo=document.getElementById('paymentInfo');
-		    paymentInfo.style.display='block';
-		});
-		//选择支付方式
-		function changeRadio(val){
-			var inputs=$(val).find("input");
-			inputs[0].checked='checked';
-		}
-		//展示订单详情
-	    function showProduct(val){
-	    	var classify1=document.getElementById('classify1');
-	    	var classify2=document.getElementById('classify2');
-	    	var spans=document.getElementsByClassName('cbtn');
-	    	for(var j=0;j<2;j++){
-	    		spans[j].style.color='#000';
-	    	}
-	    	val.style.color='#259fd9';
-	    	if($(val).attr("id")=='cbtn1'){
-	    		classify1.style.display="block";
-	    		classify2.style.display="none";
-	    	
-	    	}else if($(val).attr("id")=='cbtn2'){
-	    		classify1.style.display="none";
-	    		classify2.style.display="block";
-	    	
-	    	}
-	  		
-	    }
 	    
-	    //判断支付类型跳转支付
-	    function topay(){
-	    	var radio=$('input[name="paytype"]:checked');
-	    	var ir_paytype=radio[0].value;
-	    	
-	    	var ir_receiptnum1 = $('input[name="ir_receiptnum"]').val();
-			if(ir_paytype==2){
-				// alert(ir_paytype);
-	    		window.location.href="{:U('IbosWeb/Pay/payPoint/ir_receiptnum/"+ir_receiptnum1+"')}";
-		    }else if(ir_paytype==1){	    		
-		    		window.location.href="{:U('IbosWeb/Pay/Qrcode/ir_receiptnum/"+ir_receiptnum1+"')}";
-	    	}	   	
-		}
 	</script>  
 </body>  
 </html>  

@@ -546,7 +546,7 @@ class HapylifeController extends AdminBaseController{
 	public function receiptSon(){
 		$ir_receiptnum = I('get.ir_receiptnum');
 		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum);
-		$this->assign('data',$assign['data']);
+		$this->assign($assign);
 		$this->display();
 	}
 
@@ -816,9 +816,9 @@ class HapylifeController extends AdminBaseController{
 		// die;
 		// 导出excel
 		if($excel == 'excel'){
-			$data = D('Receipt')->getAllSendData(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime desc');
+			$data = D('Receipt')->getSendPageSonAll(D('Receipt'));
 			// p($data);die;
-			$export_send_excel = D('Receipt')->export_send_excel($data);
+			$export_send_excel = D('Receipt')->export_send_excel($data['data']);
 		}else{
 			$this->assign($assign);
 			$this->assign('status',I('get.status'));

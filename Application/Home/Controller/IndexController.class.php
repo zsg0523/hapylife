@@ -108,7 +108,7 @@ class IndexController extends HomeBaseController{
                     $userinfo = $usa->validateHpl($tmpe['CustomerID']);
                     //检查wv是否存在该账号 Y创建该账号  N登录失败
                     switch ($userinfo['isActive']) {
-                        case 'true':
+                        case true:
                         //检查系统是否存在该账号 Y无密码登录 N创建账号
                         $checkAccount = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
                             switch ($checkAccount) {
@@ -117,6 +117,7 @@ class IndexController extends HomeBaseController{
                                     $map      = array(
                                             'CustomerID'  =>$tmpe['CustomerID'],
                                             'PassWord'    =>md5($tmpe['PassWord']),
+                                            'WvPass'      =>$tmpe['PassWord'],
                                             'LastName'    =>$userinfo['lastName'],
                                             'FirstName'   =>$userinfo['firstName'],
                                             'isActive'    =>$userinfo['isActive'],
@@ -127,7 +128,8 @@ class IndexController extends HomeBaseController{
                                 default:
                                     //更新相关信息在本系统
                                     $map      = array(
-                                            'PassWord'    =>md5($userinfo['password']),
+                                            'PassWord'    =>md5($tmpe['PassWord']),
+                                            'WvPass'      =>$tmpe['PassWord'],
                                             'LastName'    =>$userinfo['lastName'],
                                             'FirstName'   =>$userinfo['firstName'],
                                             'isActive'    =>$userinfo['isActive'],

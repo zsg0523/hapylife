@@ -76,6 +76,7 @@
 								&nbsp;
 							<if condition="$v['ir_status'] eq 0">交易状态:<span>待付款</span>
 		                        <elseif condition="$v['ir_status'] eq 1"/>交易状态:<span>待审核</span>
+		                        <elseif condition="$v['ir_status'] eq 202"/>交易状态:<span>未全额支付</span>
 		                        <elseif condition="$v['ir_status'] eq 2"/>交易状态:<span>已支付</span>
 		                        <elseif condition="$v['ir_status'] eq 3"/>交易状态:<span>已发货</span>
 		                        <elseif condition="$v['ir_status'] eq 4"/>交易状态:<span>已到达</span>
@@ -88,11 +89,11 @@
 								
 									<if condition="$v['ir_ordertype'] eq 1">
 										<a href="{:U('Home/Pay/choosePay1',array('ir_unpoint'=>$v['ir_unpoint'],'ir_price'=>$v['ir_price'],'ir_point'=>$v['ir_point'],'ir_unpaid'=>$v['ir_unpaid'],'ir_receiptnum'=>$v['ir_receiptnum']))}" id="pay">
-											去支付
+											继续支付
 										</a>
 									<elseif condition="$v['ir_ordertype'] eq 3" />
 										<a href="{:U('Home/Pay/choosePay',array('ir_unpoint'=>$v['ir_unpoint'],'ir_price'=>$v['ir_price'],'ir_point'=>$v['ir_point'],'ir_unpaid'=>$v['ir_unpaid'],'ir_receiptnum'=>$v['ir_receiptnum']))}" id="pay" >
-											去支付
+											继续支付
 										</a>
 									</if>
 								
