@@ -26,19 +26,36 @@ class usa
 	* @param customerId: id to validate
 	* @param key: your secret key
 	**/
-	function validateHpl($CustomerId){
-		$key      = $this->key;
-		$url      = $this->url;
-		$data     = $url."/api/Hpl/Validate?customerId=".$CustomerId."&"."key=".$key;
-		$wv       = file_get_contents($data);
-		$userinfo = json_decode($wv,true);
-        return $userinfo;
+	function validateHpl($CustomerId)
+	{
+		$key    = $this->key;
+		$url    = $this->url;
+		$data   = $url."/api/Hpl/Validate?customerId=".$CustomerId."&"."key=".$key;
+		$wv     = file_get_contents($data);
+		$result = json_decode($wv,true);
+        return $result;
+	}
+
+	/**
+	 * [total description]
+	 * @param  [type] $CustomerId [description]
+	 * @return [type]             [description]
+	 */
+	function total($CustomerId)
+	{
+		$key    = $this->key;
+		$url    = $this->url;
+		$data   = $url."/api/Hpl/Totals?customerId=".$CustomerId."&"."key=".$key;
+		$wv     = file_get_contents($data);
+		$result = json_decode($wv,true);
+		return $result;
 	}
 
 	/**
 	* CREATE CUSTOMER
 	**/
-	public function createCustomer($happyLifeID,$password,$sponsorID,$firstName_EN,$lastName_EN,$emailAddress,$phone,$products='RBS,DTP',$dob='2000-1-1'){
+	public function createCustomer($happyLifeID,$password,$sponsorID,$firstName_EN,$lastName_EN,$emailAddress,$phone,$products='RBS,DTP',$dob='2000-1-1')
+	{
 		
 		$key  = $this->key;
 		$url  = $this->url;
