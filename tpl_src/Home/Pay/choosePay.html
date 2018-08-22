@@ -54,8 +54,8 @@
 					    <input class="fr" type="radio" name="ip_paytype"  value="2"  />
 					</div>
 					<div class="form-group">
-						<label for="">本次付款金额:</label>				
-					   	<input type="text" class="ir_unpaid" name="ir_unpaid" id="ir_unpaid" value="{:I('get.ir_unpaid')}"/>
+						<label for="">本次付款金额:</label>			
+					   	<input type="text" class="ir_unpaid" name="ir_unpaid" id="ir_unpaid" value="{:I('get.ir_unpaid')}" readonly="readonly" />
 					    <span class="priceunit" id="priceunit">RMB</span>
 					</div>
 				</div>
@@ -71,10 +71,34 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 	   		changeCommonHead('选择支付方式');
-	   		$("input[name='ir_unpaidep']").val($("input[name='ir_unpaid']").val()/100);
+	   		getReceiptInfo();
 		});
 		function back(){
         	window.location.href ="{:U('Home/Purchase/center')}";
+   		}
+   		function getReceiptInfo(){
+   			var ir_receiptnum=$('#ir_receiptnum').val();
+   			 $.ajax({
+				type:"post",
+				url:"{:U('Home/Pay/getReceipt')}",
+				async:true, 
+				dataType: 'json',
+				data:{
+					ir_receiptnum:ir_receiptnum,
+				},
+				success:function(ret){
+    				if(ret.status==1){
+                        if(ret.ir_ordertype==4){
+                        	$('#ir_unpaid').attr('readonly',false); 
+                        }
+    				}else{
+    					
+    				}
+				},
+				error:function(){
+//						alert('接口错误！！!');
+				}
+			});
    		}
 	//改变支付类型单选框
 		function changeRadio(val){
