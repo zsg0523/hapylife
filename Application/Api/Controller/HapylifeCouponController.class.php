@@ -11,7 +11,7 @@ class HapylifeCouponController extends HomeBaseController{
     public function edit_point(){
         $jsonStr = file_get_contents("php://input");
         //写入服务器日志文件
-        // $log     = addUsaLog($jsonStr);
+        $log     = addUsaLog($jsonStr);
         $data    = json_decode($jsonStr,true);
         $result = M('User')->where(array('CustomerID'=>$data['customerid']))->save($data);
     }
@@ -22,7 +22,7 @@ class HapylifeCouponController extends HomeBaseController{
 	public function userinfo(){
 		$jsonStr = file_get_contents("php://input");
 	    //写入服务器日志文件
-	    // $log     = addUsaLog($jsonStr);
+	    $log     = addUsaLog($jsonStr);
 	    $data    = json_decode($jsonStr,true);
 	    $userinfo = M('User')->where(array('CustomerID'=>$data['hu_nickname']))->find();
 	    if($userinfo){
@@ -37,7 +37,7 @@ class HapylifeCouponController extends HomeBaseController{
 	public function callBack(){
 		$jsonStr = file_get_contents("php://input");
 	    //写入服务器日志文件
-	    // $log     = addUsaLog($jsonStr);
+	    $log     = addUsaLog($jsonStr);
 	    $data    = json_decode($jsonStr,true);
 	    $userinfo = M('User')->where(array('CustomerID'=>$data['hu_nickname']))->find();
 	    if($userinfo){
@@ -52,7 +52,7 @@ class HapylifeCouponController extends HomeBaseController{
 	public function editPoint(){
 		$jsonStr = file_get_contents("php://input");
 	    //写入服务器日志文件
-	    // $log     = addUsaLog($jsonStr);
+	    $log     = addUsaLog($jsonStr);
 	    $data    = json_decode($jsonStr,true);
 	    $result = M('User')->where(array('CustomerID'=>$data['hu_nickname']))->save($data);
 	    if($result){
@@ -67,7 +67,7 @@ class HapylifeCouponController extends HomeBaseController{
 	public function addLog(){
 		$jsonStr = file_get_contents("php://input");
 	    //写入服务器日志文件
-	    // $log     = addUsaLog($jsonStr);
+	    $log     = addUsaLog($jsonStr);
 	    $data    = json_decode($jsonStr,true);
         $addlog  = M('Log')->add($data['log']);
 
@@ -83,7 +83,7 @@ class HapylifeCouponController extends HomeBaseController{
 	public function addLogs(){
 		$jsonStr = file_get_contents("php://input");
 	    //写入服务器日志文件
-	    // $log     = addUsaLog($jsonStr);
+	    $log     = addUsaLog($jsonStr);
 	    $data    = json_decode($jsonStr,true);
         $addlogs = M('Getpoint')->add($data['logs']);
         if($addlogs){

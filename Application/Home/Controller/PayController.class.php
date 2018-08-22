@@ -353,7 +353,7 @@ class PayController extends HomeBaseController{
                                                 $this->success('注册成功',U('Home/Register/new_regsuccess',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
                                             }
                                         }
-                                    }else if($ir_ordertype = 4){
+                                    }else if($ir_ordertype == 4){
                                        // 添加通用券
                                         $product = M('Receipt')
                                                         ->alias('r')
@@ -365,13 +365,12 @@ class PayController extends HomeBaseController{
                                                 'userinfo' => $userinfo,
                                             );
                                         $data    = json_encode($data);
-                                        $sendUrl = "http://apps.nulifeshop.com/nulife/index.php/Api/Couponapi/addCoupon";
+                                        $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/addCoupon";
                                         // $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/addCoupon";
                                         $result  = post_json_data($sendUrl,$data);
                                         $back_msg = json_decode($result['result'],true);
                                         if($back_msg){
-                                            p($back_msg);
-                                            die;
+                                            $this->success('完成支付',U('Home/Purchase/center'));
                                         }
                                     }else{
                                         $userinfo   = D('User')->where(array('iuid'=>$receipt['riuid']))->find();
