@@ -377,7 +377,7 @@ class HapylifeController extends AdminBaseController{
 			'appkey' => 'ALL',
 		);
 		$data    = json_encode($data);
-		$sendUrl = "http://apps.nulifeshop.com/nulife/index.php/Api/Couponapi/getCouponList";
+		$sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
 		$result  = post_json_data($sendUrl,$data);
 		$back_message = json_decode($result['result'],true);
 		$CouponGroups = $back_message;
