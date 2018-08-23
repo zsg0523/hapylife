@@ -62,3 +62,21 @@
 "customerid":"HPL00000181",
 "point":"1"
 }**********
+2018-08-22 20:08:18**********[
+{"CustomerIds":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+{"CustomerIds":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+{"CustomerIds":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+{"CustomerIds":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"}
+]**********
+2018-08-22 20:09:34**********[
+{"CustomerIds":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+{"CustomerIds":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+{"CustomerIds":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+{"CustomerIds":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"}
+]**********
+2018-08-22 20:09:42**********[
+{"CustomerIds":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+{"CustomerIds":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+{"CustomerIds":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+{"CustomerIds":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"}
+]**********

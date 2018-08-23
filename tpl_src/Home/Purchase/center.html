@@ -140,12 +140,14 @@
 //  	window.location.href="http://localhost/testnulife/index.php/Home/Coupon/coupons/hu_nickname/"+username+"/whichApp/"+5+"/isApp/"+isApp+"";
     }
 
+
     // 初始化io对象
 	var socket = io('http://120.77.206.79:2120');
 	// uid 可以为网站用户的uid，作为例子这里用customerId代替
-	var uid=$("input[name='username']").val();
-	// var uid = '<?php echo session_id();?>';
+	var uid = $("input[name='username']").val();
+	var sessionId = '<?php echo session_id();?>';
 	console.log(uid);
+	console.log(sessionId);
 	// 当socket连接后发送登录请求
 	socket.on('connect', function(){socket.emit('login', uid);});
 	// 更新在线人数

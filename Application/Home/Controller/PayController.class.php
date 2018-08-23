@@ -187,7 +187,7 @@ class PayController extends HomeBaseController{
                                 );
                                 $change_receipt = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($maps);
                                 if($change_receipt){
-                                    if($ir_ordertype = 4){
+                                    if($ir_ordertype == 4){
                                         // 添加通用券
                                         $product = M('Receipt')
                                                         ->alias('r')
