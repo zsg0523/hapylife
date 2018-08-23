@@ -13,7 +13,7 @@ class User1Model extends BaseModel{
         array('FirstName','require','请填写中文名'), 
         array('EnLastName','require','请填写英文姓，如果没有英文姓请填写中文拼音'), 
         array('EnFirstName','require','请填写英文名，如果没有英文名请填写中文拼音'), 
-        array('PassWord','/^[a-zA-Z0-9]{7,}/','密码最少7位数'), 
+        array('PassWord','/^[0-9a-zA-Z]{7,}$/','最少7位以上的密码'), 
         array('ConfirmPassWord','PassWord','两次输入密码不一致',0,'confirm'), 
         array('EnrollerID','require','推荐人不能为空！'), 
         array('Email','/^\w+([.]\w+)?[@]\w+[.]\w+([.]\w+)?$/','请输入正确的电子邮箱'),
@@ -31,7 +31,6 @@ class User1Model extends BaseModel{
         array('BankArea','require','请填写银行所在区'), 
         array('SubName','require','支行名称不能为空'), 
         // array('Idcard','/(\d{6})(\d{4})(\d{2})(\d{2})(\d{3})([0-9]|X|x)|[A-Za-z]{1}\d{6}[(\d)]{3}/','请输入有效身份证号码'),
-        // array('Idcard','/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[012])(0[1-9]|[12]\d|3[01])\d{3}(\d|[xX])$/','请输入有效身份证号码'),
         // array('Idcard','/[^\w\s]+/','存在非法字符'),
    );
 }

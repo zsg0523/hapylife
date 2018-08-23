@@ -5,6 +5,35 @@ use Common\Model\BaseModel;
 * HapylifeÓÃ»§model
 **/
 class UserModel extends BaseModel{
+	// 批量验证
+    protected $patchValidate = true;
+    // 验证规则
+    protected $_validate = array(
+        array('LastName','require','请填写中文姓'), 
+        array('FirstName','require','请填写中文名'), 
+        array('EnLastName','require','请填写英文姓，如果没有英文姓请填写中文拼音'), 
+        array('EnFirstName','require','请填写英文名，如果没有英文名请填写中文拼音'), 
+        array('PassWord','/^[a-zA-Z0-9]{7,}/','密码最少7位数'), 
+        array('ConfirmPassWord','PassWord','两次输入密码不一致',0,'confirm'), 
+        array('EnrollerID','require','推荐人不能为空！'), 
+        array('Email','/^\w+([.]\w+)?[@]\w+[.]\w+([.]\w+)?$/','请输入正确的电子邮箱'),
+        array('Phone','/(^(0[0-9]{2,3}\-)?([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$)|(^((\(\d{3}\))|(\d{3}\-))?(1[358]\d{9})$)/','请输入正确的电话号码'),
+        // array('Phone','','该号码已被注册',0,'unique'),
+        array('ShopProvince','require','请填写所在省'), 
+        array('ShopCity','require','请填写所在市'), 
+        array('ShopArea','require','请填写所在区'), 
+        array('ShopAddress1','require','请填写详细地址'), 
+        // array('BankName','require','银行名称不能为空'), 
+        // array('BankAccount','require','银行账号不能为空'), 
+        // array('BankNum','/^([1-9]{1})(\d{14}|\d{18})$/','请填写有效的银行账号'), 
+        // array('BankProvince','require','请填写银行所在省'), 
+        // array('BankCity','require','请填写银行所在市'), 
+        // array('BankArea','require','请填写银行所在区'), 
+        // array('SubName','require','支行名称不能为空'), 
+        // array('Idcard','/(\d{6})(\d{4})(\d{2})(\d{2})(\d{3})([0-9]|X|x)|[A-Za-z]{1}\d{6}[(\d)]{3}/','请输入有效身份证号码'),
+        // array('Idcard','/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[012])(0[1-9]|[12]\d|3[01])\d{3}(\d|[xX])$/','请输入有效身份证号码'),
+        // array('Idcard','/[^\w\s]+/','存在非法字符'),
+   );
 	public function getAllData($model,$map,$word='',$order='',$limit=50,$field=''){
 		$count=$model
 			  ->where($map)
@@ -261,6 +290,72 @@ class UserModel extends BaseModel{
 		        }
         		break;
         }
+	        
+        $data=array(
+            'data'=>$list,
+            'page'=>$page->show()
+            );
+        return $data;
+    }
+
+    /**
+     * 获取分页数据
+     * @param  subject  $model  model对象
+     * @param  array    $map    where条件
+     * @param  string   $order  排序规则
+     * @param  integer  $limit  每页数量
+     * @param  integer  $field  $field
+     * @return array            分页数据
+     */
+    public function getPageS($model,$word,$order='',$starttime,$endtime,$limit=20){
+    		if(empty($word)){
+				$count=$model
+					->alias('u')
+					->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+					->count();
+			}else{
+				$count=$model
+					->alias('u')
+		            ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		            ->count();
+			}
+	        $page=new_page($count,$limit);
+	        // 获取分页数据
+	        if(empty($word)){
+	        	if (empty($field)) {
+		            $list=$model
+		            	->alias('u')
+		            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }else{
+		            $list=$model
+		            	->alias('u')
+		            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->field($field)
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }
+	        }else{
+	        	if (empty($field)) {
+		            $list=$model
+		            	->alias('u')
+		                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }else{
+		            $list=$model
+		            	->alias('u')
+		                ->field($field)
+		                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }
+	        }
 	        
         $data=array(
             'data'=>$list,

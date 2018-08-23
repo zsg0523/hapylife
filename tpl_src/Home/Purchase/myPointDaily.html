@@ -3,7 +3,7 @@
 <head>  
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">  
-    <title>每日积分</title>  
+    <title>每日积分详情</title>  
     <link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css">
     <link rel="stylesheet" href="__PUBLIC_CSS__/common.css" />
     <style type="text/css">
@@ -12,9 +12,9 @@
     	
     	#wrap{width: 100%;background-color: #fff;}
     	
-    	.note{width: 96%;height:40px;margin: auto; border-bottom:#eeeef0 1px solid;font-size: 15px;line-height:40px;background:#fff url(../../res/img/input_next.png) 98% 50% no-repeat;background-size:8px 13px;}
+    	.note{width: 96%;height:40px;margin: auto; border-bottom:#eeeef0 1px solid;font-size: 15px;line-height:40px;background:#fff  no-repeat;background-size:8px 13px;}
     	.note_date{width: 44%;height:40px;float: left;font-size:12px;overflow: hidden;}
-    	.note_increase{width: 28%;height:40px;float:left;color: #1DBD8D;}
+    	.note_increase{width: 28%;height:40px;float:left;}
     	.note_reduce{width: 28%;height:40px;float:left;color: #FF0000;}
     	
     	.title{width: 96%;height:40px;margin: auto; background-color: #fff;font-size:1em;line-height: 40px;color:#000;border-bottom:#CCCCCC 1px solid;}
@@ -41,7 +41,11 @@
 				<div class="note">
 					<div class="note_date">{$v['date']}</div>
 					<div class="note_increase">{$v['type']}</div>
-					<div class="note_reduce">{$v['syslog']}{$v['point']}</div>
+                    <if condition="$v['syslog'] eq '+'">
+                       <div class="note_reduce" style="color: #1DBD8D">{$v['syslog']}{$v['point']}</div>
+                    <else />
+                        <div class="note_reduce">{$v['syslog']}{$v['point']}</div>
+                    </if>
 				</div>
             </foreach>	
 		</div>
@@ -52,12 +56,13 @@
 	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>  
 	<script type="text/javascript">  
-	 $(document).ready(function(){ 
-			
-	  });
-	  function back(){
+	$(document).ready(function(){
+   		changeCommonHead('每日积分详情');
+	});
+		
+	function back(){
 	  	var dates=$('#dates').val();
-        window.location.href ="{:U('IbosWeb/PersonalCenter/myPointDay/date/"+dates+"')}";
+        window.location.href ="{:U('Home/Purchase/myPointDay/date/"+dates+"')}";
     }
  
 	</script>  

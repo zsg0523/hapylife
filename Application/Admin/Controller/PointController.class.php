@@ -199,6 +199,7 @@ class PointController extends AdminBaseController{
             $data['handletime'] = date('Y-m-d H:i:s');
             $data['status']     = 2;
             $data['pointNo']    = 'EP'.date('YmdHis').rand(100000, 999999);
+            $data['whichApp']   = 5;
             // p($data);;die;
             $add = D('Getpoint')->add($data);
             if($add){
@@ -309,6 +310,7 @@ class PointController extends AdminBaseController{
             $data['leftpoint'] = $iu_point;
             $data['iu_unpoint']= $user['iu_unpoint'];
             $data['pointNo']   = $tmpe['pointNo']?$tmpe['pointNo']:'EP'.date('YmdHis').rand(100000, 999999);
+            $data['whichApp']  = 5;
             // p($data);die;
             $add = D('Getpoint')->add($data);
             if($add){
@@ -330,7 +332,8 @@ class PointController extends AdminBaseController{
                        'send'       =>$data['received'],
                        'received'   =>'系统',
                        'status'     =>$data['status'],
-                       'pointtype'  =>6
+                       'pointtype'  =>6,
+                       'whichApp'   =>5
                     );
                     D('Getpoint')->add($mape);
                 }
@@ -422,6 +425,7 @@ class PointController extends AdminBaseController{
             $data['leftpoint'] = $iu_point;
             $data['iu_unpoint']= $user['iu_unpoint'];
             $data['pointNo']   = $tmpe['pointNo']?$tmpe['pointNo']:'EP'.date('YmdHis').rand(100000, 999999);
+            $data['whichApp']  = 5;
             // p($data);die;
             $add = D('Getpoint')->where(array('igid'=>$tmpe['igid']))->save($data);
             if($add){

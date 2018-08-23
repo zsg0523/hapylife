@@ -372,7 +372,15 @@ class HapylifeController extends AdminBaseController{
 		//获取分类信息
 		$tmpe['pid'] =array('NEQ','0');
 		$catList=D('Category')->where($tmpe)->select();
-
+		$data = array(
+			'result' => 'eggcarton',
+			'appkey' => 'ALL',
+		);
+		$data    = json_encode($data);
+		$sendUrl = "http://apps.nulifeshop.com/nulife/index.php/Api/Couponapi/getCouponList";
+		$result  = post_json_data($sendUrl,$data);
+		$back_message = json_decode($result['result'],true);
+		$CouponGroups = $back_message;
 		//获取商品分类列表
 		$word=I('get.word','');
 		if(empty($word)){
@@ -382,8 +390,10 @@ class HapylifeController extends AdminBaseController{
 				'ip_name_zh'=>$word
 			);
 		}
+		// p($CouponGroups);die;
 		$assign=D('Product')->getAllData(D('Product'),$map);
 		$this->assign('catList',$catList);
+		$this->assign('CouponGroups',$CouponGroups);
 		$this->assign($assign);
 		$this->display();
 	}
@@ -395,6 +405,16 @@ class HapylifeController extends AdminBaseController{
 		$data=I('post.');
 		$upload=post_upload();
 		$data['ip_picture_zh']=C('WEB_URL').$upload['name'];
+		// p($data);die;
+		if($data['gidArr']){
+			foreach ($data['gidArr'] as $key => $value) {
+				$mape         = explode(',',$value);
+				$getCoupn    .= $mape[0].',';
+				$traversenum .= $mape[1].',';
+			}
+			$data['get_coupon'] = substr($getCoupn,0,-1);
+			$data['traverse_num'] = substr($traversenum,0,-1);
+		}
 		$result=D('Product')->addData($data);
 		if($result){
 			$this->redirect('Admin/Hapylife/product');
@@ -412,6 +432,15 @@ class HapylifeController extends AdminBaseController{
 			'ipid'=>$data['id']
 			);
 		$upload=post_upload();
+		if($data['gidArr']){
+			foreach ($data['gidArr'] as $key => $value) {
+				$mape         = explode(',',$value);
+				$getCoupn    .= $mape[0].',';
+				$traversenum .= $mape[1].',';
+			}
+			$data['get_coupon'] = substr($getCoupn,0,-1);
+			$data['traverse_num'] = substr($traversenum,0,-1);
+		}
 		if(isset($upload['name'])){
 			$data['ip_picture_zh']=C('WEB_URL').$upload['name'];
 		}
@@ -501,7 +530,8 @@ class HapylifeController extends AdminBaseController{
 		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$starttime,$endtime,$status,$order='ir_date desc',$timeType);
 		//导出excel
 		if($excel == 'excel'){
-			$export_excel = D('Receipt')->export_excel($assign['data']);
+			$data = D('Receiptson')->getSendPageSonE(D('Receiptson'));
+			$export_excel = D('Receiptson')->export_excel($data['data']);
 		}else{
 			$this->assign($assign);
 			$this->assign('status',I('get.status'));
@@ -511,7 +541,13 @@ class HapylifeController extends AdminBaseController{
 			$this->assign('endtime',I('get.endtime'));
 			$this->display();
 		}
-		
+	}
+	//查看订单明细
+	public function receiptSon(){
+		$ir_receiptnum = I('get.ir_receiptnum');
+		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum);
+		$this->assign($assign);
+		$this->display();
 	}
 
 	/**
@@ -552,7 +588,7 @@ class HapylifeController extends AdminBaseController{
 	**/
 	public function user(){
 		//有密码账户搜索
-		$count = M('user')->where(array('PassWord'=>array('neq','')))->count();
+		$count = M('user')->count();
 		//账户昵称搜索
 		$word = trim(I('get.word'));
 		if(empty($word)){
@@ -700,6 +736,55 @@ class HapylifeController extends AdminBaseController{
 		}
 	}
 
+	public function users(){
+		//有密码账户搜索
+		$count = M('user')->count();
+		//账户昵称搜索
+		$word = trim(I('get.word'));
+		if(empty($word)){
+			$map = array();
+		}else{
+			$map = array(
+				'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%')
+			);
+		}
+		
+		$excel     = I('get.excel');
+		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
+		$assign    = D('User')->getPageS(D('User'),$word,$order='joinedon desc',$starttime,$endtime);
+
+		//导出excel
+		if($excel == 'excel'){
+			$export_excel = D('User')->export_excel($assign['data']);
+		}else{
+			$this->assign($assign);
+			$this->assign('count',$count);
+			$this->assign('word',$word);
+			$this->assign('starttime',I('get.starttime'));
+			$this->assign('endtime',I('get.endtime'));
+			$this->display();
+		}
+	}
+
+	/**
+	* 用户删除
+	**/
+	public function delete_users(){
+		$id=I('get.id');
+		$map=array(
+			'iuid'=>$id
+			);
+		
+		$result=D('User')->deleteData($map);
+		if($result){
+			redirect($_SERVER['HTTP_REFERER']);
+		}else{
+			$this->error('删除失败');
+		}
+	}
+
+
 	/*****************************************************************送货单管理******************************************************************/
 	//送货单列表
 	public function sendReceipt(){
@@ -731,9 +816,9 @@ class HapylifeController extends AdminBaseController{
 		// die;
 		// 导出excel
 		if($excel == 'excel'){
-			$data = D('Receipt')->getAllSendData(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime desc');
+			$data = D('Receipt')->getSendPageSonAll(D('Receipt'));
 			// p($data);die;
-			$export_send_excel = D('Receipt')->export_send_excel($data);
+			$export_send_excel = D('Receipt')->export_send_excel($data['data']);
 		}else{
 			$this->assign($assign);
 			$this->assign('status',I('get.status'));
@@ -744,6 +829,15 @@ class HapylifeController extends AdminBaseController{
 			$this->assign('code',$code);
 			$this->display();
 		}
+	}
+
+	//查看订单明细
+	public function sendReceiptSon(){
+		$ir_receiptnum = I('get.ir_receiptnum');
+		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum);
+		// p($assign);
+		$this->assign($assign);
+		$this->display();
 	}
 
 
@@ -826,15 +920,16 @@ class HapylifeController extends AdminBaseController{
 	public function send_sms(){
 		$data = I('post.');
 		$issend = I('post.is_send');
+		$remove = explode('-',$data['username']);
 		
 		if(!empty($issend)){
 			// 发送续费短信
 			$spotemplate = 146228;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
 			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
-			$spoparams = array($data['username'],$data['productnams']);
+			$spoparams = array($remove[0],$data['productnams']);
 		}
 
-        $sponsorSms    = D('Smscode')->sms($appid='1400096409',$appkey='fc1c7e21ab36fef1865b0a3110709c51',$data['phone'],$data['acnumber'],$spotemplate,$sposmsSign,$spoparams);
+        $sponsorSms    = D('Smscode')->sms($data['acnumber'],$data['phone'],$spoparams,$spotemplate);
         
         if($sponsorSms['errmsg']=='OK'){
         	if(!empty($issend)){
@@ -843,12 +938,13 @@ class HapylifeController extends AdminBaseController{
 				if($result){
 	        		$mape  = array(
 	                    'phone'   =>$data['phone'],
-	                    'content'    =>'亲爱的会员'.$data['username'].'，您购买的'.$data['productnams'].'物流信息出现问题，我们会有电话通知您，请留意接听。',
+	                    'content'    =>'亲爱的会员'.$remove[0].'，您购买的'.$data['productnams'].'物流信息出现问题，我们会有电话通知您，请留意接听。',
 	                    'acnumber'=>$data['acnumber'],
 	                    'date'    =>date('Y-m-d H:i:s'),
 	                    'operator' => $_SESSION['user']['username'],
 	                    'product_name' => $data['productnams'],
-	                    'addressee' => $data['username'],
+	                    'addressee' => $remove[0],
+	                    'customerid' => $remove[1]
 	                );
 	                $add = D('SmsLog')->add($mape);
 	                if($add){
@@ -893,31 +989,33 @@ class HapylifeController extends AdminBaseController{
 	// 发送短信
 	public function add_sends(){
 		$data = I('post.');
+		$remove = explode('-',$data['username']);
 		if($data['psd'] == 146228){
 			// 物流信息通知
 			$spotemplate = 146228;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
 			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
-			$spoparams = array($data['username'],$data['productnams']);
+			$spoparams = array($remove[0],$data['productnams']);
 		}
 
 		if($data['psd'] == 146227){
 			// 续费信息通知
 			$spotemplate = 146227;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
 			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
-			$spoparams = array($data['username'],$data['endtime']);
+			$spoparams = array($remove[0],$data['endtime']);
 		}
 
-        $sponsorSms    = D('Smscode')->sms($appid='1400096409',$appkey='fc1c7e21ab36fef1865b0a3110709c51',$data['phone'],$data['acnumber'],$spotemplate,$sposmsSign,$spoparams);
+        $sponsorSms    = D('Smscode')->sms($data['acnumber'],$data['phone'],$spoparams,$spotemplate);
         
         if($sponsorSms['errmsg']=='OK'){
         	if($data['psd'] == 146227){
 				$mape  = array(
                     'phone'   =>$data['phone'],
-                    'content'    =>'亲爱的会员'.$data['username'].'，这是系统提醒消息，请在'.$data['endtime'].'之前购买月费包。',
+                    'content'    =>'亲爱的会员'.$remove[0].'，这是系统提醒消息，请在'.$data['endtime'].'之前购买月费包。',
                     'acnumber'=>$data['acnumber'],
                     'date'    =>time(),
                     'operator' => $_SESSION['user']['username'],
-                    'addressee' => $data['username'],
+                    'addressee' => $remove[0],
+                    'customerid' => $remove[1]
                 );
                 $add = D('SmsLog')->add($mape);
                 if($add){
@@ -929,12 +1027,13 @@ class HapylifeController extends AdminBaseController{
     		if($data['psd'] == 146228){
         		$mape  = array(
                     'phone'   =>$data['phone'],
-                    'content'    =>'亲爱的会员'.$data['username'].'，您购买的'.$data['productnams'].'物流信息出现问题，我们会有电话通知您，请留意接听。',
+                    'content'    =>'亲爱的会员'.$remove[0].'，您购买的'.$data['productnams'].'物流信息出现问题，我们会有电话通知您，请留意接听。',
                     'acnumber'=>$data['acnumber'],
                     'date'    =>time(),
                     'operator' => $_SESSION['user']['username'],
                     'product_name' => $data['productnams'],
-                    'addressee' => $data['username'],
+                    'addressee' => $remove[0],
+                    'customerid' => $remove[1]
                 );
                 $add = D('SmsLog')->add($mape);
                 if($add){

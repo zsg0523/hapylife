@@ -189,7 +189,6 @@ class HapylifeRegisterController extends HomeBaseController{
     * 首购订单
     **/
     public function registerOrder(){
-        // $iuid = $_SESSION['user']['id'];
         $iuid = I('post.iuid');
         $ipid = I('post.ipid');
         $htid = D('Tempuser')->where(array('iuid'=>$iuid))->order('htid desc')->getfield('htid');
@@ -212,7 +211,7 @@ class HapylifeRegisterController extends HomeBaseController{
             //下单用户
             'rCustomerID'=>$userinfo['customerid'],
             //收货人
-            'ia_name'=>$userinfo['firstname'],
+            'ia_name'=>$userinfo['lastname'].$userinfo['firstname'],
             //收货人电话
             'ia_phone'=>$userinfo['phone'],
             //收货地址
@@ -223,6 +222,10 @@ class HapylifeRegisterController extends HomeBaseController{
             'ir_price'=>$product['ip_price_rmb'],
             //订单总积分
             'ir_point'=>$product['ip_point'],
+            //订单待付款总金额
+            'ir_unpaid'=>$product['ip_price_rmb'],
+            //订单待付款总积分
+            'ir_unpoint'=>$product['ip_point'],
             //订单备注
             'ir_desc'=>$con,
             //订单类型
@@ -334,131 +337,70 @@ class HapylifeRegisterController extends HomeBaseController{
         $return = rsaVerify($map);
         //更改订单状态
         if($return == "true" && $map['trade_status'] == 'TRADE_SUCCESS'){
-            if($receipt['ir_status']==7){
-                $tmpeArr = M('Tempuser')->where(array('htid'=>$receipt['htid']))->find();
-                //添加新用户
-                $keyword= 'HPL';
-                $custid = M('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
-                if(empty($custid)){
-                    $CustomerID = 'HPL00000001';
-                }else{
-                    $num   = substr($custid,3);
-                    $nums  = $num+1;
-                    $count = strlen($nums);
-                    switch ($count) {
-                        case '1':
-                            $CustomerID = 'HPL0000000'.$nums;
-                            break;
-                        case '2':
-                            $CustomerID = 'HPL000000'.$nums;
-                            break;
-                        case '3':
-                            $CustomerID = 'HPL00000'.$nums;
-                            break;
-                        case '4':
-                            $CustomerID = 'HPL0000'.$nums;
-                            break;
-                        case '5':
-                            $CustomerID = 'HPL000'.$nums;
-                            break;
-                        case '6':
-                            $CustomerID = 'HPL00'.$nums;
-                            break;
-                        case '7':
-                            $CustomerID = 'HPL0'.$nums;
-                            break;
-                        default:
-                            $CustomerID = 'HPL'.$nums;
-                            break;
-                     } 
-                }
-                //用户资料
-                $tmpe = array(
-                    'EnrollerID'  =>$tmpeArr['enrollerid'],
-                    'Sex'         =>$tmpeArr['sex'],
-                    'LastName'    =>$tmpeArr['lastname'],
-                    'FirstName'   =>$tmpeArr['firstname'],
-                    'Email'       =>$tmpeArr['email'],
-                    'PassWord'    =>md5($tmpeArr['password']),
-                    'acid'        =>$tmpeArr['acid'],
-                    'acnumber'    =>$tmpeArr['acnumber'],
-                    'Phone'       =>$tmpeArr['phone'],
-                    'ShopAddress1'=>$tmpeArr['shopaddress1'],
-                    'ShopArea'    =>$tmpeArr['shoparea'],
-                    'ShopCity'    =>$tmpeArr['shopcity'],
-                    'ShopProvince'=>$tmpeArr['shopprovince'],
-                    'ShopCountry' =>$tmpeArr['shopcountry'],
-                    'Idcard'      =>$tmpeArr['idcard'],
-                    'JustIdcard'  =>$tmpeArr['justidcard'],
-                    'BackIdcard'  =>$tmpeArr['backidcard'],
-                    'Language'    =>$tmpeArr['language'],
-                    'EnLastName'  =>$tmpeArr['enlastname'],
-                    'EnFirstName' =>$tmpeArr['enfirstname'],
-                    'EnMiddleName'=>$tmpeArr['enmiddlename'],
-                    'DeviceType'  =>$tmpeArr['devicetype'],
-                    'Browser'     =>$tmpeArr['browser'],
-                    'PaymentType' =>$tmpeArr['paymenttype'],
-                    'BankName'    =>$tmpeArr['bankname'],
-                    'BankAccount' =>$tmpeArr['bankaccount'],
-                    'BankProvince'=>$tmpeArr['bankprovince'],
-                    'BankCity'    =>$tmpeArr['bankcity'],
-                    'BankArea'    =>$tmpeArr['bankarea'],
-                    'SubName'     =>$tmpeArr['subname'],
-                    'AccountType' =>$tmpeArr['accounttype'],
-                    'CustomerID'  =>$CustomerID,
-                    'OrderDate'   =>date("m/d/Y h:i:s A"),
-                    'Number'      =>1,
-                    'MailingProvince'    =>$tmpeArr['mailingprovince'],
-                    'TermsAndConditions' =>1,
-                    'DeviceGeolocation'  =>$tmpeArr['devicegeolocation'],
-                    'BrowserVersion'     =>$tmpeArr['browserversion'],
-                    'DistributorType'    =>D('Product')->where(array('ipid'=>$receipt['ipid']))->getfield('ip_after_grade'),
-                    'JoinedOn'    => time(),
-                );
-                $OrderDate         = date("Y-m-d",strtotime("-1 month",time()));
-                $activa = $OrderDate;
-                $day    = date('d',strtotime($OrderDate));
-                if($day>=28){
-                    $allday = 28;
-                }else{
-                    $allday = $day;
-                }
-                $ddd = $allday-1;
-                if($ddd>=10){
-                    $oneday = $ddd;
-                }else{
-                    $oneday = '0'.$ddd;
-                }
-                $update     = M('User')->add($tmpe);
-                if($update){
-                    $userinfo= M('User')->where(array('CustomerID'=>$CustomerID))->find();
-                    //添加激活
-                    $time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
-                    $year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
-                    $endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
-                    $where =array('iuid'=>$userinfo['iuid'],'ir_receiptnum'=>$map['outer_trade_no'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
-                    $save  = M('Activation')->add($where);
-                    $status  = array(
-                        'ir_status'  =>2,
-                        'rCustomerID'=>$CustomerID,
-                        'riuid'      =>$userinfo['iuid'],
-                        'ir_paytype' =>4,
-                        'ir_paytime' =>time(),
-                        'ia_name'    =>$userinfo['lastname'].$userinfo['firstname'],
-                        'ia_name_en' =>$userinfo['enlastname'].$userinfo['enfirstname'],
-                        'ia_phone'   =>$userinfo['phone'],
-                        'ia_address' =>$userinfo['shopaddress1'],
-                    );
-                    //更新订单信息
-                    $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($status);
-                    if($upreceipt){
-                        //通知畅捷完成支付
-                        $sample['status'] = 1;
-                        $this->ajaxreturn($sample);
+            if($receipt['ir_status']==7 || $receipt['ir_status'] == 0){
+                //修改用户最近订单日期/是否通过/等级/数量
+                $tmpe['iuid']     =$receipt['riuid'];
+                $find             =D('User')->where(array('iuid'=>$receipt['iuid']))->find();
+                if($find['number']==0){
+                    $tmpe['OrderDate']= date("m/d/Y h:i:s A");
+                    $OrderDate        = date("Y-m-d",strtotime("-1 month",time()));
+                    if($find['isnew']==0){
+                        if($find['number']==0){
+                            $tmpe['IsCheck'] = 1;   
+                        }
                     }else{
-                        $sample['status'] = 0;
-                        $this->ajaxreturn($sample);
+                        $tmpe['IsCheck'] = 2;
                     }
+                }else{
+                    $OrderDate       = $find['orderdate'];
+                    $tmpe['IsCheck'] = 2;
+                }
+                $tmpe['DistributorType'] = D('Product')->where(array('ipid'=>$receipt['ipid']))->getfield('ip_after_grade');
+                $tmpe['Number']   =$find['number']+1;
+                $status  = array(
+                    'ir_status'  =>2,
+                    'ir_paytype' =>4,
+                    'ir_paytime' =>time(),
+                );
+                $update  =D('User')->save($tmpe);
+                if($upreceipt){
+                    $activaDate = D('Activation')->where(array('iuid'=>$receipt['riuid'],'is_tick'=>1))->order('datetime desc')->getfield('datetime');
+                    if(empty($activaDate)){
+                        $activa = $OrderDate;
+                    }else{
+                        $activa = $activaDate;
+                    }
+                    $day = date('d',strtotime($OrderDate));
+                    if($day>=28){
+                        $allday = 28;
+                    }else{
+                        $allday = $day;
+                    }
+                    $ddd    = $allday-1;
+                    if($ddd>=10){
+                        $oneday = $ddd;
+                    }else{
+                        $oneday = '0'.$ddd;
+                    }
+                    // for($i=0;$i<$receipt['ir_productnum'];$i++) {
+                        //删除原先未激活，添加激活
+                        $time  = date("Y-m",strtotime("+1 month",strtotime($activa)));
+                        $year  = date("Y年m月",strtotime("+1 month",strtotime($activa))).$allday.'日';
+                        $endday= date("Y年m月",strtotime("+2 month",strtotime($activa))).$oneday.'日';
+                        $delete= D('Activation')->where(array('iuid'=>$receipt['riuid'],'datetime'=>$time))->delete();
+                        $where =array('iuid'=>$receipt['riuid'],'ir_receiptnum'=>$map['outer_trade_no'],'is_tick'=>1,'datetime'=>$time,'hatime'=>$year,'endtime'=>$endday);
+                        $save  = D('Activation')->add($where);
+                    // }   
+                }
+                //更新订单信息
+                $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->save($status);
+                if($upreceipt){
+                    //通知畅捷完成支付
+                    $sample['status'] = 1;
+                    $this->ajaxreturn($sample);
+                }else{
+                    $sample['status'] = 0;
+                    $this->ajaxreturn($sample);
                 }
             }
         }

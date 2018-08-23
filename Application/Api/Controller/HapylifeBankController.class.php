@@ -18,6 +18,8 @@ class HapylifeBankController extends HomeBaseController{
             $iuid        = I('post.iuid');
             // 查询注册信息
             $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
+
+
             $bankaccount = I('post.bankaccount');
             $bankprovince = I('post.bankprovince');
             $banktown = I('post.banktown');
@@ -64,7 +66,6 @@ class HapylifeBankController extends HomeBaseController{
                 }
                 //添加
                 $addBank = D('Bank')->add($tmp);
-                
                 if($addBank){
                     $data['status'] = 1;
                     $data['message']='银行信息添加成功';
@@ -88,7 +89,7 @@ class HapylifeBankController extends HomeBaseController{
             $this->ajaxreturn($data);
         }else{
             //获取用户iuid
-            $iuid = I('post.iuid');
+            $iuid   = I('post.iuid');
             // 查询注册信息
             $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
             // 查询银行表信息
@@ -111,10 +112,11 @@ class HapylifeBankController extends HomeBaseController{
                 if($result){
                     $_SESSION['user']['bank'] = $_SESSION['user']['bank'] + 1;
                 }
-            }        
+            }
             //列表信息
             $data   = D('Bank')
                     ->where(array('iuid'=>$iuid))
+                    ->order('isshow DESC')
                     ->select(); 
             if($data){
                 $this->ajaxreturn($data);

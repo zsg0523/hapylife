@@ -526,7 +526,7 @@ class GetpointModel extends BaseModel{
 	/**
 	* 获取所有成功操作积分--总额详情
 	**/
-	public function getAllPointInfo($model,$type,$date,$hu_nickname,$starttime,$endtime,$limit=50,$field='',$order=''){
+	public function getAllPointInfo($model,$type,$date,$hu_nickname,$starttime='',$endtime='',$limit=50,$field='',$order=''){
 		if($hu_nickname){
 			if($type){
 				if($date){

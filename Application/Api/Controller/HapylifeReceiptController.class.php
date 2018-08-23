@@ -11,13 +11,16 @@ class HapylifeReceiptController extends HomeBaseController{
 	**/
 	public function receiptList(){
 		$iuid      = I('post.iuid');
-		$ir_status = I('post.ir_status')-1;
-		if($ir_status==-1){
-			$where = array('iuid'=>$iuid,'is_delete'=>0);
-		}else{
-			$where = array('iuid'=>$iuid,'ir_status'=>$ir_status,'is_delete'=>0);
-		}
-		$receipt = D('Receipt')->where($where)->order('ir_date desc')->select();
+		$map  = array(
+				'riuid'=>$iuid,
+                'ir_status'=>array('in','2,3,4,5,202')
+			);
+		$receipt = M('Receipt')
+					->alias('r')
+					->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
+					->join('hapylife_product hp on hr.ipid=hp.ipid')
+					->where($map)
+					->select();
 		if($receipt){
 			$this->ajaxreturn($receipt);
 		}else{
@@ -56,7 +59,4 @@ class HapylifeReceiptController extends HomeBaseController{
 			$this->ajaxreturn($data);
 		}
 	}
-
-
-	
 }

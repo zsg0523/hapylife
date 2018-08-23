@@ -143,7 +143,7 @@ class HapylifeFoodController extends HomeBaseController{
 				'lifePoint'    =>$lifePoint,
 				'pengPoint'    =>$pengPoint,
 				'agentPoint'   =>$agentPoint,
-				'image'		   =>$data['image'], 
+				'image'		   =>$data['image'],
 				'payStatus'    =>0,
 				'isDelete'     =>0,
 				'create_month' =>date('Y-m',time()),
@@ -443,7 +443,7 @@ class HapylifeFoodController extends HomeBaseController{
     /************************************************************工具类********************************************************
     /**
 	* 用户反馈
-	* 1ibos 2nlc  3hrac 4elpa 5hapylife 
+	* 1ibos 2nlc  3hrac 4elpa 5hapylife
 	**/
 	public function feedback(){
 		//最多三张图	
@@ -456,9 +456,9 @@ class HapylifeFoodController extends HomeBaseController{
 					'iuid'         => trim(I('post.iuid')),
 					'whichApp'     => trim(I('post.whichApp')),
 					'content'      => trim(I('post.content')),
-					'type'		   => trim(I('post.type')),	
 					'create_month' => date('Y-m',time()),
-					'create_time'  => time()
+					'create_time'  => time(),
+					'type'		   => trim(I('post.type')),
 				);
 		for ($i=0; $i<count($image); $i++) { 
 			$img_body                 = substr(strstr($image['image'.($i+1)],','),1);
@@ -487,8 +487,8 @@ class HapylifeFoodController extends HomeBaseController{
     **/
     public function feedbackList(){
         $iuid     = I('post.iuid');
-        $whichApp = I('post.whichApp');
-        $data     = D('feedback')->where(array('iuid'=>$iuid,'whichApp'=>$whichApp))->order('create_time desc')->select();
+        // $whichApp = I('post.whichApp');
+        $data     = D('feedback')->where(array('iuid'=>$iuid,'whichApp'=>5))->order('create_time desc')->select();
         foreach ($data as $key => $value) {
             $feedback[$key]   = $value;
             switch ($value['type']) {
@@ -521,7 +521,7 @@ class HapylifeFoodController extends HomeBaseController{
             $this->ajaxreturn($data);
         }
     }
-
+    
 	/**
     * 用户反馈详情及回复
     **/
@@ -544,7 +544,6 @@ class HapylifeFoodController extends HomeBaseController{
             $this->ajaxreturn($data);
         }
     }
-
 
 	/**
 	* 申请成为美食代理

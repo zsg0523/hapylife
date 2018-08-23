@@ -24,7 +24,7 @@
 </head>  
 <body id="body">  
     <div class="commonHead">
-  		<include file="Purchase/commonHead" />
+  		<include file="Common/commonHead1" />
   	</div>
     <div class="main">  
 		<div class="ep_group">
@@ -47,12 +47,12 @@
 	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>  
 	<script type="text/javascript">
 	$(document).ready(function(){ 
-//		changeCommonHead('积分支付');
+		changeCommonHead('积分支付');
 		
 	});
 	//返回个人中心
 	function back(){
-			window.location.href ="{:U('Home/PersonalCenter/personalCenter')}";
+			window.location.href ="{:U('Home/Purchase/center')}";
 	}
 	  
 	</script>  

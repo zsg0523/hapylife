@@ -13,12 +13,12 @@ class usa
 
 	public function __construct(){
 		// production 生产环境配置
-		// $this->key = "KDHE5011CVFO1KJEP1A0S";
-		// $this->url = "https://signupapi.wvhservices.com";
+		$this->key = "KDHE5011CVFO1KJEP1A0S";
+		$this->url = "https://signupapi.wvhservices.com";
 
 		// qa 沙盒环境
-		$this->key = "QACER3H5T6HGYDCCDAZM3";
-		$this->url = "https://signupapi-qa.wvhservices.com";
+		// $this->key = "QACER3H5T6HGYDCCDAZM3";
+		// $this->url = "https://signupapi-qa.wvhservices.com";
 	}
 
 	/**
@@ -26,20 +26,36 @@ class usa
 	* @param customerId: id to validate
 	* @param key: your secret key
 	**/
-	function validateHpl(){
-		$map      = I('post.');
-		$key      = $this->key;
-		$url      = $this->url;
-		$data     = $url."/api/Account/ValidateHpl?customerId=".$map['CustomerID']."&"."key=".$key;
-		$wv       = file_get_contents($data);
-		$userinfo = json_decode($wv,true);
-        $this->ajaxreturn($userinfo);
+	function validateHpl($CustomerId)
+	{
+		$key    = $this->key;
+		$url    = $this->url;
+		$data   = $url."/api/Hpl/Validate?customerId=".$CustomerId."&"."key=".$key;
+		$wv     = file_get_contents($data);
+		$result = json_decode($wv,true);
+        return $result;
+	}
+
+	/**
+	 * [total description]
+	 * @param  [type] $CustomerId [description]
+	 * @return [type]             [description]
+	 */
+	function total($CustomerId)
+	{
+		$key    = $this->key;
+		$url    = $this->url;
+		$data   = $url."/api/Hpl/Totals?customerId=".$CustomerId."&"."key=".$key;
+		$wv     = file_get_contents($data);
+		$result = json_decode($wv,true);
+		return $result;
 	}
 
 	/**
 	* CREATE CUSTOMER
 	**/
-	public function createCustomer($happyLifeID,$password,$sponsorID,$firstName_EN,$lastName_EN,$emailAddress,$phone,$products='RBS,DTP',$dob='2000-1-1'){
+	public function createCustomer($happyLifeID,$password,$sponsorID,$firstName_EN,$lastName_EN,$emailAddress,$phone,$products='RBS,DTP',$dob='2000-1-1')
+	{
 		
 		$key  = $this->key;
 		$url  = $this->url;
@@ -61,29 +77,7 @@ class usa
 		return $result;
 	}
 
-	/**
-	* UPDATE CUSTOMER
-	**/
-	function updateCustomer(){
-		$map  = I('post.');
-		$key  = $this->key;
-		$url  = $this->url;
-		$data = array(
-			'happyLifeID'  =>$map['happyLifeID'],
-            'password'     =>$map['password'],
-            'sponsorID'    =>$map['sponsorID'],
-            'firstName_EN' =>$map['firstName_EN'],
-            'lastName_EN'  =>$map['lastName_EN'],
-            'emailAddress' =>$map['emailAddress'],
-            'phone'        =>$map['phone'],
-            'dob'          =>$map['dob'],
-            'key'          =>$key
-		);
-		$data    = json_encode($data);
-		$sendUrl = $url."/api/Hpl/UpdateCustomer";
-		$result  = post_json_data($sendUrl,$data);
-		print_r($result);
-	}
+
 
 
 
