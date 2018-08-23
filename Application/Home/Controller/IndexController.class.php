@@ -73,6 +73,10 @@ class IndexController extends HomeBaseController{
         }
     }
 
+    public function index(){
+        $this->redirect('Home/Index/login');
+    }
+
     
     /**
     * 前台登录

@@ -5,6 +5,13 @@ use Common\Controller\HomeBaseController;
 * hapylife控制器
 **/
 class HapylifeApiController extends HomeBaseController{
+    public function push(){
+        $customerId   = trim(I('post.customerId'));
+        $content      = trim(I('post.content'));
+        $notification = new \Common\PushEvent\Notification;
+        $notification->setUser($customerId)->setContent($content)->push();
+    }
+
     public function index(){
         //检查WV api用户信息
         $HappyLifeID  = trim(I('post.happyLifeID'));

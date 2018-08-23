@@ -1,7 +1,6 @@
 Runtime/
 install.lock
 Application/Common/Conf/db.php
-Application/Common/Conf/config.php
 node_modules/
 Upload/
 install/
