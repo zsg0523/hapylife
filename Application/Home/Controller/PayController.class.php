@@ -420,8 +420,10 @@ class PayController extends HomeBaseController{
     public function getReceipt(){
         $ir_receiptnum = I('post.ir_receiptnum');
         $receipt = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
+        $userinfo = M('User')->where(array('iuid'=>$receipt['riuid']))->find();
         if($receipt){
             $receipt['status'] = 1;
+            $receipt['userinfo'] = $userinfo;
             $this->ajaxreturn($receipt);
         }else{
             $receipt['status'] = 0;
