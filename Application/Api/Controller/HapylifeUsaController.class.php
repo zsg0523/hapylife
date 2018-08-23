@@ -35,13 +35,13 @@ class HapylifeUsaController extends HomeBaseController{
 
 
 	public function _initialize(){
-		// production 生产环境配置
-		// $this->key = "Z131MZ8ZV29H5EQ9LGVH";
-		// $this->url = "https://signupapi.wvhservices.com";
+		// production 生产环境配置KDHE5011CVFO1KJEP1A0S
+		$this->key = "KDHE5011CVFO1KJEP1A0S";
+		$this->url = "https://signupapi.wvhservices.com";
 
 		// qa 沙盒环境
-		$this->key = "QACER3H5T6HGYDCCDAZM3";
-		$this->url = "https://signupapi-qa.wvhservices.com";
+		// $this->key = "QACER3H5T6HGYDCCDAZM3";
+		// $this->url = "https://signupapi-qa.wvhservices.com";
 	}
 	
 	/**
@@ -53,7 +53,7 @@ class HapylifeUsaController extends HomeBaseController{
 		$map      = I('post.');
 		$key      = $this->key;
 		$url      = $this->url;
-		$data     = $url."/api/Account/ValidateHpl?customerId=".$map['CustomerID']."&"."key=".$key;
+		$data     = $url."/api/Hpl/Validate?customerId=".$map['CustomerID']."&"."key=".$key;
 		$wv       = file_get_contents($data);
 		$userinfo = json_decode($wv,true);
         $this->ajaxreturn($userinfo);
