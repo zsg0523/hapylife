@@ -209,17 +209,17 @@ class PayController extends HomeBaseController{
                                     // 发送短信提示
                                     $templateId ='178959';
                                     $params     = array($receipt['ir_receiptnum'],$product_name);
-                                    $sms        = D('Smscode')->sms($data['acnumber'],$data['phone'],$params,$templateId);
+                                    $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                     if($sms['errmsg'] == 'OK'){
                                         $contents = array(
-                                                    'acnumber' => $data['acnumber'],
-                                                    'phone' => $data['phone'],
+                                                    'acnumber' => $userinfo['acnumber'],
+                                                    'phone' => $userinfo['phone'],
                                                     'operator' => '系统',
-                                                    'addressee' => $data['lastname'].$data['firstname'],
-                                                    'product_name' => '',
+                                                    'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                                    'product_name' => $product_name,
                                                     'date' => time(),
                                                     'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
-                                                    'customerid' => $data['customerid']
+                                                    'customerid' => $userinfo['customerid']
                                         );
                                         $logs = M('SmsLog')->add($contents);
                                     }
@@ -369,7 +369,7 @@ class PayController extends HomeBaseController{
                                         // $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/addCoupon";
                                         $result  = post_json_data($sendUrl,$data);
                                         $back_msg = json_decode($result['result'],true);
-                                        if($back_msg){
+                                        if($back_msg['status']){
                                             $this->success('完成支付',U('Home/Purchase/center'));
                                         }
                                     }else{
@@ -414,7 +414,22 @@ class PayController extends HomeBaseController{
         }
     }
 
-
+    /**
+    * 获取订单信息
+    **/ 
+    public function getReceipt(){
+        $ir_receiptnum = I('post.ir_receiptnum');
+        $receipt = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
+        $userinfo = M('User')->where(array('iuid'=>$receipt['riuid']))->find();
+        if($receipt){
+            $receipt['status'] = 1;
+            $receipt['userinfo'] = $userinfo;
+            $this->ajaxreturn($receipt);
+        }else{
+            $receipt['status'] = 0;
+            $this->ajaxreturn($receipt);
+        }
+    }
 
 
 
