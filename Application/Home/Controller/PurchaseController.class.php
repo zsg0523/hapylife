@@ -76,12 +76,17 @@ class PurchaseController extends HomeBaseController{
         }
         
         $products = D('Product')->where($tmpe)->order('is_sort desc')->select();
-        $an_pro = M('Product')->where(array('ip_type'=>4))->select();
-        $product = array_merge($products,$an_pro);
-        foreach ($product as $key => $value) {
-            $data[$key]         = $value; 
-            $data[$key]['show'] = 1; 
+        if($find['customerid'] == 'HPL00000181'){
+            $an_pro = M('Product')->where(array('ip_type'=>4))->select();
+            $product = array_merge($products,$an_pro);
+            foreach ($product as $key => $value) {
+                $data[$key]         = $value; 
+                $data[$key]['show'] = 1; 
+            }
+        }else{
+            $data = $products;
         }
+
         $this->assign('product',$data);
 		$this->display();
 	}
@@ -184,12 +189,12 @@ class PurchaseController extends HomeBaseController{
 	**/
 	public function myOrderInfo(){
         $ir_receiptnum = I('get.ir_receiptnum'); 
-        $data = M('Receipt')
-                ->alias('r')
-                ->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
-                ->join('hapylife_product hp on hr.ipid=hp.ipid')
-                ->where(array('r.ir_receiptnum'=>$ir_receiptnum))
-                ->find();
+		$data = M('Receipt')
+				->alias('r')
+				->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
+				->join('hapylife_product hp on hr.ipid=hp.ipid')
+				->where(array('r.ir_receiptnum'=>$ir_receiptnum))
+				->find();
         $data['receiptson'] = D('Receiptson')->where(array('status'=>2,'ir_receiptnum'=>$ir_receiptnum))->select();
 		$this->assign('data',$data);
 //		p($data);

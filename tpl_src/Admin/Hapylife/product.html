@@ -36,6 +36,7 @@
 						<th>商品图</th>
 						<th>香港售卖</th>
 						<th>大陆售卖</th>
+						<th>可获得的通用券</th>
 						<th>是否推荐</th>
 						<th>是否下架</th>
 						<th>操作</th>
@@ -54,10 +55,15 @@
 							<td><img width='40' height="40" src="{$v['ip_picture_zh']}"></td>
 							<td><a href="{:U('Admin/Hapylife/status_product',array('id'=>$v['ipid'],'ip_hksale'=>$v['ip_hksale']?0:1))}">{$v['ip_hksale']?是:否}</a></td>
 							<td><a href="{:U('Admin/Hapylife/status_product',array('id'=>$v['ipid'],'ip_cnsale'=>$v['ip_cnsale']?0:1))}">{$v['ip_cnsale']?是:否}</a></td>
+							<td>
+								<foreach name="CouponGroups['data']" item="n">
+                                    <if condition="in_array($n['gid'],explode(',',$v['get_coupon']))">&nbsp;&nbsp;{$n.c_name}*{$n.number}张</if>
+                                </foreach>
+							</td>
 							<td><a href="{:U('Admin/Hapylife/status_product',array('id'=>$v['ipid'],'is_push'=>$v['is_push']?0:1))}">{$v['is_push']?推荐:否}</a></td>
 							<td><a href="{:U('Admin/Hapylife/status_product',array('id'=>$v['ipid'],'is_pull'=>$v['is_pull']?0:1))}">{$v['is_pull']?上架:否}</a></td>
 							<td>
-								<a href="javascript:;" productId="{$v['ipid']}" productName="{$v['ip_name_zh']}" productBh="{$v['ip_bh']}" productPrice="{$v['ip_price_rmb']}" productOne="{$v['ip_oneprice']}"  productDesc="{$v['ip_desc_zh']}" productPoint="{$v['ip_point']}" categoryId="{$v['id']}" onclick="edit(this)">修改</a> |
+								<a href="javascript:;" id="editid" productId="{$v['ipid']}" getcoupon = "{$v['get_coupon']}"  productName="{$v['ip_name_zh']}" productBh="{$v['ip_bh']}" productPrice="{$v['ip_price_rmb']}" productOne="{$v['ip_oneprice']}"  productDesc="{$v['ip_desc_zh']}" productPoint="{$v['ip_point']}" categoryId="{$v['id']}" onclick="edit(this)">修改</a> |
 								<a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Hapylife/delete_product',array('id'=>$v['ipid']))}'">删除</a>
 							</td>
 						</tr>
@@ -143,14 +149,17 @@
 								</td>
 							</tr>
 							<tr>
-								<th width="15%">获得的优惠券：</th>
+								<th width="15%">获得的通用券：</th>
 								<td>
-									<select name="get_coupon">
-										<option value="0">请选择</option>
-										<foreach name="" item="">
-											<option value="">请选择</option>
-										</foreach>
-									</select>
+									<foreach name="CouponGroups['data']" item="v">
+                                        <label>
+                                            {$v['c_name']}*{$v['number']}张
+                                            <input type="checkbox" name="gidArr[]" value="{$v['gid']},{$v['number']}">
+                                        </label>
+                                        &nbsp;
+                                        &nbsp;
+                                        &nbsp;
+                                    </foreach>
 								</td>
 							</tr>
 							<tr>
@@ -240,6 +249,20 @@
 								</td>
 							</tr>
 							<tr>
+								<th width="15%">获得的通用券：</th>
+								<td>
+									<foreach name="CouponGroups['data']" item="v">
+                                        <label>
+                                            <span id="checkBoxGid[{$v['gid']}]">{$v['c_name']}*{$v['number']}张</span>
+                                            <input type="checkbox" name="gidArr[]" value="{$v['gid']},{$v['number']}" >
+                                        </label>
+                                        &nbsp;
+                                        &nbsp;
+                                        &nbsp;
+                                    </foreach>
+								</td>
+							</tr>
+							<tr>
 								<th></th>
 								<td>
 									<input class="btn btn-success" type="submit" value="修改">
@@ -262,6 +285,7 @@
 	}
 
 	// 修改菜单
+	var getcoupon;
 	function edit(obj){
 		var productId=$(obj).attr('productId');
 		var productName=$(obj).attr('productName');
@@ -270,7 +294,11 @@
 		var productOne=$(obj).attr('productOne');
 		var productDesc=$(obj).attr('productDesc');
 		var productPoint=$(obj).attr('productPoint');
-		var categoryId=$(obj).attr('categoryId')
+		var categoryId=$(obj).attr('categoryId');
+		getcoupon='';
+
+		getcoupon=$(obj).attr('getcoupon');
+		console.log(getcoupon);
 		$("input[name='id']").val(productId);
 		$("input[name='ip_name_zh']").val(productName);
 		$("input[name='ip_bh']").val(productBh);
@@ -311,5 +339,36 @@
 		return confirm("确定要删除以下数据吗:"+str+"");
 
 	}
+	$('#bjy-edit').on('show.bs.modal', function () {
+        // var gId=$("#editid").attr('gId');
+        var gidArr = getcoupon.split(",");
+        // console.log(getcoupon);
+        // console.log(gidArr);
+        var checkboxgid=$("input[name='gidArr[]']");
+        for(var i=0;i<checkboxgid.length;i++){
+        	checkboxgid[i].checked=false;
+        }
+        // checkboxgid
+        for(var i=0;i<gidArr.length;i++){
+            for(var j=0;j<checkboxgid.length;j++){
+            	var gidvalue=checkboxgid[j].value.split(',');
+                if(gidArr[i]==gidvalue[0]){
+                   	checkboxgid[j].checked='checked'; 
+                }
+            }
+        }
+//         for(var j=0;j<checkboxgid.length;j++){
+//             if(gId==checkboxgid[j].value){
+//                 checkboxgid[j].type='hidden';
+                
+//                 var spantitle=checkboxgid[j].parentNode;
+//                 spantitle.style.display='none';
+// //              console.log(spantitle.style.display);
+
+//                // alert($('').attr('id')) ;
+               
+//             }
+//         }
+    });
 	</script>
 </block>

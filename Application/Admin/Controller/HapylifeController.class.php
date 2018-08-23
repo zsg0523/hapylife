@@ -372,7 +372,15 @@ class HapylifeController extends AdminBaseController{
 		//获取分类信息
 		$tmpe['pid'] =array('NEQ','0');
 		$catList=D('Category')->where($tmpe)->select();
-
+		$data = array(
+			'result' => 'eggcarton',
+			'appkey' => 'ALL',
+		);
+		$data    = json_encode($data);
+		$sendUrl = "http://apps.nulifeshop.com/nulife/index.php/Api/Couponapi/getCouponList";
+		$result  = post_json_data($sendUrl,$data);
+		$back_message = json_decode($result['result'],true);
+		$CouponGroups = $back_message;
 		//获取商品分类列表
 		$word=I('get.word','');
 		if(empty($word)){
@@ -382,9 +390,10 @@ class HapylifeController extends AdminBaseController{
 				'ip_name_zh'=>$word
 			);
 		}
-
+		// p($CouponGroups);die;
 		$assign=D('Product')->getAllData(D('Product'),$map);
 		$this->assign('catList',$catList);
+		$this->assign('CouponGroups',$CouponGroups);
 		$this->assign($assign);
 		$this->display();
 	}
@@ -396,6 +405,16 @@ class HapylifeController extends AdminBaseController{
 		$data=I('post.');
 		$upload=post_upload();
 		$data['ip_picture_zh']=C('WEB_URL').$upload['name'];
+		// p($data);die;
+		if($data['gidArr']){
+			foreach ($data['gidArr'] as $key => $value) {
+				$mape         = explode(',',$value);
+				$getCoupn    .= $mape[0].',';
+				$traversenum .= $mape[1].',';
+			}
+			$data['get_coupon'] = substr($getCoupn,0,-1);
+			$data['traverse_num'] = substr($traversenum,0,-1);
+		}
 		$result=D('Product')->addData($data);
 		if($result){
 			$this->redirect('Admin/Hapylife/product');
@@ -413,6 +432,15 @@ class HapylifeController extends AdminBaseController{
 			'ipid'=>$data['id']
 			);
 		$upload=post_upload();
+		if($data['gidArr']){
+			foreach ($data['gidArr'] as $key => $value) {
+				$mape         = explode(',',$value);
+				$getCoupn    .= $mape[0].',';
+				$traversenum .= $mape[1].',';
+			}
+			$data['get_coupon'] = substr($getCoupn,0,-1);
+			$data['traverse_num'] = substr($traversenum,0,-1);
+		}
 		if(isset($upload['name'])){
 			$data['ip_picture_zh']=C('WEB_URL').$upload['name'];
 		}
