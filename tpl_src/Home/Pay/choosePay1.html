@@ -53,7 +53,7 @@
 						<label for="">积分支付:</label>
 					    <input class="fr" type="radio" name="ip_paytype"  value="2"  />
 					</div>
-					<div class="form-group">
+					<div class="form-group" id="unpay">
 						<label for="">本次付款金额:</label>
 					    <input type="text" class="ir_unpaid" name="ir_unpaid" id="ir_unpaid"  value="{:I('get.ir_unpaid')}" readonly="readonly" />
 					    <span class="priceunit" id="priceunit">RMB</span>
@@ -75,6 +75,7 @@
 	   		changeCommonHead('选择支付方式');
 	   		getReceiptInfo();
 		});
+		var mypoint;
 		function back(){
         	window.location.href ="{:U('Home/Purchase/center')}";
    		}
@@ -90,11 +91,15 @@
 				},
 				success:function(ret){
 					var havaEP=$('#havaEP');
+					mypoint=ret.userinfo.iu_point;
 					havaEP.text('您的EP:'+ret.userinfo.iu_point);
-
     				if(ret.status==1){
-                        if(ret.ir_ordertype==4){
-                        	$('#ir_unpaid').attr('readonly',false); 
+                        if(ret.ispullamout==1){
+                        	$('#unpay').css('display','none'); 
+                        	$('.hint').css('display','none');
+                        }else{
+                        	
+                        	$('#ir_unpaid').attr('readonly',false);
                         }
     				}else{
     					
@@ -129,11 +134,15 @@
 			var typevalue=$(":radio[name='ip_paytype']:checked").val();
 			var money=$('#money').text();
 			if(typevalue==2){
-			 	if(ir_unpaid>=(money*0.0025)){
-			 		form.submit();
-			 	}else{
-			 		alert('付款金额须大于未付款的25%')
-			 	}
+			 	if(ir_unpaid<=mypoint){
+					if(ir_unpaid>=(money*0.0025)){
+				 		form.submit();
+				 	}else{
+				 		alert('付款金额须大于未付款的25%')
+			 		}
+				}else{
+					alert('您的积分余额不足！');
+				}
 			}else{
 			 	if(ir_unpaid>=(money*0.25)){
 			 		form.submit();
