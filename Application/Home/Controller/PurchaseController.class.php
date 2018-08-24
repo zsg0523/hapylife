@@ -495,6 +495,26 @@ class PurchaseController extends HomeBaseController{
                             'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
                             'customerid' => $userinfo['customerid']
                         );
+                    }else if($ir_ordertype == 4){
+                       // 添加通用券
+                        $product = M('Receipt')
+                                        ->alias('r')
+                                        ->join('hapylife_product AS p ON r.ipid = p.ipid')
+                                        ->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))
+                                        ->find();
+                        $data = array(
+                                'product' => $product,
+                                'userinfo' => $userinfo,
+                            );
+                        $data    = json_encode($data);
+                        $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/addCoupon";
+                        // $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/addCoupon";
+                        $result  = post_json_data($sendUrl,$data);
+                        $back_msg = json_decode($result['result'],true);
+                        if($back_msg['status']){
+                            $maps['status'] = 1;
+                            $this->ajaxreturn($maps);
+                        }
                     }else{
                         // 总共已经支付金额
                         $total = bcsub($receipt['ir_price'],$sub,2);
