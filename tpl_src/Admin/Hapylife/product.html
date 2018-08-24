@@ -29,6 +29,7 @@
 						<th><input type="checkbox" id="seelctAll" onclick="select_all()">全选</th>
 						<th>商品名</th>
 						<th>商品分类</th>
+						<th>所属类型</th>
 						<th>商品编号</th>
 						<th>首次费用</th>
 						<th>月费</th>
@@ -39,6 +40,7 @@
 						<th>可获得的通用券</th>
 						<th>是否推荐</th>
 						<th>是否下架</th>
+						<th>是否需要全额支付</th>
 						<th>操作</th>
 					</tr>
 					<foreach name="data" item="v">
@@ -48,6 +50,12 @@
 							</td>
 							<td>{$v['ip_name_zh']}</td>
 							<td>{$v['icat_name_zh']}</td>
+							<td>
+								<if     condition="$v['ip_type'] eq 1">首购
+								<elseif condition="$v['ip_type'] eq 3"/>月费
+								<elseif condition="$v['ip_type'] eq 4"/>通用券	
+								</if>
+							</td>
 							<td>{$v['ip_bh']}</td>
 							<td>{$v['ip_oneprice']}</td>
 							<td>{$v['ip_price_rmb']}</td>
@@ -62,8 +70,9 @@
 							</td>
 							<td><a href="{:U('Admin/Hapylife/status_product',array('id'=>$v['ipid'],'is_push'=>$v['is_push']?0:1))}">{$v['is_push']?推荐:否}</a></td>
 							<td><a href="{:U('Admin/Hapylife/status_product',array('id'=>$v['ipid'],'is_pull'=>$v['is_pull']?0:1))}">{$v['is_pull']?上架:否}</a></td>
+							<td>{$v['ispullamount']?是:否}</td>
 							<td>
-								<a href="javascript:;" id="editid" productId="{$v['ipid']}" getcoupon = "{$v['get_coupon']}"  productName="{$v['ip_name_zh']}" productBh="{$v['ip_bh']}" productPrice="{$v['ip_price_rmb']}" productOne="{$v['ip_oneprice']}"  productDesc="{$v['ip_desc_zh']}" productPoint="{$v['ip_point']}" categoryId="{$v['id']}" onclick="edit(this)">修改</a> |
+								<a href="javascript:;" id="editid" productId="{$v['ipid']}" getcoupon = "{$v['get_coupon']}"  productName="{$v['ip_name_zh']}" productBh="{$v['ip_bh']}" productPrice="{$v['ip_price_rmb']}" productOne="{$v['ip_oneprice']}"  productDesc="{$v['ip_desc_zh']}" productPoint="{$v['ip_point']}" categoryId="{$v['id']}" iptype="{$v['ip_type']}" ispullamount="{$v['ispullamount']}" onclick="edit(this)">修改</a> |
 								<a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Hapylife/delete_product',array('id'=>$v['ipid']))}'">删除</a>
 							</td>
 						</tr>
@@ -107,7 +116,7 @@
 								</td>
 							</tr>
 							<tr>
-								<th width="15%">商品分类：</th>
+								<th width="15%">所属类型：</th>
 								<td>
                                 <select name="icid">
                                     <volist name='catList' id='c'>
@@ -115,6 +124,24 @@
                                     </volist>
                                 </select>
                             </td>
+							<tr>
+								<th width="15%">商品分类：</th>
+								<td>
+	                                <select name="ip_type">
+	                                    <option value="1">首购</option>
+	                                    <option value="3">月费</option>
+	                                    <option value="4">通用券</option>
+	                                </select>
+                            	</td>
+							</tr>
+							<tr>
+								<th width="15%">是否需全额支付：</th>
+								<td>
+	                                <select name="ispullamount">
+	                                    <option value="1">是</option>
+	                                    <option value="0">否</option>
+	                                </select>
+                            	</td>
 							</tr>
 							<tr>
 								<th width="15%">首次费用：</th>
@@ -215,6 +242,23 @@
                                     </volist>
                                 </select>
                             </td>
+                            <tr>
+								<th width="15%">商品分类：</th>
+								<td>
+	                                <select name="ip_type">
+	                                    <option value="1">首购</option>
+	                                    <option value="3">月费</option>
+	                                    <option value="4">通用券</option>
+	                                </select>
+							<tr>
+								<th width="15%">是否需全额支付：</th>
+								<td>
+	                                <select name="ispullamount">
+	                                    <option value="1">是</option>
+	                                    <option value="0">否</option>
+	                                </select>
+                            	</td>
+							</tr>
 							</tr>
 							<tr>
 								<th width="15%">首次费用：</th>
@@ -295,6 +339,8 @@
 		var productDesc=$(obj).attr('productDesc');
 		var productPoint=$(obj).attr('productPoint');
 		var categoryId=$(obj).attr('categoryId');
+		var iptype=$(obj).attr('iptype');
+		var ispullamount=$(obj).attr('ispullamount');
 		getcoupon='';
 
 		getcoupon=$(obj).attr('getcoupon');
@@ -307,6 +353,8 @@
 		$("textarea[name='ip_desc_zh']").val(productDesc);
 		$("input[name='ip_point']").val(productPoint);
 		$("select[name='icid']").val(categoryId);
+		$("select[name='ip_type']").val(iptype);
+		$("select[name='ispullamount']").val(ispullamount);
 		$('#bjy-edit').modal('show');
 	}
 

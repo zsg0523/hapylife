@@ -195,6 +195,9 @@ class PayController extends HomeBaseController{
                                         case '3':
                                             $this->success('支付成功',U('Home/Pay/choosePay',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
                                             break;
+                                        case '4':
+                                            $this->success('支付成功',U('Home/Pay/choosePay',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
+                                            break;
                                     }
                                 }
                             }else{
@@ -419,9 +422,15 @@ class PayController extends HomeBaseController{
     **/ 
     public function getReceipt(){
         $ir_receiptnum = I('post.ir_receiptnum');
-        $receipt = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
+        $receipt = M('Receipt')
+                        ->alias('r')
+                        ->join('hapylife_product AS p ON r.ipid = g.ipid')
+                        ->where(array('ir_receiptnum'=>$ir_receiptnum))
+                        ->find();
+        $userinfo = M('User')->where(array('iuid'=>$receipt['riuid']))->find();
         if($receipt){
             $receipt['status'] = 1;
+            $receipt['userinfo'] = $userinfo;
             $this->ajaxreturn($receipt);
         }else{
             $receipt['status'] = 0;

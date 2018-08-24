@@ -27,6 +27,8 @@
 		.links>li>img{width:55px;display: block;margin: auto;margin-top: 5px;}
 		.links>li>div{width:100%;height: 40px; line-height: 40px;display: block;float: left;}
 		.links>li>div>a{width: 90px;height: 30px;line-height: 30px;display: block;color: #118bfa;border-radius: 15px;border: 1px solid #118bfa;margin: auto;margin-top: 5px;}
+		#usereg{width: 96%;height: auto;margin-left: 2%;margin-bottom: 10px;display: none;}
+		#usereg>img{width: 100%;height: auto;border-radius: 10px;}
 		
     	.commonHead{width:100%;position: fixed;top: 0;left: 0;z-index: 20;}
     	@media screen and (min-width:1200px) {
@@ -43,6 +45,9 @@
     	</div>
     	
 		<ul class="links">
+			<div id="usereg"  onclick='useregCoupon();'>
+				<img src="__PUBLIC_IMAGE__/有券注册.png"/>
+			</div>
 			<li onclick='window.location.href="{:U('Home/Purchase/purchase')}";'>
 				<img src="__PUBLIC_IMAGE__/购买产品.png"/>
 				<div>
@@ -74,6 +79,7 @@
 				</div>
 			</li>
 			<input type="hidden" name="username" value="{$Think.session.user.username}">
+			<input type="hidden" name="userid" value="{$Think.session.user.id}">
 			<li onclick='tocoupon();'}>
 				<img src="__PUBLIC_IMAGE__/通用券.png"/>
 				<div>
@@ -126,28 +132,59 @@
 	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
 	<script src='//cdn.bootcss.com/socket.io/1.3.7/socket.io.js'></script> 
 	<script type="text/javascript">  
-
+	getRegistbycoupon();
+	
     function tocoupon(){
     	var username=$("input[name='username']").val();
     	var isApp=200;
     	window.location.href="http://apps.nulifeshop.com/nulife/index.php/Home/Coupon/coupons/hu_nickname/"+username+"/whichApp/"+5+"/isApp/"+isApp+"";
 //  	window.location.href="http://localhost/testnulife/index.php/Home/Coupon/coupons/hu_nickname/"+username+"/whichApp/"+5+"/isApp/"+isApp+"";
     }
-
-
-    // 初始化io对象
+    
+	//检查用户券状态
 	var socket = io('http://120.77.206.79:2120');
 	// uid 可以为网站用户的uid，作为例子这里用customerId代替
-	var uid = $("input[name='username']").val();
-	var sessionId = '<?php echo session_id();?>';
-	console.log(uid);
-	console.log(sessionId);
+	// var uid = $("input[name='username']").val();
+	 var uid = $("input[name='username']").val();
+	//console.log(uid);
+	// console.log(sessionId);
 	// 当socket连接后发送登录请求
 	socket.on('connect', function(){socket.emit('login', uid);});
 	// 更新在线人数
 	// socket.on('update_online_count',function(online_count){alert(online_count);});
 	// 当服务端推送来消息时触发，这里简单的alert出来，用户可做成自己的展示效果
-	socket.on('new_msg', function(msg){alert(msg);});
+	socket.on('new_msg', function(msg){
+		// alert(msg);
+		$("#usereg").css('display','block');
+	});	
+		
+	function useregCoupon(){
+		
+	}
+	function getRegistbycoupon(){
+		var iuid=$("input[name='userid']").val();
+		$.ajax({
+			type:"post",
+			url:"{:U('Api/HapylifeApi/userinfo')}",
+			async:true, 
+			dataType: 'json',
+			data:{
+				iuid:iuid,
+			},
+			success:function(ret){
+				if(ret.registbycoupon==1){
+					$("#usereg").css('display','block');
+				}else{
+					$("#usereg").css('display','none');
+				}
+			},
+			error:function(){
+//						alert('接口错误！！!');
+			}
+		});
+	}
+	
+     
      
 	</script>  
 </body>  
