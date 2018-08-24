@@ -495,55 +495,23 @@ class PurchaseController extends HomeBaseController{
                         $ir_paytime= 0;
                     }
                     if($sub==0){
-                        $addactivation     = D('Activation')->addAtivation($OrderDate,$receipt['riuid'],$receipt['ir_receiptnum']);
-                        // 发送短信提示
-                        $templateId ='178959';
-                        $params     = array($receipt['ir_receiptnum'],$product_name);
-                        $contents = array(
-                            'acnumber' => $userinfo['acnumber'],
-                            'phone' => $userinfo['phone'],
-                            'operator' => '系统',
-                            'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                            'product_name' => $product_name,
-                            'date' => time(),
-                            'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
-                            'customerid' => $userinfo['customerid']
-                        );
-                    }else if($ir_ordertype == 4){
-                       // 添加通用券
-                        $product = M('Receipt')
-                                        ->alias('r')
-                                        ->join('hapylife_product AS p ON r.ipid = p.ipid')
-                                        ->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))
-                                        ->find();
-                        $data = array(
-                                'product' => $product,
-                                'userinfo' => $userinfo,
-                            );
-                        $data    = json_encode($data);
-                        $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/addCoupon";
-                        $result  = post_json_data($sendUrl,$data);
-                        $back_msg = json_decode($result['result'],true);
-                        if($back_msg['status']){
-                            $maps['status'] = 1;
-                            $this->ajaxreturn($maps);
+                        $addactivation     = D('Activation')->addAtivation($OrderDate,$receipt['riuid'],$receipt['ir_receiptnum']); 
+                        if($order['ir_ordertype'] == 4){
+                            // 添加通用券
+                            $product = M('Receipt')
+                                            ->alias('r')
+                                            ->join('hapylife_product AS p ON r.ipid = p.ipid')
+                                            ->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))
+                                            ->find();
+                            $data = array(
+                                    'product' => $product,
+                                    'userinfo' => $userinfo,
+                                );
+                            $data    = json_encode($data);
+                            $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/addCoupon";
+                            $result  = post_json_data($sendUrl,$data);
+                            // $back_msg = json_decode($result['result'],true);
                         }
-                    }else{
-                        // 总共已经支付金额
-                        $total = bcsub($receipt['ir_price'],$sub,2);
-                        // 发送短信提示
-                        $templateId ='178957';
-                        $params     = array($receipt['ir_receiptnum'],$receiptson['ir_price'],$total,$sub);
-                        $contents = array(
-                            'acnumber' => $userinfo['acnumber'],
-                            'phone' => $userinfo['phone'],
-                            'operator' => '系统',
-                            'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                            'product_name' => '',
-                            'date' => time(),
-                            'content' => '订单编号：'.$receipt['ir_receiptnum'].'，收到付款'.$receiptson['ir_price'].'，总共已支付'.$total.'剩余需支付'.$sub,
-                            'customerid' => $userinfo['customerid']
-                        );
                     }
                     $status  = array(
                         'ir_status'  =>$ir_status,
@@ -554,10 +522,44 @@ class PurchaseController extends HomeBaseController{
                     //更新订单信息
                     $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
                     if($upreceipt){
-                        // 发送短信提示
-                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                        if($sms['errmsg'] == 'OK'){
-                            $logs = M('SmsLog')->add($contents);
+                        if($sub == 0){
+                            // 发送短信提示
+                            $templateId ='178959';
+                            $params     = array($receipt['ir_receiptnum'],$product_name);
+                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                            if($sms['errmsg'] == 'OK'){
+                                $contents = array(
+                                    'acnumber' => $userinfo['acnumber'],
+                                    'phone' => $userinfo['phone'],
+                                    'operator' => '系统',
+                                    'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                    'product_name' => $product_name,
+                                    'date' => time(),
+                                    'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
+                                    'customerid' => $userinfo['customerid']
+                                );
+                                $logs = M('SmsLog')->add($contents);
+                            }
+                        }else{
+                            // 共总支付
+                            $total = bcsub($order['ir_unpaid'],$sub,2);
+                            // 发送短信提示
+                            $templateId ='178957';
+                            $params     = array($receipt['ir_receiptnum'],$receipt['ir_price'],$total,$sub);
+                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                            if($sms['errmsg'] == 'OK'){
+                                $contents = array(
+                                    'acnumber' => $userinfo['acnumber'],
+                                    'phone' => $userinfo['phone'],
+                                    'operator' => '系统',
+                                    'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                    'product_name' => '',
+                                    'date' => time(),
+                                    'content' => '订单编号：'.$receipt['ir_receiptnum'].'，收到付款'.$receiptson['ir_price'].'，总共已支付'.$total.'剩余需支付'.$sub,
+                                    'customerid' => $userinfo['customerid']
+                                );
+                                $logs = M('SmsLog')->add($contents);
+                            }
                         }
                     }
                     $data['status'] = 1;
