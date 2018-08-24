@@ -91,9 +91,7 @@
 				success:function(ret){
 					var havaEP=$('#havaEP');
 					havaEP.text('您的EP:'+ret.userinfo.iu_point);
-
     				if(ret.status==1){
-    					$('#havaEP').text('您的EP:'+ret.userinfo.iu_point)
                         if(ret.ir_ordertype==4){
                         	$('#ir_unpaid').attr('readonly',false); 
                         }
