@@ -60,24 +60,39 @@ class PurchaseController extends HomeBaseController{
         $find  = M('User')->where(array('iuid'=>$iuid))->find();
         $type  = trim($find['distributortype']);
         $mtype = trim($find['customertype']);
-        $status = $find['status'];
+        $status= $find['status'];
         //判断用户等级 show--1、可点击 2、不可点击
         // p($type);die;
-        if(!empty($status)){
-            $tmpe    = array(
-                'ip_grade' =>$type,
-                'is_push'  =>2
-            );
-        }else{
-            $tmpe    = array(
-                'ip_grade' =>$type,
-                'is_pull'  =>1
-            );
-        }
-        
-        $products = D('Product')->where($tmpe)->order('is_sort desc')->select();
+        switch (substr($find['customerid'],0,3)) {
+            case 'HPL':
+                    $tmpe  = array(
+                        'ip_grade' =>$type,
+                        'is_pull'  =>1
+                    );
+                    $proArr  = D('Product')->where($tmpe)->order('is_sort desc')->select();
+                    $an_pro  = M('Product')->where(array('ip_type'=>4,'is_pull'=>1))->select();
+                    $product = array_merge($proArr,$an_pro);
+                    foreach ($product as $key => $value) {
+                        $products[$key]         = $value; 
+                        $products[$key]['show'] = 1; 
+                    }
+                break;
+            default:
+                //核对usa 账号是否正确存在
+                $usa    = new \Common\UsaApi\Usa;
+                $result = $usa->validateHpl($find['customerid']);
+                switch ($result['isActive']) {
+                    case true:
+                        $products = M('Product')->where(array('ip_type'=>4,'is_pull'=>1))->select();
+                        break;
+                    default:
+                        $products = array();
+                        break;
+                }
+                break;
+        }  
         if($find['customerid'] == 'HPL00000181'){
-            $an_pro = M('Product')->where(array('ip_type'=>4))->select();
+            $an_pro = M('Product')->where(array('ip_type'=>4,'is_pull'=>0))->select();
             $product = array_merge($products,$an_pro);
             foreach ($product as $key => $value) {
                 $data[$key]         = $value; 
@@ -86,7 +101,6 @@ class PurchaseController extends HomeBaseController{
         }else{
             $data = $products;
         }
-
         $this->assign('product',$data);
         $this->display();
     }
