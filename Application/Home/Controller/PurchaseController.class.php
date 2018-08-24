@@ -465,6 +465,8 @@ class PurchaseController extends HomeBaseController{
                 $change_orderstatus = M('Receiptson')->where(array('pay_receiptnum'=>$data['billno']))->save($map);
                 if($change_orderstatus){
                     $order   = D('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();  
+                    $userinfo   = D('User')->where(array('iuid'=>$receipt['riuid']))->find();  
+                    $product_name   = D('Receiptlist')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('product_name');  
                     $OrderDate         = date("Y-m-d",strtotime("-1 month",time()));
                     $subnum= bcsub($order['ir_unpaid'],$receipt['ir_price'],2);
                     if($subnum=='0.00'){
@@ -480,6 +482,35 @@ class PurchaseController extends HomeBaseController{
                     }
                     if($sub==0){
                         $addactivation     = D('Activation')->addAtivation($OrderDate,$receipt['riuid'],$receipt['ir_receiptnum']);
+                        // 发送短信提示
+                        $templateId ='178959';
+                        $params     = array($receipt['ir_receiptnum'],$product_name);
+                        $contents = array(
+                            'acnumber' => $userinfo['acnumber'],
+                            'phone' => $userinfo['phone'],
+                            'operator' => '系统',
+                            'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                            'product_name' => $product_name,
+                            'date' => time(),
+                            'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
+                            'customerid' => $userinfo['customerid']
+                        );
+                    }else{
+                        // 总共已经支付金额
+                        $total = bcsub($receipt['ir_price'],$sub,2);
+                        // 发送短信提示
+                        $templateId ='178957';
+                        $params     = array($receipt['ir_receiptnum'],$receiptson['ir_price'],$total,$sub);
+                        $contents = array(
+                            'acnumber' => $userinfo['acnumber'],
+                            'phone' => $userinfo['phone'],
+                            'operator' => '系统',
+                            'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                            'product_name' => '',
+                            'date' => time(),
+                            'content' => '订单编号：'.$receipt['ir_receiptnum'].'，收到付款'.$receiptson['ir_price'].'，总共已支付'.$total.'剩余需支付'.$sub,
+                            'customerid' => $userinfo['customerid']
+                        );
                     }
                     $status  = array(
                         'ir_status'  =>$ir_status,
@@ -489,6 +520,13 @@ class PurchaseController extends HomeBaseController{
                     );
                     //更新订单信息
                     $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+                    if($upreceipt){
+                        // 发送短信提示
+                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                        if($sms['errmsg'] == 'OK'){
+                            $logs = M('SmsLog')->add($contents);
+                        }
+                    }
                     $data['status'] = 1;
                     $this->ajaxreturn($data);
                 }else{
@@ -575,6 +613,7 @@ class PurchaseController extends HomeBaseController{
         }
         // $map['outer_trade_no'] = '20180808104800320253';
         $receipt = M('Receiptson')->where(array('pay_receiptnum'=>$map['outer_trade_no']))->find();
+        $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->find();
         $cjPayStatus = M('Receiptson')->where(array('pay_receiptnum'=>$map['outer_trade_no']))->save($map);
         //验签
         $return = rsaVerify($map);
@@ -732,7 +771,24 @@ class PurchaseController extends HomeBaseController{
                         $tmpeArr['password'] = $userinfo['wvpass'];
                         $status['ia_name']   = $userinfo['shopaddress1'];
                     }
-                    if($upreceipt){    
+                    if($upreceipt){ 
+                        // 发送短信提示
+                        $templateId ='178959';
+                        $params     = array($receipt['ir_receiptnum'],$receiptlist['product_name']);
+                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                        if($sms['errmsg'] == 'OK'){
+                            $contents = array(
+                                        'acnumber' => $userinfo['acnumber'],
+                                        'phone' => $userinfo['phone'],
+                                        'operator' => '系统',
+                                        'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                        'product_name' => $receiptlist['product_name'],
+                                        'date' => time(),
+                                        'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$receiptlist['product_name'].'，支付成功。',
+                                        'customerid' => $userinfo['customerid']
+                            );
+                            $logs = M('SmsLog')->add($contents);
+                        }   
                         $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$order['ir_receiptnum']);
                         if($tmpeArr['password']){
                             $usa    = new \Common\UsaApi\Usa;
@@ -750,7 +806,6 @@ class PurchaseController extends HomeBaseController{
                                     $params     = array();
                                     $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                     if($sms['errmsg'] == 'OK'){
-                                        $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$map['outer_trade_no']))->find();
                                         $contents = array(
                                                     'acnumber' => $userinfo['acnumber'],
                                                     'phone' => $userinfo['phone'],
@@ -775,6 +830,27 @@ class PurchaseController extends HomeBaseController{
                     );                   
                     //更新订单信息
                     $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+                    if($upreceipt){
+                        // 总共已经支付金额
+                        $total = bcsub($receipt['ir_price'],$sub,2);
+                        // 发送短信提示
+                        $templateId ='178957';
+                        $params     = array($receipt['ir_receiptnum'],$receiptson['ir_price'],$total,$sub);
+                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                        if($sms['errmsg'] == 'OK'){
+                            $contents = array(
+                                        'acnumber' => $userinfo['acnumber'],
+                                        'phone' => $userinfo['phone'],
+                                        'operator' => '系统',
+                                        'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                        'product_name' => '',
+                                        'date' => time(),
+                                        'content' => '订单编号：'.$receipt['ir_receiptnum'].'，收到付款'.$receiptson['ir_price'].'，总共已支付'.$total.'剩余需支付'.$sub,
+                                        'customerid' => $userinfo['customerid']
+                            );
+                            $logs = M('SmsLog')->add($contents);
+                        }
+                    }
                 }
             }
 		}
