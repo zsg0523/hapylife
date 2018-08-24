@@ -22,9 +22,9 @@ class HapylifeCouponController extends HomeBaseController{
 	public function userinfo(){
 		$jsonStr = file_get_contents("php://input");
 	    //写入服务器日志文件
-	    $log     = addUsaLog($jsonStr);
-	    $data    = json_decode($jsonStr,true);
-	    $userinfo = M('User')->where(array('CustomerID'=>$data['hu_nickname']))->find();
+		$log      = addUsaLog($jsonStr);
+		$data     = json_decode($jsonStr,true);
+		$userinfo = M('User')->where(array('CustomerID'=>$data['hu_nickname']))->find();
 	    if($userinfo){
 	    	$userinfo['status'] = 1;
 	    	$this->ajaxreturn($userinfo);
@@ -100,6 +100,24 @@ class HapylifeCouponController extends HomeBaseController{
 		if($data){
 	    	$this->ajaxreturn($data);
 		}
+	}
+	/**
+	 * [registByCoupon description]
+	 * @return [type] [description]
+	 */
+	public function registByCoupon(){
+		$jsonStr = file_get_contents("php://input");
+	    //写入服务器日志文件
+		$log    = addUsaLog($jsonStr);
+		$data   = json_decode($jsonStr,true);
+		$map    = array(
+				'registByCoupon'=>1
+			);
+		$result = M('User')->where(array('CustomerID'=>$data['hu_nickname']))->save($map);
+	    if($result){
+	    	$result['status'] = 1;
+	    	$this->ajaxreturn($result);
+	    }
 	}
 
 	/**

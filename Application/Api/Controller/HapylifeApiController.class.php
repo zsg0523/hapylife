@@ -5,6 +5,30 @@ use Common\Controller\HomeBaseController;
 * hapylife控制器
 **/
 class HapylifeApiController extends HomeBaseController{
+
+    /**
+     * [receivePhoto description]
+     * @return [type] [description]
+     */
+    public function receivePhoto(){
+        $photo        = I('post.photo');
+        $img_body     = substr(strstr($photo,','),1);
+        $photo_name   = time().'_'.mt_rand().'.jpg';
+        $img          = file_put_contents('./Upload/file/'.$photo_name, base64_decode($img_body));
+        $map['photo'] = C('WEB_URL').'/Upload/file/'.$photo_name;
+        $save_image   = M('photo')->add($map);
+        if($save_image){
+            // $customerId   = trim(I('post.customerId'));
+            // $content      = trim(I('post.content'));
+            $notification = new \Common\PushEvent\Notification;
+            $notification->setUser()->setContent($map['photo'])->push();
+        }
+    }
+
+    /**
+     * [push description]
+     * @return [type] [description]
+     */
     public function push(){
         $customerId   = trim(I('post.customerId'));
         $content      = trim(I('post.content'));
