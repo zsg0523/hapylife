@@ -864,14 +864,20 @@ class PurchaseController extends HomeBaseController{
     **/ 
     public function addressAdd(){
         $data = array(
-                'iuid'        => I('post.iuid'),
-                'ia_name'     => I('post.ia_name'),
-                'ia_phone'    => I('post.ia_phone'),
-                'ia_province' => I('post.ia_province'),
-                'ia_town'     => I('post.ia_town'),
-                'ia_region'   => I('post.ia_region'),
-                'ia_road'     => I('post.ia_road'),
-                );
+            'iuid'        => I('post.iuid'),
+            'ia_name'     => I('post.ia_name'),
+            'ia_phone'    => I('post.ia_phone'),
+            'ia_province' => I('post.ia_province'),
+            'ia_town'     => I('post.ia_town'),
+            'ia_region'   => I('post.ia_region'),
+            'ia_road'     => I('post.ia_road'),
+        );
+        $address = D('Address')->where(array('iuid'=>I('post.iuid'),'is_address_show'=>1))->find();
+        if($address){
+            $data['is_address_show'] = 0;
+        }else{
+            $data['is_address_show'] = 1;
+        }
         if(!empty($data['ia_name']) && !empty($data['ia_phone']) && !empty($data['ia_province']) && !empty($data['ia_town']) && !empty($data['ia_region']) && !empty($data['ia_road'])){
             $result = M('Address')->add($data);   
         }
