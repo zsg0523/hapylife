@@ -63,21 +63,8 @@ class PurchaseController extends HomeBaseController{
         $status= $find['status'];
         //判断用户等级 show--1、可点击 2、不可点击
         // p($type);die;
-        switch (substr($find['customerid'],0,3)) {
-            case 'HPL':
-                    $tmpe  = array(
-                        'ip_grade' =>$type,
-                        'is_pull'  =>1
-                    );
-                    $proArr  = D('Product')->where($tmpe)->order('is_sort desc')->select();
-                    $an_pro  = M('Product')->where(array('ip_type'=>4,'is_pull'=>1))->select();
-                    $product = array_merge($proArr,$an_pro);
-                    foreach ($product as $key => $value) {
-                        $products[$key]         = $value; 
-                        $products[$key]['show'] = 1; 
-                    }
-                break;
-            default:
+        switch (strlen($find['customerid'])) {
+            case '8':
                 //核对usa 账号是否正确存在
                 $usa    = new \Common\UsaApi\Usa;
                 $result = $usa->validateHpl($find['customerid']);
@@ -90,8 +77,22 @@ class PurchaseController extends HomeBaseController{
                         break;
                 }
                 break;
+            default:
+                $tmpe  = array(
+                    'ip_grade' =>$type,
+                    'is_pull'  =>1
+                );
+                $proArr  = D('Product')->where($tmpe)->order('is_sort desc')->select();
+                $an_pro  = M('Product')->where(array('ip_type'=>4,'is_pull'=>1))->select();
+                $product = array_merge($proArr,$an_pro);
+                foreach ($product as $key => $value) {
+                    $products[$key]         = $value; 
+                    $products[$key]['show'] = 1; 
+                }
+                break;
         }  
-        if($find['customerid'] == 'HPL00000181'){
+        $array = array('HPL00000181','HPL00123539');
+        if(in_array($find['customerid'],$array)){
             $an_pro = M('Product')->where(array('ip_type'=>4,'is_pull'=>0))->select();
             $product = array_merge($products,$an_pro);
             foreach ($product as $key => $value) {
