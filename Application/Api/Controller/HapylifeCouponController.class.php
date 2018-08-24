@@ -120,5 +120,20 @@ class HapylifeCouponController extends HomeBaseController{
 	    }
 	}
 
- 
+	/**
+	* 将用户数据存储在临时用户表
+	**/ 
+	public function addUserInfo(){
+		$jsonStr = file_get_contents("php://input");
+	    //写入服务器日志文件
+	    $log     = addUsaLog($jsonStr);
+	    $data    = json_decode($jsonStr,true);
+	    $addUserInfo = M('Tempuser')->add($data['data']);
+	    if($addUserInfo){
+	    	$result['status'] = 1;
+	    	$this->ajaxreturn($result);
+	    }
+	}
+
+	
 }
