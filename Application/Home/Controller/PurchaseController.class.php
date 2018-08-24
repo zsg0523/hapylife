@@ -25,12 +25,12 @@ class PurchaseController extends HomeBaseController{
             }
         }
     }
-	
-	/**
-	* 主界面
-	**/
-	public function main(){
-		$iuid  = $_SESSION['user']['id'];
+    
+    /**
+    * 主界面
+    **/
+    public function main(){
+        $iuid  = $_SESSION['user']['id'];
         $find  = M('User')->where(array('iuid'=>$iuid))->find();
         $type  = trim($find['distributortype']);
         $mtype = trim($find['customertype']);
@@ -48,14 +48,14 @@ class PurchaseController extends HomeBaseController{
         }
         // p($data);die;
         $this->assign('product',$data);
-		$this->display();
-	}
+        $this->display();
+    }
 
 
-	/**
-	* 购买礼包
-	**/
-	public function purchase(){
+    /**
+    * 购买礼包
+    **/
+    public function purchase(){
         $iuid  = $_SESSION['user']['id'];
         $find  = M('User')->where(array('iuid'=>$iuid))->find();
         $type  = trim($find['distributortype']);
@@ -103,15 +103,15 @@ class PurchaseController extends HomeBaseController{
             $data = $products;
         }
         $this->assign('product',$data);
-		$this->display();
-	}
+        $this->display();
+    }
 
 
-	/**
-	* 会籍激活记录
-	**/
-	public function activaction(){
-		$iuid     = $_SESSION['user']['id'];
+    /**
+    * 会籍激活记录
+    **/
+    public function activaction(){
+        $iuid     = $_SESSION['user']['id'];
         $orderTime= D('User')->where(array('iuid'=>$iuid))->getfield('OrderDate');
         if($orderTime){
             $date     = date('Y-m',time());
@@ -176,11 +176,11 @@ class PurchaseController extends HomeBaseController{
         }
         $data = D('Activation')->where(array('iuid'=>$iuid))->select();
         $this->assign('data',$data);
-		$this->display();
-	}
+        $this->display();
+    }
 
 
-	/**
+    /**
     * 我的订单列表
     **/
     public function myOrder(){
@@ -200,81 +200,81 @@ class PurchaseController extends HomeBaseController{
         $this->display();
     }
     /**
-	* 订单详情
-	**/
-	public function myOrderInfo(){
+    * 订单详情
+    **/
+    public function myOrderInfo(){
         $ir_receiptnum = I('get.ir_receiptnum'); 
-		$data = M('Receipt')
-				->alias('r')
-				->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
-				->join('hapylife_product hp on hr.ipid=hp.ipid')
-				->where(array('r.ir_receiptnum'=>$ir_receiptnum))
-				->find();
+        $data = M('Receipt')
+                ->alias('r')
+                ->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
+                ->join('hapylife_product hp on hr.ipid=hp.ipid')
+                ->where(array('r.ir_receiptnum'=>$ir_receiptnum))
+                ->find();
         $data['receiptson'] = D('Receiptson')->where(array('status'=>2,'ir_receiptnum'=>$ir_receiptnum))->select();
-		$this->assign('data',$data);
-//		p($data);
-		$this->display();
-	}
+        $this->assign('data',$data);
+//      p($data);
+        $this->display();
+    }
 
 
-	/**
-	* 删除订单
-	**/
-	public function delete_order(){
-		//订单号
-		$order_num  = I('get.ir_receiptnum');
-	    $result = M('receipt')->where(array('ir_receiptnum'=>$order_num))->delete();
-	    if($result){
-	    	redirect($_SERVER['HTTP_REFERER']);
-	    }else{
-	    	$this->error('删除失败');
-	    }
-	}
+    /**
+    * 删除订单
+    **/
+    public function delete_order(){
+        //订单号
+        $order_num  = I('get.ir_receiptnum');
+        $result = M('receipt')->where(array('ir_receiptnum'=>$order_num))->delete();
+        if($result){
+            redirect($_SERVER['HTTP_REFERER']);
+        }else{
+            $this->error('删除失败');
+        }
+    }
 
 
-	/**
-	* 个人资料
-	**/
-	public function myProfile(){
-		$iuid = $_SESSION['user']['id'];
-		$data = D('User')->where(array('iuid'=>$iuid))->find();
-		$right= D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Right'))->select();
-		$left = D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Left'))->select();
+    /**
+    * 个人资料
+    **/
+    public function myProfile(){
+        $iuid = $_SESSION['user']['id'];
+        $data = D('User')->where(array('iuid'=>$iuid))->find();
+        $right= D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Right'))->select();
+        $left = D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Left'))->select();
         //right右脚、left左脚
-		if($right){
-			$data['right'] = count($right);
-		}else{
-			$data['right'] = 0;
-		}
-		if($left){
-			$data['left'] = count($left);
-		}else{
-			$data['left'] = 0;
-		}
-		// p($data);die;
-		$this->assign('userinfo',$data);
-		$this->display();
-	}
+        if($right){
+            $data['right'] = count($right);
+        }else{
+            $data['right'] = 0;
+        }
+        if($left){
+            $data['left'] = count($left);
+        }else{
+            $data['left'] = 0;
+        }
+        // p($data);die;
+        $this->assign('userinfo',$data);
+        $this->display();
+    }
 
-	/**
-	* 购买详情
-	**/
-	public function purchaseInfo(){
-		$ipid = I('get.ipid');
-		// p($ipid);die;
+    /**
+    * 购买详情
+    **/
+    public function purchaseInfo(){
+        $ipid = I('get.ipid');
+        // p($ipid);die;
         $data = M('Product')
-			  ->where(array('ipid'=>$ipid))
-			  ->find();
-		$this->assign('data',$data);
-		$this->display();
-	}
+              ->where(array('ipid'=>$ipid))
+              ->find();
+        $this->assign('data',$data);
+        $this->display();
+    }
 
 
-	/**
-	* 生成订单
-	**/
-	public function order(){
-		$iuid = $_SESSION['user']['id'];
+    /**
+    * 生成订单
+    **/
+    public function order(){
+        $iuid = $_SESSION['user']['id'];
         $ipid = trim(I('get.ipid'));
         //商品信息
         $product = M('Product')->where(array('ipid'=>$ipid))->find();
@@ -374,7 +374,7 @@ class PurchaseController extends HomeBaseController{
         }else{
             $this->error('订单生成失败');
         }
-	}
+    }
 
     //购买产品IPS支付
     public function ipsPayment(){
@@ -523,7 +523,6 @@ class PurchaseController extends HomeBaseController{
                             );
                         $data    = json_encode($data);
                         $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/addCoupon";
-                        // $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/addCoupon";
                         $result  = post_json_data($sendUrl,$data);
                         $back_msg = json_decode($result['result'],true);
                         if($back_msg['status']){
@@ -578,73 +577,73 @@ class PurchaseController extends HomeBaseController{
         }
     }
 
-	/**
+    /**
     * 购买产品畅捷支付
     **/
     public function cjPayment(){
         //订单号
-		$order_num  = I('get.ir_receiptnum');
+        $order_num  = I('get.ir_receiptnum');
         // p($order_num);die;
         $order      = M('Receiptson')->where(array('pay_receiptnum'=>$order_num))->find();
         // p($order);die;
         // p($order);die;
-		$postData                      = array();	
-		// 基本参数
-		$postData['Service']           = 'nmg_quick_onekeypay';
-		$postData['Version']           = '1.0';
-		// $postData['PartnerId']         = '200001280051';//商户号
-		$postData['PartnerId']         = '200001380239';//商户号
-		$postData['InputCharset']      = 'UTF-8';
-		$postData['TradeDate']         = date('Ymd').'';
-		$postData['TradeTime']         = date('His').'';
-		$postData['ReturnUrl']         = 'http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/getPayUrl?ir_receiptnum='.$order_num;// 前台跳转url
-		$postData['Memo']              = '备注';
-		// 4.4.2.8. 直接支付请求接口（畅捷前台） 业务参数++++++++++++++++++
-		$postData['TrxId']             = $order_num; //外部流水号
-		$postData['SellerId']          = '200001380239'; //商户编号，调用畅捷子账户开通接口获取的子账户编号;该字段可以传入平台id或者平台id下的子账户号;作为收款方使用；与鉴权请求接口中MerchantNo保持一致
-		$postData['SubMerchantNo']     = '200001380239'; //子商户，在畅捷商户自助平台申请开通的子商户，用于自动结算
-		$postData['ExpiredTime']       = '48h'; //订单有效期，取值范围：1m～48h。单位为分，如1.5h，可转换为90m。用来标识本次鉴权订单有效时间，超过该期限则该笔订单作废
-		$postData['MerUserId']         = $order['riuid']; //用户标识
-		$postData['BkAcctTp']          = ''; //卡类型（00 –银行贷记账户;01 –银行借记账户;）
-		// $postData['BkAcctNo']       =   rsaEncrypt('XXXXX'); //卡号
-		$postData['BkAcctNo']          = ''; //卡号
-		$postData['IDTp']              = ''; //证件类型，01：身份证
-		//$postData['IDNo']            =   rsaEncrypt('XXXX'); //证件号
-		$postData['IDNo']              = ''; //证件号
-		// $postData['CstmrNm']        =   rsaEncrypt('XX'); //持卡人姓名
-		$postData['CstmrNm']           = ''; //持卡人姓名
-		// $postData['MobNo']          =   rsaEncrypt('XXXXX'); //银行预留手机号
-		$postData['MobNo']             = ''; //银行预留手机号		
-		$postData['CardCvn2']          = rsaEncrypt(''); //CVV2码，当卡类型为信用卡时必填
-		$postData['CardExprDt']        = rsaEncrypt(''); //有效期，当卡类型为信用卡时必填
-		$postData['TradeType']         = '11'; //交易类型（即时 11 担保 12）
-		$postData['TrxAmt']            = $order['ir_price']; //交易金额
-		$postData['EnsureAmount']      = ''; //担保金额
-		$postData['OrdrName']          = '商品名称'; //商品名称
-		$postData['OrdrDesc']          = ''; //商品详情
-		$postData['RoyaltyParameters'] = '';      //"[{'userId':'13890009900','PID':'2','account_type':'101','amount':'100.00'},{'userId':'13890009900','PID':'2','account_type':'101','amount':'100.00'}]"; //退款分润账号集
-		$postData['NotifyUrl']         = 'http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/notifyVerify';//异步通知地址
-		$postData['AccessChannel']     = 'wap';//用户终端类型；web,wap
-		$postData['Extension']         = '';//扩展字段s
-		$postData['Sign']              = rsaSign($postData);
-		$postData['SignType']          = 'RSA'; //签名类型		
-		$query                         = http_build_query($postData);
-		$url                           = 'https://pay.chanpay.com/mag-unify/gateway/receiveOrder.do?'. $query; //该url为生产环境url
-		$data['url']                   = $url;
+        $postData                      = array();   
+        // 基本参数
+        $postData['Service']           = 'nmg_quick_onekeypay';
+        $postData['Version']           = '1.0';
+        // $postData['PartnerId']         = '200001280051';//商户号
+        $postData['PartnerId']         = '200001380239';//商户号
+        $postData['InputCharset']      = 'UTF-8';
+        $postData['TradeDate']         = date('Ymd').'';
+        $postData['TradeTime']         = date('His').'';
+        $postData['ReturnUrl']         = 'http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/getPayUrl?ir_receiptnum='.$order_num;// 前台跳转url
+        $postData['Memo']              = '备注';
+        // 4.4.2.8. 直接支付请求接口（畅捷前台） 业务参数++++++++++++++++++
+        $postData['TrxId']             = $order_num; //外部流水号
+        $postData['SellerId']          = '200001380239'; //商户编号，调用畅捷子账户开通接口获取的子账户编号;该字段可以传入平台id或者平台id下的子账户号;作为收款方使用；与鉴权请求接口中MerchantNo保持一致
+        $postData['SubMerchantNo']     = '200001380239'; //子商户，在畅捷商户自助平台申请开通的子商户，用于自动结算
+        $postData['ExpiredTime']       = '48h'; //订单有效期，取值范围：1m～48h。单位为分，如1.5h，可转换为90m。用来标识本次鉴权订单有效时间，超过该期限则该笔订单作废
+        $postData['MerUserId']         = $order['riuid']; //用户标识
+        $postData['BkAcctTp']          = ''; //卡类型（00 –银行贷记账户;01 –银行借记账户;）
+        // $postData['BkAcctNo']       =   rsaEncrypt('XXXXX'); //卡号
+        $postData['BkAcctNo']          = ''; //卡号
+        $postData['IDTp']              = ''; //证件类型，01：身份证
+        //$postData['IDNo']            =   rsaEncrypt('XXXX'); //证件号
+        $postData['IDNo']              = ''; //证件号
+        // $postData['CstmrNm']        =   rsaEncrypt('XX'); //持卡人姓名
+        $postData['CstmrNm']           = ''; //持卡人姓名
+        // $postData['MobNo']          =   rsaEncrypt('XXXXX'); //银行预留手机号
+        $postData['MobNo']             = ''; //银行预留手机号      
+        $postData['CardCvn2']          = rsaEncrypt(''); //CVV2码，当卡类型为信用卡时必填
+        $postData['CardExprDt']        = rsaEncrypt(''); //有效期，当卡类型为信用卡时必填
+        $postData['TradeType']         = '11'; //交易类型（即时 11 担保 12）
+        $postData['TrxAmt']            = $order['ir_price']; //交易金额
+        $postData['EnsureAmount']      = ''; //担保金额
+        $postData['OrdrName']          = '商品名称'; //商品名称
+        $postData['OrdrDesc']          = ''; //商品详情
+        $postData['RoyaltyParameters'] = '';      //"[{'userId':'13890009900','PID':'2','account_type':'101','amount':'100.00'},{'userId':'13890009900','PID':'2','account_type':'101','amount':'100.00'}]"; //退款分润账号集
+        $postData['NotifyUrl']         = 'http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/notifyVerify';//异步通知地址
+        $postData['AccessChannel']     = 'wap';//用户终端类型；web,wap
+        $postData['Extension']         = '';//扩展字段s
+        $postData['Sign']              = rsaSign($postData);
+        $postData['SignType']          = 'RSA'; //签名类型      
+        $query                         = http_build_query($postData);
+        $url                           = 'https://pay.chanpay.com/mag-unify/gateway/receiveOrder.do?'. $query; //该url为生产环境url
+        $data['url']                   = $url;
         header("Location:".$url);
     }
 
     //购买产品畅捷返回结果
     public function notifyVerify(){
         //I('post')，$_POST 无法获取API post过来的字符串数据
-		$jsonStr = file_get_contents("php://input");
-		//写入服务器日志文件
-		$log     = logTest($jsonStr);
-		$data    = explode('&', $jsonStr);
-		//签名数据会被转码，需解码urldecode
-		foreach ($data as $key => $value) {
-			$temp = explode('=', $value);
-			$map[$temp[0]]=urldecode(trim($temp[1]));
+        $jsonStr = file_get_contents("php://input");
+        //写入服务器日志文件
+        $log     = logTest($jsonStr);
+        $data    = explode('&', $jsonStr);
+        //签名数据会被转码，需解码urldecode
+        foreach ($data as $key => $value) {
+            $temp = explode('=', $value);
+            $map[$temp[0]]=urldecode(trim($temp[1]));
         }
         // $map['outer_trade_no'] = '20180808104800320253';
         $receipt = M('Receiptson')->where(array('pay_receiptnum'=>$map['outer_trade_no']))->find();
@@ -807,23 +806,6 @@ class PurchaseController extends HomeBaseController{
                         $status['ia_name']   = $userinfo['shopaddress1'];
                     }
                     if($upreceipt){ 
-                        // 发送短信提示
-                        $templateId ='178959';
-                        $params     = array($receipt['ir_receiptnum'],$receiptlist['product_name']);
-                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                        if($sms['errmsg'] == 'OK'){
-                            $contents = array(
-                                        'acnumber' => $userinfo['acnumber'],
-                                        'phone' => $userinfo['phone'],
-                                        'operator' => '系统',
-                                        'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                                        'product_name' => $receiptlist['product_name'],
-                                        'date' => time(),
-                                        'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$receiptlist['product_name'].'，支付成功。',
-                                        'customerid' => $userinfo['customerid']
-                            );
-                            $logs = M('SmsLog')->add($contents);
-                        }   
                         $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$order['ir_receiptnum']);
                         if($tmpeArr['password']){
                             $usa    = new \Common\UsaApi\Usa;
@@ -878,7 +860,7 @@ class PurchaseController extends HomeBaseController{
                                         'phone' => $userinfo['phone'],
                                         'operator' => '系统',
                                         'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                                        'product_name' => '',
+                                        'product_name' => $receiptlist['product_name'],
                                         'date' => time(),
                                         'content' => '订单编号：'.$receipt['ir_receiptnum'].'，收到付款'.$receiptson['ir_price'].'，总共已支付'.$total.'剩余需支付'.$sub,
                                         'customerid' => $userinfo['customerid']
@@ -888,7 +870,7 @@ class PurchaseController extends HomeBaseController{
                     }
                 }
             }
-		}
+        }
     }
     /**
     *
@@ -1187,18 +1169,18 @@ class PurchaseController extends HomeBaseController{
 
 // ***********我的积分**************
     /**
-	* 我的积分
+    * 我的积分
     **/
     public function myPoint(){
-    	$iuid = $_SESSION['user']['id'];
-    	$data = M('User')->where(array('iuid'=>$iuid))->find();
-    	$log  = M('Log')->where(array('iuid'=>$iuid,'type'=>1))->order('create_time DESC')->limit(50)->select();
-    	$assign = array(
-    				'data' => $data,
-    				'log' => $log
-    			);
-    	$this->assign($assign);
-    	$this->display();
+        $iuid = $_SESSION['user']['id'];
+        $data = M('User')->where(array('iuid'=>$iuid))->find();
+        $log  = M('Log')->where(array('iuid'=>$iuid,'type'=>1))->order('create_time DESC')->limit(50)->select();
+        $assign = array(
+                    'data' => $data,
+                    'log' => $log
+                );
+        $this->assign($assign);
+        $this->display();
     }
 
     /**
@@ -1220,10 +1202,10 @@ class PurchaseController extends HomeBaseController{
     }
 
     /**
-	* 返回用户名称
+    * 返回用户名称
     **/ 
     public function checkName(){
-    	$CustomerID = strtoupper(I('post.CustomerID'));
+        $CustomerID = strtoupper(I('post.CustomerID'));
         $data = M('User')->where(array('CustomerID'=>$CustomerID))->find();
         if($data){
             $data['status'] = 1;
@@ -1254,7 +1236,7 @@ class PurchaseController extends HomeBaseController{
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
         $password = md5(trim(I('post.password')));
         if($userinfo['password'] != $password){
-        	$this->error('密码错误',U('Home/Purchase/myPoint'));
+            $this->error('密码错误',U('Home/Purchase/myPoint'));
         }else{
             $tohu_nickname  = strtoupper(trim(I('post.CustomerID')));
             $whichApp       = 5;
@@ -1347,7 +1329,7 @@ class PurchaseController extends HomeBaseController{
                             'iuid'           =>$userinfo['iuid'],
                             'pointNo'        =>'EP'.date('YmdHis').rand(10000, 99999),
                             'hu_username'    =>$userinfo['lastname'].$userinfo['firstname'],
-                        	'hu_nickname'    =>$userinfo['customerid'],
+                            'hu_nickname'    =>$userinfo['customerid'],
                             'getpoint'       =>$point,
                             'feepoint'       =>0,
                             'realpoint'      =>$point,
