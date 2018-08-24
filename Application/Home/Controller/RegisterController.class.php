@@ -375,6 +375,7 @@ class RegisterController extends HomeBaseController{
         }
         // $map['outer_trade_no'] = '20180808104800320253';
         $receipt = M('Receiptson')->where(array('pay_receiptnum'=>$map['outer_trade_no']))->find();
+        $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();
         $cjPayStatus = M('Receiptson')->where(array('pay_receiptnum'=>$map['outer_trade_no']))->save($map);
         //验签
         $return = rsaVerify($map);
@@ -531,8 +532,27 @@ class RegisterController extends HomeBaseController{
                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
                         $tmpeArr['password'] = $userinfo['wvpass'];
                         $status['ia_name']   = $userinfo['shopaddress1'];
+                        // 总共已经支付金额
+                        $total = bcsub($receipt['ir_price'],$sub,2);
+                        // 发送短信提示
+                        $templateId ='178957';
+                        $params     = array($receipt['ir_receiptnum'],$receiptson['ir_price'],$total,$sub);
+                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                        if($sms['errmsg'] == 'OK'){
+                            $contents = array(
+                                'acnumber' => $userinfo['acnumber'],
+                                'phone' => $userinfo['phone'],
+                                'operator' => '系统',
+                                'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                'product_name' => $receiptlist['product_name'],
+                                'date' => time(),
+                                'content' => '订单编号：'.$receipt['ir_receiptnum'].'，收到付款'.$receiptson['ir_price'].'，总共已支付'.$total.'剩余需支付'.$sub,
+                                'customerid' => $userinfo['customerid']
+                            );
+                            $logs = M('SmsLog')->add($contents);
+                        }
                     }
-                    if($upreceipt){    
+                    if($upreceipt){
                         $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$order['ir_receiptnum']);
                         $usa    = new \Common\UsaApi\Usa;
                         $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
@@ -541,7 +561,8 @@ class RegisterController extends HomeBaseController{
                             $maps = json_decode($result['result'],true);
                             $wv  = array(
                                         'wvCustomerID' => $maps['wvCustomerID'],
-                                        'wvOrderID'    => $maps['wvOrderID']
+                                        'wvOrderID'    => $maps['wvOrderID'],
+                                        'Products'     => 'DTP1'
                                     );
                             $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                             if($res){
@@ -549,7 +570,6 @@ class RegisterController extends HomeBaseController{
                                 $params     = array();
                                 $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                 if($sms['errmsg'] == 'OK'){
-                                    $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();
                                     $contents = array(
                                                 'acnumber' => $userinfo['acnumber'],
                                                 'phone' => $userinfo['phone'],
@@ -560,6 +580,7 @@ class RegisterController extends HomeBaseController{
                                                 'content' => '恭喜您注册成功，请注意查收邮件'
                                     );
                                     $logs = M('SmsLog')->add($contents);
+                                    
                                 }
                             }
                         }
@@ -574,153 +595,6 @@ class RegisterController extends HomeBaseController{
                     $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
                 }
             }
-        }
-    }
-
-    /**
-    * 二维码获取
-    * @param ir_status 0待付款 1待审核 2已支付待发货 3已发货待收货 4已收货待评价 5已评价完成 6审核未通过
-    **/
-    public function getQrcode(){
-        //订单号
-        $ir_receiptnum  = I('post.ir_receiptnum')?I('post.ir_receiptnum'):date('YmdHis').rand(10000, 99999);
-        //用户iuid
-        $iuid           = I('post.iuid');
-        //订单信息查询
-        $order          = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
-
-        // wsdl模式访问wsdl程序
-        $client = new \SoapClient("https://pay.hkipsec.com/webservice/GetQRCodeWebService.asmx?wsdl",
-            array(
-                'trace' => true,
-                'exceptions' => true,
-                'stream_context'=>stream_context_create(array('ssl' => array('verify_peer'=>false,
-                        'verify_peer_name'  => false,
-                        'allow_self_signed' => true,
-                        'cache_wsdl' => WSDL_CACHE_NONE,
-                        )
-                    )
-                )
-            ));
-
-        //E0001904
-        // $merchantcert = "GB30j0XP0jGZPVrJc6G69PCLsmPKNmDiISNvrXc0DB2c7uLLFX9ah1zRYHiXAnbn68rWiW2f4pSXxAoX0eePDCaq3Wx9OeP0Ao6YdPDJ546R813x2k76ilAU8a3m8Sq0";
-        //E000404
-        $merchantcert = "1mtfZAJ3sGPc22Vq20LUaJ9Z8w0S8BBP3Jc5uJkwM7v7099nbmwwvVfICu7CkQVGea9JzzVIpzh3xb9YNmRvpp47DtTam7lWCF20aPOBrDgVOCvAL9PXZ91P6bff6U6H";
-
-        try{
-             // $merAccNo       = 'E0001904';
-            $merAccNo       = "E0004004";
-            $orderId        = $ir_receiptnum;
-            $fee_type       = "CNY";
-            $amount         = $order['ir_price'];
-            $goodsInfo      = "Product";
-            $strMerchantUrl = "http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/getResponse";
-            $cert           = $merchantcert;
-            $signMD5        = "merAccNo".$merAccNo."orderId".$orderId."fee_type".$fee_type."amount".$amount."goodsInfo".$goodsInfo."strMerchantUrl".$strMerchantUrl."cert".$cert;
-            $signMD5_lower = strtolower(md5($signMD5));
-
-            $para = array(
-                'merAccNo'      => $merAccNo,
-                'orderId'       => $orderId,
-                'fee_type'      => $fee_type,
-                'amount'        => $amount,
-                'goodsInfo'     => $goodsInfo,
-                'strMerchantUrl'=> $strMerchantUrl,
-                'signMD5'       => $signMD5_lower
-            );
-
-            $result      = $client->GetQRCodeXml($para);
-            //对象操作
-            $xmlstr      = $result->GetQRCodeXmlResult;
-            //构造SimpleXMLEliement对象
-            $xml         = new \SimpleXMLElement($xmlstr);
-            //微信支付链接
-            $code_url    = (string)$xml->code_url;
-            $return_code = (string)$xml->return_code;
-            $return_msg  = (string)$xml->return_msg;
-
-            //返回数据
-            $para['code_url'] = $code_url;
-            $para['return_code'] = $return_code;
-            $para['return_msg'] = $return_msg;
-
-            $this->ajaxreturn($para);
-            
-        }catch(SoapFault $f){
-            echo "Error Message:{$f->getMessage()}";
-        }
-    }
-    
-
-    /**
-    * 支付成功订单状态修改
-    * @param ir_status 0待付款 1待审核 2已支付待发货 3已发货待收货 4已收货待评价 5已评价完成 6审核未通过
-    **/
-    public function getResponse(){
-        //获取ips回调数据
-        $data = I('post.');
-
-        //写入日志记录
-        $jsonStr = json_encode($data);
-        $log     = logTest($jsonStr);
-        
-        //查询订单信息
-        $receipt = M('Receiptson')->where(array('pay_receiptnum'=>$data['billno']))->find();
-
-        //支付返回数据验证,是否支付成功验证
-        if($data['succ'] == 'Y'){
-            //签名验证
-            //订单数量&订单金额
-            if($data['amount'] == $receipt['ir_price']){                
-                //修改订单状态
-                $map = array(
-                    'ir_paytype' =>1,
-                    'status'  =>2,
-                    'paytime'=>time(),
-                    'ips_trade_no' => $data['ipsbillno'],
-                    'ips_trade_status' => $data['msg']
-                );
-                $change_orderstatus = M('Receiptson')->where(array('pay_receiptnum'=>$data['billno']))->save($map);
-                if($change_orderstatus){
-                    $order   = D('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();  
-                    $OrderDate         = date("Y-m-d",strtotime("-1 month",time()));
-                    $subnum= bcsub($order['ir_unpaid'],$receipt['ir_price'],2);
-                    if($subnum=='0.00'){
-                        $sub      = 0;
-                        $unp      = 0;
-                        $ir_status= 2;
-                        $ir_paytime = time();
-                    }else{
-                        $sub      = $subnum;
-                        $unp      = bcdiv($sub,100,4);
-                        $ir_status= 202;
-                        $ir_paytime = 0;
-                    }
-                    if($sub==0){
-                        $addactivation     = D('Activation')->addAtivation($OrderDate,$receipt['riuid'],$receipt['ir_receiptnum']);
-                    }
-                    $status  = array(
-                        'ir_status'  =>$ir_status,
-                        'ir_unpaid'  =>$sub,
-                        'ir_unpoint' =>$unp,
-                        'ir_paytime' =>$ir_paytime,
-                    );
-                    //更新订单信息
-                    $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
-                    $data['status'] = 1;
-                    $this->ajaxreturn($data);
-                }else{
-                    $data['status'] = 0;
-                    $this->ajaxreturn($data);  
-                }
-            }else{
-                $data['status'] = 0;
-                $this->ajaxreturn($data);         
-            }
-        }else{
-            $data['status'] = 0;
-            $this->ajaxreturn($data);
         }
     }
 
@@ -915,6 +789,11 @@ class RegisterController extends HomeBaseController{
         $cu_id = I('get.cu_id');
         $hu_nickname = I('get.hu_nickname');
         $htid = I('get.htid');
+        $is_dt = M('CouponUser')
+                    ->alias('u')
+                    ->join('nulife_coupon_groups AS g ON u.cg_id = g.gid')
+                    ->where(array('u.cu_id'=>$cu_id))
+                    ->getfield('is_dt');
         $userinfo = M('Tempuser')->where(array('htid'=>$htid))->find();
         $keyword= 'HPL';
         $custid = D('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
@@ -1075,11 +954,21 @@ class RegisterController extends HomeBaseController{
                         if(!empty($result['result'])){
                             $log = addUsaLog($result['result']);
                             $maps = json_decode($result['result'],true);
-                            $wv  = array(
-                                        'wvCustomerID' => $maps['wvCustomerID'],
-                                        'wvOrderID'    => $maps['wvOrderID'],
-                                        'DistributorType' => 'Platinum',
-                                    );
+                            if(!empty($is_dt)){
+                                $wv  = array(
+                                    'wvCustomerID' => $maps['wvCustomerID'],
+                                    'wvOrderID'    => $maps['wvOrderID'],
+                                    'DistributorType' => 'Platinum',
+                                    'Products'      => 'DTP2',
+                                );
+                            }else{
+                                $wv  = array(
+                                    'wvCustomerID' => $maps['wvCustomerID'],
+                                    'wvOrderID'    => $maps['wvOrderID'],
+                                    'DistributorType' => 'Platinum',
+                                    'Products'      => 'DTP3',
+                                );
+                            }
                             $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
                             if($res){
                                 $templateId ='164137';
