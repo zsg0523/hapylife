@@ -195,6 +195,7 @@ class PurchaseController extends HomeBaseController{
                 ->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
                 ->join('hapylife_product hp on hr.ipid=hp.ipid')
                 ->where($map)
+                ->order('r.ir_date DESC')
                 ->select();
         $this->assign('data',$data);
         $this->display();
@@ -885,13 +886,13 @@ class PurchaseController extends HomeBaseController{
             if($order['htid']){
                 $this->redirect('Home/Register/new_regsuccess',array('ir_receiptnum'=>$order['ir_receiptnum']));
             }else{
-                $this->redirect('Home/Purchase/center');  
+                $this->redirect('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$order['ir_receiptnum']));  
             }
         }else{
             if($order['ir_ordertype'] == 1){
-                $this->redirect('Home/Pay/choosePay1',array('ir_unpoint'=>$order['ir_unpoint'],'ir_price'=>$order['ir_price'],'ir_point'=>$order['ir_point'],'ir_unpaid'=>$order['ir_unpaid'],'ir_receiptnum'=>$ir_receiptnum));
+                $this->redirect('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$order['ir_receiptnum']));
             }else{
-                $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$order['ir_unpoint'],'ir_price'=>$order['ir_price'],'ir_point'=>$order['ir_point'],'ir_unpaid'=>$order['ir_unpaid'],'ir_receiptnum'=>$ir_receiptnum));
+                $this->redirect('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$order['ir_receiptnum']));
             }
         }
      }

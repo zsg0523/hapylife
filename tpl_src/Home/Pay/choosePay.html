@@ -62,7 +62,7 @@
 				</div>
 				<p class="tc" id="havaEP">您的EP:</p>
 				<p class="tc">合计:&nbsp;&nbsp;￥<i id="money">{:I('get.ir_price')}</i>&nbsp;&nbsp;EP&nbsp;<span id="point">{:I('get.ir_point')}</span></p>				
-				<p class="tc">待付款:&nbsp;&nbsp;￥<i id="money">{:I('get.ir_unpaid')}</i>&nbsp;&nbsp;EP&nbsp;<span id="point">{:I('get.ir_unpoint')}</span></p>
+				<p class="tc">待付款:&nbsp;&nbsp;￥<i id="unmoney">{:I('get.ir_unpaid')}</i>&nbsp;&nbsp;EP&nbsp;<span id="point">{:I('get.ir_unpoint')}</span></p>
 			</div>
 			<div class="addCart tc" onclick="topay()">去付款</div>
 		</form>
@@ -131,11 +131,12 @@
 		function topay(){
 			var form=$('#paymentInfo');
 			var ir_unpaid=$("#ir_unpaid").val();
+			ir_unpaid=parseFloat(ir_unpaid);
 			var typevalue=$(":radio[name='ip_paytype']:checked").val();
-			var money=$('#money').text();
+			var money=$('#unmoney').text();
 			if(typevalue==2){
-				if(parseFloat(ir_unpaid)<=parseFloat(mypoint)){
-					if(ir_unpaid>=(money*0.0025)){
+				if(ir_unpaid<=parseFloat(mypoint)){
+					if(ir_unpaid>=(money*0.0025).toFixed(2)){
 				 		form.submit();
 				 	}else{
 				 		alert('付款金额须大于未付款的25%')
@@ -145,7 +146,7 @@
 				}
 			
 			}else{
-			 	if(ir_unpaid>=(money*0.25)){
+			 	if(ir_unpaid>=(money*0.25).toFixed(2)){
 			 		form.submit();
 			 	}else{
 			 		alert('付款金额须大于未付款的25%')

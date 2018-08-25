@@ -31,7 +31,11 @@
 					</div>
 				</div>
 				<div class="col-md-12 rg-btn" >
-					<a href="{:U('Home/Index/login',array('iuid'=>$iuid))}" class="btn btn-block btn-info">立即登录</a>
+					<if condition="empty($cu_id) eq true">
+						<a href="{:U('Home/Index/login',array('iuid'=>$iuid))}" class="btn btn-block btn-info">立即登录</a>
+					<else />
+						<a href="{:U('Home/Purchase/center')}" class="btn btn-block btn-info">返回中心</a>
+					</if>
 				</div>
 			</div>
 		</div>

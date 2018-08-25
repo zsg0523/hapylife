@@ -122,16 +122,34 @@ class HapylifeCouponController extends HomeBaseController{
 	**/ 
 	public function checkCoupon(){
 		$hu_nickname = I('post.hu_nickname');
-		$data = array(
-				'hu_nickname' => $hu_nickname,
-			);
-		$data    = json_encode($data);
-		$sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/checkCoupon";
-		$result  = post_json_data($sendUrl,$data);
-		$back_result = json_decode($result['result'],true);
-		if($back_result['result']){
-			$map['status'] = 1;
-			$this->ajaxreturn($map);
+		$userinfo = M('User')->where(array('CustomerID'=>$hu_nickname))->find();
+		if(substr($userinfo['customerid'],0,3) == 'HPL' && $userinfo['distributortype'] == 'Pc'){
+			$data = array(
+					'hu_nickname' => $hu_nickname,
+				);
+			$data    = json_encode($data);
+			$sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/checkCoupon";
+			$result  = post_json_data($sendUrl,$data);
+			$back_result = json_decode($result['result'],true);
+			if($back_result['couponStatus'] && $back_result['coupon']){
+				foreach ($back_result['coupon'] as $key => $value) {
+					if($value['is_dt']==1){
+						$DT1[] = $value;
+					}else{
+						$DT0[] = $value;
+					}
+				}
+				if($DT1){
+					$map['cu_id'] = $DT1[0]['cu_id'];
+				}else{
+					$map['cu_id'] = $DT0[0]['cu_id'];
+				}
+				$map['status'] = 1;
+				$this->ajaxreturn($map);
+			}else{
+				$map['status'] = 0;
+				$this->ajaxreturn($map);
+			}
 		}else{
 			$map['status'] = 0;
 			$this->ajaxreturn($map);
