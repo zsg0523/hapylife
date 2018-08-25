@@ -101,24 +101,6 @@ class HapylifeCouponController extends HomeBaseController{
 	    	$this->ajaxreturn($data);
 		}
 	}
-	/**
-	 * [registByCoupon description]
-	 * @return [type] [description]
-	 */
-	public function registByCoupon(){
-		$jsonStr = file_get_contents("php://input");
-	    //写入服务器日志文件
-		$log    = addUsaLog($jsonStr);
-		$data   = json_decode($jsonStr,true);
-		$map    = array(
-				'registByCoupon'=>1
-			);
-		$result = M('User')->where(array('CustomerID'=>$data['hu_nickname']))->save($map);
-	    if($result){
-	    	$result['status'] = 1;
-	    	$this->ajaxreturn($result);
-	    }
-	}
 
 	/**
 	* 将用户数据存储在临时用户表
@@ -133,5 +115,26 @@ class HapylifeCouponController extends HomeBaseController{
 	    	$result['status'] = 1;
 	    	$this->ajaxreturn($result);
 	    }
+	}
+
+	/**
+	* 通过用户账号查询是否有注册券
+	**/ 
+	public function checkCoupon(){
+		$hu_nickname = I('post.hu_nickname');
+		$data = array(
+				'hu_nickname' => $hu_nickname,
+			);
+		$data    = json_encode($data);
+		$sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/checkCoupon";
+		$result  = post_json_data($sendUrl,$data);
+		$back_result = json_decode($result['result'],true);
+		if($back_result['result']){
+			$map['status'] = 1;
+			$this->ajaxreturn($map);
+		}else{
+			$map['status'] = 0;
+			$this->ajaxreturn($map);
+		}
 	}
 }
