@@ -92,7 +92,7 @@
 				success:function(ret){
 //					console.log(ret);
 					var havaEP=$('#havaEP');
-					mypoint=havaEP;
+					mypoint=ret.userinfo.iu_point;
 					havaEP.text('您的EP:'+ret.userinfo.iu_point);
     				if(ret.status==1){
                         if(ret.ispullamount==1){
