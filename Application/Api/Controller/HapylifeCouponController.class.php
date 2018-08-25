@@ -101,24 +101,6 @@ class HapylifeCouponController extends HomeBaseController{
 	    	$this->ajaxreturn($data);
 		}
 	}
-	/**
-	 * [registByCoupon description]
-	 * @return [type] [description]
-	 */
-	public function registByCoupon(){
-		$jsonStr = file_get_contents("php://input");
-	    //写入服务器日志文件
-		$log    = addUsaLog($jsonStr);
-		$data   = json_decode($jsonStr,true);
-		$map    = array(
-				'registByCoupon'=>1
-			);
-		$result = M('User')->where(array('CustomerID'=>$data['hu_nickname']))->save($map);
-	    if($result){
-	    	$result['status'] = 1;
-	    	$this->ajaxreturn($result);
-	    }
-	}
 
 	/**
 	* 将用户数据存储在临时用户表
