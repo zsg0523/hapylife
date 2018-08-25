@@ -101,22 +101,21 @@ class HapylifeCouponController extends HomeBaseController{
 	    	$this->ajaxreturn($data);
 		}
 	}
-
 	/**
-	* 将用户数据存储在临时用户表
-	**/ 
-	public function addUserInfo(){
+	 * [registByCoupon description]
+	 * @return [type] [description]
+	 */
+	public function registByCoupon(){
 		$jsonStr = file_get_contents("php://input");
 	    //写入服务器日志文件
-	    $log     = addUsaLog($jsonStr);
-	    $data    = json_decode($jsonStr,true);
-	    $addUserInfo = M('Tempuser')->add($data['data']);
-	    if($addUserInfo){
+		$log    = addUsaLog($jsonStr);
+		$data   = json_decode($jsonStr,true);
+		$result = M('User')->where(array('CustomerID'=>$data['hu_nickname']))->setField('registByCoupon',1);
+	    if($result){
 	    	$result['status'] = 1;
 	    	$this->ajaxreturn($result);
 	    }
 	}
-
 	/**
 	* 通过用户账号查询是否有注册券
 	**/ 
