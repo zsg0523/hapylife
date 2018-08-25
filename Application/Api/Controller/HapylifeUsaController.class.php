@@ -8,43 +8,15 @@ use Common\Controller\HomeBaseController;
 **/
 class HapylifeUsaController extends HomeBaseController{
 
-	public function testUsaClass(){
-		$iuid     = I('post.iuid');
-		$password = I('post.password');
-		$userinfo = M('User')->where(array('iuid'=>$iuid))->find();
-		$usa      = new \Common\UsaApi\Usa;
-		$result   = $usa->createCustomer($userinfo['customerid'],$password,$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
-		p($userinfo);
-		p($result);
-        if(!empty($result['result'])){
-        	$map = json_decode($result['result'],true);
-            $wv  = array(
-						'wvCustomerID' => $map['wvCustomerID'],
-						'wvOrderID'    => $map['wvOrderID']
-                    );
-            $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
-            if($res){
-            	$templateId='164137';
-            	$params = array();
-				$sms    = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-				p($sms);
-            }else{
-            	echo 'false';
-            }
-        }else{
-        	echo 'error';
-        }
-	}
-
 
 	public function _initialize(){
 		// production 生产环境配置
-		$this->key = "KDHE5011CVFO1KJEP1A0S";
-		$this->url = "https://signupapi.wvhservices.com";
+		// $this->key = "KDHE5011CVFO1KJEP1A0S";
+		// $this->url = "https://signupapi.wvhservices.com";
 
 		// qa 沙盒环境
-		// $this->key = "QACER3H5T6HGYDCCDAZM3";
-		// $this->url = "https://signupapi-qa.wvhservices.com";
+		$this->key = "QACER3H5T6HGYDCCDAZM3";
+		$this->url = "https://signupapi-qa.wvhservices.com";
 	}
 	
 	/**
@@ -89,13 +61,31 @@ class HapylifeUsaController extends HomeBaseController{
 		$map      = I('post.');
 		$key      = $this->key;
 		$url      = $this->url;
-		 https://signupapi-qa.wvhservices.com/api/hpl/customer/hpl0001/lineageactivity?key=<wv提供給HapyLife的key> -H "accept: application/json"
-		$data     = $url."/api/hpl/customer/".$map['CustomerID']."/lineageactivity?key=<QACER3H5T6HGYDCCDAZM3>";
-		p($data);die;
+		$data     = $url."/api/hpl/customer/".$map['CustomerID']."/lineageactivity?key=".$key;
 		$wv       = file_get_contents($data);
 		$userinfo = json_decode($wv,true);
         $this->ajaxreturn($userinfo);
 	}
+
+
+	/**
+	* PLACEMENT VERIFICATION
+	* @param customerId: id to validate
+	* @param key: your secret key
+	* HPL00000254
+	**/
+	public function placement(){
+		$map      = I('post.');
+		$key      = $this->key;
+		$url      = $this->url;
+		$data     = $url."/api/hpl/customer/".$map['CustomerID']."/placementposition?key=".$key;
+		$wv       = file_get_contents($data);
+		$userinfo = json_decode($wv,true);
+        $this->ajaxreturn($userinfo);
+	}
+
+
+
 
 	/**
 	* CREATE CUSTOMER

@@ -16,18 +16,18 @@
       
 		.main{width: 100%;height:auto;}
 		.pageDetial{width: 100%;height:auto;position: relative;}
-		.icon{width: 120px;height: 120px;}
-		.icon>img{height: 120px;position: absolute;left: 50%;margin-left: -60px;}
-		.title{height: 80px;font-size:14px;display: block;}
+		.icon{width: 240;height: 240px;}
+		.icon>img{height: 240px;position: absolute;left: 50%;margin-left: -120px;}
+		.title{height: 80px;font-size:16px;display: block;}
 		.title>span{width:100%;height: 40px;display:block;text-align: center;float: left;line-height: 40px;}
-		.title>i{width:100%;height: 40px;display:block;font-style:normal;text-align: center;float: left;line-height: 40px;}
+		.title>i{width:100%;color: red;font-weight: bold; height: 40px;display:block;font-style:normal;text-align: center;float: left;line-height: 40px;font-size: 18px;}
 		.link{width: 100%;height: 40px;position: relative;margin-top: 40px;}
 		.link>a{height: 40px;font-size: 15px;text-align:center;display: block;line-height:40px;background-color: #439DFE;color:#fff;}
 		
 		
       /*手机*/
       @media screen and (max-width: 768px){
-        .icon>img{width: 120px;position: absolute;left: 50%;margin-left: -60px;}
+        .icon>img{width: 240px;position: absolute;left: 50%;margin-left: -120px;}
         .title{width: 100%;}
         .link>a{width: 100%;}
       }
@@ -35,7 +35,7 @@
       @media screen and (min-width: 768px){
       	
         
-        .icon>img{width: 120px;}
+       .icon>img{width: 240px;position: absolute;left: 50%;margin-left: -120px;}
         .title{width: 360px; position: absolute;left: 50%;margin-left: -180px;}
         .link>a{width: 360px;position: absolute;left: 50%;margin-left: -180px;}
         
@@ -43,7 +43,7 @@
         /*中等屏幕*/
       @media screen and (min-width: 992px){
    
-        .icon>img{width: 120px;}
+        .icon>img{width: 240px;position: absolute;left: 50%;margin-left: -120px;}
         .title{width: 360px; position: absolute;left: 50%;margin-left: -180px;}
         .link>a{width: 360px;position: absolute;left: 50%;margin-left: -180px;}
        
@@ -52,7 +52,7 @@
       /*大屏幕*/
       @media screen and (min-width: 1200px){
    
-        .icon>img{width:120px;}
+        .icon>img{width:240px;}
         .title{width: 360px;}
         .link>a{width: 360px;position: absolute;left: 50%;margin-left: -180px;}
    
@@ -63,7 +63,7 @@
 <body>
 	
 	<div class="main container-fluid ">	
-			<h5 style="color: #000;text-align: center;margin-top: 100px;">注:请使用微信扫码支付！！！</h3>
+			<h5 style="color: #000;text-align: center;margin-top: 100px;color: #01d10c;">请使用微信扫码支付</h5>
 			<input type="hidden" id="userid" value="{$Think.session.user.id}" />
 			<input type="hidden" id="ir_receiptnum" value="{:I('get.ir_receiptnum')}" />
 			<div class="pageDetial">
@@ -74,7 +74,12 @@
 					<span id="orderId">订单号：{$data.ip_name_zh}</span>
 					<i id="money">订单金额：￥{$data.ip_price_rmb}</i>
 				</div>
-			</div>		
+			</div>
+			<div style="width: 300px;margin: auto;height: 60px;border: 1px solid #ccc;">
+				<h4 style="text-align: center;">扫码后，处理需时，请耐心等待！</h4>	
+				<h4 style="text-align: center;">如因网络延时，可能需等待一分钟！</h4>
+			</div>
+			
 	</div>
 	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
     <script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>

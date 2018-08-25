@@ -160,7 +160,7 @@ class PayController extends HomeBaseController{
                             // 父订单待支付金额
                             $ir_unpaid = bcsub($receipt['ir_unpaid'],$receiptson['ir_price'],2);
                             // 总共已经支付金额
-                            $total = bcsub($receipt['ir_price'],$receipt['ir_unpaid'],2);
+                            $total = bcsub($receipt['ir_price'],$ir_unpaid,2);
                             // 修改父订单状态
                             if($ir_unpoint != 0 && $ir_unpaid != 0){
                                 $maps = array(
@@ -188,17 +188,18 @@ class PayController extends HomeBaseController{
                                         $logs = M('SmsLog')->add($contents);
                                     }
                                     // 支付完成一部分，获取产品类型
-                                    switch ($ir_ordertype) {
-                                        case '1':
-                                            $this->success('支付成功',U('Home/Pay/choosePay1',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
-                                            break;
-                                        case '3':
-                                            $this->success('支付成功',U('Home/Pay/choosePay',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
-                                            break;
-                                        case '4':
-                                            $this->success('支付成功',U('Home/Pay/choosePay',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
-                                            break;
-                                    }
+                                    // switch ($ir_ordertype) {
+                                    //     case '1':
+                                    //         $this->success('支付成功',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receipt['ir_receiptnum']));
+                                    //         break;
+                                    //     case '3':
+                                    //         $this->success('支付成功',U('Home/Pay/choosePay',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
+                                    //         break;
+                                    //     case '4':
+                                    //         $this->success('支付成功',U('Home/Pay/choosePay',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
+                                    //         break;
+                                    // }
+                                    $this->success('支付成功',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
                                 }
                             }else{
                                 $maps = array(
@@ -373,7 +374,7 @@ class PayController extends HomeBaseController{
                                         $result  = post_json_data($sendUrl,$data);
                                         $back_msg = json_decode($result['result'],true);
                                         if($back_msg['status']){
-                                            $this->success('完成支付',U('Home/Purchase/center'));
+                                            $this->success('完成支付',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receiptson['ir_receiptnum'])));
                                         }
                                     }else{
                                         $userinfo   = D('User')->where(array('iuid'=>$receipt['riuid']))->find();
@@ -396,7 +397,8 @@ class PayController extends HomeBaseController{
                                         $riuid     = $receipt['riuid'];
                                         $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$receipt['ir_receiptnum']);
                                         // 支付完成
-                                        $this->success('完成支付',U('Home/Purchase/center'));
+                                        // $this->success('完成支付',U('Home/Purchase/center'));
+                                        $this->success('完成支付',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
                                     }
                                 }
                             }
@@ -413,6 +415,9 @@ class PayController extends HomeBaseController{
                 case '3':
                     $this->error('积分不足',U('Home/Pay/choosePay',array('ir_unpoint'=>$receipt['ir_unpoint'],'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$receipt['ir_unpaid'],'ir_receiptnum'=>$receipt['ir_receiptnum'])));
                     break;
+                case '4':
+                    $this->error('积分不足',U('Home/Pay/choosePay',array('ir_unpoint'=>$receipt['ir_unpoint'],'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$receipt['ir_unpaid'],'ir_receiptnum'=>$receipt['ir_receiptnum'])));
+                    break;
             }
         }
     }
@@ -422,7 +427,11 @@ class PayController extends HomeBaseController{
     **/ 
     public function getReceipt(){
         $ir_receiptnum = I('post.ir_receiptnum');
-        $receipt = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
+        $receipt = M('Receipt')
+                        ->alias('r')
+                        ->join('hapylife_product AS p ON r.ipid = p.ipid')
+                        ->where(array('ir_receiptnum'=>$ir_receiptnum))
+                        ->find();
         $userinfo = M('User')->where(array('iuid'=>$receipt['riuid']))->find();
         if($receipt){
             $receipt['status'] = 1;
