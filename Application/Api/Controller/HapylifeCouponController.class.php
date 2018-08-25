@@ -134,6 +134,4 @@ class HapylifeCouponController extends HomeBaseController{
 	    	$this->ajaxreturn($result);
 	    }
 	}
-
-	
 }
