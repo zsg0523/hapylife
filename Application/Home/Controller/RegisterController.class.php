@@ -981,6 +981,7 @@ class RegisterController extends HomeBaseController{
         $assign = array(
                         'data' => $data,
                         'iuid' => $addResult,
+                        'cu_id' => $cu_id,
                         );
         $this->assign($assign);
         $this->display();
@@ -1103,13 +1104,23 @@ class RegisterController extends HomeBaseController{
                                         'product_name' => $receiptlist['product_name'],
                                         'date' => time(),
                                         'content' => '恭喜您注册成功，请注意查收邮件',
-                                        'customerid' => $CustomerID
+                                        'customerid' => $userinfo['customerid']
                             );
                             $logs = M('SmsLog')->add($contents);
+                            if($logs){
+                                $sample['status'] = 1;
+                                $this->ajaxreturn($sample);
+                            }else{
+                                $sample['status'] = 0;
+                                $this->ajaxreturn($sample);
+                            }
                         }
                     }
                 }
             }
+        }else{
+            $sample['status'] = 0;
+            $this->ajaxreturn($sample);
         }
     }
 

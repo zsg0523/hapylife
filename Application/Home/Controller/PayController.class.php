@@ -188,17 +188,18 @@ class PayController extends HomeBaseController{
                                         $logs = M('SmsLog')->add($contents);
                                     }
                                     // 支付完成一部分，获取产品类型
-                                    switch ($ir_ordertype) {
-                                        case '1':
-                                            $this->success('支付成功',U('Home/Pay/choosePay1',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
-                                            break;
-                                        case '3':
-                                            $this->success('支付成功',U('Home/Pay/choosePay',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
-                                            break;
-                                        case '4':
-                                            $this->success('支付成功',U('Home/Pay/choosePay',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
-                                            break;
-                                    }
+                                    // switch ($ir_ordertype) {
+                                    //     case '1':
+                                    //         $this->success('支付成功',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receipt['ir_receiptnum']));
+                                    //         break;
+                                    //     case '3':
+                                    //         $this->success('支付成功',U('Home/Pay/choosePay',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
+                                    //         break;
+                                    //     case '4':
+                                    //         $this->success('支付成功',U('Home/Pay/choosePay',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
+                                    //         break;
+                                    // }
+                                    $this->success('支付成功',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receipt['ir_receiptnum']));
                                 }
                             }else{
                                 $maps = array(
@@ -396,7 +397,8 @@ class PayController extends HomeBaseController{
                                         $riuid     = $receipt['riuid'];
                                         $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$receipt['ir_receiptnum']);
                                         // 支付完成
-                                        $this->success('完成支付',U('Home/Purchase/center'));
+                                        // $this->success('完成支付',U('Home/Purchase/center'));
+                                        $this->success('完成支付',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receipt['ir_receiptnum']));
                                     }
                                 }
                             }
