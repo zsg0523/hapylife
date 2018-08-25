@@ -160,7 +160,7 @@ class PayController extends HomeBaseController{
                             // 父订单待支付金额
                             $ir_unpaid = bcsub($receipt['ir_unpaid'],$receiptson['ir_price'],2);
                             // 总共已经支付金额
-                            $total = bcsub($receipt['ir_price'],$receipt['ir_unpaid'],2);
+                            $total = bcsub($receipt['ir_price'],$ir_unpaid,2);
                             // 修改父订单状态
                             if($ir_unpoint != 0 && $ir_unpaid != 0){
                                 $maps = array(
