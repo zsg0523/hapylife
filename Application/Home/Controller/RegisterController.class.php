@@ -744,10 +744,11 @@ class RegisterController extends HomeBaseController{
         $hu_nickname = I('get.hu_nickname');
         $cu_id = I('get.cu_id');
         $userinfo = M('Tempuser')->where(array('htid'=>$htid))->find();
-        $userinfo['cu_id'] = $cu_id;
-        $userinfo['hu_nickname'] = $hu_nickname;
+        
         $assign = array(
                 'userinfo' => $userinfo,
+                'cu_id' => $cu_id,
+                'hu_nickname' => $hu_nickname,
         );
         $this->assign($assign);
         $this->display();

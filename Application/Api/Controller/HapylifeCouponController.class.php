@@ -123,7 +123,7 @@ class HapylifeCouponController extends HomeBaseController{
 	public function checkCoupon(){
 		$hu_nickname = I('post.hu_nickname');
 		$userinfo = M('User')->where(array('CustomerID'=>$hu_nickname))->find();
-		if(substr($userinfo['customerid'],0,3) == 'HPL' && $userinfo['distributortype'] == 'Pc'){
+		if(substr($userinfo['customerid'],0,3) == 'HPL' && $userinfo['distributortype'] == 'Pc' && empty($userinfo['wvCustomerID'])){
 			$data = array(
 					'hu_nickname' => $hu_nickname,
 				);

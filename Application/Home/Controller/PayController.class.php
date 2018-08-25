@@ -199,7 +199,7 @@ class PayController extends HomeBaseController{
                                     //         $this->success('支付成功',U('Home/Pay/choosePay',array('ir_unpoint'=>$ir_unpoint,'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$ir_unpaid,'ir_receiptnum'=>$receipt['ir_receiptnum'])));
                                     //         break;
                                     // }
-                                    $this->success('支付成功',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receipt['ir_receiptnum']));
+                                    $this->success('支付成功',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
                                 }
                             }else{
                                 $maps = array(
@@ -374,7 +374,7 @@ class PayController extends HomeBaseController{
                                         $result  = post_json_data($sendUrl,$data);
                                         $back_msg = json_decode($result['result'],true);
                                         if($back_msg['status']){
-                                            $this->success('完成支付',U('Home/Purchase/center'));
+                                            $this->success('完成支付',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receiptson['ir_receiptnum'])));
                                         }
                                     }else{
                                         $userinfo   = D('User')->where(array('iuid'=>$receipt['riuid']))->find();
@@ -398,7 +398,7 @@ class PayController extends HomeBaseController{
                                         $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$receipt['ir_receiptnum']);
                                         // 支付完成
                                         // $this->success('完成支付',U('Home/Purchase/center'));
-                                        $this->success('完成支付',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receipt['ir_receiptnum']));
+                                        $this->success('完成支付',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
                                     }
                                 }
                             }
