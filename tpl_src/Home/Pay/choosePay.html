@@ -92,7 +92,7 @@
 				success:function(ret){
 //					console.log(ret);
 					var havaEP=$('#havaEP');
-					mypoint=havaEP;
+					mypoint=ret.userinfo.iu_point;
 					havaEP.text('您的EP:'+ret.userinfo.iu_point);
     				if(ret.status==1){
                         if(ret.ispullamount==1){
@@ -152,6 +152,7 @@
 			 	}
 			}
 		}
+		parseFloat($("#ir_unpaid").val())-()($('#unmoney').text()*0.0025).toFixed(2));
 
 	</script>  
 </body>  
