@@ -744,7 +744,7 @@ class RegisterController extends HomeBaseController{
         $hu_nickname = I('get.hu_nickname');
         $cu_id = I('get.cu_id');
         $userinfo = M('Tempuser')->where(array('htid'=>$htid))->find();
-        
+
         $assign = array(
                 'userinfo' => $userinfo,
                 'cu_id' => $cu_id,
@@ -851,7 +851,7 @@ class RegisterController extends HomeBaseController{
                     $product = M('Product')->where(array('ipid'=>$ipid))->find();
                     //生成唯一订单号
                     $order_num = 'CP'.date('YmdHis').rand(10000, 99999);
-                    $con = '买四送一';
+                    $con = $product['ip_name_zh'];
                     $order = array(
                         //订单编号
                         'ir_receiptnum' =>$order_num,
@@ -1007,7 +1007,7 @@ class RegisterController extends HomeBaseController{
             $product = M('Product')->where(array('ipid'=>$ipid))->find();
             //生成唯一订单号
             $order_num = 'CP'.date('YmdHis').rand(10000, 99999);
-            $con = '买四送一';
+            $con = $product['ip_name_zh'];
             $order = array(
                 //订单编号
                 'ir_receiptnum' =>$order_num,
