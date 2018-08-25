@@ -413,6 +413,9 @@ class PayController extends HomeBaseController{
                 case '3':
                     $this->error('积分不足',U('Home/Pay/choosePay',array('ir_unpoint'=>$receipt['ir_unpoint'],'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$receipt['ir_unpaid'],'ir_receiptnum'=>$receipt['ir_receiptnum'])));
                     break;
+                case '4':
+                    $this->error('积分不足',U('Home/Pay/choosePay',array('ir_unpoint'=>$receipt['ir_unpoint'],'ir_price'=>$receipt['ir_price'],'ir_point'=>$receipt['ir_point'],'ir_unpaid'=>$receipt['ir_unpaid'],'ir_receiptnum'=>$receipt['ir_receiptnum'])));
+                    break;
             }
         }
     }
@@ -424,7 +427,7 @@ class PayController extends HomeBaseController{
         $ir_receiptnum = I('post.ir_receiptnum');
         $receipt = M('Receipt')
                         ->alias('r')
-                        ->join('hapylife_product AS p ON r.ipid = g.ipid')
+                        ->join('hapylife_product AS p ON r.ipid = p.ipid')
                         ->where(array('ir_receiptnum'=>$ir_receiptnum))
                         ->find();
         $userinfo = M('User')->where(array('iuid'=>$receipt['riuid']))->find();

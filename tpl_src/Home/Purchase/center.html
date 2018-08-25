@@ -145,7 +145,7 @@
 	var socket = io('http://120.77.206.79:2120');
 	// uid 可以为网站用户的uid，作为例子这里用customerId代替
 	// var uid = $("input[name='username']").val();
-	 var uid = $("input[name='username']").val();
+	var uid = $("input[name='username']").val();
 	//console.log(uid);
 	// console.log(sessionId);
 	// 当socket连接后发送登录请求
@@ -162,17 +162,17 @@
 		
 	}
 	function getRegistbycoupon(){
-		var iuid=$("input[name='userid']").val();
+		var hu_nickname=$("input[name='username']").val();
 		$.ajax({
 			type:"post",
-			url:"{:U('Api/HapylifeApi/userinfo')}",
+			url:"{:U('Api/HapylifeCoupon/checkCoupon')}",
 			async:true, 
 			dataType: 'json',
 			data:{
-				iuid:iuid,
+				hu_nickname:hu_nickname,
 			},
 			success:function(ret){
-				if(ret.registbycoupon==1){
+				if(ret.status==1){
 					$("#usereg").css('display','block');
 				}else{
 					$("#usereg").css('display','none');
