@@ -851,7 +851,7 @@ class RegisterController extends HomeBaseController{
                     $product = M('Product')->where(array('ipid'=>$ipid))->find();
                     //生成唯一订单号
                     $order_num = 'CP'.date('YmdHis').rand(10000, 99999);
-                    $con = $product['ip_name_zh'];
+                    $con = $product['ip_name_zh'].$back_result['coupon_code'];
                     $order = array(
                         //订单编号
                         'ir_receiptnum' =>$order_num,
@@ -1007,7 +1007,7 @@ class RegisterController extends HomeBaseController{
             $product = M('Product')->where(array('ipid'=>$ipid))->find();
             //生成唯一订单号
             $order_num = 'CP'.date('YmdHis').rand(10000, 99999);
-            $con = $product['ip_name_zh'];
+            $con = $product['ip_name_zh'].$back_result['coupon_code'];
             $order = array(
                 //订单编号
                 'ir_receiptnum' =>$order_num,
