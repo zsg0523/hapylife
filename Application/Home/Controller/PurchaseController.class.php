@@ -195,6 +195,7 @@ class PurchaseController extends HomeBaseController{
                 ->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
                 ->join('hapylife_product hp on hr.ipid=hp.ipid')
                 ->where($map)
+                ->order('r.ir_date DESC')
                 ->select();
         $this->assign('data',$data);
         $this->display();
@@ -885,7 +886,7 @@ class PurchaseController extends HomeBaseController{
             if($order['htid']){
                 $this->redirect('Home/Register/new_regsuccess',array('ir_receiptnum'=>$order['ir_receiptnum']));
             }else{
-                $this->redirect('Home/Purchase/center');  
+                $this->redirect('Home/Purchase/myOrder');  
             }
         }else{
             if($order['ir_ordertype'] == 1){

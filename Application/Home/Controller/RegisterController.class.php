@@ -988,8 +988,7 @@ class RegisterController extends HomeBaseController{
 
     // 有券注册
     public function hadCoupon(){
-        // $iuid = $_SESSION['user']['id'];
-        $iuid = I('post.iuid');
+        $iuid = $_SESSION['user']['id'];
         $cu_id = I('post.cu_id');
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
         $data = array(
@@ -997,8 +996,7 @@ class RegisterController extends HomeBaseController{
                     'cu_id' => $cu_id,
                 );
         $data    = json_encode($data);
-        // $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/use_coupon";
-        $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/use_coupon";
+        $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/use_coupon";
         $results  = post_json_data($sendUrl,$data);
         $back_result = json_decode($results['result'],true);
         if($back_result['status']){
