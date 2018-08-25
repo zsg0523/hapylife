@@ -129,30 +129,16 @@ class RegisterController extends HomeBaseController{
     public function checkName(){
         $customerid = strtoupper(trim(I('post.EnrollerID')));
         if($customerid){
-            if(substr($customerid,0,3) == 'HPL'){
-                $data = M('User')->where(array('CustomerID'=>$customerid))->find();
-                if(!empty($data)){
-                    $this->ajaxreturn($data);     
-                }else{
-                    $data['status'] = 0;
-                    $this->ajaxreturn($data);           
-                }
+            $usa  = new \Common\UsaApi\usa;
+            $map = $usa->validateHpl($customerid);
+            if(empty($map['errors'])){
+                $data['lastname'] = $data['lastName'];
+                $data['firstname'] = $data['firstName'];
+                $this->ajaxreturn($data);     
             }else{
-                $key      = "KDHE5011CVFO1KJEP1A0S";
-                $url      = "https://signupapi.wvhservices.com/api/Hpl/Validate?customerId=".$customerid."&"."key=".$key;
-                $wv       = file_get_contents($url);
-                $data = json_decode($wv,true);
-                if(empty($data['error'])){
-                    $data['lastname'] = $data['lastName'];
-                    $data['firstname'] = $data['firstName'];
-                    $this->ajaxreturn($data);     
-                }else{
-                    $data['status'] = 0;
-                    $this->ajaxreturn($data);           
-                }
+                $this->ajaxreturn($data);           
             }
         }else{
-            $data['status'] = 0;
             $this->ajaxreturn($data);           
         }
     }
@@ -553,13 +539,13 @@ class RegisterController extends HomeBaseController{
                                 $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                 if($sms['errmsg'] == 'OK'){
                                     $contents = array(
-                                                'acnumber' => $userinfo['acnumber'],
-                                                'phone' => $userinfo['phone'],
-                                                'operator' => '系统',
-                                                'addressee' => $status['ia_name'],
+                                                'acnumber'     => $userinfo['acnumber'],
+                                                'phone'        => $userinfo['phone'],
+                                                'operator'     => '系统',
+                                                'addressee'    => $status['ia_name'],
                                                 'product_name' => $receiptlist['product_name'],
-                                                'date' => time(),
-                                                'content' => '恭喜您注册成功，请注意查收邮件'
+                                                'date'         => time(),
+                                                'content'      => '恭喜您注册成功，请注意查收邮件'
                                     );
                                     $logs = M('SmsLog')->add($contents);
                                 }
