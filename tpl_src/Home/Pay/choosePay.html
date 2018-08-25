@@ -135,7 +135,7 @@
 			var typevalue=$(":radio[name='ip_paytype']:checked").val();
 			var money=$('#money').text();
 			if(typevalue==2){
-				if(ir_unpaid<=mypoint){
+				if(parseFloat(ir_unpaid)<=parseFloat(mypoint)){
 					if(ir_unpaid>=(money*0.0025)){
 				 		form.submit();
 				 	}else{
