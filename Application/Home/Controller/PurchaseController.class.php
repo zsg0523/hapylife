@@ -886,7 +886,7 @@ class PurchaseController extends HomeBaseController{
             if($order['htid']){
                 $this->redirect('Home/Register/new_regsuccess',array('ir_receiptnum'=>$order['ir_receiptnum']));
             }else{
-                $this->redirect('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$order['ir_receiptnum']));  
+                $this->redirect('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$order['ir_receiptnum']));
             }
         }else{
             if($order['ir_ordertype'] == 1){
