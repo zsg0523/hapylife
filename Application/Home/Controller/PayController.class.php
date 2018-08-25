@@ -424,7 +424,7 @@ class PayController extends HomeBaseController{
         $ir_receiptnum = I('post.ir_receiptnum');
         $receipt = M('Receipt')
                         ->alias('r')
-                        ->join('hapylife_product AS p ON r.ipid = g.ipid')
+                        ->join('hapylife_product AS p ON r.ipid = p.ipid')
                         ->where(array('ir_receiptnum'=>$ir_receiptnum))
                         ->find();
         $userinfo = M('User')->where(array('iuid'=>$receipt['riuid']))->find();
