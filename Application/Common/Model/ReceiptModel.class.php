@@ -192,31 +192,22 @@ class ReceiptModel extends BaseModel{
      * @param  string   $ir_receiptnum   父订单号
      * @return array            分页数据
      */
-    public function getSendPageSonAll($model){
-        $count=$model
-            ->alias('r')
-            ->join('hapylife_user u on r.riuid = u.iuid')
-            ->where(array('ir_status'=>array('in','2,3,4')))
-            ->count();
-        // p($count);die;
-        $page=new_page($count,$limit);
+    public function getSendPageSonAll($model,$word,$starttime,$endtime,$ir_status,$timeType,$order='',$limit=50,$field=''){
         // 获取分页数据
         if (empty($field)) {
             $list=$model
                 ->alias('r')
                 ->join('hapylife_user u on r.riuid = u.iuid')
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
                 ->order('ir_paytime desc')
-                ->limit($page->firstRow.','.$page->listRows)
-                ->where(array('ir_status'=>array('in','2,3,4')))
                 ->select();
         }else{
             $list=$model
                 ->alias('r')
                 ->join('hapylife_user u on r.riuid = u.iuid')
                 ->field($field)
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
                 ->order('ir_paytime desc')
-                ->limit($page->firstRow.','.$page->listRows)
-                ->where(array('ir_status'=>array('in','2,3,4')))
                 ->select();         
         }
         foreach ($list as $key => $value) {
@@ -278,7 +269,6 @@ class ReceiptModel extends BaseModel{
 
         $data=array(
             'data'=>$mape,
-            'page'=>$page->show()
             );
         return $data;
     }
@@ -287,10 +277,12 @@ class ReceiptModel extends BaseModel{
     * 送货单导出excel
     **/
     public function export_send_excel($data){
-        $title   = array('用户ID','订单号','订单状态','产品信息','订单总价','订货人','收货人','收货地址','收货人电话','创建日期','创建时间','支付日期','支付时间','发货日期','送达日期');
+        $title   = array('用户ID','订单号','订单状态','流水号','流水方式','产品信息','订单总价','订货人','收货人','收货地址','收货人电话','创建日期','创建时间','支付日期','支付时间','发货日期','送达日期');
         foreach ($data as $k => $v) {
             $content[$k]['rcustomerid']      = $v['rcustomerid'];
             $content[$k]['ir_receiptnum']    = $v['ir_receiptnum'];
+            $content[$k]['receiptson']  = $v['receiptson'];
+            $content[$k]['paytype']  = $v['paytype'];
             switch ($v['ir_status']) {
                 case '0':
                     $content[$k]['ir_status'] = '待付款';
