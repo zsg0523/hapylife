@@ -41,7 +41,7 @@ class ReceiptsonModel extends BaseModel{
                 ->limit($page->firstRow.','.$page->listRows)
                 ->select();         
         }
-        p($list);
+        // p($list);
         foreach ($list as $key => $value) {
             $ia_address = '';
             $mape[$key] = $value;

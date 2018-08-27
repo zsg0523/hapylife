@@ -546,12 +546,119 @@ class HapylifeController extends AdminBaseController{
 	public function receiptSon(){
 		$ir_receiptnum = I('get.ir_receiptnum');
 		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum);
-		p($assign);
-		die;
+		// p($assign);
+		// die;
 		$this->assign($assign);
 		$this->display();
 	}
-
+	/**
+	**添加明细
+	*/
+	public function addReceiptSon(){
+		$tmpe      = I('post.');
+		$session   = session();
+		$password  = md5($tmpe['password']);
+		$receiptnum= date('YmdHis').rand(100000, 999999);
+        $admin     = D('Admin')->where(array('id'=>$session['user']['id']))->find();
+        $receipt   = D('Receipt')->where(array('ir_receiptnum'=>$tmpe['ir_receiptnum']))->find();
+        $userinfo  = D('User')->where(array('iuid'=>$receipt['riuid']))->find();
+        if($admin && $admin['password']==$password){
+        	if($tmpe['ir_paytype']==2){
+        		$point = $tmpe['ir_price'];
+        		$price = bcmul($tmpe['ir_price'],10,2);
+        	}else{
+        		$price = $tmpe['ir_price'];
+        		$point = bcdiv($tmpe['ir_price'],10,2);
+        	}
+        	$data = array(
+        		'operator'      =>$session['user']['username'],
+        		'ir_receiptnum' =>$tmpe['ir_receiptnum'],
+        		'riuid'         =>$receipt['riuid'],
+        		'pay_receiptnum'=>$receiptnum,
+        		'ir_paytype'    =>$tmpe['ir_paytype'],
+        		'ir_price'      =>$price,
+        		'ir_point'      =>$point,
+        		'status'        =>2,
+        		'cretime'       =>time(),
+        		'paytime'       =>time()
+        	);
+        	$add = D('Receiptson')->addData($data);
+        	if($add){
+        		$unpaind = bcsub($receipt['ir_unpaid'],$price,2);
+        		$unpoint = bcsub($receipt['ir_unpoint'],$point,2);
+        		$mape    = array('ir_unpaid'=>$unpaind,'ir_unpoint'=>$unpoint,'ir_paytime'=>time());
+        		if($unpoint == 0 && $unpoint==0){
+        			$mape['ir_status'] = 2;
+        		}else{
+        			$mape['ir_status'] = 202;
+        		}
+    			$save    = D('receipt')->where(array('ir_receiptnum'=>$tmpe['ir_receiptnum']))->save($mape);	
+        		if($save){
+        			if($unpoint == 0 && $unpoint==0){
+                        // 发送短信提示
+                        $templateId ='178959';
+                        $params     = array($receiptnum,$receipt['ir_desc']);
+                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                        if($sms['errmsg'] == 'OK'){
+                            $contents = array(
+                                'acnumber' => $userinfo['acnumber'],
+                                'phone' => $userinfo['phone'],
+                                'operator' => '系统',
+                                'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                'product_name' => $receipt['ir_desc'],
+                                'date' => time(),
+                                'content' => '订单编号：'.$receiptnum.'，产品：'.$receipt['ir_desc'].'，支付成功。',
+                                'customerid' => $userinfo['customerid']
+                            );
+                            $logs = M('SmsLog')->add($contents);
+                        }
+                        if($receipt['ir_ordertype'] == 4){
+                            // 添加通用券
+                            $product= M('Receipt')
+                                    ->alias('r')
+                                    ->join('hapylife_product AS p ON r.ipid = p.ipid')
+                                    ->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))
+                                    ->find();
+                            $data = array(
+                                    'product' => $product,
+                                    'userinfo' => $userinfo,
+                                );
+                            $data    = json_encode($data);
+                            $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/addCoupon";
+                            // $sendUrl = "http://192.168.33.10/testnulife/index.php/Api/Couponapi/addCoupon";
+                            $result  = post_json_data($sendUrl,$data);
+                            // $back_msg = json_decode($result['result'],true);
+                        }
+                    }else{
+                        // 共总支付
+                        $total = bcsub($receipt['ir_unpaid'],$unpaind,2);
+                        // 发送短信提示
+                        $templateId ='178957';
+                        $params     = array($receiptnum,$receipt['ir_price'],$total,$unpaind);
+                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                        if($sms['errmsg'] == 'OK'){
+                            $contents = array(
+                                'acnumber' => $userinfo['acnumber'],
+                                'phone' => $userinfo['phone'],
+                                'operator' => '系统',
+                                'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                'product_name' => '',
+                                'date' => time(),
+                                'content' => '订单编号：'.$receiptnum.'，收到付款'.$receiptson['ir_price'].'，总共已支付'.$total.'剩余需支付'.$unpaind,
+                                'customerid' => $userinfo['customerid']
+                            );
+                            $logs = M('SmsLog')->add($contents);
+                        }
+                    }
+        		}
+        		$this->success('添加成功');
+        	}else{
+				$this->error('添加失败');
+        	}
+        }else{
+        	$this->error('管理员密码错误');
+        }
+	}
 	/**
 	* 订单修改
 	**/
