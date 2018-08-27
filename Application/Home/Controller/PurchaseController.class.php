@@ -92,7 +92,7 @@ class PurchaseController extends HomeBaseController{
                 break;
         }  
         $array   = array('HPL00000181','HPL00123539');
-        $arrayTo = array('61338465','64694832','65745561','HPL00123556','61751610','61624356');
+        $arrayTo = array('61338465','64694832','65745561','HPL00123556','61751610','61624356','61695777','68068002');
         if(in_array($find['customerid'],$array)){
             $an_pro = M('Product')->where(array('ip_type'=>4,'is_pull'=>0))->select();
             $product = array_merge($products,$an_pro);
@@ -313,9 +313,9 @@ class PurchaseController extends HomeBaseController{
                 $con = '买四送一单';
                 break;
         }
-        if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
-            $this->error('请先填写个人信息的地区和详细地址');
-        }
+        // if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
+        //     $this->error('请先填写个人信息的地区和详细地址');
+        // }
         $ia_name  = $userinfo['lastname'].$userinfo['firstname'];
         $order = array(
             //订单编号
