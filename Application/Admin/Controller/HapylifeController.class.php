@@ -520,7 +520,7 @@ class HapylifeController extends AdminBaseController{
 		$order_status    = I('get.status')-1;
 		if($order_status== -1){
 			//所有订单
-			$status = '0,1,2,3,4,5,7,8';
+			$status = '0,1,2,3,4,5,7,8,202';
 		}else{
 			$status = (string)$order_status;
 		}
@@ -530,7 +530,9 @@ class HapylifeController extends AdminBaseController{
 		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$starttime,$endtime,$status,$order='ir_date desc',$timeType);
 		//导出excel
 		if($excel == 'excel'){
-			$data = D('Receiptson')->getSendPageSonE(D('Receiptson'));
+			$data = D('Receiptson')->getSendPageSonE(D('Receiptson'),$word,$starttime,$endtime,$status,$order='cretime desc',$timeType);
+			p($data);
+			die;
 			$export_excel = D('Receiptson')->export_excel($data['data']);
 		}else{
 			$this->assign($assign);
@@ -545,9 +547,8 @@ class HapylifeController extends AdminBaseController{
 	//查看订单明细
 	public function receiptSon(){
 		$ir_receiptnum = I('get.ir_receiptnum');
-		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum);
-		// p($assign);
-		// die;
+		$field = '*,rs.ir_price as r_price,rs.ir_point as r_point';
+		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum,$field);
 		$this->assign($assign);
 		$this->display();
 	}
@@ -925,7 +926,7 @@ class HapylifeController extends AdminBaseController{
 		// die;
 		// 导出excel
 		if($excel == 'excel'){
-			$data = D('Receipt')->getSendPageSonAll(D('Receipt'));
+			$data = D('Receipt')->getSendPageSonAll(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime asc');
 			// p($data);die;
 			$export_send_excel = D('Receipt')->export_send_excel($data['data']);
 		}else{
@@ -943,7 +944,8 @@ class HapylifeController extends AdminBaseController{
 	//查看订单明细
 	public function sendReceiptSon(){
 		$ir_receiptnum = I('get.ir_receiptnum');
-		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum);
+		$field = '*,rs.ir_price as r_price,rs.ir_point as r_point';
+		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum,$field);
 		// p($assign);
 		$this->assign($assign);
 		$this->display();
