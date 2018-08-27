@@ -566,10 +566,10 @@ class HapylifeController extends AdminBaseController{
         if($admin && $admin['password']==$password){
         	if($tmpe['ir_paytype']==2){
         		$point = $tmpe['ir_price'];
-        		$price = bcmul($tmpe['ir_price'],10,2);
+        		$price = bcmul($tmpe['ir_price'],100,2);
         	}else{
         		$price = $tmpe['ir_price'];
-        		$point = bcdiv($tmpe['ir_price'],10,2);
+        		$point = bcdiv($tmpe['ir_price'],100,2);
         	}
         	$data = array(
         		'operator'      =>$session['user']['username'],
