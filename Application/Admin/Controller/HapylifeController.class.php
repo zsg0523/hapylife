@@ -562,7 +562,7 @@ class HapylifeController extends AdminBaseController{
 		$receiptnum= date('YmdHis').rand(100000, 999999);
         $admin     = D('Admin')->where(array('id'=>$session['user']['id']))->find();
         $receipt   = D('Receipt')->where(array('ir_receiptnum'=>$tmpe['ir_receiptnum']))->find();
-        $userinfo  = D('User')->where(array('iuid'=>$receipt['riuid']))->find();
+        $userinfo  = D('User')->where(array('CustomerID'=>$receipt['rcustomerid']))->find();
         if($admin && $admin['password']==$password){
         	if($tmpe['ir_paytype']==2){
         		$point = $tmpe['ir_price'];
