@@ -192,10 +192,10 @@ class PurchaseController extends HomeBaseController{
     * 我的订单列表
     **/
     public function myOrder(){
-        $iuid = $_SESSION['user']['id'];
+        $customerid = $_SESSION['user']['username'];
         $data['status'] = $_SESSION['user']['status'];
         $map  = array(
-                'riuid'=>$iuid,
+                'rCustomerID'=>$customerid,
                 'ir_status'=>array('in','2,3,4,5,202')
             );
         $data = M('Receipt')
@@ -205,6 +205,7 @@ class PurchaseController extends HomeBaseController{
                 ->where($map)
                 ->order('r.ir_date DESC')
                 ->select();
+
         $this->assign('data',$data);
         $this->display();
     }

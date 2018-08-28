@@ -35,11 +35,8 @@
                         <input class='btn btn-sm' type="submit" name='excel' value="excel" />
                 	</form>
 			    </li>
-			    <li>
+			    <li style="margin-left: 5px;">
 					<a href="javascript:;" pId="{$cid}" lId="{$lid}" fieldTitle="" optionA="" optionB="" optionC="" optionD="" onclick="adds(this)">批量添加</a>
-				</li>
-				<li>
-					<a href="javascript:;" onclick="addOne()">单个添加</a>
 				</li>
             </ul>
 		</div>
@@ -233,77 +230,6 @@
 	</div>
 	<!-- 添加菜单模态框结束 -->
 
-	<!-- 添加菜单模态框开始 -->
-	<div class="modal fade" id="bjy-add-one" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			 <div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-						&times;
-					</button>
-					<h4 class="modal-title" id="myModalLabel">
-						单个添加
-					</h4>
-				</div>
-				<div class="modal-body">
-					<form id="bjy-form" class="form-inline" action="{:U('Admin/Hapylife/add_receipt')}" method="post" enctype="multipart/form-data">
-						<table class="table table-striped table-bordered table-hover table-condensed">
-							<tr>
-								<th width="15%">用户账号</th>
-								<td>
-									<input class="input-medium" type="text" name="customerid" placeholder="用户账号">
-								</td>
-							</tr>
-							<tr>
-								<th width="15%">产品价格</th>
-								<td>
-									<input class="input-medium" type="text" name="ir_price" placeholder="产品价格">
-								</td>
-							</tr>
-							<tr>
-								<th width="15%">已支付金额</th>
-								<td>
-									<input class="input-medium" type="text" name="ir_prices" placeholder="订单金额">
-								</td>
-							</tr>
-							<tr>
-								<th width="15%">收货人</th>
-								<td>
-									<input class="input-medium" type="text" name="ia_name" placeholder="收货人">
-								</td>
-							</tr>
-							<tr>
-								<th width="15%">收货人号码</th>
-								<td>
-									<input class="input-medium" type="text" name="ia_phone" placeholder="收货人号码">
-								</td>
-							</tr>
-							<tr>
-								<th width="15%">产品名称</th>
-								<td>
-									<input class="input-medium" type="text" name="product_name" placeholder="产品名称">
-								</td>
-							</tr>
-							<tr>
-								<th width="15%">产品id</th>
-								<td>
-									<input class="input-medium" type="text" name="ipid" placeholder="产品id">
-								</td>
-							</tr>
-							<tr>
-								<th></th>
-								<td>
-									<input class="btn btn-success" type="submit" value="添加">
-								</td>
-							</tr>
-						</table>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- 添加菜单模态框结束 -->
-
 </block>
 <block name="js">
 	<script>
@@ -343,9 +269,5 @@
 		$('#bjy-adds').modal('show');
 	}
 
-	// 单个添加
-	function addOne(){
-		$('#bjy-add-one').modal('show');
-	}
 	</script>
 </block>

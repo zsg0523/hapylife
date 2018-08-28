@@ -692,91 +692,143 @@ class HapylifeController extends AdminBaseController{
 
 	// 批量添加订单
 	public function add_receipt(){
-		if(!empty($_FILES)){
-		 	$upload = post_uploads();
-		 	// 文件名称
-		 	$filename = trim(strrchr($upload['name'], '/'),'/');
-		 	// 截取文件后缀
-		 	$exts = substr($filename,strpos($filename,'.')+1);
-		 	$arr = import_excel($upload['name']);
-		 	$count = count($arr);
-		 	
-		 	for($i=2;$i<=$count;$i++){
-		 		$array = array(
-		 			'riuid' =>'',
-		 			'rCustomerID' => $arr[$i][A],
-		 			'ir_receiptnum' => date('YmdHis').rand(10000, 99999),
-		 			'ir_desc' => $arr[$i][F].'(已在接龙易交付押金'.$arr[$i][C].')',
-		 			'ir_status' => 202,
-		 			'ipid' => $arr[$i][G],
-		 			'ir_productnum' => 1,
-		 			'ir_point' => bcdiv($arr[$i][B],100,2),
-		 			'ir_unpoint' => bcdiv(bcsub($arr[$i][B],$arr[$i][C]),100,2),
-		 			'ir_price' => $arr[$i][B],
-		 			'ir_unpaid' => bcsub($arr[$i][B],$arr[$i][C],2),
-		 			'ia_name' => $arr[$i][D],
-		 			'ia_phone' => $arr[$i][E],
-		 			'ia_address' => '',
-		 			'ir_ordertype' => 4,
-		 			'ir_date' => time(),
-		 			'ir_paytime' => time(),
-		 		);
-		 		$result = M('Receipt')->add($array);
+	 	$upload = post_uploads();
+	 	// 文件名称
+	 	$filename = trim(strrchr($upload['name'], '/'),'/');
+	 	// 截取文件后缀
+	 	$exts = substr($filename,strpos($filename,'.')+1);
+	 	$arr = import_excel($upload['name']);
+	 	$count = count($arr);
 
-		 		$son = array(
-		 			'ir_receiptnum' => date('YmdHis').rand(10000, 99999),
-		 			'pay_receiptnum' => date('YmdHis').rand(100000, 999999),
-		 			'ir_price' => $arr[$i][C],
-		 			'ir_point' => bcdiv($arr[$i][C],100,2),
-		 			'ir_paytype' => 5,
-		 			'cretime' => time(),
-		 			'paytime' => time(),
-		 			'status' => 2,
-		 			'operator' => $_SESSION['user']['username'],
-		 		);
-		 		$res = M('Receiptson')->add($son);
-		 	}
-		}else{
-			$data =I('post.');
-			$array = array(
-	 			'riuid' =>'',
-	 			'rCustomerID' => $data['customerid'],
+	 	foreach($arr as $key=>$value){
+	 		if($key!=1){
+	 			$data[] = $value;
+	 		}
+	 	}
+	 	// p($data);die;
+	 	foreach ($data as $key => $value) {
+	 		$product = M('Product')->where(array('ipid'=>$value[N]))->find();
+	 		$userinfo = M('User')->where(array('CustomerID'=>$value[A]))->find();
+	 		if($value[S] == 0){
+	 			$riuid = $userinfo['iuid'];
+	 			$rCustomerID = $value[A];
+	 		}else if($value[S] == 1){
+	 			//添加新用户
+                $keyword= 'HPL';
+                $custid = M('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
+                if(empty($custid)){
+                    $CustomerID = 'HPL00000001';
+                }else{
+                    $num   = substr($custid,3);
+                    $nums  = $num+1;
+                    $count = strlen($nums);
+                    switch ($count) {
+                        case '1':
+                            $CustomerID = 'HPL0000000'.$nums;
+                            break;
+                        case '2':
+                            $CustomerID = 'HPL000000'.$nums;
+                            break;
+                        case '3':
+                            $CustomerID = 'HPL00000'.$nums;
+                            break;
+                        case '4':
+                            $CustomerID = 'HPL0000'.$nums;
+                            break;
+                        case '5':
+                            $CustomerID = 'HPL000'.$nums;
+                            break;
+                        case '6':
+                            $CustomerID = 'HPL00'.$nums;
+                            break;
+                        case '7':
+                            $CustomerID = 'HPL0'.$nums;
+                            break;
+                        default:
+                            $CustomerID = 'HPL'.$nums;
+                            break;
+                    }
+                }
+                //用户资料
+                $tmpe = array(
+                    'EnrollerID'  =>$value[B],
+                    'Sex'         =>'保密',
+                    'LastName'    =>$value[C],
+                    'FirstName'   =>$value[D],
+                    'Email'       =>$value[M],
+                    'PassWord'    =>md5($value[H]),
+                    'acid'        =>217,
+                    'acnumber'    =>$value[G],
+                    'Phone'       =>$value[H],
+                    'ShopAddress1'=>$value[L],
+                    'ShopArea'    =>$value[K],
+                    'ShopCity'    =>$value[J],
+                    'ShopProvince'=>$value[I],
+                    'ShopCountry' =>'中国',
+                    'EnLastName'  =>$value[E],
+                    'EnFirstName' =>$value[F],
+                    'CustomerID'  =>$CustomerID,
+                    'OrderDate'   =>date("m/d/Y h:i:s A"),
+                    'Number'      =>1,
+                    'TermsAndConditions' =>1,
+                    'JoinedOn'    => time(),
+                    'WvPass' => $value[H],
+                );
+                $update     = M('User')->add($tmpe);
+                $riuid = $update;
+                $rCustomerID = $CustomerID;
+            }
+            $receipt = array(
+	 			'riuid' =>$riuid,
+	 			'rCustomerID' => $rCustomerID,
 	 			'ir_receiptnum' => date('YmdHis').rand(10000, 99999),
-	 			'ir_desc' => $data['product_name'].'(已在接龙易交付押金'.$data['ir_prices'].')',
+	 			'ir_desc' => $product['ip_name_zh'].'(已在接龙易交付押金'.$value[P].')',
 	 			'ir_status' => 202,
-	 			'ipid' => $arr[$i][G],
+	 			'ipid' => $value[N],
 	 			'ir_productnum' => 1,
-	 			'ir_point' => bcdiv($data['ir_price'],100,2),
-	 			'ir_unpoint' => bcdiv(bcsub($data['ir_price'],$data['ir_prices']),100,2),
-	 			'ir_price' => $data['ir_price'],
-	 			'ir_unpaid' => bcsub($data['ir_price'],$data['ir_prices'],2),
-	 			'ia_name' => $data['ia_name'],
-	 			'ia_phone' => $data['ia_phone'],
-	 			'ia_address' => '',
+	 			'ir_point' => bcdiv($value[O],100,2),
+	 			'ir_unpoint' => bcdiv(bcsub($value[O],$value[P]),100,2),
+	 			'ir_price' => $value[O],
+	 			'ir_unpaid' => bcsub($value[O],$value[P],2),
+	 			'ia_name' => $value[C].$value[D],
+	 			'ia_phone' => $value[H],
+	 			'ia_address' => $value[I].$value[J].$value[K].$value[L],
 	 			'ir_ordertype' => 4,
-	 			'ir_date' => time(),
-	 			'ir_paytime' => time(),
+	 			'ir_date' => strtotime(gmdate('Y-m-d H:i:s',\PHPExcel_Shared_Date::ExcelToPHP($value[Q]))),
 	 		);
-	 		$result = M('Receipt')->add($array);
+	 		$receipt_result = M('Receipt')->add($receipt);
 
-	 		$son = array(
+	 		$receiptson = array(
 	 			'ir_receiptnum' => date('YmdHis').rand(10000, 99999),
+	 			'riuid' => $riuid,
 	 			'pay_receiptnum' => date('YmdHis').rand(100000, 999999),
-	 			'ir_price' => $data['ir_prices'],
-	 			'ir_point' => bcdiv($data['ir_prices'],100,2),
+	 			'ir_price' => $value[P],
+	 			'ir_point' => bcdiv($value[P],100,2),
 	 			'ir_paytype' => 5,
-	 			'cretime' => time(),
-	 			'paytime' => time(),
+	 			'cretime' => strtotime(gmdate('Y-m-d H:i:s',\PHPExcel_Shared_Date::ExcelToPHP($value[Q]))),
+	 			'paytime' => strtotime(gmdate('Y-m-d H:i:s',\PHPExcel_Shared_Date::ExcelToPHP($value[Q]))),
 	 			'status' => 2,
 	 			'operator' => $_SESSION['user']['username'],
 	 		);
-	 		$res = M('Receiptson')->add($son);
-		}
-	 	if($result && $res){
-			$this->success('添加成功',U('Admin/Hapylife/receipt'));
-		}else{
-			$this->error('添加失败');
-		}
+	 		$receiptson_result = M('Receiptson')->add($receiptson);
+
+	 		$receiptlist = array(
+	 			'ir_receiptnum' => date('YmdHis').rand(10000, 99999),
+	 			'ipid' => $value[N],
+	 			'ilid' => 0,
+	 			'product_num' => 1,
+	 			'product_price' => $product['ip_price_rmb'],
+	 			'product_point' => $product['ip_point'],
+	 			'product_name' => $product['ip_name_zh'],
+	 			'product_picture' => $product['ip_picture_zh'],
+	 		);
+	 		$receiptlist_result = M('receiptlist')->add($receiptlist);
+	 	}
+	 	if($receipt_result && $receiptson_result && $receiptlist_result){
+	 		$this->success('添加成功',U('Admin/Hapylife/receipt'));
+	 	}else{
+	 		$this->error('添加失败');
+	 	}
 	}
 
 	//**********************用户*********************
