@@ -17,7 +17,7 @@ class ReceiptModel extends BaseModel{
     public function getPage($model,$word,$starttime,$endtime,$status,$order='',$timeType,$limit=20){
         $count=$model
             ->alias('r')
-            ->join('hapylife_user u on r.riuid = u.iuid')
+            ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
             ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
             ->count();
         // p($count);die;
@@ -26,7 +26,7 @@ class ReceiptModel extends BaseModel{
         if (empty($field)) {
             $list=$model
                 ->alias('r')
-                ->join('hapylife_user u on r.riuid = u.iuid')
+                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
                 ->order($order)
                 ->limit($page->firstRow.','.$page->listRows)
                 ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
@@ -34,7 +34,7 @@ class ReceiptModel extends BaseModel{
         }else{
             $list=$model
                 ->alias('r')
-                ->join('hapylife_user u on r.riuid = u.iuid')
+                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
                 ->field($field)
                 ->order($order)
                 ->limit($page->firstRow.','.$page->listRows)

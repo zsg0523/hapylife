@@ -692,29 +692,88 @@ class HapylifeController extends AdminBaseController{
 
 	// 批量添加订单
 	public function add_receipt(){
-	 	$upload = post_uploads();
-	 	// 文件名称
-	 	$filename = trim(strrchr($upload['name'], '/'),'/');
-	 	// 截取文件后缀
-	 	$exts = substr($filename,strpos($filename,'.')+1);
-	 	$arr = import_excel($upload['name']);
-	 	$count = count($arr);
-	 	for($i=1;$i<$count;$i++){
-	 		$array = array(
-	 			'fieldtitle' =>$arr[$i][A],
-	 			'descriptive_option_a' =>$arr[$i][B],
-	 			'descriptive_option_b' =>$arr[$i][C],
-	 			'descriptive_option_c' =>$arr[$i][D],
-	 			'descriptive_option_d' =>$arr[$i][E],
-	 			'option' =>$arr[$i][F],
-	 			'op_num' =>$arr[$i][G],
-	 			'type' => 2,
-	 			'pid' => $data['pid'],
+		if(!empty($_FILES)){
+		 	$upload = post_uploads();
+		 	// 文件名称
+		 	$filename = trim(strrchr($upload['name'], '/'),'/');
+		 	// 截取文件后缀
+		 	$exts = substr($filename,strpos($filename,'.')+1);
+		 	$arr = import_excel($upload['name']);
+		 	$count = count($arr);
+		 	
+		 	for($i=2;$i<=$count;$i++){
+		 		$array = array(
+		 			'riuid' =>'',
+		 			'rCustomerID' => $arr[$i][A],
+		 			'ir_receiptnum' => date('YmdHis').rand(10000, 99999),
+		 			'ir_desc' => $arr[$i][F].'(已在接龙易交付押金'.$arr[$i][C].')',
+		 			'ir_status' => 202,
+		 			'ipid' => $arr[$i][G],
+		 			'ir_productnum' => 1,
+		 			'ir_point' => bcdiv($arr[$i][B],100,2),
+		 			'ir_unpoint' => bcdiv(bcsub($arr[$i][B],$arr[$i][C]),100,2),
+		 			'ir_price' => $arr[$i][B],
+		 			'ir_unpaid' => bcsub($arr[$i][B],$arr[$i][C],2),
+		 			'ia_name' => $arr[$i][D],
+		 			'ia_phone' => $arr[$i][E],
+		 			'ia_address' => '',
+		 			'ir_ordertype' => 4,
+		 			'ir_date' => time(),
+		 			'ir_paytime' => time(),
+		 		);
+		 		$result = M('Receipt')->add($array);
+
+		 		$son = array(
+		 			'ir_receiptnum' => date('YmdHis').rand(10000, 99999),
+		 			'pay_receiptnum' => date('YmdHis').rand(100000, 999999),
+		 			'ir_price' => $arr[$i][C],
+		 			'ir_point' => bcdiv($arr[$i][C],100,2),
+		 			'ir_paytype' => 5,
+		 			'cretime' => time(),
+		 			'paytime' => time(),
+		 			'status' => 2,
+		 			'operator' => $_SESSION['user']['username'],
+		 		);
+		 		$res = M('Receiptson')->add($son);
+		 	}
+		}else{
+			$data =I('post.');
+			$array = array(
+	 			'riuid' =>'',
+	 			'rCustomerID' => $data['customerid'],
+	 			'ir_receiptnum' => date('YmdHis').rand(10000, 99999),
+	 			'ir_desc' => $data['product_name'].'(已在接龙易交付押金'.$data['ir_prices'].')',
+	 			'ir_status' => 202,
+	 			'ipid' => $arr[$i][G],
+	 			'ir_productnum' => 1,
+	 			'ir_point' => bcdiv($data['ir_price'],100,2),
+	 			'ir_unpoint' => bcdiv(bcsub($data['ir_price'],$data['ir_prices']),100,2),
+	 			'ir_price' => $data['ir_price'],
+	 			'ir_unpaid' => bcsub($data['ir_price'],$data['ir_prices'],2),
+	 			'ia_name' => $data['ia_name'],
+	 			'ia_phone' => $data['ia_phone'],
+	 			'ia_address' => '',
+	 			'ir_ordertype' => 4,
+	 			'ir_date' => time(),
+	 			'ir_paytime' => time(),
 	 		);
-	 		$result = M('ElpaQuestion')->add($array);
-	 	}
-	 	if($result){
-			$this->redirect('Admin/Elpa/question',array('cid'=>$data['pid'],'lid'=>$data['lid']));
+	 		$result = M('Receipt')->add($array);
+
+	 		$son = array(
+	 			'ir_receiptnum' => date('YmdHis').rand(10000, 99999),
+	 			'pay_receiptnum' => date('YmdHis').rand(100000, 999999),
+	 			'ir_price' => $data['ir_prices'],
+	 			'ir_point' => bcdiv($data['ir_prices'],100,2),
+	 			'ir_paytype' => 5,
+	 			'cretime' => time(),
+	 			'paytime' => time(),
+	 			'status' => 2,
+	 			'operator' => $_SESSION['user']['username'],
+	 		);
+	 		$res = M('Receiptson')->add($son);
+		}
+	 	if($result && $res){
+			$this->success('添加成功',U('Admin/Hapylife/receipt'));
 		}else{
 			$this->error('添加失败');
 		}

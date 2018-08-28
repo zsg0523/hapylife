@@ -309,6 +309,7 @@ class PurchaseController extends HomeBaseController{
                 break;
             case '3':
                 $con = '月费单';
+                break;
             case '4':
                 $con = '买四送一单';
                 break;
