@@ -89,7 +89,7 @@ class ReceiptsonModel extends BaseModel{
      * @return array            分页数据
      */
     public function getSendPageSonE($model,$word,$starttime,$endtime,$ir_status,$timeType,$order='',$limit=50,$field=''){
-        // // 获取分页数据
+        // 获取分页数据
         if (empty($field)) {
             $list=$model
                 ->alias('rs')
@@ -106,23 +106,7 @@ class ReceiptsonModel extends BaseModel{
                 ->order('ir_paytime desc')
                 ->select();         
         }
-        // // 获取分页数据
-        // if (empty($field)) {
-        //     $list=$model
-        //         ->alias('rs')
-        //         ->join('hapylife_user u on rs.riuid = u.iuid')
-        //         ->where(array('u.CustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
-        //         ->order('ir_paytime desc')
-        //         ->select();
-        // }else{
-        //     $list=$model
-        //         ->alias('rs')
-        //         ->join('hapylife_user u on rs.riuid = u.iuid')
-        //         ->field($field)
-        //         ->where(array('rs.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
-        //         ->order('ir_paytime desc')
-        //         ->select();         
-        // }
+
         foreach ($list as $key => $value) {
             $ia_address = '';
             $mape[$key] = $value;
@@ -148,19 +132,19 @@ class ReceiptsonModel extends BaseModel{
             $receiptson = '';
             $ir_paytype = '';
             foreach ($son as $k => $v) {
-                $receiptson .= $v['pay_receiptnum'].',';
+                $receiptson .= $v['pay_receiptnum'].'/';
                 switch ($v['ir_paytype']) {
                     case '1':
-                        $ir_paytype .= 'IPS'.',';
+                        $ir_paytype .= 'IPS'.'/';
                         break;
                     case '2':
-                        $ir_paytype .= '积分'.',';
+                        $ir_paytype .= '积分'.'/';
                         break;
                     case '3':
-                        // $ir_paytype .= '积分'.',';
+                        // $ir_paytype .= '积分'.'/';
                         break;
                     case '4':
-                        $ir_paytype .= '畅捷'.',';
+                        $ir_paytype .= '畅捷'.'/';
                         break;
                 }
             }

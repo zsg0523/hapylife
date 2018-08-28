@@ -530,9 +530,7 @@ class HapylifeController extends AdminBaseController{
 		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$starttime,$endtime,$status,$order='ir_date desc',$timeType);
 		//导出excel
 		if($excel == 'excel'){
-			$data = D('Receiptson')->getSendPageSonE(D('Receiptson'),$word,$starttime,$endtime,$status,$order='cretime desc',$timeType);
-			p($data);
-			die;
+			$data = D('Receipt')->getAllSendData(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime desc');
 			$export_excel = D('Receiptson')->export_excel($data['data']);
 		}else{
 			$this->assign($assign);
@@ -689,6 +687,36 @@ class HapylifeController extends AdminBaseController{
 			redirect($_SERVER['HTTP_REFERER']);
 		}else{
 			$this->error('删除失败');
+		}
+	}
+
+	// 批量添加订单
+	public function add_receipt(){
+	 	$upload = post_uploads();
+	 	// 文件名称
+	 	$filename = trim(strrchr($upload['name'], '/'),'/');
+	 	// 截取文件后缀
+	 	$exts = substr($filename,strpos($filename,'.')+1);
+	 	$arr = import_excel($upload['name']);
+	 	$count = count($arr);
+	 	for($i=1;$i<$count;$i++){
+	 		$array = array(
+	 			'fieldtitle' =>$arr[$i][A],
+	 			'descriptive_option_a' =>$arr[$i][B],
+	 			'descriptive_option_b' =>$arr[$i][C],
+	 			'descriptive_option_c' =>$arr[$i][D],
+	 			'descriptive_option_d' =>$arr[$i][E],
+	 			'option' =>$arr[$i][F],
+	 			'op_num' =>$arr[$i][G],
+	 			'type' => 2,
+	 			'pid' => $data['pid'],
+	 		);
+	 		$result = M('ElpaQuestion')->add($array);
+	 	}
+	 	if($result){
+			$this->redirect('Admin/Elpa/question',array('cid'=>$data['pid'],'lid'=>$data['lid']));
+		}else{
+			$this->error('添加失败');
 		}
 	}
 
@@ -922,12 +950,9 @@ class HapylifeController extends AdminBaseController{
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
 
 		$assign    = D('Receipt')->getSendPage(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime asc');
-		// p($assign);
-		// die;
 		// 导出excel
 		if($excel == 'excel'){
 			$data = D('Receipt')->getSendPageSonAll(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime asc');
-			// p($data);die;
 			$export_send_excel = D('Receipt')->export_send_excel($data['data']);
 		}else{
 			$this->assign($assign);
