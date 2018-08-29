@@ -948,7 +948,7 @@ class RegisterController extends HomeBaseController{
                                                 'addressee' => $userinfo['shopaddress1'],
                                                 'product_name' => $receiptlist['product_name'],
                                                 'date' => time(),
-                                                'content' => '恭喜您创建成功，您的会员号码是'.$userinfo['customerid'].'，同时注意查收Rovia邮件。',
+                                                'content' => '恭喜您创建成功，您的会员号码是'.$CustomerID.'，同时注意查收Rovia邮件。',
                                                 'customerid' => $CustomerID
                                     );
                                     $logs = M('SmsLog')->add($contents);
@@ -957,26 +957,25 @@ class RegisterController extends HomeBaseController{
                         }
                     }
                 }
+            }else{
+                // 发送短信提示
+                $templateId ='183054';
+                $params     = array();
+                $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                if($sms['errmsg'] == 'OK'){
+                    $contents = array(
+                                'acnumber' => $userinfo['acnumber'],
+                                'phone' => $userinfo['phone'],
+                                'operator' => '系统',
+                                'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                'product_name' => '',
+                                'date' => time(),
+                                'content' => '恭喜您注册成功。',
+                                'customerid' => $CustomerID
+                    );
+                    $logs = M('SmsLog')->add($contents);
+                }
             }
-            // else{
-            //     // 发送短信提示
-            //     $templateId ='178952';
-            //     $params     = array($CustomerID);
-            //     $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-            //     if($sms['errmsg'] == 'OK'){
-            //         $contents = array(
-            //                     'acnumber' => $userinfo['acnumber'],
-            //                     'phone' => $userinfo['phone'],
-            //                     'operator' => '系统',
-            //                     'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-            //                     'product_name' => '',
-            //                     'date' => time(),
-            //                     'content' => '恭喜您创建成功，您的会员号码是'.$userinfo['customerid'].'，同时注意查收Rovia邮件。',
-            //                     'customerid' => $CustomerID
-            //         );
-            //         $logs = M('SmsLog')->add($contents);
-            //     }
-            // }
         }
         $data = M('User')->where(array('iuid'=>$addResult))->find();
         $assign = array(

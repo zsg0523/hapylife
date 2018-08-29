@@ -205,7 +205,6 @@ class PurchaseController extends HomeBaseController{
                 ->where($map)
                 ->order('r.ir_date DESC')
                 ->select();
-
         $this->assign('data',$data);
         $this->display();
     }

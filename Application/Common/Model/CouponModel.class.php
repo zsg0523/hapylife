@@ -49,5 +49,4 @@ class CouponModel extends BaseModel{
             );
         return $data;
     }
-
 }
