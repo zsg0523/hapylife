@@ -91,8 +91,8 @@ class PurchaseController extends HomeBaseController{
                 }
                 break;
         }  
-        $array   = array('HPL00000181','HPL00123539');
-        $arrayTo = array('61338465','64694832','65745561','HPL00123556','61751610','61624356','61695777','68068002');
+        $array   = array('HPL00000181','HPL00123539');//显示测试产品账号
+        $arrayTo = array('61338465','64694832','65745561','HPL00123556','61751610','61624356','61695777','68068002');//显示真实产品账号
         if(in_array($find['customerid'],$array)){
             $an_pro = M('Product')->where(array('ip_type'=>4,'is_pull'=>0))->select();
             $product = array_merge($products,$an_pro);
@@ -100,13 +100,13 @@ class PurchaseController extends HomeBaseController{
                 $data[$key]         = $value; 
                 $data[$key]['show'] = 1; 
             }
-        }else if(in_array($find['customerid'],$arrayTo)){
-            $an_pro = M('Product')->where(array('ipid'=>48,'is_pull'=>0))->select();
-            $product = array_merge($products,$an_pro);
-            foreach ($product as $key => $value) {
-                $data[$key]         = $value; 
-                $data[$key]['show'] = 1; 
-            }
+        // }else if(in_array($find['customerid'],$arrayTo)){
+        //     $an_pro = M('Product')->where(array('ipid'=>48,'is_pull'=>0))->select();
+        //     $product = array_merge($products,$an_pro);
+        //     foreach ($product as $key => $value) {
+        //         $data[$key]         = $value; 
+        //         $data[$key]['show'] = 1; 
+        //     }
         }else{
             $data = $products;
         }
