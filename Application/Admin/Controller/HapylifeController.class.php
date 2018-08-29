@@ -692,14 +692,13 @@ class HapylifeController extends AdminBaseController{
 
 	// 批量添加订单
 	public function add_receipt(){
-	 	$upload = post_uploads();
+	 	$upload = post_upload();
 	 	// 文件名称
-	 	$filename = trim(strrchr($upload['name'], '/'),'/');
-	 	// 截取文件后缀
-	 	$exts = substr($filename,strpos($filename,'.')+1);
-	 	$arr = import_excel($upload['name']);
+		$file  = '.'.$upload['name'];
+		$data  = import_excel($file);
 	 	$count = count($arr);
-
+	 	p($data);
+	 	die;
 	 	foreach($arr as $key=>$value){
 	 		if($key!=1){
 	 			$data[] = $value;
@@ -778,7 +777,7 @@ class HapylifeController extends AdminBaseController{
                 $riuid = $update;
                 $rCustomerID = $CustomerID;
             }
-            $receipt = array(
+			$receipt = array(
 	 			'riuid' =>$riuid,
 	 			'rCustomerID' => $rCustomerID,
 	 			'ir_receiptnum' => date('YmdHis').rand(10000, 99999),
@@ -799,7 +798,7 @@ class HapylifeController extends AdminBaseController{
 	 		$receipt_result = M('Receipt')->add($receipt);
 
 	 		$receiptson = array(
-	 			'ir_receiptnum' => date('YmdHis').rand(10000, 99999),
+	 			'ir_receiptnum' => $receipt['ir_receiptnum'],
 	 			'riuid' => $riuid,
 	 			'pay_receiptnum' => date('YmdHis').rand(100000, 999999),
 	 			'ir_price' => $value[P],
@@ -813,7 +812,7 @@ class HapylifeController extends AdminBaseController{
 	 		$receiptson_result = M('Receiptson')->add($receiptson);
 
 	 		$receiptlist = array(
-	 			'ir_receiptnum' => date('YmdHis').rand(10000, 99999),
+	 			'ir_receiptnum' => $receipt['ir_receiptnum'],
 	 			'ipid' => $value[N],
 	 			'ilid' => 0,
 	 			'product_num' => 1,
@@ -823,8 +822,27 @@ class HapylifeController extends AdminBaseController{
 	 			'product_picture' => $product['ip_picture_zh'],
 	 		);
 	 		$receiptlist_result = M('receiptlist')->add($receiptlist);
+	 		if($receipt_result && $receiptson_result && $receiptlist_result){
+	 			// 发送短信提示
+                $templateId ='183580';
+                $params     = array($product['ip_name_zh']);
+                $sms        = D('Smscode')->sms($value[G],$value[H],$params,$templateId);
+                if($sms['errmsg'] == 'OK'){
+                    $contents = array(
+                        'acnumber' => $value[G],
+                        'phone' => $value[H],
+                        'operator' => '系统',
+                        'addressee' => $value[C].$value[D],
+                        'product_name' => $product['ip_name_zh'],
+                        'date' => time(),
+                        'content' => '恭喜您，您的'.$product['ip_name_zh'].'订单已经生成，请登录HAPYLIFE，在订单里查看。',
+                        'customerid' => $value[A]
+                    );
+                    $logs = M('SmsLog')->add($contents);
+                }
+	 		}
 	 	}
-	 	if($receipt_result && $receiptson_result && $receiptlist_result){
+	 	if($logs){
 	 		$this->success('添加成功',U('Admin/Hapylife/receipt'));
 	 	}else{
 	 		$this->error('添加失败');
