@@ -91,8 +91,6 @@ class IndexController extends HomeBaseController{
                                     'username' =>$data['customerid'],
                                     'name_cn'  =>$data['lastname'].$data['firstname'],
                                     'status'   =>1,
-                                    'address'  =>0,
-                                    'bank'     =>0,
                                 );
             }else{
                 $_SESSION['user']=array(
@@ -173,8 +171,6 @@ class IndexController extends HomeBaseController{
                                                 'username' =>$data['customerid'],
                                                 'name_cn'  =>$data['lastname'].$data['firstname'],
                                                 'status'   =>1,
-                                                'address'  =>0,
-                                                'bank'     =>0,
                                             );
                         }else{
                             $_SESSION['user']=array(

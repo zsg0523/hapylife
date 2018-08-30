@@ -377,7 +377,8 @@ class HapylifeController extends AdminBaseController{
 			'appkey' => 'ALL',
 		);
 		$data    = json_encode($data);
-		$sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
+//		$sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
+		$sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/getCouponList";
 		$result  = post_json_data($sendUrl,$data);
 		$back_message = json_decode($result['result'],true);
 		$CouponGroups = $back_message;
@@ -390,7 +391,7 @@ class HapylifeController extends AdminBaseController{
 				'ip_name_zh'=>$word
 			);
 		}
-		// p($CouponGroups);die;
+//		 p($CouponGroups);die;
 		$assign=D('Product')->getAllData(D('Product'),$map);
 		$this->assign('catList',$catList);
 		$this->assign('CouponGroups',$CouponGroups);
@@ -403,6 +404,8 @@ class HapylifeController extends AdminBaseController{
 	**/
 	public function add_product(){
 		$data=I('post.');
+		p($data);
+		die;
 		$upload=post_upload();
 		$data['ip_picture_zh']=C('WEB_URL').$upload['name'];
 		// p($data);die;
@@ -695,16 +698,12 @@ class HapylifeController extends AdminBaseController{
 	 	$upload = post_upload();
 	 	// 文件名称
 		$file  = '.'.$upload['name'];
-		$data  = import_excel($file);
-	 	$count = count($arr);
-	 	p($data);
-	 	die;
+		$arr  = import_excel($file);
 	 	foreach($arr as $key=>$value){
-	 		if($key!=1){
+	 		if($key!=1 && $value[C] !=''){
 	 			$data[] = $value;
 	 		}
 	 	}
-	 	// p($data);die;
 	 	foreach ($data as $key => $value) {
 	 		$product = M('Product')->where(array('ipid'=>$value[N]))->find();
 	 		$userinfo = M('User')->where(array('CustomerID'=>$value[A]))->find();
