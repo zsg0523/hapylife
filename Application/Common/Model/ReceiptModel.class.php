@@ -61,7 +61,7 @@ class ReceiptModel extends BaseModel{
         $count=$model
             ->alias('r')
             ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-            ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'LastName|FirstName'=>array('not in',$test)))
+            ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'LastName|FirstName'=>array('not in',$test),'coucode'=>0))
             ->count();
         // p($count);die;
         $page=new_page($count,$limit);
@@ -72,7 +72,7 @@ class ReceiptModel extends BaseModel{
                 ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
                 ->order($order)
                 ->limit($page->firstRow.','.$page->listRows)
-                ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'LastName|FirstName'=>array('not in',$test)))
+                ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'LastName|FirstName'=>array('not in',$test),'coucode'=>0))
                 ->select();
         }else{
             $list=$model
@@ -81,7 +81,7 @@ class ReceiptModel extends BaseModel{
                 ->field($field)
                 ->order($order)
                 ->limit($page->firstRow.','.$page->listRows)
-                ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'LastName|FirstName'=>array('not in',$test)))
+                ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'LastName|FirstName'=>array('not in',$test),'coucode'=>0))
                 ->select();         
         }
 
@@ -332,7 +332,90 @@ class ReceiptModel extends BaseModel{
             );
         return $data;
     }
+    /**
+    * 订单管理导出数据查询
+    * 去除测试和用券
+    **/
+    public function FinanceGetAllSendData($model,$word,$starttime,$endtime,$ir_status,$timeType,$test,$order='',$field=''){
+        // 获取分页数据
+        if (empty($field)) {
+            $list=$model
+                ->alias('r')
+                ->join('hapylife_user u on r.riuid = u.iuid')
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'LastName|FirstName'=>array('not in',$test),'coucode'=>0))
+                ->order('ir_paytime desc')
+                ->select();
+        }else{
+            $list=$model
+                ->alias('r')
+                ->join('hapylife_user u on r.riuid = u.iuid')
+                ->field($field)
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'LastName|FirstName'=>array('not in',$test),'coucode'=>0))
+                ->order('ir_paytime desc')
+                ->select();         
+        }
+        foreach ($list as $key => $value) {
+            $ia_address = '';
+            $mape[$key] = $value;
+            $address    = explode(' ',$value['ia_address']);
+            foreach ($address as $k => $v) {
+                $ia_address.= $v;
+            }
+            $mape[$key]['ia_address'] = $ia_address;
+            $arr = D('Receiptlist')
+                    ->join('hapylife_product on hapylife_receiptlist.ipid = hapylife_product.ipid')
+                    ->where(array('ir_receiptnum'=>$value['ir_receiptnum']))
+                    ->select();
+            $productname = '';
+            foreach ($arr as $k => $v) {
+                $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
+            }
+            $mape[$key]['productname'] = substr($productname,0,-1);
+            $mape[$key]['productno']   = $v['productno'];
+            $mape[$key]['productnams'] = $v['product_name'];
+            $son = D('Receiptson')
+                 ->where(array('ir_receiptnum'=>$value['ir_receiptnum'],'status'=>2))
+                 ->select();
+            $receiptson = '';
+            $ir_paytype = '';
+            foreach ($son as $k => $v) {
+                $receiptson .= $v['pay_receiptnum'].'/';
+                switch ($v['ir_paytype']) {
+                    case '1':
+                        $ir_paytype .= 'IPS'.'/';
+                        break;
+                    case '2':
+                        $ir_paytype .= '积分'.'/';
+                        break;
+                    case '3':
+                        // $ir_paytype .= '积分'.'/';
+                        break;
+                    case '4':
+                        $ir_paytype .= '畅捷'.'/';
+                        break;
+                }
+            }
+            $mape[$key]['receiptson']  = substr($receiptson,0,-1);
+            $mape[$key]['paytype']     = substr($ir_paytype,0,-1);
+            $time = D('Receipt')
+                        ->alias('r')
+                        ->join('hapylife_activation AS a ON r.riuid = a.iuid')
+                        ->where(array('r.ir_receiptnum'=>$value['ir_receiptnum']))
+                        ->select();
+                        // p($time);
+            foreach($time as $v){
+                // $times[$k] = $v['endtime'];
+                $mape[$key]['endtime'] = $v['endtime'];
+            }
+            // 获取会籍到期时间
+            // $mape[$key]['endtime'] = $times[$k];
+        }
 
+        $data=array(
+            'data'=>$mape,
+            );
+        return $data;
+    }
     /**
     * 送货单管理导出数据查询
     **/
