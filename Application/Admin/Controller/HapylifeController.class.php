@@ -1124,11 +1124,52 @@ class HapylifeController extends AdminBaseController{
 		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
-		$array  = '测,测试,test,试,试点,testtest';
-		$assign    = D('Receipt')->getSendPage(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$array,$order='ir_paytime asc');
+		$assign    = D('Receipt')->getSendPage(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime asc');
 		// 导出excel
 		if($excel == 'excel'){
-			$data = D('Receipt')->getSendPageSonAll(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$array,$order='ir_paytime asc');
+			$data = D('Receipt')->getSendPageSonAll(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime asc');
+			$export_send_excel = D('Receipt')->export_send_excel($data['data']);
+		}else{
+			$this->assign($assign);
+			$this->assign('status',I('get.status'));
+			$this->assign('word',$word);
+			$this->assign('timeType',$timeType);
+			$this->assign('starttime',I('get.starttime'));
+			$this->assign('endtime',I('get.endtime'));
+			$this->assign('code',$code);
+			$this->display();
+		}
+	}
+
+	//送货报表
+	public function sendReport(){
+		$mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
+        foreach ($mape as $key => $value) {
+            $code[$key]         = $value;
+            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
+            	$code[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+            }else{
+            	$code[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+            }
+        }
+		//0、7未支付 1待审核 2已支付 3已发货 4已到达 5申请退货 8确定退货
+		$order_status = I('get.status')-1;
+		if($order_status== -1){
+			//所有订单
+			$status = '2,3,4,5,6,8';
+		}else{
+			$status = (string)$order_status;
+		}
+		$excel     = I('get.excel');
+		$word      = trim(I('get.word',''));
+		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
+		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
+		$array  = '测,测试,test,试,试点,testtest';
+		$assign    = D('Receipt')->getSendPages(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$array,$order='ir_paytime asc');
+		// 导出excel
+		if($excel == 'excel'){
+			$data = D('Receipt')->getSendPageSonAlls(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$array,$order='ir_paytime asc');
 			$export_send_excel = D('Receipt')->export_send_excel($data['data']);
 		}else{
 			$this->assign($assign);
@@ -1144,6 +1185,16 @@ class HapylifeController extends AdminBaseController{
 
 	//查看订单明细
 	public function sendReceiptSon(){
+		$ir_receiptnum = I('get.ir_receiptnum');
+		$field = '*,rs.ir_price as r_price,rs.ir_point as r_point';
+		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum,$field);
+		// p($assign);
+		$this->assign($assign);
+		$this->display();
+	}
+
+	//查看订单明细
+	public function sendReportSon(){
 		$ir_receiptnum = I('get.ir_receiptnum');
 		$field = '*,rs.ir_price as r_price,rs.ir_point as r_point';
 		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum,$field);
