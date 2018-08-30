@@ -48,7 +48,49 @@ class ReceiptModel extends BaseModel{
             );
         return $data;
     }
+    /**
+     * 获取分页数据
+     * @param  subject  $model  model对象
+     * @param  array    $map    where条件
+     * @param  string   $order  排序规则
+     * @param  integer  $limit  每页数量
+     * @param  integer  $field  $field
+     * @return array            分页数据
+     */
+    public function FinanceGetPage($model,$word,$starttime,$endtime,$status,$test,$order='',$timeType,$limit=20){
+        $count=$model
+            ->alias('r')
+            ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+            ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'LastName|FirstName'=>array('not in',$test)))
+            ->count();
+        // p($count);die;
+        $page=new_page($count,$limit);
+        // 获取分页数据
+        if (empty($field)) {
+            $list=$model
+                ->alias('r')
+                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                ->order($order)
+                ->limit($page->firstRow.','.$page->listRows)
+                ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'LastName|FirstName'=>array('not in',$test)))
+                ->select();
+        }else{
+            $list=$model
+                ->alias('r')
+                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                ->field($field)
+                ->order($order)
+                ->limit($page->firstRow.','.$page->listRows)
+                ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'LastName|FirstName'=>array('not in',$test)))
+                ->select();         
+        }
 
+        $data=array(
+            'data'=>$list,
+            'page'=>$page->show()
+            );
+        return $data;
+    }
     /**
      * 获取分页数据
      * @param  subject  $model  model对象

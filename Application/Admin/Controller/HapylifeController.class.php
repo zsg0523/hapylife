@@ -556,6 +556,43 @@ class HapylifeController extends AdminBaseController{
 			$this->display();
 		}
 	}
+	/**
+	* 订单列表(剔除测试账号和使用通用券的单)
+	*@param ir_status -1所有订单 0待付款 1待审核 2已支付 3已完成
+	*@param excel 导出excel
+	*@param word  搜索关键词
+	*@param status订单状态筛选
+	*@param starttime 起始时间 endtime 结束时间
+	**/
+	public function FinanceReceipt(){
+		$excel     = I('get.excel');
+		$word      = trim(I('get.word',''));
+		$order_status    = I('get.status')-1;
+		if($order_status== -1){
+			//所有订单
+			$status = '0,1,2,3,4,5,7,8,202';
+		}else{
+			$status = (string)$order_status;
+		}
+		$test      ='测试,测,试,试点,test,testtest';
+		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
+		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
+		$assign    = D('Receipt')->FinanceGetPage(D('Receipt'),$word,$starttime,$endtime,$status,$test,$order='ir_date desc',$timeType);
+		//导出excel
+		if($excel == 'excel'){
+			$data = D('Receipt')->FinanceGetAllSendData(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime desc');
+			$export_excel = D('Receiptson')->export_excel($data['data']);
+		}else{
+			$this->assign($assign);
+			$this->assign('status',I('get.status'));
+			$this->assign('word',$word);
+			$this->assign('timeType',$timeType);
+			$this->assign('starttime',I('get.starttime'));
+			$this->assign('endtime',I('get.endtime'));
+			$this->display();
+		}
+	}
 	//查看订单明细
 	public function receiptSon(){
 		$ir_receiptnum = I('get.ir_receiptnum');
