@@ -180,8 +180,8 @@
 								<td>
 									<foreach name="CouponGroups['data']" item="v">
                                         <label style="width: 100%;">
-                                            {$v['c_name']}*{$v['number']}张
-                                            <input type="checkbox" name="gidArr[]" value="{$v['gid']},{$v['number']}">
+                                            {$v['c_name']}
+                                            <input type="checkbox" name="gidArr[]" value="{$v['gid']}">
                                             <input type="number" name="nogidnumArr[]" style="display: none;" placeholder="请输入券数量"/>
                                         </label>
                                         &nbsp;
@@ -298,9 +298,9 @@
 								<td>
 									<foreach name="CouponGroups['data']" item="v">
                                         <label style="width: 100%;">
-                                            <span id="checkBoxGid[{$v['gid']}]">{$v['c_name']}*{$v['number']}张</span>
+                                            <span id="checkBoxGid[{$v['gid']}]">{$v['c_name']}</span>
                                             <input type="checkbox" name="gidArr1[]" value="{$v['gid']},{$v['number']}" >
-                                            <input type="number" name="gidnumArr1[]" placeholder="请输入券数量"/>
+                                            <input type="number" name="nogidnumArr1[]" placeholder="请输入券数量"/>
                                         </label>
                                         &nbsp;
                                         &nbsp;
@@ -392,7 +392,7 @@
 	$('#bjy-edit').on('show.bs.modal', function () {
         var gidArr = getcoupon.split(",");
         var checkboxgid=$("input[name='gidArr1[]']");
-        var inputgidnum=$("input[name='gidnumArr1[]']");
+        var inputgidnum=$("input[name='nogidnumArr1[]']");
         for(var i=0;i<checkboxgid.length;i++){
         	checkboxgid[i].checked=false;
         	checkboxgid[i].parentNode.lastChild.previousSibling.style.display='none';
@@ -405,9 +405,8 @@
                    	checkboxgid[j].checked='checked';
                    	checkboxgid[j].parentNode.lastChild.previousSibling.style.display='inline';
                    	checkboxgid[j].parentNode.lastChild.previousSibling.value=gidvalue[1];
+               		checkboxgid[j].parentNode.lastChild.previousSibling.name='gidnumArr1[]';
 //                 	console.log(checkboxgid[j].parentNode.lastChild.previousSibling);
-                }else{
-                	checkboxgid[j].parentNode.lastChild.previousSibling.name='nogidnumArr1[]';
                 }
             }
         }
