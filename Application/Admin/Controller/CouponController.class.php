@@ -72,7 +72,6 @@ class CouponController extends AdminBaseController{
 					'type' => 2,
 				);
 			$res = M('CouponLog')->add($array);
-			
 		}
 		
 		if($res){

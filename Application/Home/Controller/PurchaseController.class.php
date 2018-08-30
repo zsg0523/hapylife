@@ -831,18 +831,19 @@ class PurchaseController extends HomeBaseController{
                                         );
                                 $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                                 if($res){
-                                    $templateId ='164137';
-                                    $params     = array();
+                                    $templateId ='178952';
+                                    $params     = array($CustomerID);
                                     $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                     if($sms['errmsg'] == 'OK'){
                                         $contents = array(
                                                     'acnumber' => $userinfo['acnumber'],
                                                     'phone' => $userinfo['phone'],
                                                     'operator' => '系统',
-                                                    'addressee' => $status['ia_name'],
+                                                    'addressee' => $userinfo['shopaddress1'],
                                                     'product_name' => $receiptlist['product_name'],
                                                     'date' => time(),
-                                                    'content' => '恭喜您注册成功，请注意查收邮件'
+                                                    'content' => '恭喜您创建成功，您的会员号码是'.$CustomerID.'，同时注意查收Rovia邮件。',
+                                                    'customerid' => $CustomerID
                                         );
                                         $logs = M('SmsLog')->add($contents);
                                     }
@@ -934,6 +935,11 @@ class PurchaseController extends HomeBaseController{
     **/ 
     public function addressList(){
         $iuid = $_SESSION['user']['id'];
+        if(empty($_SESSION['user']['address'])){
+            $_SESSION['user']['address'] = 0;
+        }
+        p($_SESSION);
+        // die;
         // 查询注册信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
         // 查询地址表信息
@@ -1049,6 +1055,9 @@ class PurchaseController extends HomeBaseController{
         // 查询银行表信息
         $bankaccount = M('Bank')->where(array('iuid'=>$iuid))->getField('bankaccount',true); 
         
+        if(!isset($_SESSION['user']['bank'])){
+            $_SESSION['user']['bank'] = 0;
+        }
         if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0 && !empty($userinfo['bankaccount'])){
            $message = array(
                     'iuid'         => $userinfo['iuid'],
