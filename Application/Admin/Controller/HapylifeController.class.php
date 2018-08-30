@@ -570,7 +570,7 @@ class HapylifeController extends AdminBaseController{
 		$assign    = D('Receipt')->FinanceGetPage(D('Receipt'),$word,$starttime,$endtime,$status,$test,$order='ir_date desc',$timeType);
 		//导出excel
 		if($excel == 'excel'){
-			$data = D('Receipt')->FinanceGetAllSendData(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime desc');
+			$data = D('Receipt')->FinanceGetAllSendData(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$test,$order='ir_paytime desc');
 			$export_excel = D('Receiptson')->export_excel($data['data']);
 		}else{
 			$this->assign($assign);
@@ -1125,7 +1125,7 @@ class HapylifeController extends AdminBaseController{
 		$assign    = D('Receipt')->getSendPage(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime asc');
 		// 导出excel
 		if($excel == 'excel'){
-			$data = D('Receipt')->getSendPageSonAll(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$array,$order='ir_paytime asc');
+			$data = D('Receipt')->getSendPageSonAll(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime asc');
 			$export_send_excel = D('Receipt')->export_send_excel($data['data']);
 		}else{
 			$this->assign($assign);
