@@ -96,9 +96,17 @@ class HapylifeCouponController extends HomeBaseController{
 	* 给nulife传送产品信息
 	**/ 
 	public function sendPro(){
-		$data = M('Product')->where(array('is_pull'=>1))->select();
-		if($data){
-	    	$this->ajaxreturn($data);
+		$jsonStr = file_get_contents("php://input");
+	    //写入服务器日志文件
+		$log    = addUsaLog($jsonStr);
+		$data   = json_decode($jsonStr,true);
+		if($data['product_id']){
+			$result = M('Product')->where(array('ipid'=>array('in',$data['product_id'])))->select();	
+		}else{
+			$result = M('Product')->where(array('is_pull'=>1))->select();
+		}
+		if($result){
+	    	$this->ajaxreturn($result);
 		}
 	}
 	/**
