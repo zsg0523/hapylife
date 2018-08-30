@@ -104,6 +104,85 @@ class ReceiptModel extends BaseModel{
         $count=$model
             ->alias('r')
             ->join('hapylife_user u on r.riuid = u.iuid')
+            ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+            ->count();
+        // p($count);die;
+        $page=new_page($count,$limit);
+        // 获取分页数据
+        if (empty($field)) {
+            $list=$model
+                ->alias('r')
+                ->join('hapylife_user u on r.riuid = u.iuid')
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                ->order('ir_paytime desc')
+                ->limit($page->firstRow.','.$page->listRows)
+                ->select();
+        }else{
+            $list=$model
+                ->alias('r')
+                ->join('hapylife_user u on r.riuid = u.iuid')
+                ->field($field)
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                ->order('ir_paytime desc')
+                ->limit($page->firstRow.','.$page->listRows)
+                ->select();         
+        }
+        // p($list);
+        foreach ($list as $key => $value) {
+            $ia_address = '';
+            $mape[$key] = $value;
+            $address    = explode(' ',$value['ia_address']);
+            foreach ($address as $k => $v) {
+                $ia_address.= $v;
+            }
+            $mape[$key]['ia_address'] = $ia_address;
+            $arr = D('Receiptlist')
+                    ->join('hapylife_product on hapylife_receiptlist.ipid = hapylife_product.ipid')
+                    ->where(array('ir_receiptnum'=>$value['ir_receiptnum']))
+                    ->select();
+                    // p($arr);
+            $productname = '';
+            foreach ($arr as $k => $v) {
+                $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
+            }
+            $mape[$key]['productname'] = substr($productname,0,-1);
+            $mape[$key]['productno']   = $v['productno'];
+            $mape[$key]['productnams'] = $v['product_name'];
+
+            $time = D('Receipt')
+                        ->alias('r')
+                        ->join('hapylife_activation AS a ON r.riuid = a.iuid')
+                        ->where(array('r.ir_receiptnum'=>$value['ir_receiptnum']))
+                        ->select();
+                        // p($time);
+            foreach($time as $v){
+                // $times[$k] = $v['endtime'];
+                $mape[$key]['endtime'] = $v['endtime'];
+            }
+            // 获取会籍到期时间
+            // $mape[$key]['endtime'] = $times[$k];
+        }
+        // p($mape);
+        $data=array(
+            'data'=>$mape,
+            'page'=>$page->show()
+            );
+        return $data;
+    }
+
+    /**
+     * 获取分页数据
+     * @param  subject  $model  model对象
+     * @param  array    $word   搜索关键词
+     * @param  string   $order  排序规则
+     * @param  integer  $limit  每页数量
+     * @param  integer  $field  $field
+     * @return array            分页数据
+     */
+    public function getSendPages($model,$word,$starttime,$endtime,$ir_status,$timeType,$array,$order='',$limit=50,$field=''){
+        $count=$model
+            ->alias('r')
+            ->join('hapylife_user u on r.riuid = u.iuid')
             ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'ir_ordertype'=>array('neq',4),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
             ->count();
         // p($count);die;
@@ -379,6 +458,93 @@ class ReceiptModel extends BaseModel{
                 ->alias('r')
                 ->join('hapylife_user u on r.riuid = u.iuid')
                 ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                ->order('ir_paytime desc')
+                ->select();
+        }else{
+            $list=$model
+                ->alias('r')
+                ->join('hapylife_user u on r.riuid = u.iuid')
+                ->field($field)
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                ->order('ir_paytime desc')
+                ->select();         
+        }
+        foreach ($list as $key => $value) {
+            $ia_address = '';
+            $mape[$key] = $value;
+            $address    = explode(' ',$value['ia_address']);
+            foreach ($address as $k => $v) {
+                $ia_address.= $v;
+            }
+            $mape[$key]['ia_address'] = $ia_address;
+            $arr = D('Receiptlist')
+                    ->join('hapylife_product on hapylife_receiptlist.ipid = hapylife_product.ipid')
+                    ->where(array('ir_receiptnum'=>$value['ir_receiptnum']))
+                    ->select();
+            $productname = '';
+            foreach ($arr as $k => $v) {
+                $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
+            }
+            $mape[$key]['productname'] = substr($productname,0,-1);
+            $mape[$key]['productno']   = $v['productno'];
+            $mape[$key]['productnams'] = $v['product_name'];
+            $son = D('Receiptson')
+                 ->where(array('ir_receiptnum'=>$value['ir_receiptnum'],'status'=>2))
+                 ->select();
+            $receiptson = '';
+            $ir_paytype = '';
+            foreach ($son as $k => $v) {
+                $receiptson .= $v['pay_receiptnum'].'/';
+                switch ($v['ir_paytype']) {
+                    case '1':
+                        $ir_paytype .= 'IPS'.'/';
+                        break;
+                    case '2':
+                        $ir_paytype .= '积分'.'/';
+                        break;
+                    case '3':
+                        // $ir_paytype .= '积分'.'/';
+                        break;
+                    case '4':
+                        $ir_paytype .= '畅捷'.'/';
+                        break;
+                }
+            }
+            $mape[$key]['receiptson']  = substr($receiptson,0,-1);
+            $mape[$key]['paytype']     = substr($ir_paytype,0,-1);
+            $time = D('Receipt')
+                        ->alias('r')
+                        ->join('hapylife_activation AS a ON r.riuid = a.iuid')
+                        ->where(array('r.ir_receiptnum'=>$value['ir_receiptnum']))
+                        ->select();
+                        // p($time);
+            foreach($time as $v){
+                // $times[$k] = $v['endtime'];
+                $mape[$key]['endtime'] = $v['endtime'];
+            }
+            // 获取会籍到期时间
+            // $mape[$key]['endtime'] = $times[$k];
+        }
+
+        $data=array(
+            'data'=>$mape,
+            );
+        return $data;
+    }
+
+    /**
+     * 获取分页数据
+     * @param  subject  $model  model对象
+     * @param  string   $ir_receiptnum   父订单号
+     * @return array            分页数据
+     */
+    public function getSendPageSonAlls($model,$word,$starttime,$endtime,$ir_status,$timeType,$array,$order='',$field=''){
+        // 获取分页数据
+        if (empty($field)) {
+            $list=$model
+                ->alias('r')
+                ->join('hapylife_user u on r.riuid = u.iuid')
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'ir_ordertype'=>array('neq',4),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
                 ->order('ir_paytime desc')
                 ->select();
         }else{
