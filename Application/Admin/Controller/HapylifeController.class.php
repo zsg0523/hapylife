@@ -695,16 +695,12 @@ class HapylifeController extends AdminBaseController{
 	 	$upload = post_upload();
 	 	// 文件名称
 		$file  = '.'.$upload['name'];
-		$data  = import_excel($file);
-	 	$count = count($arr);
-	 	p($data);
-	 	die;
+		$arr  = import_excel($file);
 	 	foreach($arr as $key=>$value){
-	 		if($key!=1){
+	 		if($key!=1 && $value[C] !=''){
 	 			$data[] = $value;
 	 		}
 	 	}
-	 	// p($data);die;
 	 	foreach ($data as $key => $value) {
 	 		$product = M('Product')->where(array('ipid'=>$value[N]))->find();
 	 		$userinfo = M('User')->where(array('CustomerID'=>$value[A]))->find();
