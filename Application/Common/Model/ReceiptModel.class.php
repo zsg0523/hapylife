@@ -100,11 +100,11 @@ class ReceiptModel extends BaseModel{
      * @param  integer  $field  $field
      * @return array            分页数据
      */
-    public function getSendPage($model,$word,$starttime,$endtime,$ir_status,$timeType,$order='',$limit=50,$field=''){
+    public function getSendPage($model,$word,$starttime,$endtime,$ir_status,$timeType,$array,$order='',$limit=50,$field=''){
         $count=$model
             ->alias('r')
             ->join('hapylife_user u on r.riuid = u.iuid')
-            ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+            ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'ir_ordertype'=>array('neq',4),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
             ->count();
         // p($count);die;
         $page=new_page($count,$limit);
@@ -113,7 +113,7 @@ class ReceiptModel extends BaseModel{
             $list=$model
                 ->alias('r')
                 ->join('hapylife_user u on r.riuid = u.iuid')
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'ir_ordertype'=>array('neq',4),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
                 ->order('ir_paytime desc')
                 ->limit($page->firstRow.','.$page->listRows)
                 ->select();
@@ -122,7 +122,7 @@ class ReceiptModel extends BaseModel{
                 ->alias('r')
                 ->join('hapylife_user u on r.riuid = u.iuid')
                 ->field($field)
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'ir_ordertype'=>array('neq',4),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
                 ->order('ir_paytime desc')
                 ->limit($page->firstRow.','.$page->listRows)
                 ->select();         
