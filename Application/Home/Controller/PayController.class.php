@@ -370,6 +370,7 @@ class PayController extends HomeBaseController{
                                         $data = array(
                                                 'product' => $product,
                                                 'userinfo' => $userinfo,
+                                                'ir_receiptnum' => $receipt['ir_receiptnum'],
                                             );
                                         $data    = json_encode($data);
                                         $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/addCoupon";

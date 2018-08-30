@@ -1052,6 +1052,8 @@ class RegisterController extends HomeBaseController{
                 'ipid'         => $product['ipid'],
                 // 订单支付时间
                 'ir_paytime' => time(),
+                // 通用券标号
+                'coucode' => $back_result['coupon_code'],
                 
             );
             $receipt = M('Receipt')->add($order);

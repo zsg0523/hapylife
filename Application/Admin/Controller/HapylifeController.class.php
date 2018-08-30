@@ -404,6 +404,8 @@ class HapylifeController extends AdminBaseController{
 	**/
 	public function add_product(){
 		$data=I('post.');
+		p($data);
+		die;
 		$upload=post_upload();
 		$data['ip_picture_zh']=C('WEB_URL').$upload['name'];
 		// p($data);die;
