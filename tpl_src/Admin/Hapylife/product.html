@@ -296,9 +296,10 @@
 								<th width="15%">获得的通用券：</th>
 								<td>
 									<foreach name="CouponGroups['data']" item="v">
-                                        <label>
+                                        <label style="width: 100%;">
                                             <span id="checkBoxGid[{$v['gid']}]">{$v['c_name']}*{$v['number']}张</span>
-                                            <input type="checkbox" name="gidArr[]" value="{$v['gid']},{$v['number']}" >
+                                            <input type="checkbox" name="gidArr1[]" value="{$v['gid']},{$v['number']}" >
+                                            <input type="number" name="{$v['gid']}" placeholder="请输入券数量"/>
                                         </label>
                                         &nbsp;
                                         &nbsp;
@@ -344,7 +345,7 @@
 		getcoupon='';
 
 		getcoupon=$(obj).attr('getcoupon');
-		console.log(getcoupon);
+//		console.log(getcoupon);
 		$("input[name='id']").val(productId);
 		$("input[name='ip_name_zh']").val(productName);
 		$("input[name='ip_bh']").val(productBh);
@@ -388,35 +389,34 @@
 
 	}
 	$('#bjy-edit').on('show.bs.modal', function () {
-        // var gId=$("#editid").attr('gId');
         var gidArr = getcoupon.split(",");
-        // console.log(getcoupon);
-        // console.log(gidArr);
-        var checkboxgid=$("input[name='gidArr[]']");
+        var checkboxgid=$("input[name='gidArr1[]']");
+        var inputgidnum=$("input[name='gidnumArr[]']");
         for(var i=0;i<checkboxgid.length;i++){
         	checkboxgid[i].checked=false;
+        	checkboxgid[i].parentNode.lastChild.previousSibling.style.display='none';
         }
         // checkboxgid
         for(var i=0;i<gidArr.length;i++){
             for(var j=0;j<checkboxgid.length;j++){
             	var gidvalue=checkboxgid[j].value.split(',');
                 if(gidArr[i]==gidvalue[0]){
-                   	checkboxgid[j].checked='checked'; 
+                   	checkboxgid[j].checked='checked';
+                   	checkboxgid[j].parentNode.lastChild.previousSibling.style.display='inline';
+//                 	console.log(checkboxgid[j].parentNode.lastChild.previousSibling);
                 }
             }
         }
-//         for(var j=0;j<checkboxgid.length;j++){
-//             if(gId==checkboxgid[j].value){
-//                 checkboxgid[j].type='hidden';
-                
-//                 var spantitle=checkboxgid[j].parentNode;
-//                 spantitle.style.display='none';
-// //              console.log(spantitle.style.display);
-
-//                // alert($('').attr('id')) ;
-               
-//             }
-//         }
+    });
+    $("input[name='gidArr1[]']").click(function(){
+    	if($(this).parent().find("input[type='checkbox']").prop('checked')){
+    		$(this).parent().find("input[type='number']").css('display','inline');
+    	}else{
+    		$(this).parent().find("input[type='number']").css('display','none');
+    	}
+    
+//  	console.log($(this).parent().find("input[type='number']").css('display'));
+//  	console.log($(this).parent().find("input[type='checkbox']").prop('checked'));
     });
 	</script>
 </block>
