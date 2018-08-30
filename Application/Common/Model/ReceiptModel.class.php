@@ -372,13 +372,13 @@ class ReceiptModel extends BaseModel{
      * @param  string   $ir_receiptnum   父订单号
      * @return array            分页数据
      */
-    public function getSendPageSonAll($model,$word,$starttime,$endtime,$ir_status,$timeType,$order='',$field=''){
+    public function getSendPageSonAll($model,$word,$starttime,$endtime,$ir_status,$timeType,$array,$order='',$field=''){
         // 获取分页数据
         if (empty($field)) {
             $list=$model
                 ->alias('r')
                 ->join('hapylife_user u on r.riuid = u.iuid')
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'ir_ordertype'=>array('neq',4),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
                 ->order('ir_paytime desc')
                 ->select();
         }else{
@@ -386,7 +386,7 @@ class ReceiptModel extends BaseModel{
                 ->alias('r')
                 ->join('hapylife_user u on r.riuid = u.iuid')
                 ->field($field)
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'ir_ordertype'=>array('neq',4),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
                 ->order('ir_paytime desc')
                 ->select();         
         }
