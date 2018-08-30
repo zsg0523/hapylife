@@ -404,6 +404,8 @@ class HapylifeController extends AdminBaseController{
 	**/
 	public function add_product(){
 		$data=I('post.');
+		p($data);
+		die;
 		$upload=post_upload();
 		$data['ip_picture_zh']=C('WEB_URL').$upload['name'];
 		// p($data);die;
@@ -411,15 +413,9 @@ class HapylifeController extends AdminBaseController{
 			foreach ($data['gidArr'] as $key => $value) {
 				$mape         = explode(',',$value);
 				$getCoupn    .= $mape[0].',';
+				$traversenum .= $mape[1].',';
 			}
 			$data['get_coupon'] = substr($getCoupn,0,-1);
-		}
-
-		if($data['gidnumArr']){
-			foreach ($data['gidnumArr'] as $key => $value) {
-				$mape         = explode(',',$value);
-				$traversenum .= $mape[0].',';
-			}
 			$data['traverse_num'] = substr($traversenum,0,-1);
 		}
 		$result=D('Product')->addData($data);
@@ -439,22 +435,15 @@ class HapylifeController extends AdminBaseController{
 			'ipid'=>$data['id']
 			);
 		$upload=post_upload();
-		if($data['gidArr1']){
-			foreach ($data['gidArr1'] as $key => $value) {
+		if($data['gidArr']){
+			foreach ($data['gidArr'] as $key => $value) {
 				$mape         = explode(',',$value);
 				$getCoupn    .= $mape[0].',';
+				$traversenum .= $mape[1].',';
 			}
 			$data['get_coupon'] = substr($getCoupn,0,-1);
-		}
-
-		if($data['gidnumArr1']){
-			foreach ($data['gidnumArr1'] as $key => $value) {
-				$mape         = explode(',',$value);
-				$traversenum .= $mape[0].',';
-			}
 			$data['traverse_num'] = substr($traversenum,0,-1);
 		}
-
 		if(isset($upload['name'])){
 			$data['ip_picture_zh']=C('WEB_URL').$upload['name'];
 		}
@@ -595,6 +584,14 @@ class HapylifeController extends AdminBaseController{
 	}
 	//查看订单明细
 	public function receiptSon(){
+		$ir_receiptnum = I('get.ir_receiptnum');
+		$field = '*,rs.ir_price as r_price,rs.ir_point as r_point';
+		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum,$field);
+		$this->assign($assign);
+		$this->display();
+	}
+	//查看订单明细
+	public function FinanceReceiptSon(){
 		$ir_receiptnum = I('get.ir_receiptnum');
 		$field = '*,rs.ir_price as r_price,rs.ir_point as r_point';
 		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum,$field);
@@ -1124,8 +1121,8 @@ class HapylifeController extends AdminBaseController{
 		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
-		$array  = '测,测试,test,试,试点,testtest';
-		$assign    = D('Receipt')->getSendPage(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$array,$order='ir_paytime asc');
+
+		$assign    = D('Receipt')->getSendPage(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime asc');
 		// 导出excel
 		if($excel == 'excel'){
 			$data = D('Receipt')->getSendPageSonAll(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime asc');

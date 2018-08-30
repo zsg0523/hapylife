@@ -1,6 +1,6 @@
 <extend name="Public:base" />
 
-<block name="title">财务订单管理</block>
+<block name="title">财务报表</block>
 <block name="content">
     <!-- 导航栏开始 -->
     <div class="page-header">
@@ -9,7 +9,7 @@
             &gt;
             Hapylife
             &gt;
-			财务订单管理
+			财务报表
         </h1>
     </div>
     <div class="col-xs-12">
@@ -93,7 +93,7 @@
 							<td>{$v['ia_phone']}</td>
 							<td>{$v.shopprovince}{$v.shopcity}{$v.shoparea}{$v['ia_address']}</td>
 							<td>{:date('Y-m-d H:i:s',$v['ir_date'])}</td>
-							<td><a href="{:U('Admin/Hapylife/receiptSon',array('ir_receiptnum'=>$v['ir_receiptnum']))}">查看明细</td>
+							<td><a href="{:U('Admin/Hapylife/FinanceReceiptSon',array('ir_receiptnum'=>$v['ir_receiptnum']))}">查看明细</td>
 							<if condition="$_SESSION['user']['username'] eq mary || $_SESSION['user']['username'] eq admin2">
 							<else />
 								<td>
