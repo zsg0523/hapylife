@@ -135,7 +135,7 @@
 			var money=$('#money').text();
 			if(typevalue==2){
 				if(parseFloat(ir_unpaid)<=parseFloat(mypoint)){
-					if(ir_unpaid>=(money*0.0025)){
+					if(ir_unpaid>=(money*0.0025).toFixed(2)){
 				 		form.submit();
 				 	}else{
 				 		alert('付款金额须大于未付款的25%')
@@ -145,7 +145,7 @@
 				}
 			
 			}else{
-			 	if(ir_unpaid>=(money*0.25)){
+			 	if(ir_unpaid>=(money*0.25).toFixed(2)){
 			 		form.submit();
 			 	}else{
 			 		alert('付款金额须大于未付款的25%')

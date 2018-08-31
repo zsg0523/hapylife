@@ -77,10 +77,10 @@ class HapylifeAddController extends HomeBaseController{
      * @param  [type] $content    [description]
      * @return [type]             [description]
      * [
-        {"CustomerIds":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
-        {"CustomerIds":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
-        {"CustomerIds":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
-        {"CustomerIds":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"}
+        {"Customers":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"}
         ]
      */
     public function wvNotification(){
@@ -95,7 +95,7 @@ class HapylifeAddController extends HomeBaseController{
             //异常处理
             foreach($data as $key=>$value){
                 //添加bonus记录
-                $value['CustomerIds'] = json_encode($value['CustomerIds']);
+                $value['Customers'] = json_encode($value['Customers']);
                 $res = M('wvNotification')->add($value);
                 if(!$res){
                     E("错误信息");
