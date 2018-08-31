@@ -59,4 +59,21 @@ class HapylifeReceiptController extends HomeBaseController{
 			$this->ajaxreturn($data);
 		}
 	}
+	/**
+	*订单详情
+	**/
+	public function getReceiptSon(){
+		$receiptnum = I('post.ir_receiptnum');
+		$receiptson = D('receiptson')->where(array('ir_receiptnum'=>$receiptnum,'status'=>2))->select();
+		foreach ($receiptson as $key => $value) {
+			$receiptson[$key]['paytime'] = date('Y-m-d H:i:s',$value['paytime']);
+			$receiptson[$key]['keynum']  = $key+1;
+		}
+		if($receiptson){
+			$this->ajaxreturn($receiptson);
+		}else{
+			$data['status'] = 0;
+			$this->ajaxreturn($data);
+		}
+	}
 }
