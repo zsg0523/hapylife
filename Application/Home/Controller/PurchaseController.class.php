@@ -378,6 +378,8 @@ class PurchaseController extends HomeBaseController{
         if($addlog){
             if($product['ip_type'] == 1){
                 $this->redirect('Home/Pay/choosePay1',array('ir_unpoint'=>$product['ip_point'],'ir_price'=>$product['ip_price_rmb'],'ir_point'=>$product['ip_point'],'ir_unpaid'=>$product['ip_price_rmb'],'ir_receiptnum'=>$order_num));
+            }else if($product['ip_type'] == 4){
+                $this->redirect('Home/Pay/choosePay2',array('ir_unpoint'=>$product['ip_point'],'ir_price'=>$product['ip_price_rmb'],'ir_point'=>$product['ip_point'],'ir_unpaid'=>$product['ip_price_rmb'],'ir_receiptnum'=>$order_num));
             }else{
                 $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$product['ip_point'],'ir_price'=>$product['ip_price_rmb'],'ir_point'=>$product['ip_point'],'ir_unpaid'=>$product['ip_price_rmb'],'ir_receiptnum'=>$order_num));
             }
@@ -787,6 +789,26 @@ class PurchaseController extends HomeBaseController{
                         );
                         //更新订单信息
                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+                    }else if($order['ir_ordertype'] == 4){
+                        // 添加通用券
+                        $product = M('Receipt')
+                                        ->alias('r')
+                                        ->join('hapylife_product AS p ON r.ipid = p.ipid')
+                                        ->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))
+                                        ->find();
+                        $data = array(
+                                'product' => $product,
+                                'userinfo' => $userinfo,
+                                'ir_receiptnum' => $receipt['ir_receiptnum'],
+                            );
+                        $data    = json_encode($data);
+                        $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/addCoupon";
+                        // $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/addCoupon";
+                        $result  = post_json_data($sendUrl,$data);
+                        $back_msg = json_decode($result['result'],true);
+                        if($back_msg['status']){
+                            $this->success('完成支付',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
+                        }
                     }else{
                         $userinfo   = D('User')->where(array('iuid'=>$order['riuid']))->find();
                         //修改用户最近订单日期/是否通过/等级/数量
@@ -938,8 +960,6 @@ class PurchaseController extends HomeBaseController{
         if(empty($_SESSION['user']['address'])){
             $_SESSION['user']['address'] = 0;
         }
-        p($_SESSION);
-        // die;
         // 查询注册信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
         // 查询地址表信息
