@@ -84,7 +84,63 @@ class ReceiptModel extends BaseModel{
                 ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'LastName|FirstName'=>array('not in',$test),'coucode'=>0))
                 ->select();         
         }
-
+        foreach ($list as $key => $value) {
+            $arr = D('Receiptlist')
+                    ->join('hapylife_product on hapylife_receiptlist.ipid = hapylife_product.ipid')
+                    ->where(array('ir_receiptnum'=>$value['ir_receiptnum']))
+                    ->select();
+            if($value['coucode']){
+                $data = array(
+                    'coupon_code' => $value['coucode'],
+                );
+                $data    = json_encode($data);
+                $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/codeGetCouponInfo";
+                // $sendUrl = "http://192.168.33.10/data/testnulife/index.php/Api/Couponapi/codeGetCouponInfo";
+                $result  = post_json_data($sendUrl,$data);
+                $back_message = json_decode($result['result'],true);
+                $list[$key]['operator'] = $back_message['operator'];
+            }else{
+                $list[$key]['operator'] = '';
+            }
+            $productname = '';
+            foreach ($arr as $k => $v) {
+                $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
+            }
+            $list[$key]['productname'] = substr($productname,0,-1);
+            $list[$key]['productno']   = $v['productno'];
+            $list[$key]['productnams'] = $v['product_name'];
+            $son = D('Receiptson')
+                 ->where(array('ir_receiptnum'=>$value['ir_receiptnum'],'status'=>2))
+                 ->select();
+            $receiptson = '';
+            $ir_paytype = '';
+            foreach ($son as $k => $v) {
+                $receiptson .= $v['pay_receiptnum'].' /';
+                switch ($v['ir_paytype']) {
+                    case '1':
+                        $ir_paytype .= 'IPS'.' /';
+                        break;
+                    case '2':
+                        $ir_paytype .= '积分'.' /';
+                        break;
+                    case '3':
+                        // $ir_paytype .= '积分'.'/';
+                        break;
+                    case '4':
+                        $ir_paytype .= '畅捷'.' /';
+                        break;
+                    case '5':
+                        $ir_paytype .= '现金'.' /';
+                            break;
+                    case '6':
+                        $ir_paytype .= '接龙易'.' /';
+                            break;
+                }
+            }
+            $list[$key]['receiptson']  = substr($receiptson,0,-1);
+            $list[$key]['paytype']     = substr($ir_paytype,0,-1);
+        }
+        // p($list);die;
         $data=array(
             'data'=>$list,
             'page'=>$page->show()
@@ -295,20 +351,26 @@ class ReceiptModel extends BaseModel{
             $receiptson = '';
             $ir_paytype = '';
             foreach ($son as $k => $v) {
-                $receiptson .= $v['pay_receiptnum'].'/';
+                $receiptson .= $v['pay_receiptnum'].' /';
                 switch ($v['ir_paytype']) {
                     case '1':
-                        $ir_paytype .= 'IPS'.'/';
+                        $ir_paytype .= 'IPS'.' /';
                         break;
                     case '2':
-                        $ir_paytype .= '积分'.'/';
+                        $ir_paytype .= '积分'.' /';
                         break;
                     case '3':
                         // $ir_paytype .= '积分'.'/';
                         break;
                     case '4':
-                        $ir_paytype .= '畅捷'.'/';
+                        $ir_paytype .= '畅捷'.' /';
                         break;
+                    case '5':
+                        $ir_paytype .= '现金'.' /';
+                            break;
+                    case '6':
+                        $ir_paytype .= '接龙易'.' /';
+                            break;
                 }
             }
             $mape[$key]['receiptson']  = substr($receiptson,0,-1);
@@ -379,20 +441,26 @@ class ReceiptModel extends BaseModel{
             $receiptson = '';
             $ir_paytype = '';
             foreach ($son as $k => $v) {
-                $receiptson .= $v['pay_receiptnum'].'/';
+                $receiptson .= $v['pay_receiptnum'].' /';
                 switch ($v['ir_paytype']) {
                     case '1':
-                        $ir_paytype .= 'IPS'.'/';
+                        $ir_paytype .= 'IPS'.' /';
                         break;
                     case '2':
-                        $ir_paytype .= '积分'.'/';
+                        $ir_paytype .= '积分'.' /';
                         break;
                     case '3':
                         // $ir_paytype .= '积分'.'/';
                         break;
                     case '4':
-                        $ir_paytype .= '畅捷'.'/';
+                        $ir_paytype .= '畅捷'.' /';
                         break;
+                    case '5':
+                        $ir_paytype .= '现金'.' /';
+                            break;
+                    case '6':
+                        $ir_paytype .= '接龙易'.' /';
+                            break;
                 }
             }
             $mape[$key]['receiptson']  = substr($receiptson,0,-1);
@@ -494,20 +562,26 @@ class ReceiptModel extends BaseModel{
             $receiptson = '';
             $ir_paytype = '';
             foreach ($son as $k => $v) {
-                $receiptson .= $v['pay_receiptnum'].'/';
+                $receiptson .= $v['pay_receiptnum'].' /';
                 switch ($v['ir_paytype']) {
                     case '1':
-                        $ir_paytype .= 'IPS'.'/';
+                        $ir_paytype .= 'IPS'.' /';
                         break;
                     case '2':
-                        $ir_paytype .= '积分'.'/';
+                        $ir_paytype .= '积分'.' /';
                         break;
                     case '3':
                         // $ir_paytype .= '积分'.'/';
                         break;
                     case '4':
-                        $ir_paytype .= '畅捷'.'/';
+                        $ir_paytype .= '畅捷'.' /';
                         break;
+                    case '5':
+                        $ir_paytype .= '现金'.' /';
+                            break;
+                    case '6':
+                        $ir_paytype .= '接龙易'.' /';
+                            break;
                 }
             }
             $mape[$key]['receiptson']  = substr($receiptson,0,-1);
@@ -581,20 +655,26 @@ class ReceiptModel extends BaseModel{
             $receiptson = '';
             $ir_paytype = '';
             foreach ($son as $k => $v) {
-                $receiptson .= $v['pay_receiptnum'].'/';
+                $receiptson .= $v['pay_receiptnum'].' /';
                 switch ($v['ir_paytype']) {
                     case '1':
-                        $ir_paytype .= 'IPS'.'/';
+                        $ir_paytype .= 'IPS'.' /';
                         break;
                     case '2':
-                        $ir_paytype .= '积分'.'/';
+                        $ir_paytype .= '积分'.' /';
                         break;
                     case '3':
                         // $ir_paytype .= '积分'.'/';
                         break;
                     case '4':
-                        $ir_paytype .= '畅捷'.'/';
+                        $ir_paytype .= '畅捷'.' /';
                         break;
+                    case '5':
+                        $ir_paytype .= '现金'.' /';
+                            break;
+                    case '6':
+                        $ir_paytype .= '接龙易'.' /';
+                            break;
                 }
             }
             $mape[$key]['receiptson']  = substr($receiptson,0,-1);
