@@ -67,7 +67,7 @@ class CouponUserModel extends BaseModel{
         $count=$model
             ->alias('u')
             ->join('hapylife_user AS us ON u.user_id = us.iuid')
-            ->where(array('us.CustomerID|u.coupon_name|u.coupon_code'=>array('like','%'.$word.'%'),'is_used'=>0,'u.redeem_time|u.add_time'=>array(array('egt',$starttime),array('elt',$endtime))))
+            ->where(array('us.CustomerID|u.coupon_name|u.coupon_code'=>array('like','%'.$word.'%'),'u.redeem_time|u.add_time'=>array(array('egt',$starttime),array('elt',$endtime))))
             ->count();
         // p($count);die;
         $page=new_page($count,$limit);
@@ -76,7 +76,7 @@ class CouponUserModel extends BaseModel{
             $list=$model
                 ->alias('u')
                 ->join('hapylife_user AS us ON u.user_id = us.iuid')
-                ->where(array('us.CustomerID|u.coupon_name|u.coupon_code'=>array('like','%'.$word.'%'),'is_used'=>0,'u.redeem_time|u.add_time'=>array(array('egt',$starttime),array('elt',$endtime))))
+                ->where(array('us.CustomerID|u.coupon_name|u.coupon_code'=>array('like','%'.$word.'%'),'u.redeem_time|u.add_time'=>array(array('egt',$starttime),array('elt',$endtime))))
                 ->order($order)
                 ->limit($page->firstRow.','.$page->listRows)
                 ->select();
@@ -85,7 +85,7 @@ class CouponUserModel extends BaseModel{
                 ->alias('u')
                 ->join('hapylife_user AS us ON u.user_id = us.iuid')
                 ->field($field)
-                ->where(array('us.CustomerID|u.coupon_name|u.coupon_code'=>array('like','%'.$word.'%'),'is_used'=>0,'u.redeem_time|u.add_time'=>array(array('egt',$starttime),array('elt',$endtime))))
+                ->where(array('us.CustomerID|u.coupon_name|u.coupon_code'=>array('like','%'.$word.'%'),'u.redeem_time|u.add_time'=>array(array('egt',$starttime),array('elt',$endtime))))
                 ->order($order)
                 ->limit($page->firstRow.','.$page->listRows)
                 ->select();         
