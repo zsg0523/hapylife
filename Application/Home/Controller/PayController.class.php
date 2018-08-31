@@ -361,7 +361,7 @@ class PayController extends HomeBaseController{
                                             }
                                         }
                                     }else if($ir_ordertype == 4){
-                                       // 添加通用券
+                                        // 添加通用券
                                         $product = M('Receipt')
                                                         ->alias('r')
                                                         ->join('hapylife_product AS p ON r.ipid = p.ipid')
