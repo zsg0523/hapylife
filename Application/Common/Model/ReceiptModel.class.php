@@ -105,10 +105,10 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
+                $list[$key]['productno']   = $v['productno'];
+                $list[$key]['productnams'] = $v['product_name'];
             }
             $list[$key]['productname'] = substr($productname,0,-1);
-            $list[$key]['productno']   = $v['productno'];
-            $list[$key]['productnams'] = $v['product_name'];
             $son = D('Receiptson')
                  ->where(array('ir_receiptnum'=>$value['ir_receiptnum'],'status'=>2))
                  ->select();
@@ -200,10 +200,10 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
+                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
-            $mape[$key]['productno']   = $v['productno'];
-            $mape[$key]['productnams'] = $v['product_name'];
 
             $time = D('Receipt')
                         ->alias('r')
@@ -279,10 +279,10 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
+                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
-            $mape[$key]['productno']   = $v['productno'];
-            $mape[$key]['productnams'] = $v['product_name'];
 
             $time = D('Receipt')
                         ->alias('r')
@@ -341,10 +341,10 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
+                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
-            $mape[$key]['productno']   = $v['productno'];
-            $mape[$key]['productnams'] = $v['product_name'];
             $son = D('Receiptson')
                  ->where(array('ir_receiptnum'=>$value['ir_receiptnum'],'status'=>2))
                  ->select();
@@ -431,10 +431,10 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
+                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
-            $mape[$key]['productno']   = $v['productno'];
-            $mape[$key]['productnams'] = $v['product_name'];
             $son = D('Receiptson')
                  ->where(array('ir_receiptnum'=>$value['ir_receiptnum'],'status'=>2))
                  ->select();
@@ -552,10 +552,10 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
+                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
-            $mape[$key]['productno']   = $v['productno'];
-            $mape[$key]['productnams'] = $v['product_name'];
             $son = D('Receiptson')
                  ->where(array('ir_receiptnum'=>$value['ir_receiptnum'],'status'=>2))
                  ->select();
@@ -645,10 +645,10 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
+                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
-            $mape[$key]['productno']   = $v['productno'];
-            $mape[$key]['productnams'] = $v['product_name'];
             $son = D('Receiptson')
                  ->where(array('ir_receiptnum'=>$value['ir_receiptnum'],'status'=>2))
                  ->select();
