@@ -311,7 +311,7 @@ class PurchaseController extends HomeBaseController{
                 $con = '月费单';
                 break;
             case '4':
-                $con = '买四送一单';
+                $con = '通用券'.$product['ip_name_zh'];
                 break;
         }
         // if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
