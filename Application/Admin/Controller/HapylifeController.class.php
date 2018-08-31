@@ -377,7 +377,8 @@ class HapylifeController extends AdminBaseController{
 			'appkey' => 'ALL',
 		);
 		$data    = json_encode($data);
-		$sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
+//		$sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
+		$sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/getCouponList";
 		$result  = post_json_data($sendUrl,$data);
 		$back_message = json_decode($result['result'],true);
 		$CouponGroups = $back_message;
@@ -390,7 +391,7 @@ class HapylifeController extends AdminBaseController{
 				'ip_name_zh'=>$word
 			);
 		}
-		// p($CouponGroups);die;
+//		 p($CouponGroups);die;
 		$assign=D('Product')->getAllData(D('Product'),$map);
 		$this->assign('catList',$catList);
 		$this->assign('CouponGroups',$CouponGroups);
@@ -403,6 +404,8 @@ class HapylifeController extends AdminBaseController{
 	**/
 	public function add_product(){
 		$data=I('post.');
+		p($data);
+		die;
 		$upload=post_upload();
 		$data['ip_picture_zh']=C('WEB_URL').$upload['name'];
 		// p($data);die;
@@ -520,7 +523,7 @@ class HapylifeController extends AdminBaseController{
 		$order_status    = I('get.status')-1;
 		if($order_status== -1){
 			//所有订单
-			$status = '0,1,2,3,4,5,7,8';
+			$status = '0,1,2,3,4,5,7,8,202';
 		}else{
 			$status = (string)$order_status;
 		}
@@ -530,7 +533,44 @@ class HapylifeController extends AdminBaseController{
 		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$starttime,$endtime,$status,$order='ir_date desc',$timeType);
 		//导出excel
 		if($excel == 'excel'){
-			$data = D('Receiptson')->getSendPageSonE(D('Receiptson'));
+			$data = D('Receipt')->getAllSendData(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime desc');
+			$export_excel = D('Receiptson')->export_excel($data['data']);
+		}else{
+			$this->assign($assign);
+			$this->assign('status',I('get.status'));
+			$this->assign('word',$word);
+			$this->assign('timeType',$timeType);
+			$this->assign('starttime',I('get.starttime'));
+			$this->assign('endtime',I('get.endtime'));
+			$this->display();
+		}
+	}
+	/**
+	* 订单列表(剔除测试账号和使用通用券的单)
+	*@param ir_status -1所有订单 0待付款 1待审核 2已支付 3已完成
+	*@param excel 导出excel
+	*@param word  搜索关键词
+	*@param status订单状态筛选
+	*@param starttime 起始时间 endtime 结束时间
+	**/
+	public function FinanceReceipt(){
+		$excel     = I('get.excel');
+		$word      = trim(I('get.word',''));
+		$order_status    = I('get.status')-1;
+		if($order_status== -1){
+			//所有订单
+			$status = '0,1,2,3,4,5,7,8,202';
+		}else{
+			$status = (string)$order_status;
+		}
+		$test      ='测试,测,试,试点,test,testtest';
+		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
+		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
+		$assign    = D('Receipt')->FinanceGetPage(D('Receipt'),$word,$starttime,$endtime,$status,$test,$order='ir_date desc',$timeType);
+		//导出excel
+		if($excel == 'excel'){
+			$data = D('Receipt')->FinanceGetAllSendData(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$test,$order='ir_paytime desc');
 			$export_excel = D('Receiptson')->export_excel($data['data']);
 		}else{
 			$this->assign($assign);
@@ -545,11 +585,127 @@ class HapylifeController extends AdminBaseController{
 	//查看订单明细
 	public function receiptSon(){
 		$ir_receiptnum = I('get.ir_receiptnum');
-		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum);
+		$field = '*,rs.ir_price as r_price,rs.ir_point as r_point';
+		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum,$field);
 		$this->assign($assign);
 		$this->display();
 	}
-
+	//查看订单明细
+	public function FinanceReceiptSon(){
+		$ir_receiptnum = I('get.ir_receiptnum');
+		$field = '*,rs.ir_price as r_price,rs.ir_point as r_point';
+		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum,$field);
+		$this->assign($assign);
+		$this->display();
+	}
+	/**
+	**添加明细
+	*/
+	public function addReceiptSon(){
+		$tmpe      = I('post.');
+		$session   = session();
+		$password  = md5($tmpe['password']);
+		$receiptnum= date('YmdHis').rand(100000, 999999);
+        $admin     = D('Admin')->where(array('id'=>$session['user']['id']))->find();
+        $receipt   = D('Receipt')->where(array('ir_receiptnum'=>$tmpe['ir_receiptnum']))->find();
+        $userinfo  = D('User')->where(array('CustomerID'=>$receipt['rcustomerid']))->find();
+        if($admin && $admin['password']==$password){
+        	if($tmpe['ir_paytype']==2){
+        		$point = $tmpe['ir_price'];
+        		$price = bcmul($tmpe['ir_price'],100,2);
+        	}else{
+        		$price = $tmpe['ir_price'];
+        		$point = bcdiv($tmpe['ir_price'],100,2);
+        	}
+        	$data = array(
+        		'operator'      =>$session['user']['username'],
+        		'ir_receiptnum' =>$tmpe['ir_receiptnum'],
+        		'riuid'         =>$receipt['riuid'],
+        		'pay_receiptnum'=>$receiptnum,
+        		'ir_paytype'    =>$tmpe['ir_paytype'],
+        		'ir_price'      =>$price,
+        		'ir_point'      =>$point,
+        		'status'        =>2,
+        		'cretime'       =>time(),
+        		'paytime'       =>time()
+        	);
+        	$add = D('Receiptson')->addData($data);
+        	if($add){
+        		$unpaind = bcsub($receipt['ir_unpaid'],$price,2);
+        		$unpoint = bcsub($receipt['ir_unpoint'],$point,2);
+        		$mape    = array('ir_unpaid'=>$unpaind,'ir_unpoint'=>$unpoint,'ir_paytime'=>time());
+        		if($unpoint == 0 && $unpoint==0){
+        			$mape['ir_status'] = 2;
+        		}else{
+        			$mape['ir_status'] = 202;
+        		}
+    			$save    = D('receipt')->where(array('ir_receiptnum'=>$tmpe['ir_receiptnum']))->save($mape);	
+        		if($save){
+        			if($unpoint == 0 && $unpoint==0){
+                        // 发送短信提示
+                        $templateId ='178959';
+                        $params     = array($receiptnum,$receipt['ir_desc']);
+                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                        if($sms['errmsg'] == 'OK'){
+                            $contents = array(
+                                'acnumber' => $userinfo['acnumber'],
+                                'phone' => $userinfo['phone'],
+                                'operator' => '系统',
+                                'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                'product_name' => $receipt['ir_desc'],
+                                'date' => time(),
+                                'content' => '订单编号：'.$receiptnum.'，产品：'.$receipt['ir_desc'].'，支付成功。',
+                                'customerid' => $userinfo['customerid']
+                            );
+                            $logs = M('SmsLog')->add($contents);
+                        }
+                        if($receipt['ir_ordertype'] == 4){
+                            // 添加通用券
+                            $product= M('Receipt')
+                                    ->alias('r')
+                                    ->join('hapylife_product AS p ON r.ipid = p.ipid')
+                                    ->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))
+                                    ->find();
+                            $data = array(
+                                    'product' => $product,
+                                    'userinfo' => $userinfo,
+                                );
+                            $data    = json_encode($data);
+                            $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/addCoupon";
+                            // $sendUrl = "http://192.168.33.10/testnulife/index.php/Api/Couponapi/addCoupon";
+                            $result  = post_json_data($sendUrl,$data);
+                            // $back_msg = json_decode($result['result'],true);
+                        }
+                    }else{
+                        // 共总支付
+                        $total = bcsub($receipt['ir_unpaid'],$unpaind,2);
+                        // 发送短信提示
+                        $templateId ='178957';
+                        $params     = array($receiptnum,$receipt['ir_price'],$total,$unpaind);
+                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                        if($sms['errmsg'] == 'OK'){
+                            $contents = array(
+                                'acnumber' => $userinfo['acnumber'],
+                                'phone' => $userinfo['phone'],
+                                'operator' => '系统',
+                                'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                'product_name' => '',
+                                'date' => time(),
+                                'content' => '订单编号：'.$receiptnum.'，收到付款'.$receiptson['ir_price'].'，总共已支付'.$total.'剩余需支付'.$unpaind,
+                                'customerid' => $userinfo['customerid']
+                            );
+                            $logs = M('SmsLog')->add($contents);
+                        }
+                    }
+        		}
+        		$this->success('添加成功');
+        	}else{
+				$this->error('添加失败');
+        	}
+        }else{
+        	$this->error('管理员密码错误');
+        }
+	}
 	/**
 	* 订单修改
 	**/
@@ -580,6 +736,161 @@ class HapylifeController extends AdminBaseController{
 		}else{
 			$this->error('删除失败');
 		}
+	}
+
+	// 批量添加订单
+	public function add_receipt(){
+	 	$upload = post_upload();
+	 	// 文件名称
+		$file  = '.'.$upload['name'];
+		$arr  = import_excel($file);
+	 	foreach($arr as $key=>$value){
+	 		if($key!=1 && $value[C] !=''){
+	 			$data[] = $value;
+	 		}
+	 	}
+	 	foreach ($data as $key => $value) {
+	 		$product = M('Product')->where(array('ipid'=>$value[N]))->find();
+	 		$userinfo = M('User')->where(array('CustomerID'=>$value[A]))->find();
+	 		if($value[S] == 0){
+	 			$riuid = $userinfo['iuid'];
+	 			$rCustomerID = $value[A];
+	 		}else if($value[S] == 1){
+	 			//添加新用户
+                $keyword= 'HPL';
+                $custid = M('User')->where(array('CustomerID'=>array('like','%'.$keyword.'%')))->order('iuid desc')->getfield('CustomerID');
+                if(empty($custid)){
+                    $CustomerID = 'HPL00000001';
+                }else{
+                    $num   = substr($custid,3);
+                    $nums  = $num+1;
+                    $count = strlen($nums);
+                    switch ($count) {
+                        case '1':
+                            $CustomerID = 'HPL0000000'.$nums;
+                            break;
+                        case '2':
+                            $CustomerID = 'HPL000000'.$nums;
+                            break;
+                        case '3':
+                            $CustomerID = 'HPL00000'.$nums;
+                            break;
+                        case '4':
+                            $CustomerID = 'HPL0000'.$nums;
+                            break;
+                        case '5':
+                            $CustomerID = 'HPL000'.$nums;
+                            break;
+                        case '6':
+                            $CustomerID = 'HPL00'.$nums;
+                            break;
+                        case '7':
+                            $CustomerID = 'HPL0'.$nums;
+                            break;
+                        default:
+                            $CustomerID = 'HPL'.$nums;
+                            break;
+                    }
+                }
+                //用户资料
+                $tmpe = array(
+                    'EnrollerID'  =>$value[B],
+                    'Sex'         =>'保密',
+                    'LastName'    =>$value[C],
+                    'FirstName'   =>$value[D],
+                    'Email'       =>$value[M],
+                    'PassWord'    =>md5($value[H]),
+                    'acid'        =>217,
+                    'acnumber'    =>$value[G],
+                    'Phone'       =>$value[H],
+                    'ShopAddress1'=>$value[L],
+                    'ShopArea'    =>$value[K],
+                    'ShopCity'    =>$value[J],
+                    'ShopProvince'=>$value[I],
+                    'ShopCountry' =>'中国',
+                    'EnLastName'  =>$value[E],
+                    'EnFirstName' =>$value[F],
+                    'CustomerID'  =>$CustomerID,
+                    'OrderDate'   =>date("m/d/Y h:i:s A"),
+                    'Number'      =>1,
+                    'TermsAndConditions' =>1,
+                    'JoinedOn'    => time(),
+                    'WvPass' => $value[H],
+                );
+                $update     = M('User')->add($tmpe);
+                $riuid = $update;
+                $rCustomerID = $CustomerID;
+            }
+			$receipt = array(
+	 			'riuid' =>$riuid,
+	 			'rCustomerID' => $rCustomerID,
+	 			'ir_receiptnum' => date('YmdHis').rand(10000, 99999),
+	 			'ir_desc' => $product['ip_name_zh'].'(已在接龙易交付押金'.$value[P].')',
+	 			'ir_status' => 202,
+	 			'ipid' => $value[N],
+	 			'ir_productnum' => 1,
+	 			'ir_point' => bcdiv($value[O],100,2),
+	 			'ir_unpoint' => bcdiv(bcsub($value[O],$value[P]),100,2),
+	 			'ir_price' => $value[O],
+	 			'ir_unpaid' => bcsub($value[O],$value[P],2),
+	 			'ia_name' => $value[C].$value[D],
+	 			'ia_phone' => $value[H],
+	 			'ia_address' => $value[I].$value[J].$value[K].$value[L],
+	 			'ir_ordertype' => 4,
+	 			'ir_date' => strtotime(gmdate('Y-m-d H:i:s',\PHPExcel_Shared_Date::ExcelToPHP($value[Q]))),
+	 		);
+	 		$receipt_result = M('Receipt')->add($receipt);
+
+	 		$receiptson = array(
+	 			'ir_receiptnum' => $receipt['ir_receiptnum'],
+	 			'riuid' => $riuid,
+	 			'pay_receiptnum' => date('YmdHis').rand(100000, 999999),
+	 			'ir_price' => $value[P],
+	 			'ir_point' => bcdiv($value[P],100,2),
+	 			'ir_paytype' => 5,
+	 			'cretime' => strtotime(gmdate('Y-m-d H:i:s',\PHPExcel_Shared_Date::ExcelToPHP($value[Q]))),
+	 			'paytime' => strtotime(gmdate('Y-m-d H:i:s',\PHPExcel_Shared_Date::ExcelToPHP($value[Q]))),
+	 			'status' => 2,
+	 			'operator' => $_SESSION['user']['username'],
+	 		);
+	 		$receiptson_result = M('Receiptson')->add($receiptson);
+
+	 		$receiptlist = array(
+	 			'ir_receiptnum' => $receipt['ir_receiptnum'],
+	 			'ipid' => $value[N],
+	 			'ilid' => 0,
+	 			'product_num' => 1,
+	 			'product_price' => $product['ip_price_rmb'],
+	 			'product_point' => $product['ip_point'],
+	 			'product_name' => $product['ip_name_zh'],
+	 			'product_picture' => $product['ip_picture_zh'],
+	 		);
+	 		$receiptlist_result = M('receiptlist')->add($receiptlist);
+	 		if($receipt_result && $receiptson_result && $receiptlist_result){
+	 			// 发送短信提示
+                $templateId ='183580';
+                $params     = array($product['ip_name_zh']);
+                $sms        = D('Smscode')->sms($value[G],$value[H],$params,$templateId);
+                if($sms['errmsg'] == 'OK'){
+                    $contents = array(
+                        'acnumber' => $value[G],
+                        'phone' => $value[H],
+                        'operator' => '系统',
+                        'addressee' => $value[C].$value[D],
+                        'product_name' => $product['ip_name_zh'],
+                        'date' => time(),
+                        'content' => '恭喜您，您的'.$product['ip_name_zh'].'订单已经生成，请登录HAPYLIFE，在订单里查看。',
+                        'customerid' => $value[A]
+                    );
+                    $logs = M('SmsLog')->add($contents);
+                }
+	 		}
+	 	}
+	 	if($logs){
+	 		$this->success('添加成功',U('Admin/Hapylife/receipt'));
+	 	}else{
+	 		$this->error('添加失败');
+	 	}
 	}
 
 	//**********************用户*********************
@@ -810,14 +1121,52 @@ class HapylifeController extends AdminBaseController{
 		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
-
 		$assign    = D('Receipt')->getSendPage(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime asc');
-		// p($assign);
-		// die;
 		// 导出excel
 		if($excel == 'excel'){
-			$data = D('Receipt')->getSendPageSonAll(D('Receipt'));
-			// p($data);die;
+			$data = D('Receipt')->getSendPageSonAll(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime asc');
+			$export_send_excel = D('Receipt')->export_send_excel($data['data']);
+		}else{
+			$this->assign($assign);
+			$this->assign('status',I('get.status'));
+			$this->assign('word',$word);
+			$this->assign('timeType',$timeType);
+			$this->assign('starttime',I('get.starttime'));
+			$this->assign('endtime',I('get.endtime'));
+			$this->assign('code',$code);
+			$this->display();
+		}
+	}
+
+	//送货报表
+	public function sendReport(){
+		$mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
+        foreach ($mape as $key => $value) {
+            $code[$key]         = $value;
+            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
+            	$code[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+            }else{
+            	$code[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+            }
+        }
+		//0、7未支付 1待审核 2已支付 3已发货 4已到达 5申请退货 8确定退货
+		$order_status = I('get.status')-1;
+		if($order_status== -1){
+			//所有订单
+			$status = '2,3,4,5,6,8';
+		}else{
+			$status = (string)$order_status;
+		}
+		$excel     = I('get.excel');
+		$word      = trim(I('get.word',''));
+		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
+		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
+		$array  = '测,测试,test,试,试点,testtest';
+		$assign    = D('Receipt')->getSendPages(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$array,$order='ir_paytime asc');
+		// 导出excel
+		if($excel == 'excel'){
+			$data = D('Receipt')->getSendPageSonAlls(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$array,$order='ir_paytime asc');
 			$export_send_excel = D('Receipt')->export_send_excel($data['data']);
 		}else{
 			$this->assign($assign);
@@ -834,7 +1183,18 @@ class HapylifeController extends AdminBaseController{
 	//查看订单明细
 	public function sendReceiptSon(){
 		$ir_receiptnum = I('get.ir_receiptnum');
-		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum);
+		$field = '*,rs.ir_price as r_price,rs.ir_point as r_point';
+		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum,$field);
+		// p($assign);
+		$this->assign($assign);
+		$this->display();
+	}
+
+	//查看订单明细
+	public function sendReportSon(){
+		$ir_receiptnum = I('get.ir_receiptnum');
+		$field = '*,rs.ir_price as r_price,rs.ir_point as r_point';
+		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum,$field);
 		// p($assign);
 		$this->assign($assign);
 		$this->display();

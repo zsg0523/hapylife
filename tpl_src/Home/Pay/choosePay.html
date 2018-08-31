@@ -46,7 +46,7 @@
 				<span class="tc">选择类型</span>
 				<div class="radioBox">
 					<div class="form-group" onclick="changeRadio(this);">
-						<label for="">IPS支付:</label>
+						<label for="">IPS支付(微信扫码):</label>
 					    <input class="fr" type="radio" name="ip_paytype"  value="1" checked="checked" />
 					</div>
 					<div class="form-group" onclick="changeRadio(this);">
@@ -62,7 +62,7 @@
 				</div>
 				<p class="tc" id="havaEP">您的EP:</p>
 				<p class="tc">合计:&nbsp;&nbsp;￥<i id="money">{:I('get.ir_price')}</i>&nbsp;&nbsp;EP&nbsp;<span id="point">{:I('get.ir_point')}</span></p>				
-				<p class="tc">待付款:&nbsp;&nbsp;￥<i id="money">{:I('get.ir_unpaid')}</i>&nbsp;&nbsp;EP&nbsp;<span id="point">{:I('get.ir_unpoint')}</span></p>
+				<p class="tc">待付款:&nbsp;&nbsp;￥<i id="unmoney">{:I('get.ir_unpaid')}</i>&nbsp;&nbsp;EP&nbsp;<span id="point">{:I('get.ir_unpoint')}</span></p>
 			</div>
 			<div class="addCart tc" onclick="topay()">去付款</div>
 		</form>
@@ -131,10 +131,11 @@
 		function topay(){
 			var form=$('#paymentInfo');
 			var ir_unpaid=$("#ir_unpaid").val();
+			ir_unpaid=parseFloat(ir_unpaid);
 			var typevalue=$(":radio[name='ip_paytype']:checked").val();
-			var money=$('#money').text();
+			var money=$('#unmoney').text();
 			if(typevalue==2){
-				if(parseFloat(ir_unpaid)<=parseFloat(mypoint)){
+				if(ir_unpaid<=parseFloat(mypoint)){
 					if(ir_unpaid>=(money*0.0025).toFixed(2)){
 				 		form.submit();
 				 	}else{
@@ -152,6 +153,7 @@
 			 	}
 			}
 		}
+		parseFloat($("#ir_unpaid").val())-()($('#unmoney').text()*0.0025).toFixed(2));
 
 	</script>  
 </body>  

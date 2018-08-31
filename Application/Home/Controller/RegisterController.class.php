@@ -129,15 +129,25 @@ class RegisterController extends HomeBaseController{
     public function checkName(){
         $customerid = strtoupper(trim(I('post.EnrollerID')));
         if($customerid){
-            $usa = new \Common\UsaApi\Usa;
-            $map = $usa->validateHpl($customerid);
-            if(empty($map['errors'])){
-                $data['lastname'] = $map['lastName'];
-                $data['firstname'] = $map['firstName'];
-                $this->ajaxreturn($data);     
+            if(strlen($customerid)==8){
+                $usa = new \Common\UsaApi\Usa;
+                $map = $usa->validateHpl($customerid);
+                if(empty($map['errors'])){
+                    $data['lastname'] = $map['lastName'];
+                    $data['firstname'] = $map['firstName'];
+                    $this->ajaxreturn($data);     
+                }else{
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data);           
+                }
             }else{
-                $data['status'] = 0;
-                $this->ajaxreturn($data);           
+                $data = M('User')->where(array('CustomerID'=>$customerid))->find();
+                if($data){
+                    $this->ajaxreturn($data);
+                }else{
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data); 
+                }
             }
         }else{
             $data['status'] = 0;
@@ -744,10 +754,11 @@ class RegisterController extends HomeBaseController{
         $hu_nickname = I('get.hu_nickname');
         $cu_id = I('get.cu_id');
         $userinfo = M('Tempuser')->where(array('htid'=>$htid))->find();
-        $userinfo['cu_id'] = $cu_id;
-        $userinfo['hu_nickname'] = $hu_nickname;
+
         $assign = array(
                 'userinfo' => $userinfo,
+                'cu_id' => $cu_id,
+                'hu_nickname' => $hu_nickname,
         );
         $this->assign($assign);
         $this->display();
@@ -850,7 +861,7 @@ class RegisterController extends HomeBaseController{
                     $product = M('Product')->where(array('ipid'=>$ipid))->find();
                     //生成唯一订单号
                     $order_num = 'CP'.date('YmdHis').rand(10000, 99999);
-                    $con = '买四送一';
+                    $con = $back_result['c_name'].$back_result['coupon_code'];
                     $order = array(
                         //订单编号
                         'ir_receiptnum' =>$order_num,
@@ -935,8 +946,8 @@ class RegisterController extends HomeBaseController{
                             }
                             $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
                             if($res){
-                                $templateId ='164137';
-                                $params     = array();
+                                $templateId ='178952';
+                                $params     = array($CustomerID);
                                 $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                 if($sms['errmsg'] == 'OK'){
                                     $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$order_num))->find();
@@ -947,7 +958,7 @@ class RegisterController extends HomeBaseController{
                                                 'addressee' => $userinfo['shopaddress1'],
                                                 'product_name' => $receiptlist['product_name'],
                                                 'date' => time(),
-                                                'content' => '恭喜您注册成功，请注意查收邮件',
+                                                'content' => '恭喜您创建成功，您的会员号码是'.$CustomerID.'，同时注意查收Rovia邮件。',
                                                 'customerid' => $CustomerID
                                     );
                                     $logs = M('SmsLog')->add($contents);
@@ -958,8 +969,8 @@ class RegisterController extends HomeBaseController{
                 }
             }else{
                 // 发送短信提示
-                $templateId ='178952';
-                $params     = array($CustomerID);
+                $templateId ='183054';
+                $params     = array();
                 $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                 if($sms['errmsg'] == 'OK'){
                     $contents = array(
@@ -969,7 +980,7 @@ class RegisterController extends HomeBaseController{
                                 'addressee' => $userinfo['lastname'].$userinfo['firstname'],
                                 'product_name' => '',
                                 'date' => time(),
-                                'content' => '恭喜您创建成功，您的会员号码是'.$userinfo['customerid'].'，同时注意查收Rovia邮件。',
+                                'content' => '恭喜您注册成功。',
                                 'customerid' => $CustomerID
                     );
                     $logs = M('SmsLog')->add($contents);
@@ -980,6 +991,7 @@ class RegisterController extends HomeBaseController{
         $assign = array(
                         'data' => $data,
                         'iuid' => $addResult,
+                        'cu_id' => $cu_id,
                         );
         $this->assign($assign);
         $this->display();
@@ -987,8 +999,7 @@ class RegisterController extends HomeBaseController{
 
     // 有券注册
     public function hadCoupon(){
-        // $iuid = $_SESSION['user']['id'];
-        $iuid = I('post.iuid');
+        $iuid = $_SESSION['user']['id'];
         $cu_id = I('post.cu_id');
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
         $data = array(
@@ -996,8 +1007,7 @@ class RegisterController extends HomeBaseController{
                     'cu_id' => $cu_id,
                 );
         $data    = json_encode($data);
-        // $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/use_coupon";
-        $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/use_coupon";
+        $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/use_coupon";
         $results  = post_json_data($sendUrl,$data);
         $back_result = json_decode($results['result'],true);
         if($back_result['status']){
@@ -1006,7 +1016,7 @@ class RegisterController extends HomeBaseController{
             $product = M('Product')->where(array('ipid'=>$ipid))->find();
             //生成唯一订单号
             $order_num = 'CP'.date('YmdHis').rand(10000, 99999);
-            $con = '买四送一';
+            $con = $back_result['c_name'].$back_result['coupon_code'];
             $order = array(
                 //订单编号
                 'ir_receiptnum' =>$order_num,
@@ -1042,6 +1052,8 @@ class RegisterController extends HomeBaseController{
                 'ipid'         => $product['ipid'],
                 // 订单支付时间
                 'ir_paytime' => time(),
+                // 通用券标号
+                'coucode' => $back_result['coupon_code'],
                 
             );
             $receipt = M('Receipt')->add($order);
@@ -1091,7 +1103,8 @@ class RegisterController extends HomeBaseController{
                     }
                     $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
                     if($res){
-                        $templateId ='164137';
+                        // 发送短信提示
+                        $templateId ='183054';
                         $params     = array();
                         $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                         if($sms['errmsg'] == 'OK'){
@@ -1100,17 +1113,27 @@ class RegisterController extends HomeBaseController{
                                         'acnumber' => $userinfo['acnumber'],
                                         'phone' => $userinfo['phone'],
                                         'operator' => '系统',
-                                        'addressee' => $userinfo['shopaddress1'],
+                                        'addressee' => $userinfo['lastname'].$userinfo['firstname'],
                                         'product_name' => $receiptlist['product_name'],
                                         'date' => time(),
-                                        'content' => '恭喜您注册成功，请注意查收邮件',
-                                        'customerid' => $CustomerID
+                                        'content' => '恭喜您注册成功。',
+                                        'customerid' => $userinfo['customerid']
                             );
                             $logs = M('SmsLog')->add($contents);
+                            if($logs){
+                                $sample['status'] = 1;
+                                $this->ajaxreturn($sample);
+                            }else{
+                                $sample['status'] = 0;
+                                $this->ajaxreturn($sample);
+                            }
                         }
                     }
                 }
             }
+        }else{
+            $sample['status'] = 0;
+            $this->ajaxreturn($sample);
         }
     }
 
