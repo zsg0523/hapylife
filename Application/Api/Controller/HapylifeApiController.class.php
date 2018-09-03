@@ -253,87 +253,37 @@ class HapylifeApiController extends HomeBaseController{
             $tmpe = I('post.');
             $data = D('User')->where(array('CustomerID'=>$tmpe['CustomerID']))->find();
             if($data && $data['password']==md5($tmpe['PassWord'])){
-                $data['status']
+                $data['status'] =1;
+                $this->ajaxreturn($data);
             }else{
-                if(strlen($tmpe['CustomerID'])==8){
                 //检查WV api用户信息
                 $usa      = new \Common\UsaApi\Usa;
                 $userinfo = $usa->validateHpl($tmpe['CustomerID']);
                 //检查wv是否存在该账号 Y创建该账号  N登录失败
                 switch ($userinfo['isActive']) {
                     case true:
-                    //检查系统是否存在该账号 Y无密码登录 N创建账号
-                    $checkAccount = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
-                        switch ($checkAccount) {
-                            case null:
-                                //创建该新账号在本系统
-                                $map      = array(
-                                        'CustomerID'  =>$tmpe['CustomerID'],
-                                        'PassWord'    =>md5($tmpe['PassWord']),
-                                        'WvPass'      =>$tmpe['PassWord'],
-                                        'LastName'    =>$userinfo['lastName'],
-                                        'FirstName'   =>$userinfo['firstName'],
-                                        'isActive'    =>$userinfo['isActive'],
-                                        'WvPass'      =>$tmpe['PassWord'],
-                                    );
-                                $createUser = D('User')->add($map);
-                                break;
-                            default:
-                                //更新相关信息在本系统
-                                $map      = array(
-                                        'PassWord'    =>md5($tmpe['PassWord']),
-                                        'WvPass'      =>$tmpe['PassWord'],
-                                        'LastName'    =>$userinfo['lastName'],
-                                        'FirstName'   =>$userinfo['firstName'],
-                                        'isActive'    =>$userinfo['isActive'],
-                                        'WvPass'      =>$tmpe['PassWord'],
-                                    );
-                                $createUser = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->save($map);
-                                break;
-                        }
-                        $data = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
-                        //登录后看不到产品
-                        $_SESSION['user']=array(
-                                'id'       =>$data['iuid'],
-                                'username' =>$data['customerid'],
-                                'name_cn'  =>$data['lastname'].$data['firstname'],
-                                'status'   =>2,
-                            );
-                        // p($_SESSION);die;
-                        $this->redirect('Home/Purchase/center');
-                        break;
-
-                    default:
-                        $this->error('账号格式错误');
-                        break;
-                }
-                }else{
-                    $where = array(
-                        'CustomerID'=>trim($tmpe['CustomerID']),
-                        'PassWord'  =>md5($tmpe['PassWord'])
-                    );
-                    $data = D('User')->where($where)->find();
-                    if (empty($data)) {
-                        $this->error('账号或密码错误');
-                    }else{
-                        if(substr($data['customerid'],0,3) == 'HPL'){
-                            $_SESSION['user']=array(
-                                                'id'       =>$data['iuid'],
-                                                'username' =>$data['customerid'],
-                                                'name_cn'  =>$data['lastname'].$data['firstname'],
-                                                'status'   =>1,
-                                            );
+                        //创建该新账号在本系统
+                        $map = array(
+                            'CustomerID'  =>$tmpe['CustomerID'],
+                            'PassWord'    =>md5($tmpe['PassWord']),
+                            'WvPass'      =>$tmpe['PassWord'],
+                            'LastName'    =>$userinfo['lastName'],
+                            'FirstName'   =>$userinfo['firstName'],
+                            'isActive'    =>$userinfo['isActive'],
+                        );
+                        $createUser = D('User')->add($map);
+                        if($createUser){
+                            $data = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
+                            $data['status'] =1;
                         }else{
-                            $_SESSION['user']=array(
-                                    'id'       =>$data['iuid'],
-                                    'username' =>$data['customerid'],
-                                    'name_cn'  =>$data['lastname'].$data['firstname'],
-                                    'status'   =>2,
-                                );
+                            $data['status'] =0;
                         }
-                        $this->redirect('Home/Purchase/center');
-                    }
+                        break;
+                    default:
+                        $data['status'] = 0;
+                        break;
                 }
+                $this->ajaxreturn($data); 
             }
         }else{
             $data['status'] = 0;
