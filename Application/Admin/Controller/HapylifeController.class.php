@@ -554,9 +554,11 @@ class HapylifeController extends AdminBaseController{
 	*@param starttime 起始时间 endtime 结束时间
 	**/
 	public function FinanceReceipt(){
+		$session   = session();
 		$excel     = I('get.excel');
 		$word      = trim(I('get.word',''));
 		$order_status    = I('get.status')-1;
+		// p($session);die;
 		if($order_status== -1){
 			//所有订单
 			$status = '0,1,2,3,4,5,7,8,202';
@@ -579,6 +581,7 @@ class HapylifeController extends AdminBaseController{
 			$this->assign('timeType',$timeType);
 			$this->assign('starttime',I('get.starttime'));
 			$this->assign('endtime',I('get.endtime'));
+			$this->assign('session',$session);
 			$this->display();
 		}
 	}
@@ -1048,6 +1051,7 @@ class HapylifeController extends AdminBaseController{
 	}
 
 	public function users(){
+		$session = session();
 		//有密码账户搜索
 		$count = M('user')->count();
 		//账户昵称搜索
@@ -1074,6 +1078,7 @@ class HapylifeController extends AdminBaseController{
 			$this->assign('word',$word);
 			$this->assign('starttime',I('get.starttime'));
 			$this->assign('endtime',I('get.endtime'));
+			$this->assign('session',$session);
 			$this->display();
 		}
 	}
