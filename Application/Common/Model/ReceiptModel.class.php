@@ -57,11 +57,11 @@ class ReceiptModel extends BaseModel{
      * @param  integer  $field  $field
      * @return array            分页数据
      */
-    public function FinanceGetPage($model,$word,$starttime,$endtime,$status,$test,$order='',$timeType,$limit=20){
+    public function FinanceGetPage($model,$word,$starttime,$endtime,$status,$test,$timeType,$order='',$limit=20){
         $count=$model
             ->alias('r')
             ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-            ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'LastName|FirstName'=>array('not in',$test),'coucode'=>0))
+            ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test),'coucode'=>0))
             ->count();
         // p($count);die;
         $page=new_page($count,$limit);
@@ -72,7 +72,7 @@ class ReceiptModel extends BaseModel{
                 ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
                 ->order($order)
                 ->limit($page->firstRow.','.$page->listRows)
-                ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'LastName|FirstName'=>array('not in',$test),'coucode'=>0))
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test),'coucode'=>0))
                 ->select();
         }else{
             $list=$model
@@ -81,7 +81,7 @@ class ReceiptModel extends BaseModel{
                 ->field($field)
                 ->order($order)
                 ->limit($page->firstRow.','.$page->listRows)
-                ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'LastName|FirstName'=>array('not in',$test),'coucode'=>0))
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test),'coucode'=>0))
                 ->select();         
         }
         foreach ($list as $key => $value) {

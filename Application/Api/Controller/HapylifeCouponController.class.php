@@ -246,22 +246,4 @@ class HapylifeCouponController extends HomeBaseController{
         	$this->ajaxreturn($map);
         }
 	}
-
-	/**
-	* 通过订单号获取用户地址信息
-	**/
-	public function callBackMsg(){
-		$jsonStr = file_get_contents("php://input");
-	    //写入服务器日志文件
-		$log    = addUsaLog($jsonStr);
-		$data   = json_decode($jsonStr,true);
-		$receipt = M('Receipt')->where(array('ir_receiptnum'=>$data['operator']))->find();
-		if($receipt){
-			$receipt['status'] = 1;
-			$this->ajaxreturn($receipt);
-		}else{
-			$data['staus'] = 0;
-			$this->ajaxreturn($data);
-		}
-	}
 }

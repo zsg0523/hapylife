@@ -246,7 +246,102 @@ class HapylifeAddController extends HomeBaseController{
 
 
 
-
+    public function addReceipt(){
+        $hu_nickname = I('post.hu_nickname');
+        $ia_name = I('post.ia_name');
+        $lastname = I('post.lastname');
+        $firstname = I('post.firstname');
+        $ia_road = I('post.ia_road');
+        $ia_phone = I('post.ia_phone');
+        $time = strtotime(I('post.time'));
+        $ipid = I('post.ipid');
+        $product = M('Product')->where(array('ipid'=>$ipid))->find();
+        $receipt = array(
+            'rCustomerID' => $hu_nickname,
+            'ir_receiptnum' => date('YmdHis').rand(10000, 99999),
+            'ir_desc' => $product['ip_name_zh'],
+            'ir_status' => 2,
+            'ipid' => $ipid,
+            'ir_productnum' => 1,
+            'ir_point' => $product['ip_point'],
+            'ir_unpoint' => 0,
+            'ir_price' => $product['ip_price_rmb'],
+            'ir_unpaid' => 0,
+            'ia_name' => $ia_name,
+            'ia_phone' => $ia_phone,
+            'ia_address' => $ia_road,
+            'ir_ordertype' => 4,
+            'ir_date' => $time,
+            'ir_paytime' => $time,
+        );
+        $receipt_result = M('Receipt')->add($receipt);
+        $receiptson = array(
+            'ir_receiptnum' => $receipt['ir_receiptnum'],
+            'pay_receiptnum' => date('YmdHis').rand(100000, 999999),
+            'ir_price' => $product['ip_price_rmb'],
+            'ir_point' => $product['ip_price_rmb'],
+            'ir_paytype' => 5,
+            'cretime' => $time,
+            'paytime' => $time,
+            'status' => 2,
+            'operator' => '系统',
+        );
+        $receiptson_result = M('Receiptson')->add($receiptson);
+        $receiptlist = array(
+            'ir_receiptnum' => $receipt['ir_receiptnum'],
+            'ipid' => $ipid,
+            'ilid' => 0,
+            'product_num' => 1,
+            'product_price' => $product['ip_price_rmb'],
+            'product_point' => $product['ip_point'],
+            'product_name' => $product['ip_name_zh'],
+            'product_picture' => $product['ip_picture_zh'],
+        );
+        $receiptlist_result = M('receiptlist')->add($receiptlist);
+        if($receipt_result && $receiptson_result && $receiptlist_result){
+            // 发送短信提示
+            $templateId ='178959';
+            $params     = array($receipt['ir_receiptnum'],$product['ip_name_zh']);
+            $sms        = D('Smscode')->sms(86,$ia_phone,$params,$templateId);
+            if($sms['errmsg'] == 'OK'){
+                $contents = array(
+                    'acnumber' => 86,
+                    'phone' => $ia_phone,
+                    'operator' => '系统',
+                    'addressee' => $ia_road,
+                    'product_name' => $product['ip_name_zh'],
+                    'date' => time(),
+                    'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product['ip_name_zh'].'，支付成功。',
+                    'customerid' => $hu_nickname
+                );
+                $logs = M('SmsLog')->add($contents);
+                if($logs){
+                    $userinfo = array(
+                        'iuid' => '',
+                        'customerid' => $hu_nickname,
+                        'lastname' => $lastname,
+                        'firstname' => $firstname,
+                    );
+                    // 添加通用券
+                    $product= M('Receipt')
+                            ->alias('r')
+                            ->join('hapylife_product AS p ON r.ipid = p.ipid')
+                            ->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))
+                            ->find();
+                    $data = array(
+                            'product' => $product,
+                            'userinfo' => $userinfo,
+                            'ir_receiptnum' =>$receipt['ir_receiptnum']
+                        );
+                    $data    = json_encode($data);
+                    $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/addCoupon";
+                    // $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/addCoupon";
+                    $result  = post_json_data($sendUrl,$data);
+                    p($result);
+                }
+            }
+        }
+    }
 
 
 
