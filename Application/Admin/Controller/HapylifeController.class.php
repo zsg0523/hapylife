@@ -563,11 +563,11 @@ class HapylifeController extends AdminBaseController{
 		}else{
 			$status = (string)$order_status;
 		}
-		$test      ='测试,测,试,试点,test,testtest';
+		$test      ='测试,测,试,测试点,test,testtest,测试测试,新建测试';
 		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
-		$assign    = D('Receipt')->FinanceGetPage(D('Receipt'),$word,$starttime,$endtime,$status,$test,$order='ir_date desc',$timeType);
+		$assign    = D('Receipt')->FinanceGetPage(D('Receipt'),$word,$starttime,$endtime,$status,$test,$timeType,$order='ir_date desc');
 		//导出excel
 		if($excel == 'excel'){
 			$data = D('Receipt')->FinanceGetAllSendData(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$test,$order='ir_paytime desc');
@@ -847,7 +847,7 @@ class HapylifeController extends AdminBaseController{
 	 			'pay_receiptnum' => date('YmdHis').rand(100000, 999999),
 	 			'ir_price' => $value[P],
 	 			'ir_point' => bcdiv($value[P],100,2),
-	 			'ir_paytype' => 5,
+	 			'ir_paytype' => 6,
 	 			'cretime' => strtotime(gmdate('Y-m-d H:i:s',\PHPExcel_Shared_Date::ExcelToPHP($value[Q]))),
 	 			'paytime' => strtotime(gmdate('Y-m-d H:i:s',\PHPExcel_Shared_Date::ExcelToPHP($value[Q]))),
 	 			'status' => 2,

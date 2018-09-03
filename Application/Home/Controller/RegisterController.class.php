@@ -554,7 +554,7 @@ class RegisterController extends HomeBaseController{
                                                 'acnumber' => $userinfo['acnumber'],
                                                 'phone' => $userinfo['phone'],
                                                 'operator' => '系统',
-                                                'addressee' => $status['ia_name'],
+                                                'addressee' => $userinfo['lastname'].$userinfo['firstname'],
                                                 'product_name' => $receiptlist['product_name'],
                                                 'date' => time(),
                                                 'content' => '恭喜您注册成功，请注意查收邮件'
@@ -957,7 +957,7 @@ class RegisterController extends HomeBaseController{
                                                 'acnumber' => $userinfo['acnumber'],
                                                 'phone' => $userinfo['phone'],
                                                 'operator' => '系统',
-                                                'addressee' => $userinfo['shopaddress1'],
+                                                'addressee' => $userinfo['lastname'].$userinfo['firstname'],
                                                 'product_name' => $receiptlist['product_name'],
                                                 'date' => time(),
                                                 'content' => '恭喜您创建成功，您的会员号码是'.$CustomerID.'，同时注意查收Rovia邮件。',

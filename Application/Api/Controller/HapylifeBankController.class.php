@@ -95,7 +95,7 @@ class HapylifeBankController extends HomeBaseController{
             // 查询银行表信息
             $bankaccount = M('Bank')->where(array('iuid'=>$iuid))->getField('bankaccount',true); 
             
-            if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0 && !empty($userinfo['bankaccount'])){
+            if(!in_array($userinfo['bankaccount'], $bankaccount) && $userinfo['is_login'] == 0 && !empty($userinfo['bankaccount'])){
                $message = array(
                         'iuid'         => $userinfo['iuid'],
                         'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
@@ -110,7 +110,8 @@ class HapylifeBankController extends HomeBaseController{
                     );
                 $result = M('Bank')->add($message);
                 if($result){
-                    $_SESSION['user']['bank'] = $_SESSION['user']['bank'] + 1;
+                    $arr['is_login'] = 1;
+                    $res = M('User')->where(array('iuid'=>$iuid))->save($arr);
                 }
             }
             //列表信息

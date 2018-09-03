@@ -78,7 +78,7 @@ class HapylifeAddressController extends HomeBaseController{
             // 查询地址表信息
             $ia_road = M('Address')->where(array('iuid'=>$iuid))->getField('ia_road',true); 
             
-            if(!in_array($userinfo['shopaddress1'], $ia_road) && $_SESSION['user']['address'] == 0 && !empty($userinfo['shopaddress1'])){
+            if(!in_array($userinfo['shopaddress1'], $ia_road) && $userinfo['is_login'] == 0 && !empty($userinfo['shopaddress1'])){
                $message = array(
                         'iuid'            => $userinfo['iuid'],
                         'ia_name'         => $userinfo['lastname'].$userinfo['firstname'],
@@ -91,7 +91,8 @@ class HapylifeAddressController extends HomeBaseController{
                     );
                 $result = M('Address')->add($message);
                 if($result){
-                    $_SESSION['user']['address'] = $_SESSION['user']['address'] + 1;
+                    $arr['is_login'] = 1;
+                    $res = M('User')->where(array('iuid'=>$iuid))->save($arr);
                 }
             }
             //列表信息
