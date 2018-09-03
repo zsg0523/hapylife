@@ -249,16 +249,19 @@ class HapylifeApiController extends HomeBaseController{
     * 登录
     **/
     public function login(){
-        $tmpe = I('post.');
-        if(strlen($tmpe['CustomerID'])==8){
+        if(IS_POST){
+            $tmpe = I('post.');
+            $data = D('User')->where(array('CustomerID'=>$tmpe['CustomerID']))->find();
+            if($data && $data['password']==md5($tmpe['PassWord'])){
+                $data['status']
+            }else{
+                if(strlen($tmpe['CustomerID'])==8){
                 //检查WV api用户信息
-                $key      = "QACER3H5T6HGYDCCDAZM3";
-                $url      = "https://signupapi.wvhservices.com/api/Hpl/Validate?customerId=".$tmpe['CustomerID']."&"."key=".$key;
-                $wv       = file_get_contents($url);
-                $userinfo = json_decode($wv,true);
+                $usa      = new \Common\UsaApi\Usa;
+                $userinfo = $usa->validateHpl($tmpe['CustomerID']);
                 //检查wv是否存在该账号 Y创建该账号  N登录失败
                 switch ($userinfo['isActive']) {
-                    case 'true':
+                    case true:
                     //检查系统是否存在该账号 Y无密码登录 N创建账号
                     $checkAccount = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
                         switch ($checkAccount) {
@@ -266,20 +269,24 @@ class HapylifeApiController extends HomeBaseController{
                                 //创建该新账号在本系统
                                 $map      = array(
                                         'CustomerID'  =>$tmpe['CustomerID'],
-                                        'PassWord'    =>md5($userinfo['password']),
+                                        'PassWord'    =>md5($tmpe['PassWord']),
+                                        'WvPass'      =>$tmpe['PassWord'],
                                         'LastName'    =>$userinfo['lastName'],
                                         'FirstName'   =>$userinfo['firstName'],
-                                        'isActive'    =>$userinfo['isActive']
+                                        'isActive'    =>$userinfo['isActive'],
+                                        'WvPass'      =>$tmpe['PassWord'],
                                     );
                                 $createUser = D('User')->add($map);
                                 break;
                             default:
                                 //更新相关信息在本系统
                                 $map      = array(
-                                        'PassWord'    =>md5($userinfo['password']),
+                                        'PassWord'    =>md5($tmpe['PassWord']),
+                                        'WvPass'      =>$tmpe['PassWord'],
                                         'LastName'    =>$userinfo['lastName'],
                                         'FirstName'   =>$userinfo['firstName'],
-                                        'isActive'    =>$userinfo['isActive']
+                                        'isActive'    =>$userinfo['isActive'],
+                                        'WvPass'      =>$tmpe['PassWord'],
                                     );
                                 $createUser = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->save($map);
                                 break;
@@ -292,45 +299,45 @@ class HapylifeApiController extends HomeBaseController{
                                 'name_cn'  =>$data['lastname'].$data['firstname'],
                                 'status'   =>2,
                             );
-                        $data['status'] = 1;
-                        $this->ajaxreturn($data); 
+                        // p($_SESSION);die;
+                        $this->redirect('Home/Purchase/center');
                         break;
 
                     default:
-                        $data['status'] = 0;
-                        $this->ajaxreturn($data); 
+                        $this->error('账号格式错误');
                         break;
-                }   
-        }else{
-            $where= array(
-                'CustomerID'=>$tmpe['CustomerID'],
-                'PassWord'  =>md5($tmpe['PassWord'])
-            );
-            $data = D('User')->where($where)->find();
-            if($data){
-                if(substr($data['customerid'],0,3) == 'HPL'){
-                    $_SESSION['user']=array(
-                                        'id'       => $data['iuid'],
-                                        'username' => $data['customerid'],
-                                        'name_cn'  => $data['lastname'].$data['firstname'],
-                                        'status'   => 1,
-                                        'address'  => 0,
-                                        'bank'     => 0,
-                                    );
-                }else{
-                    $_SESSION['user']=array(
-                            'id'       => $data['iuid'],
-                            'username' => $data['customerid'],
-                            'name_cn'  => $data['lastname'].$data['firstname'],
-                            'status'   => 2,
-                        );
                 }
-                $data['status'] = 1;
-                $this->ajaxreturn($data);   
-            }else{
-                $data['status'] = 0;
-                $this->ajaxreturn($data);           
+                }else{
+                    $where = array(
+                        'CustomerID'=>trim($tmpe['CustomerID']),
+                        'PassWord'  =>md5($tmpe['PassWord'])
+                    );
+                    $data = D('User')->where($where)->find();
+                    if (empty($data)) {
+                        $this->error('账号或密码错误');
+                    }else{
+                        if(substr($data['customerid'],0,3) == 'HPL'){
+                            $_SESSION['user']=array(
+                                                'id'       =>$data['iuid'],
+                                                'username' =>$data['customerid'],
+                                                'name_cn'  =>$data['lastname'].$data['firstname'],
+                                                'status'   =>1,
+                                            );
+                        }else{
+                            $_SESSION['user']=array(
+                                    'id'       =>$data['iuid'],
+                                    'username' =>$data['customerid'],
+                                    'name_cn'  =>$data['lastname'].$data['firstname'],
+                                    'status'   =>2,
+                                );
+                        }
+                        $this->redirect('Home/Purchase/center');
+                    }
+                }
             }
+        }else{
+            $data['status'] = 0;
+            $this->ajaxreturn($data); 
         }
     }
 
