@@ -252,9 +252,14 @@ class HapylifeApiController extends HomeBaseController{
         if(IS_POST){
             $tmpe = I('post.');
             $data = D('User')->where(array('CustomerID'=>$tmpe['CustomerID']))->find();
-            if($data && $data['password']==md5($tmpe['PassWord'])){
-                $data['status'] =1;
-                $this->ajaxreturn($data);
+            if($data){
+                if($data['password']==md5($tmpe['PassWord'])){
+                    $data['status'] =1;
+                    $this->ajaxreturn($data);
+                }else{
+                    $data['status'] =0;
+                    $this->ajaxreturn($data);
+                }
             }else{
                 //检查WV api用户信息
                 $usa      = new \Common\UsaApi\Usa;
