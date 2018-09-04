@@ -94,6 +94,7 @@ class PayController extends HomeBaseController{
     // 积分支付
     public function payInt(){
         $iuid = $_SESSION['user']['id'];
+        // $iuid = I('get.iuid');
         $ir_receiptnum = I('get.ir_receiptnum');
         // 获取用户信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
@@ -126,36 +127,35 @@ class PayController extends HomeBaseController{
                     //生成子订单日志记录
                     $content = '订单:'.$ir_receiptnum.'支付成功,扣除Ep:'.$receiptson['ir_point'].',剩余Ep:'.$residue;
                     $log     = array(
-                                'iuid' => $iuid,
-                                'name' => $userinfo['customerid'],
-                                'content' => $content,
-                                'create_time'   =>time(),
-                                'create_month'   =>date('Y-m'),
-                                'type' => 2,
-                                'action' => 3,
-                            );
+                        'iuid' => $iuid,
+                        'name' => $userinfo['customerid'],
+                        'content' => $content,
+                        'create_time'   =>time(),
+                        'create_month'   =>date('Y-m'),
+                        'type' => 2,
+                        'action' => 3,
+                    );
                     $addlog  = M('Log')->add($log);
                     if($addlog){
                         // 记录会员使用EP日志
                         $content = $userinfo['customerid'].'在'.date('Y-m-d H:i:s').'时，消费出'.$receiptson['ir_point'].'EP到系统，剩EP余额'.$residue;
                         $logs = array(
-                                    'pointNo' => $ir_receiptnum,
-                                    'iuid' => $iuid,
-                                    'hu_username' => $userinfo['lastname'].$userinfo['firstname'],
-                                    'hu_nickname' => $userinfo['customerid'],
-                                    'send' => $userinfo['customerid'],
-                                    'received' => '系统',
-                                    'getpoint' => $receiptson['ir_point'],
-                                    'pointtype' => 7,
-                                    'realpoint' => $receiptson['ir_point'],
-                                    'leftpoint' => $residue,
-                                    'date' => date('Y-m-d H:i:s'),
-                                    'handletime' => date('Y-m-d H:i:s'),
-                                    'content' => $content,
-                                    'status' => 2,
-                                    'whichApp' => 5,
-
-                                );
+                            'pointNo' => $ir_receiptnum,
+                            'iuid' => $iuid,
+                            'hu_username' => $userinfo['lastname'].$userinfo['firstname'],
+                            'hu_nickname' => $userinfo['customerid'],
+                            'send' => $userinfo['customerid'],
+                            'received' => '系统',
+                            'getpoint' => $receiptson['ir_point'],
+                            'pointtype' => 7,
+                            'realpoint' => $receiptson['ir_point'],
+                            'leftpoint' => $residue,
+                            'date' => date('Y-m-d H:i:s'),
+                            'handletime' => date('Y-m-d H:i:s'),
+                            'content' => $content,
+                            'status' => 2,
+                            'whichApp' => 5,
+                        );
                         $addlogs = M('Getpoint')->add($logs);
                         if($addlogs){
                             // 父订单待支付积分
@@ -179,14 +179,14 @@ class PayController extends HomeBaseController{
                                     $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                     if($sms['errmsg'] == 'OK'){
                                         $contents = array(
-                                                    'acnumber' => $userinfo['acnumber'],
-                                                    'phone' => $userinfo['phone'],
-                                                    'operator' => '系统',
-                                                    'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                                                    'product_name' => '',
-                                                    'date' => time(),
-                                                    'content' => '订单编号：'.$receipt['ir_receiptnum'].'，收到付款'.$receiptson['ir_price'].'，总共已支付'.$total.'剩余需支付'.$ir_unpaid,
-                                                    'customerid' => $userinfo['customerid']
+                                            'acnumber' => $userinfo['acnumber'],
+                                            'phone' => $userinfo['phone'],
+                                            'operator' => '系统',
+                                            'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                            'product_name' => '',
+                                            'date' => time(),
+                                            'content' => '订单编号：'.$receipt['ir_receiptnum'].'，收到付款'.$receiptson['ir_price'].'，总共已支付'.$total.'剩余需支付'.$ir_unpaid,
+                                            'customerid' => $userinfo['customerid']
                                         );
                                         $logs = M('SmsLog')->add($contents);
                                     }
@@ -219,14 +219,14 @@ class PayController extends HomeBaseController{
                                     $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                     if($sms['errmsg'] == 'OK'){
                                         $contents = array(
-                                                    'acnumber' => $userinfo['acnumber'],
-                                                    'phone' => $userinfo['phone'],
-                                                    'operator' => '系统',
-                                                    'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                                                    'product_name' => $product_name,
-                                                    'date' => time(),
-                                                    'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
-                                                    'customerid' => $userinfo['customerid']
+                                            'acnumber' => $userinfo['acnumber'],
+                                            'phone' => $userinfo['phone'],
+                                            'operator' => '系统',
+                                            'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                            'product_name' => $product_name,
+                                            'date' => time(),
+                                            'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
+                                            'customerid' => $userinfo['customerid']
                                         );
                                         $logs = M('SmsLog')->add($contents);
                                     }
@@ -330,14 +330,16 @@ class PayController extends HomeBaseController{
                                         //更新订单信息
                                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
                                         $usa    = new \Common\UsaApi\Usa;
-                                        $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
+                                        $products = 'RBS,DTP';
+                                        $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
                                         if(!empty($result['result'])){
                                             $log = addUsaLog($result['result']);
                                             $maps = json_decode($result['result'],true);
                                             $wv  = array(
-                                                        'wvCustomerID' => $maps['wvCustomerID'],
-                                                        'wvOrderID'    => $maps['wvOrderID']
-                                                    );
+                                                'wvCustomerID' => $maps['wvCustomerID'],
+                                                'wvOrderID'    => $maps['wvOrderID'],
+                                                'Products'     => $products
+                                            );
                                             $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                                             if($res){
                                                 $templateId ='164137';
@@ -346,13 +348,13 @@ class PayController extends HomeBaseController{
                                                 if($sms['errmsg'] == 'OK'){
                                                     $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();
                                                     $contents = array(
-                                                                'acnumber' => $userinfo['acnumber'],
-                                                                'phone' => $userinfo['phone'],
-                                                                'operator' => '系统',
-                                                                'addressee' => $status['ia_name'],
-                                                                'product_name' => $receiptlist['product_name'],
-                                                                'date' => time(),
-                                                                'content' => '恭喜您注册成功，请注意查收邮件'
+                                                        'acnumber' => $userinfo['acnumber'],
+                                                        'phone' => $userinfo['phone'],
+                                                        'operator' => '系统',
+                                                        'addressee' => $status['ia_name'],
+                                                        'product_name' => $receiptlist['product_name'],
+                                                        'date' => time(),
+                                                        'content' => '恭喜您注册成功，请注意查收邮件'
                                                     );
                                                     $logs = M('SmsLog')->add($contents);
                                                 }

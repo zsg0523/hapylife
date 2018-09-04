@@ -433,14 +433,14 @@
 			if(EnrollerID != ''){
 				$.ajax({
 					type:"post",
-					url:"checkName",
+					url:"{:U('Home/Register/checkName')}",
 					async:false,
 					dataType:'json',
 					data:{
 						EnrollerID:EnrollerID
 					},
 					success:function(data){
-		//				console.log(12123);
+						// alert(EnrollerID);
 		//				console.log(data);
 						if(data.status == 0){
 							$("input[name='EnrollerNameCn']").val("请输入正确的推荐人ID！");
