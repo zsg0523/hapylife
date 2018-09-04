@@ -108,7 +108,7 @@
 					 	继续支付
 					</a>
 				</div>
-			<elseif condition="$data['ir_ordertype'] eq 3" />
+			<else />
 				<div class="cart_total">
 					<a href="{:U('Home/Pay/choosePay',array('ir_unpoint'=>$data['ir_unpoint'],'ir_price'=>$data['ir_price'],'ir_point'=>$data['ir_point'],'ir_unpaid'=>$data['ir_unpaid'],'ir_receiptnum'=>$data['ir_receiptnum']))}" id="pay" >
 						继续支付
@@ -133,7 +133,9 @@
 			$('#paymentInfo').height($(window).height());
 	    });
 	    //显示蒙版
-	    
+	    function back(){
+            window.location.href ="{:U('Home/Purchase/myOrder')}";
+        }
 	</script>  
 </body>  
 </html>  

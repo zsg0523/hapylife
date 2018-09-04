@@ -110,30 +110,48 @@ class HapylifeCouponController extends HomeBaseController{
 	    //写入服务器日志文件
 		$log    = addUsaLog($jsonStr);
 		$data   = json_decode($jsonStr,true);
-		$map    = array(
-				'registByCoupon'=>1
-			);
-		$result = M('User')->where(array('CustomerID'=>$data['hu_nickname']))->save($map);
+		$result = M('User')->where(array('CustomerID'=>$data['hu_nickname']))->setField('registByCoupon',1);
 	    if($result){
 	    	$result['status'] = 1;
 	    	$this->ajaxreturn($result);
 	    }
 	}
-
 	/**
-	* 将用户数据存储在临时用户表
+	* 通过用户账号查询是否有注册券
 	**/ 
-	public function addUserInfo(){
-		$jsonStr = file_get_contents("php://input");
-	    //写入服务器日志文件
-	    $log     = addUsaLog($jsonStr);
-	    $data    = json_decode($jsonStr,true);
-	    $addUserInfo = M('Tempuser')->add($data['data']);
-	    if($addUserInfo){
-	    	$result['status'] = 1;
-	    	$this->ajaxreturn($result);
-	    }
+	public function checkCoupon(){
+		$hu_nickname = I('post.hu_nickname');
+		$userinfo = M('User')->where(array('CustomerID'=>$hu_nickname))->find();
+		if(substr($userinfo['customerid'],0,3) == 'HPL' && $userinfo['distributortype'] == 'Pc' && empty($userinfo['wvCustomerID'])){
+			$data = array(
+					'hu_nickname' => $hu_nickname,
+				);
+			$data    = json_encode($data);
+			$sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/checkCoupon";
+			$result  = post_json_data($sendUrl,$data);
+			$back_result = json_decode($result['result'],true);
+			if($back_result['couponStatus'] && $back_result['coupon']){
+				foreach ($back_result['coupon'] as $key => $value) {
+					if($value['is_dt']==1){
+						$DT1[] = $value;
+					}else{
+						$DT0[] = $value;
+					}
+				}
+				if($DT1){
+					$map['cu_id'] = $DT1[0]['cu_id'];
+				}else{
+					$map['cu_id'] = $DT0[0]['cu_id'];
+				}
+				$map['status'] = 1;
+				$this->ajaxreturn($map);
+			}else{
+				$map['status'] = 0;
+				$this->ajaxreturn($map);
+			}
+		}else{
+			$map['status'] = 0;
+			$this->ajaxreturn($map);
+		}
 	}
-
-	
 }

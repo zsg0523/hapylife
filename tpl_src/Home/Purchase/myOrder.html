@@ -91,7 +91,7 @@
 										<a href="{:U('Home/Pay/choosePay1',array('ir_unpoint'=>$v['ir_unpoint'],'ir_price'=>$v['ir_price'],'ir_point'=>$v['ir_point'],'ir_unpaid'=>$v['ir_unpaid'],'ir_receiptnum'=>$v['ir_receiptnum']))}" id="pay">
 											继续支付
 										</a>
-									<elseif condition="$v['ir_ordertype'] eq 3" />
+									<else />
 										<a href="{:U('Home/Pay/choosePay',array('ir_unpoint'=>$v['ir_unpoint'],'ir_price'=>$v['ir_price'],'ir_point'=>$v['ir_point'],'ir_unpaid'=>$v['ir_unpaid'],'ir_receiptnum'=>$v['ir_receiptnum']))}" id="pay" >
 											继续支付
 										</a>

@@ -91,9 +91,17 @@ class PurchaseController extends HomeBaseController{
                 }
                 break;
         }  
-        $array = array('HPL00000181','HPL00123539');
+        $array   = array('HPL00000181','HPL00123539');
+        $arrayTo = array('61338465','64694832','65745561','HPL00123556','61751610','61624356','61695777','68068002');
         if(in_array($find['customerid'],$array)){
             $an_pro = M('Product')->where(array('ip_type'=>4,'is_pull'=>0))->select();
+            $product = array_merge($products,$an_pro);
+            foreach ($product as $key => $value) {
+                $data[$key]         = $value; 
+                $data[$key]['show'] = 1; 
+            }
+        }else if(in_array($find['customerid'],$arrayTo)){
+            $an_pro = M('Product')->where(array('ipid'=>48,'is_pull'=>0))->select();
             $product = array_merge($products,$an_pro);
             foreach ($product as $key => $value) {
                 $data[$key]         = $value; 
@@ -195,6 +203,7 @@ class PurchaseController extends HomeBaseController{
                 ->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
                 ->join('hapylife_product hp on hr.ipid=hp.ipid')
                 ->where($map)
+                ->order('r.ir_date DESC')
                 ->select();
         $this->assign('data',$data);
         $this->display();
@@ -304,9 +313,9 @@ class PurchaseController extends HomeBaseController{
                 $con = '买四送一单';
                 break;
         }
-        if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
-            $this->error('请先填写个人信息的地区和详细地址');
-        }
+        // if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
+        //     $this->error('请先填写个人信息的地区和详细地址');
+        // }
         $ia_name  = $userinfo['lastname'].$userinfo['firstname'];
         $order = array(
             //订单编号
@@ -885,13 +894,13 @@ class PurchaseController extends HomeBaseController{
             if($order['htid']){
                 $this->redirect('Home/Register/new_regsuccess',array('ir_receiptnum'=>$order['ir_receiptnum']));
             }else{
-                $this->redirect('Home/Purchase/center');  
+                $this->redirect('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$order['ir_receiptnum']));
             }
         }else{
             if($order['ir_ordertype'] == 1){
-                $this->redirect('Home/Pay/choosePay1',array('ir_unpoint'=>$order['ir_unpoint'],'ir_price'=>$order['ir_price'],'ir_point'=>$order['ir_point'],'ir_unpaid'=>$order['ir_unpaid'],'ir_receiptnum'=>$ir_receiptnum));
+                $this->redirect('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$order['ir_receiptnum']));
             }else{
-                $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$order['ir_unpoint'],'ir_price'=>$order['ir_price'],'ir_point'=>$order['ir_point'],'ir_unpaid'=>$order['ir_unpaid'],'ir_receiptnum'=>$ir_receiptnum));
+                $this->redirect('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$order['ir_receiptnum']));
             }
         }
      }
