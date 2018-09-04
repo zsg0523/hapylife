@@ -287,28 +287,6 @@ class HapylifeApiController extends HomeBaseController{
                     default:
                         $data['status'] = 0;
                         break;
-                }   
-        }else{
-            $where= array(
-                'CustomerID'=>$tmpe['CustomerID'],
-                'PassWord'  =>md5($tmpe['PassWord'])
-            );
-            $data = D('User')->where($where)->find();
-            if($data){
-                if(substr($data['customerid'],0,3) == 'HPL'){
-                    $_SESSION['user']=array(
-                                        'id'       => $data['iuid'],
-                                        'username' => $data['customerid'],
-                                        'name_cn'  => $data['lastname'].$data['firstname'],
-                                        'status'   => 1,
-                                    );
-                }else{
-                    $_SESSION['user']=array(
-                            'id'       => $data['iuid'],
-                            'username' => $data['customerid'],
-                            'name_cn'  => $data['lastname'].$data['firstname'],
-                            'status'   => 2,
-                        );
                 }
                 $this->ajaxreturn($data); 
             }
@@ -1624,18 +1602,4 @@ class HapylifeApiController extends HomeBaseController{
         }
     }
 
-    public function test(){
-        $happyLifeID = I('post.happyLifeID');
-        $password = I('post.password');
-        $sponsorID = I('post.sponsorID');
-        $firstName_EN = I('post.firstName_EN');
-        $lastName_EN = I('post.lastName_EN');
-        $emailAddress = I('post.emailAddress');
-        $phone = I('post.phone');
-        $products = I('post.products');
-        $usa    = new \Common\UsaApi\Usa;
-        p($usa);
-        $result = $usa->createCustomer($happyLifeID,$password,$sponsorID,$firstName_EN,$lastName_EN,$emailAddress,$phone,$products);
-        p($result);
-    }
 }
