@@ -80,6 +80,8 @@ class HapylifePayController extends HomeBaseController{
         $order         = M('Receiptson')->where(array('pay_receiptnum'=>$pay_receiptnum))->find();
         // 获取父订单信息
         $receipt = M('Receipt')->where(array('ir_receiptnum'=>$order['ir_receiptnum']))->find();
+        // p($order);
+        // p($receipt);die;
         switch($ip_paytype){
         	case '1':
 		        // wsdl模式访问wsdl程序
@@ -147,11 +149,13 @@ class HapylifePayController extends HomeBaseController{
 		        }
         		break;
         	case '2':
+        		$grade   = D('Product')->where(array('ipid'=>$receipt['ipid']))->getfield('ip_after_grade');
+        		// p($grade);die;
         		// 获取用户信息
-        		$userinfo = M('User')->where(array('iuid'=>$iuid))->find();
+        		$userinfo= M('User')->where(array('iuid'=>$iuid))->find();
 		        // 用户剩余积分
 		        $residue = bcsub($userinfo['iu_point'],$order['ir_point'],2);
-		        if($residue>0){
+		        if($residue>=0){
 		            //修改用户积分
 		            $message = array(
 		                'iuid'      =>$iuid,
@@ -227,7 +231,7 @@ class HapylifePayController extends HomeBaseController{
 		                                );
 		                                $change_receipt = M('Receipt')->where(array('ir_receiptnum'=>$order['ir_receiptnum']))->save($maps);
 		                                if($change_receipt){
-		                                    if($receipt['ir_ordertype']){
+		                                    if($receipt['ir_ordertype']==4){
 		                                    	// 添加通用券
 		                                        $product= M('Receipt')
                                                         ->alias('r')
@@ -332,7 +336,7 @@ class HapylifePayController extends HomeBaseController{
 			                                            'TermsAndConditions' =>1,
 			                                            'DeviceGeolocation'  =>$tmpeArr['devicegeolocation'],
 			                                            'BrowserVersion'     =>$tmpeArr['browserversion'],
-			                                            'DistributorType'    =>D('Product')->where(array('ipid'=>$receipt['ipid']))->getfield('ip_after_grade'),
+			                                            'DistributorType'    =>$grade,
 			                                            'JoinedOn'    => time(),
 			                                        );
 			                                        $update     = M('User')->add($tmpe);       
@@ -396,7 +400,7 @@ class HapylifePayController extends HomeBaseController{
 			                                        //修改用户最近订单日期/是否通过/等级/数量
 			                                        $tmpe['iuid'] = $receipt['riuid'];
 			                                        //产品等级
-			                                        $tmpe['DistributorType'] = D('Product')->where(array('ipid'=>$receipt['ipid']))->getfield('ip_after_grade');
+			                                        $tmpe['DistributorType'] = $grade;
 			                                        //购买产品次数+1
 			                                        $tmpe['Number']          = $userinfo['number']+1;
 			                                        //number 购买产品的次数
@@ -411,6 +415,40 @@ class HapylifePayController extends HomeBaseController{
 			                                        $update    = D('User')->save($tmpe);
 			                                        $riuid     = $receipt['riuid'];
 			                                        $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$receipt['ir_receiptnum']);
+			                                        // if($receipt['ir_ordertype']==1){
+			                                        // 	// 发送数据到usa
+				                                       //  $usa    = new \Common\UsaApi\Usa;
+				                                       //  $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
+				                                       //  if(!empty($result['result'])){
+				                                       //      $log = addUsaLog($result['result']);
+				                                       //      $maps = json_decode($result['result'],true);
+				                                       //      $wv  = array(
+				                                       //                  'wvCustomerID' => $maps['wvCustomerID'],
+				                                       //                  'wvOrderID'    => $maps['wvOrderID']
+				                                       //              );
+				                                       //      $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
+				                                       //      if($res){
+				                                       //          // 发送短信提示
+				                                       //          $templateId ='164137';
+				                                       //          $params     = array();
+				                                       //          $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+				                                       //          if($sms['errmsg'] == 'OK'){
+				                                       //              $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();
+				                                       //              $contents = array(
+				                                       //                          'acnumber' => $userinfo['acnumber'],
+				                                       //                          'phone' => $userinfo['phone'],
+				                                       //                          'operator' => '系统',
+				                                       //                          'addressee' => $status['ia_name'],
+				                                       //                          'product_name' => $receiptlist['product_name'],
+				                                       //                          'date' => time(),
+				                                       //                          'content' => '恭喜您注册成功，请注意查收邮件',
+				                                       //                          'customerid' => $CustomerID
+				                                       //              );
+				                                       //              $logs = M('SmsLog')->add($contents);
+				                                       //          }
+				                                       //      }
+				                                       //  }
+			                                        // }
 			                                        // 支付完成
 										            $data['status'] = 1;
 										            $this->ajaxreturn($data);
