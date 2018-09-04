@@ -32,7 +32,10 @@
 				    	<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
                         <input name="word" type="text" placeholder="关键词" value="{$word}" size="20" />
                         <input class='btn btn-sm' type="submit" value="筛选" />
-                        <input class='btn btn-sm' type="submit" name='excel' value="excel" />
+                        <if condition="$session['user']['username'] eq mary || $session['user']['username'] eq admin2">
+                        <else />
+                        	<input class='btn btn-sm' type="submit" name='excel' value="excel" />
+					    </if>
                 	</form>
 			    </li>
             </ul>
@@ -53,7 +56,10 @@
                         <th >订单状态</th>
                         <th >创建日期</th>
                         <th >查看明细</th>
-						<th>操作</th>
+                        <if condition="$session['user']['username'] eq mary || $session['user']['username'] eq admin2">
+                        	<else />
+                        	<th>操作</th>
+					    </if>
 					</tr>
 					<foreach name="data" item="v">
 						<tr>

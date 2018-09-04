@@ -108,7 +108,7 @@ class PayController extends HomeBaseController{
         $ir_ordertype = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->getfield('ir_ordertype');
         // 获取产品名称
         $product_name = M('Receiptlist')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('product_name');
-        if($residue>0){
+        if($residue>=0){
             //修改用户积分
             $message = array(
                 'iuid'      =>$iuid,

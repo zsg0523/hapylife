@@ -249,56 +249,38 @@ class HapylifeApiController extends HomeBaseController{
     * 登录
     **/
     public function login(){
-        $tmpe = I('post.');
-        if(strlen($tmpe['CustomerID'])==8){
+        if(IS_POST){
+            $tmpe = I('post.');
+            $data = D('User')->where(array('CustomerID'=>$tmpe['CustomerID']))->find();
+            if($data && $data['password']==md5($tmpe['PassWord'])){
+                $data['status'] =1;
+                $this->ajaxreturn($data);
+            }else{
                 //检查WV api用户信息
-                $key      = "QACER3H5T6HGYDCCDAZM3";
-                $url      = "https://signupapi.wvhservices.com/api/Hpl/Validate?customerId=".$tmpe['CustomerID']."&"."key=".$key;
-                $wv       = file_get_contents($url);
-                $userinfo = json_decode($wv,true);
+                $usa      = new \Common\UsaApi\Usa;
+                $userinfo = $usa->validateHpl($tmpe['CustomerID']);
                 //检查wv是否存在该账号 Y创建该账号  N登录失败
                 switch ($userinfo['isActive']) {
-                    case 'true':
-                    //检查系统是否存在该账号 Y无密码登录 N创建账号
-                    $checkAccount = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
-                        switch ($checkAccount) {
-                            case null:
-                                //创建该新账号在本系统
-                                $map      = array(
-                                        'CustomerID'  =>$tmpe['CustomerID'],
-                                        'PassWord'    =>md5($userinfo['password']),
-                                        'LastName'    =>$userinfo['lastName'],
-                                        'FirstName'   =>$userinfo['firstName'],
-                                        'isActive'    =>$userinfo['isActive']
-                                    );
-                                $createUser = D('User')->add($map);
-                                break;
-                            default:
-                                //更新相关信息在本系统
-                                $map      = array(
-                                        'PassWord'    =>md5($userinfo['password']),
-                                        'LastName'    =>$userinfo['lastName'],
-                                        'FirstName'   =>$userinfo['firstName'],
-                                        'isActive'    =>$userinfo['isActive']
-                                    );
-                                $createUser = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->save($map);
-                                break;
+                    case true:
+                        //创建该新账号在本系统
+                        $map = array(
+                            'CustomerID'  =>$tmpe['CustomerID'],
+                            'PassWord'    =>md5($tmpe['PassWord']),
+                            'WvPass'      =>$tmpe['PassWord'],
+                            'LastName'    =>$userinfo['lastName'],
+                            'FirstName'   =>$userinfo['firstName'],
+                            'isActive'    =>$userinfo['isActive'],
+                        );
+                        $createUser = D('User')->add($map);
+                        if($createUser){
+                            $data = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
+                            $data['status'] =1;
+                        }else{
+                            $data['status'] =0;
                         }
-                        $data = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
-                        //登录后看不到产品
-                        $_SESSION['user']=array(
-                                'id'       =>$data['iuid'],
-                                'username' =>$data['customerid'],
-                                'name_cn'  =>$data['lastname'].$data['firstname'],
-                                'status'   =>2,
-                            );
-                        $data['status'] = 1;
-                        $this->ajaxreturn($data); 
                         break;
-
                     default:
                         $data['status'] = 0;
-                        $this->ajaxreturn($data); 
                         break;
                 }   
         }else{
@@ -323,12 +305,11 @@ class HapylifeApiController extends HomeBaseController{
                             'status'   => 2,
                         );
                 }
-                $data['status'] = 1;
-                $this->ajaxreturn($data);   
-            }else{
-                $data['status'] = 0;
-                $this->ajaxreturn($data);           
+                $this->ajaxreturn($data); 
             }
+        }else{
+            $data['status'] = 0;
+            $this->ajaxreturn($data); 
         }
     }
 
@@ -594,11 +575,13 @@ class HapylifeApiController extends HomeBaseController{
         $iuid = trim(I('post.iuid'));
         $ipid = trim(I('post.ipid'));
         //商品信息
-        $product = M('Product')->where(array('ipid'=>$ipid))->find();
+        $product   = M('Product')->where(array('ipid'=>$ipid))->find();
         //用户信息
-        $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
+        $userinfo  = M('User')->where(array('iuid'=>$iuid))->find();
         //生成唯一订单号
         $order_num = date('YmdHis').rand(10000, 99999);
+        //查看地址
+        $address   = M('Address')->where(array('iuid'=>$iuid,'is_address_show'=>1))->find(); 
         switch ($product['ip_type']) {
             case '1':
                 $list= D('Receipt')->where(array('ir_ordertype'=>$product['ip_type'],'riuid'=>$iuid))->setField('is_delete',1);
@@ -614,12 +597,19 @@ class HapylifeApiController extends HomeBaseController{
                 $con = '通用券'.$product['ip_name_zh'];
                 break;
         }
-        if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
+        if($address){
+            $ia_name     = $address['ia_name'];    
+            $phone       = $address['ia_phone'];    
+            $shopaddress = $address['ia_province'].$address['ia_town'].$address['ia_region'].$address['     ia_road '];    
+        }else if($userinfo['shopaddress1']){
+            $ia_name     = $userinfo['lastname'].$userinfo['firstname'];
+            $phone       = $userinfo['phone'];
+            $shopaddress = $userinfo['shopaddress1'];
+        }else{
             $order['status'] = 3;
-            $order['msg']    = '请先填写个人信息的地区和详细地址';
+            $order['msg']    = '请确保有个人资料详细地址或收货地址';
             $this->ajaxreturn($order);
         }
-        $ia_name = $userinfo['lastname'].$userinfo['firstname'];
         $order = array(
             //订单编号
             'ir_receiptnum' =>$order_num,
@@ -634,9 +624,9 @@ class HapylifeApiController extends HomeBaseController{
             //收货人
             'ia_name'=>$ia_name,
             //收货人电话
-            'ia_phone'=>$userinfo['phone'],
+            'ia_phone'=>$phone,
             //收货地址
-            'ia_address'=>$userinfo['shopaddress1'].' '.$userinfo['shopaddress2'],
+            'ia_address'=>$shopaddress,
             //订单总商品数量
             'ir_productnum'=>1,
             //订单总金额
