@@ -172,22 +172,13 @@ class HapylifeCouponController extends HomeBaseController{
 		$log    = addUsaLog($jsonStr);
 		$data   = json_decode($jsonStr,true);
 		$coupon = $data['coupon'];
-		$userinfo = $data['userinfo'];
 		// 如果用户信息不存在,则通过订单号查询地址信息
-		if(empty($userinfo)){
-			$receipt_msg = M('Receipt')->where(array('ir_receiptnum'=>$data['operator']))->find();
-			$riuid = $receipt_msg['riuid'];
-			$rCustomerID = $receipt_msg['rCustomerID'];
-			$ia_name = $receipt_msg['ia_name'];
-			$ia_phone = $receipt_msg['ia_phone'];
-			$ia_address = $receipt_msg['ia_address'];
-		}else{
-			$riuid = $userinfo['iuid'];
-			$rCustomerID = $userinfo['customerid'];
-			$ia_name = $userinfo['lastname'].$userinfo['firstname'];
-			$ia_phone = $userinfo['phone'];
-			$ia_address = $userinfo['shopprovince'].$userinfo['shopcity'].$userinfo['shoparea'].$userinfo['shopaddress1'];
-		}
+		$receipt_msg = M('Receipt')->where(array('ir_receiptnum'=>$data['operator']))->find();
+		$riuid = $receipt_msg['riuid'];
+		$rCustomerID = $receipt_msg['rcustomerid'];
+		$ia_name = $receipt_msg['ia_name'];
+		$ia_phone = $receipt_msg['ia_phone'];
+		$ia_address = $receipt_msg['ia_address'];
 		$order_num = 'CP'.date('YmdHis').rand(10000, 99999);
 		$con = $coupon['c_name'].$coupon['coupon_code'];
 		$receipt = array(
@@ -240,6 +231,8 @@ class HapylifeCouponController extends HomeBaseController{
 		$receiptlistAdd = M('Receiptlist')->add($receiptlist);
         if($receiptAdd && $receiptlistAdd){
         	$map['status'] = 1;
+        	$map['ia_name'] = $ia_name;
+        	$map['iuid'] = $riuid;
         	$this->ajaxreturn($map);
         }else{
         	$map['status'] = 0;

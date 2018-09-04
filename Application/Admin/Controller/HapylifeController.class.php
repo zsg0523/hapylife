@@ -377,7 +377,7 @@ class HapylifeController extends AdminBaseController{
 			'appkey' => 'ALL',
 		);
 		$data    = json_encode($data);
-//		$sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
+		// $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
 		$sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/getCouponList";
 		$result  = post_json_data($sendUrl,$data);
 		$back_message = json_decode($result['result'],true);
@@ -391,7 +391,7 @@ class HapylifeController extends AdminBaseController{
 				'ip_name_zh'=>$word
 			);
 		}
-//		 p($CouponGroups);die;
+		 // p($CouponGroups);die;
 		$assign=D('Product')->getAllData(D('Product'),$map);
 		$this->assign('catList',$catList);
 		$this->assign('CouponGroups',$CouponGroups);
@@ -404,20 +404,36 @@ class HapylifeController extends AdminBaseController{
 	**/
 	public function add_product(){
 		$data=I('post.');
-		p($data);
-		die;
 		$upload=post_upload();
 		$data['ip_picture_zh']=C('WEB_URL').$upload['name'];
 		// p($data);die;
+		foreach($data['gidnumArr'] as $key => $value){
+			if(empty($value)){
+				$keys[] = $key;
+			}
+		}
 		if($data['gidArr']){
+			foreach($keys as $value){
+				unset($data['gidArr'][$value]);
+			}
 			foreach ($data['gidArr'] as $key => $value) {
 				$mape         = explode(',',$value);
 				$getCoupn    .= $mape[0].',';
-				$traversenum .= $mape[1].',';
 			}
 			$data['get_coupon'] = substr($getCoupn,0,-1);
+		}
+		if($data['gidnumArr']){
+			foreach($keys as $value){
+				unset($data['gidnumArr'][$value]);
+			}
+			foreach ($data['gidnumArr'] as $key => $value) {
+				$mape         = explode(',',$value);
+				$traversenum .= $mape[0].',';
+			}
 			$data['traverse_num'] = substr($traversenum,0,-1);
 		}
+		p($data);
+		die;
 		$result=D('Product')->addData($data);
 		if($result){
 			$this->redirect('Admin/Hapylife/product');
@@ -435,13 +451,29 @@ class HapylifeController extends AdminBaseController{
 			'ipid'=>$data['id']
 			);
 		$upload=post_upload();
+		foreach($data['gidnumArr'] as $key => $value){
+			if(empty($value)){
+				$keys[] = $key;
+			}
+		}
 		if($data['gidArr']){
+			foreach($keys as $value){
+				unset($data['gidArr'][$value]);
+			}
 			foreach ($data['gidArr'] as $key => $value) {
 				$mape         = explode(',',$value);
 				$getCoupn    .= $mape[0].',';
-				$traversenum .= $mape[1].',';
 			}
 			$data['get_coupon'] = substr($getCoupn,0,-1);
+		}
+		if($data['gidnumArr']){
+			foreach($keys as $value){
+				unset($data['gidnumArr'][$value]);
+			}
+			foreach ($data['gidnumArr'] as $key => $value) {
+				$mape         = explode(',',$value);
+				$traversenum .= $mape[0].',';
+			}
 			$data['traverse_num'] = substr($traversenum,0,-1);
 		}
 		if(isset($upload['name'])){
@@ -563,7 +595,7 @@ class HapylifeController extends AdminBaseController{
 		}else{
 			$status = (string)$order_status;
 		}
-		$test      ='测试,测,试,测试点,test,testtest,测试测试,新建测试';
+		$test      ='测试,测,试,测试点,test,testtest,测试测试,新建测试,测试地,测试点,测试账号';
 		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
@@ -1163,10 +1195,11 @@ class HapylifeController extends AdminBaseController{
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
 		$array  = '测,测试,test,试,试点,testtest';
-		$assign    = D('Receipt')->getSendPages(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$array,$order='ir_paytime asc');
+		$ipid = '47,48';
+		$assign    = D('Receipt')->getSendPages(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$array,$ipid,$order='ir_paytime asc');
 		// 导出excel
 		if($excel == 'excel'){
-			$data = D('Receipt')->getSendPageSonAlls(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$array,$order='ir_paytime asc');
+			$data = D('Receipt')->getSendPageSonAlls(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$array,$ipid,$order='ir_paytime asc');
 			$export_send_excel = D('Receipt')->export_send_excel($data['data']);
 		}else{
 			$this->assign($assign);

@@ -534,15 +534,16 @@ class RegisterController extends HomeBaseController{
                     }
                     if($upreceipt){
                         $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$order['ir_receiptnum']);
+                        $products = 'RBS,DTP';
                         $usa    = new \Common\UsaApi\Usa;
-                        $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
+                        $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
                         if(!empty($result['result'])){
                             $log = addUsaLog($result['result']);
                             $maps = json_decode($result['result'],true);
                             $wv  = array(
                                         'wvCustomerID' => $maps['wvCustomerID'],
                                         'wvOrderID'    => $maps['wvOrderID'],
-                                        'Products'     => 'DTP1'
+                                        'Products'     => $products
                                     );
                             $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                             if($res){
@@ -551,13 +552,13 @@ class RegisterController extends HomeBaseController{
                                 $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                 if($sms['errmsg'] == 'OK'){
                                     $contents = array(
-                                                'acnumber' => $userinfo['acnumber'],
-                                                'phone' => $userinfo['phone'],
-                                                'operator' => '系统',
-                                                'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                                                'product_name' => $receiptlist['product_name'],
-                                                'date' => time(),
-                                                'content' => '恭喜您注册成功，请注意查收邮件'
+                                        'acnumber' => $userinfo['acnumber'],
+                                        'phone' => $userinfo['phone'],
+                                        'operator' => '系统',
+                                        'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                        'product_name' => $receiptlist['product_name'],
+                                        'date' => time(),
+                                        'content' => '恭喜您注册成功，请注意查收邮件'
                                     );
                                     $logs = M('SmsLog')->add($contents);
                                 }
@@ -738,12 +739,12 @@ class RegisterController extends HomeBaseController{
         }
 
         $assign = array(
-                    'error' => $error,
-                    'data' => $data,
-                    'datas' => $datas,
-                    'cu_id' => $cu_id,
-                    'hu_nickname' => $hu_nickname,
-                    );
+            'error' => $error,
+            'data' => $data,
+            'datas' => $datas,
+            'cu_id' => $cu_id,
+            'hu_nickname' => $hu_nickname,
+        );
         $this->assign($assign);
         $this->display();
     }
@@ -756,9 +757,9 @@ class RegisterController extends HomeBaseController{
         $userinfo = M('Tempuser')->where(array('htid'=>$htid))->find();
 
         $assign = array(
-                'userinfo' => $userinfo,
-                'cu_id' => $cu_id,
-                'hu_nickname' => $hu_nickname,
+            'userinfo' => $userinfo,
+            'cu_id' => $cu_id,
+            'hu_nickname' => $hu_nickname,
         );
         $this->assign($assign);
         $this->display();
@@ -926,26 +927,22 @@ class RegisterController extends HomeBaseController{
                     );
                     $addlog = M('Log')->add($log);
                     if($addlog){
+                        if($back_result['is_dt'] == 1){
+                            $products = 'RBS,DTP,SIGNUP4';
+                        }else{
+                            $products = 'RBS,DTP,SIGNUP5';
+                        }
                         $usa    = new \Common\UsaApi\Usa;
-                        $result = $usa->createCustomer($CustomerID,$userinfo['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
+                        $result = $usa->createCustomer($CustomerID,$userinfo['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
                         if(!empty($result['result'])){
                             $log = addUsaLog($result['result']);
                             $maps = json_decode($result['result'],true);
-                            if($back_result['is_dt'] == 1){
-                                $wv  = array(
-                                    'wvCustomerID' => $maps['wvCustomerID'],
-                                    'wvOrderID'    => $maps['wvOrderID'],
-                                    'DistributorType' => 'Platinum',
-                                    'Products'      => 'DTP2',
-                                );
-                            }else{
-                                $wv  = array(
-                                    'wvCustomerID' => $maps['wvCustomerID'],
-                                    'wvOrderID'    => $maps['wvOrderID'],
-                                    'DistributorType' => 'Platinum',
-                                    'Products'      => 'DTP3',
-                                );
-                            }
+                            $wv  = array(
+                                'wvCustomerID' => $maps['wvCustomerID'],
+                                'wvOrderID'    => $maps['wvOrderID'],
+                                'DistributorType' => 'Platinum',
+                                'Products'      => $products,
+                            );
                             $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
                             if($res){
                                 $templateId ='178952';
@@ -954,14 +951,14 @@ class RegisterController extends HomeBaseController{
                                 if($sms['errmsg'] == 'OK'){
                                     $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$order_num))->find();
                                     $contents = array(
-                                                'acnumber' => $userinfo['acnumber'],
-                                                'phone' => $userinfo['phone'],
-                                                'operator' => '系统',
-                                                'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                                                'product_name' => $receiptlist['product_name'],
-                                                'date' => time(),
-                                                'content' => '恭喜您创建成功，您的会员号码是'.$CustomerID.'，同时注意查收Rovia邮件。',
-                                                'customerid' => $CustomerID
+                                        'acnumber' => $userinfo['acnumber'],
+                                        'phone' => $userinfo['phone'],
+                                        'operator' => '系统',
+                                        'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                        'product_name' => $receiptlist['product_name'],
+                                        'date' => time(),
+                                        'content' => '恭喜您创建成功，您的会员号码是'.$CustomerID.'，同时注意查收Rovia邮件。',
+                                        'customerid' => $CustomerID
                                     );
                                     $logs = M('SmsLog')->add($contents);
                                 }
@@ -1010,6 +1007,7 @@ class RegisterController extends HomeBaseController{
                 );
         $data    = json_encode($data);
         $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/use_coupon";
+        // $sendUrl = "http://localhost/nulife/index.php/Api/Couponapi/use_coupon";
         $results  = post_json_data($sendUrl,$data);
         $back_result = json_decode($results['result'],true);
         if($back_result['status']){
@@ -1083,26 +1081,22 @@ class RegisterController extends HomeBaseController{
             );
             $addlog = M('Log')->add($log);
             if($addlog){
+                if($back_result['is_dt'] == 1){
+                    $products = 'RBS,DTP,SIGNUP4';
+                }else{
+                    $products = 'RBS,DTP,SIGNUP5';
+                }
                 $usa    = new \Common\UsaApi\Usa;
-                $result = $usa->createCustomer($userinfo['customerid'],$userinfo['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
+                $result = $usa->createCustomer($userinfo['customerid'],$userinfo['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
                 if(!empty($result['result'])){
                     $log = addUsaLog($result['result']);
                     $maps = json_decode($result['result'],true);
-                    if($back_result['is_dt'] == 1){
-                        $wv  = array(
-                            'wvCustomerID' => $maps['wvCustomerID'],
-                            'wvOrderID'    => $maps['wvOrderID'],
-                            'DistributorType' => 'Platinum',
-                            'Products'      => 'DTP2',
-                        );
-                    }else{
-                        $wv  = array(
-                            'wvCustomerID' => $maps['wvCustomerID'],
-                            'wvOrderID'    => $maps['wvOrderID'],
-                            'DistributorType' => 'Platinum',
-                            'Products'      => 'DTP3',
-                        );
-                    }
+                    $wv  = array(
+                        'wvCustomerID' => $maps['wvCustomerID'],
+                        'wvOrderID'    => $maps['wvOrderID'],
+                        'DistributorType' => 'Platinum',
+                        'Products'      => $products,
+                    );
                     $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
                     if($res){
                         // 发送短信提示
