@@ -14,7 +14,10 @@ class PayController extends HomeBaseController{
 //      p($ip_paytype);die;
         $ir_price        = I('post.ir_unpaid');
         $pay_receiptnum  = date('YmdHis').rand(100000, 999999);
-        $iuid            = D('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->getfield('riuid');
+        $customerid      = D('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->getfield('rcustomerid');
+        $iuid            = D('User')->where(array('CustomerID'=>$customerid))->getfield('iuid');
+        $saveReceipt     = D('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->save(array('riuid'=>$iuid));
+        $saveReceiptSon  = D('Receiptson')->where(array('ir_receiptnum'=>$ir_receiptnum))->save(array('riuid'=>$iuid));
         if($ip_paytype == 2){
             $ir_prices = bcmul($ir_price,100,2);
             $mape            = array(
@@ -358,7 +361,7 @@ class PayController extends HomeBaseController{
                                             }
                                         }
                                     }else if($ir_ordertype == 4){
-                                       // 添加通用券
+                                        // 添加通用券
                                         $product = M('Receipt')
                                                         ->alias('r')
                                                         ->join('hapylife_product AS p ON r.ipid = p.ipid')
@@ -367,6 +370,7 @@ class PayController extends HomeBaseController{
                                         $data = array(
                                                 'product' => $product,
                                                 'userinfo' => $userinfo,
+                                                'ir_receiptnum' => $receipt['ir_receiptnum'],
                                             );
                                         $data    = json_encode($data);
                                         $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/addCoupon";

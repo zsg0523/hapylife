@@ -89,6 +89,29 @@ class HapylifeUsaController extends HomeBaseController{
 
 	/**
 	* CREATE CUSTOMER
+	* @param   $products[RBS,DTP] [<正常付费注册会员>]
+	* @param   $products[RBS,DTP,PROMO_FULL] [<正常优惠券注册会员>]
+	* @param   $products[RBS,DTP,PROMO_FREE] [<免费优惠券注册会员>]
+	*
+	Array
+	(
+	    [code] => 200
+	    [result] => {"happyLifeID":"HPL00001","sponsorID":"HPL00000254","wvCustomerID":"71794533","wvOrderID":"297679739","error":null}
+	)
+	PROMO_FULL 成功
+	Array
+	(
+	    [code] => 200
+	    [result] => {"happyLifeID":"HPL00002","sponsorID":"HPL00000254","wvCustomerID":"71794536","wvOrderID":"297679742","error":null}
+	)
+	
+	PROMO_FREE 成功
+	Array
+	(
+	    [code] => 200
+	    [result] => {"happyLifeID":"HPL00003","sponsorID":"HPL00000254","wvCustomerID":"71794539","wvOrderID":"297679745","error":null}
+	)
+
 	**/
 	public function createCustomer(){
 		$map  = I('post.');
@@ -111,6 +134,9 @@ class HapylifeUsaController extends HomeBaseController{
 		$result  = post_json_data($sendUrl,$data);
 		print_r($result);
 	}
+
+
+
 
 	
 

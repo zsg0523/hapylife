@@ -249,88 +249,45 @@ class HapylifeApiController extends HomeBaseController{
     * 登录
     **/
     public function login(){
-        $tmpe = I('post.');
-        if(strlen($tmpe['CustomerID'])==8){
+        if(IS_POST){
+            $tmpe = I('post.');
+            $data = D('User')->where(array('CustomerID'=>$tmpe['CustomerID']))->find();
+            if($data && $data['password']==md5($tmpe['PassWord'])){
+                $data['status'] =1;
+                $this->ajaxreturn($data);
+            }else{
                 //检查WV api用户信息
-                $key      = "QACER3H5T6HGYDCCDAZM3";
-                $url      = "https://signupapi.wvhservices.com/api/Hpl/Validate?customerId=".$tmpe['CustomerID']."&"."key=".$key;
-                $wv       = file_get_contents($url);
-                $userinfo = json_decode($wv,true);
+                $usa      = new \Common\UsaApi\Usa;
+                $userinfo = $usa->validateHpl($tmpe['CustomerID']);
                 //检查wv是否存在该账号 Y创建该账号  N登录失败
                 switch ($userinfo['isActive']) {
-                    case 'true':
-                    //检查系统是否存在该账号 Y无密码登录 N创建账号
-                    $checkAccount = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
-                        switch ($checkAccount) {
-                            case null:
-                                //创建该新账号在本系统
-                                $map      = array(
-                                        'CustomerID'  =>$tmpe['CustomerID'],
-                                        'PassWord'    =>md5($userinfo['password']),
-                                        'LastName'    =>$userinfo['lastName'],
-                                        'FirstName'   =>$userinfo['firstName'],
-                                        'isActive'    =>$userinfo['isActive']
-                                    );
-                                $createUser = D('User')->add($map);
-                                break;
-                            default:
-                                //更新相关信息在本系统
-                                $map      = array(
-                                        'PassWord'    =>md5($userinfo['password']),
-                                        'LastName'    =>$userinfo['lastName'],
-                                        'FirstName'   =>$userinfo['firstName'],
-                                        'isActive'    =>$userinfo['isActive']
-                                    );
-                                $createUser = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->save($map);
-                                break;
+                    case true:
+                        //创建该新账号在本系统
+                        $map = array(
+                            'CustomerID'  =>$tmpe['CustomerID'],
+                            'PassWord'    =>md5($tmpe['PassWord']),
+                            'WvPass'      =>$tmpe['PassWord'],
+                            'LastName'    =>$userinfo['lastName'],
+                            'FirstName'   =>$userinfo['firstName'],
+                            'isActive'    =>$userinfo['isActive'],
+                        );
+                        $createUser = D('User')->add($map);
+                        if($createUser){
+                            $data = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
+                            $data['status'] =1;
+                        }else{
+                            $data['status'] =0;
                         }
-                        $data = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
-                        //登录后看不到产品
-                        $_SESSION['user']=array(
-                                'id'       =>$data['iuid'],
-                                'username' =>$data['customerid'],
-                                'name_cn'  =>$data['lastname'].$data['firstname'],
-                                'status'   =>2,
-                            );
-                        $data['status'] = 1;
-                        $this->ajaxreturn($data); 
                         break;
-
                     default:
                         $data['status'] = 0;
-                        $this->ajaxreturn($data); 
                         break;
-                }   
-        }else{
-            $where= array(
-                'CustomerID'=>$tmpe['CustomerID'],
-                'PassWord'  =>md5($tmpe['PassWord'])
-            );
-            $data = D('User')->where($where)->find();
-            if($data){
-                if(substr($data['customerid'],0,3) == 'HPL'){
-                    $_SESSION['user']=array(
-                                        'id'       => $data['iuid'],
-                                        'username' => $data['customerid'],
-                                        'name_cn'  => $data['lastname'].$data['firstname'],
-                                        'status'   => 1,
-                                        'address'  => 0,
-                                        'bank'     => 0,
-                                    );
-                }else{
-                    $_SESSION['user']=array(
-                            'id'       => $data['iuid'],
-                            'username' => $data['customerid'],
-                            'name_cn'  => $data['lastname'].$data['firstname'],
-                            'status'   => 2,
-                        );
                 }
-                $data['status'] = 1;
-                $this->ajaxreturn($data);   
-            }else{
-                $data['status'] = 0;
-                $this->ajaxreturn($data);           
+                $this->ajaxreturn($data); 
             }
+        }else{
+            $data['status'] = 0;
+            $this->ajaxreturn($data); 
         }
     }
 
@@ -612,6 +569,9 @@ class HapylifeApiController extends HomeBaseController{
             case '3':
                 $con = '月费单';
                 break;
+            case '4':
+                $con = '通用券'.$product['ip_name_zh'];
+                break;
         }
         if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
             $order['status'] = 3;
@@ -878,30 +838,58 @@ class HapylifeApiController extends HomeBaseController{
         $iuid  = I('post.iuid');
         $find  = M('User')->where(array('iuid'=>$iuid))->find();
         $type  = trim($find['distributortype']);
-        $mtype = trim($find['customertype']);
-        //判断用户等级 show--1、可点击 2、不可点击
-        // p($type);die;
-        $tmpe    = array(
-            'ip_grade' =>$type,
-            'is_pull'  =>1
-        ); 
-        $product = D('Product')->where($tmpe)->order('is_sort desc')->select();
-        foreach ($product as $key => $value) {
-            $data['grade'][$key]         = $value; 
-            $data['grade'][$key]['show'] = 1; 
+        switch (strlen($find['customerid'])) {
+            case '8':
+                //核对usa 账号是否正确存在
+                $usa    = new \Common\UsaApi\Usa;
+                $result = $usa->validateHpl($find['customerid']);
+                switch ($result['isActive']) {
+                    case true:
+                        $products = M('Product')->where(array('ip_type'=>4,'is_pull'=>1))->select();
+                        break;
+                    default:
+                        $products = array();
+                        break;
+                }
+                break;
+            default:
+                $tmpe  = array(
+                    'ip_grade' =>$type,
+                    'is_pull'  =>1
+                );
+                $proArr  = D('Product')->where($tmpe)->order('is_sort desc')->select();
+                $an_pro  = M('Product')->where(array('ip_type'=>4,'is_pull'=>1))->select();
+                $product = array_merge($proArr,$an_pro);
+                foreach ($product as $key => $value) {
+                    $products[$key]         = $value; 
+                    $products[$key]['show'] = 1; 
+                }
+                break;
+        }  
+        $array   = array('HPL00000181','HPL00123539');//显示测试产品账号
+        $arrayTo = array('61338465','64694832','65745561','HPL00123556','61751610','61624356','61695777','68068002');//显示真实产品账号
+        if(in_array($find['customerid'],$array)){
+            $an_pro = M('Product')->where(array('ip_type'=>4,'is_pull'=>0))->select();
+            $product = array_merge($products,$an_pro);
+            foreach ($product as $key => $value) {
+                $data['grade'][$key]         = $value; 
+                $data['grade'][$key]['show'] = 1; 
+            }
+        // }else if(in_array($find['customerid'],$arrayTo)){
+        //     $an_pro = M('Product')->where(array('ipid'=>48,'is_pull'=>0))->select();
+        //     $product = array_merge($products,$an_pro);
+        //     foreach ($product as $key => $value) {
+        //         $data[$key]         = $value; 
+        //         $data[$key]['show'] = 1; 
+        //     }
+        }else{
+            $data['grade'] = $products;
         }
-        $mape    = array(
-            'ip_grade' =>$mtype
-        );
-        $data['rbs'] = D('Product')->where($mape)->order('is_sort desc')->select();
-        $data['rbs'][0]['show'] =1; 
         if($data){
             $this->ajaxreturn($data);
         }else{
-            $data = array(
-                'status'=>0,
-                'msg'   =>'获取失败'
-            );
+            $data['status'] = 0;
+            $data['msg']    = '获取失败';
             $this->ajaxreturn($data);
         }  
     }

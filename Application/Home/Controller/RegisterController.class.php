@@ -129,15 +129,25 @@ class RegisterController extends HomeBaseController{
     public function checkName(){
         $customerid = strtoupper(trim(I('post.EnrollerID')));
         if($customerid){
-            $usa = new \Common\UsaApi\Usa;
-            $map = $usa->validateHpl($customerid);
-            if(empty($map['errors'])){
-                $data['lastname'] = $map['lastName'];
-                $data['firstname'] = $map['firstName'];
-                $this->ajaxreturn($data);     
+            if(strlen($customerid)==8){
+                $usa = new \Common\UsaApi\Usa;
+                $map = $usa->validateHpl($customerid);
+                if(empty($map['errors'])){
+                    $data['lastname'] = $map['lastName'];
+                    $data['firstname'] = $map['firstName'];
+                    $this->ajaxreturn($data);     
+                }else{
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data);           
+                }
             }else{
-                $data['status'] = 0;
-                $this->ajaxreturn($data);           
+                $data = M('User')->where(array('CustomerID'=>$customerid))->find();
+                if($data){
+                    $this->ajaxreturn($data);
+                }else{
+                    $data['status'] = 0;
+                    $this->ajaxreturn($data); 
+                }
             }
         }else{
             $this->ajaxreturn($data);           
@@ -540,10 +550,10 @@ class RegisterController extends HomeBaseController{
                                 $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                 if($sms['errmsg'] == 'OK'){
                                     $contents = array(
-                                                'acnumber'     => $userinfo['acnumber'],
-                                                'phone'        => $userinfo['phone'],
-                                                'operator'     => '系统',
-                                                'addressee'    => $status['ia_name'],
+                                                'acnumber' => $userinfo['acnumber'],
+                                                'phone' => $userinfo['phone'],
+                                                'operator' => '系统',
+                                                'addressee' => $userinfo['lastname'].$userinfo['firstname'],
                                                 'product_name' => $receiptlist['product_name'],
                                                 'date'         => time(),
                                                 'content'      => '恭喜您注册成功，请注意查收邮件'
@@ -850,7 +860,7 @@ class RegisterController extends HomeBaseController{
                     $product = M('Product')->where(array('ipid'=>$ipid))->find();
                     //生成唯一订单号
                     $order_num = 'CP'.date('YmdHis').rand(10000, 99999);
-                    $con = $product['ip_name_zh'].$back_result['coupon_code'];
+                    $con = $back_result['c_name'].$back_result['coupon_code'];
                     $order = array(
                         //订单编号
                         'ir_receiptnum' =>$order_num,
@@ -886,6 +896,8 @@ class RegisterController extends HomeBaseController{
                         'ipid'         => $product['ipid'],
                         // 订单支付时间
                         'ir_paytime' => time(),
+                        // 通用券标号
+                        'coucode' => $back_result['coupon_code'],
                         
                     );
                     $receipt = M('Receipt')->add($order);
@@ -944,10 +956,10 @@ class RegisterController extends HomeBaseController{
                                                 'acnumber' => $userinfo['acnumber'],
                                                 'phone' => $userinfo['phone'],
                                                 'operator' => '系统',
-                                                'addressee' => $userinfo['shopaddress1'],
+                                                'addressee' => $userinfo['lastname'].$userinfo['firstname'],
                                                 'product_name' => $receiptlist['product_name'],
                                                 'date' => time(),
-                                                'content' => '恭喜您创建成功，您的会员号码是'.$userinfo['customerid'].'，同时注意查收Rovia邮件。',
+                                                'content' => '恭喜您创建成功，您的会员号码是'.$CustomerID.'，同时注意查收Rovia邮件。',
                                                 'customerid' => $CustomerID
                                     );
                                     $logs = M('SmsLog')->add($contents);
@@ -956,26 +968,25 @@ class RegisterController extends HomeBaseController{
                         }
                     }
                 }
+            }else{
+                // 发送短信提示
+                $templateId ='183054';
+                $params     = array();
+                $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                if($sms['errmsg'] == 'OK'){
+                    $contents = array(
+                                'acnumber' => $userinfo['acnumber'],
+                                'phone' => $userinfo['phone'],
+                                'operator' => '系统',
+                                'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                'product_name' => '',
+                                'date' => time(),
+                                'content' => '恭喜您注册成功。',
+                                'customerid' => $CustomerID
+                    );
+                    $logs = M('SmsLog')->add($contents);
+                }
             }
-            // else{
-            //     // 发送短信提示
-            //     $templateId ='178952';
-            //     $params     = array($CustomerID);
-            //     $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-            //     if($sms['errmsg'] == 'OK'){
-            //         $contents = array(
-            //                     'acnumber' => $userinfo['acnumber'],
-            //                     'phone' => $userinfo['phone'],
-            //                     'operator' => '系统',
-            //                     'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-            //                     'product_name' => '',
-            //                     'date' => time(),
-            //                     'content' => '恭喜您创建成功，您的会员号码是'.$userinfo['customerid'].'，同时注意查收Rovia邮件。',
-            //                     'customerid' => $CustomerID
-            //         );
-            //         $logs = M('SmsLog')->add($contents);
-            //     }
-            // }
         }
         $data = M('User')->where(array('iuid'=>$addResult))->find();
         $assign = array(
@@ -1006,7 +1017,7 @@ class RegisterController extends HomeBaseController{
             $product = M('Product')->where(array('ipid'=>$ipid))->find();
             //生成唯一订单号
             $order_num = 'CP'.date('YmdHis').rand(10000, 99999);
-            $con = $product['ip_name_zh'].$back_result['coupon_code'];
+            $con = $back_result['c_name'].$back_result['coupon_code'];
             $order = array(
                 //订单编号
                 'ir_receiptnum' =>$order_num,
@@ -1042,6 +1053,8 @@ class RegisterController extends HomeBaseController{
                 'ipid'         => $product['ipid'],
                 // 订单支付时间
                 'ir_paytime' => time(),
+                // 通用券标号
+                'coucode' => $back_result['coupon_code'],
                 
             );
             $receipt = M('Receipt')->add($order);
@@ -1091,7 +1104,8 @@ class RegisterController extends HomeBaseController{
                     }
                     $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
                     if($res){
-                        $templateId ='164137';
+                        // 发送短信提示
+                        $templateId ='183054';
                         $params     = array();
                         $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                         if($sms['errmsg'] == 'OK'){
@@ -1100,10 +1114,10 @@ class RegisterController extends HomeBaseController{
                                         'acnumber' => $userinfo['acnumber'],
                                         'phone' => $userinfo['phone'],
                                         'operator' => '系统',
-                                        'addressee' => $userinfo['shopaddress1'],
+                                        'addressee' => $userinfo['lastname'].$userinfo['firstname'],
                                         'product_name' => $receiptlist['product_name'],
                                         'date' => time(),
-                                        'content' => '恭喜您注册成功，请注意查收邮件',
+                                        'content' => '恭喜您注册成功。',
                                         'customerid' => $userinfo['customerid']
                             );
                             $logs = M('SmsLog')->add($contents);

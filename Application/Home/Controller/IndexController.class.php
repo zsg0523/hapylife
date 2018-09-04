@@ -82,43 +82,103 @@ class IndexController extends HomeBaseController{
     * 前台登录
     **/
     public function login(){
-        if(IS_POST){
-            $tmpe = I('post.');
-            if(strlen($tmpe['CustomerID'])==8){
-                //检查WV api用户信息
-                $usa      = new \Common\UsaApi\Usa;
-                $userinfo = $usa->validateHpl($tmpe['CustomerID']);
-                //检查wv是否存在该账号 Y创建该账号  N登录失败
-                switch ($userinfo['isActive']) {
-                    case true:
-                    //检查系统是否存在该账号 Y无密码登录 N创建账号
-                    $checkAccount = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
-                        switch ($checkAccount) {
-                            case null:
-                                //创建该新账号在本系统
-                                $map      = array(
-                                        'CustomerID'  =>$tmpe['CustomerID'],
-                                        'PassWord'    =>md5($tmpe['PassWord']),
-                                        'WvPass'      =>$tmpe['PassWord'],
-                                        'LastName'    =>$userinfo['lastName'],
-                                        'FirstName'   =>$userinfo['firstName'],
-                                        'isActive'    =>$userinfo['isActive'],
-                                        'WvPass'      =>$tmpe['PassWord'],
-                                    );
-                                $createUser = D('User')->add($map);
-                                break;
-                            default:
-                                //更新相关信息在本系统
-                                $map      = array(
-                                        'PassWord'    =>md5($tmpe['PassWord']),
-                                        'WvPass'      =>$tmpe['PassWord'],
-                                        'LastName'    =>$userinfo['lastName'],
-                                        'FirstName'   =>$userinfo['firstName'],
-                                        'isActive'    =>$userinfo['isActive'],
-                                        'WvPass'      =>$tmpe['PassWord'],
-                                    );
-                                $createUser = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->save($map);
-                                break;
+        $iuid = I('get.iuid');
+        if(!empty($iuid)){
+            $data = D('User')->where(array('iuid'=>$iuid))->find();
+            if(substr($data['customerid'],0,3) == 'HPL'){
+                $_SESSION['user']=array(
+                                    'id'       =>$data['iuid'],
+                                    'username' =>$data['customerid'],
+                                    'name_cn'  =>$data['lastname'].$data['firstname'],
+                                    'status'   =>1,
+                                );
+            }else{
+                $_SESSION['user']=array(
+                        'id'       =>$data['iuid'],
+                        'username' =>$data['customerid'],
+                        'name_cn'  =>$data['lastname'].$data['firstname'],
+                        'status'   =>2,
+                    );
+            }
+            $this->redirect('Home/Purchase/center');
+        }else{
+            if(IS_POST){
+                $tmpe = I('post.');
+                if(strlen($tmpe['CustomerID'])==8){
+                    //检查WV api用户信息
+                    $usa      = new \Common\UsaApi\Usa;
+                    $userinfo = $usa->validateHpl($tmpe['CustomerID']);
+                    //检查wv是否存在该账号 Y创建该账号  N登录失败
+                    switch ($userinfo['isActive']) {
+                        case true:
+                        //检查系统是否存在该账号 Y无密码登录 N创建账号
+                        $checkAccount = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
+                            switch ($checkAccount) {
+                                case null:
+                                    //创建该新账号在本系统
+                                    $map      = array(
+                                            'CustomerID'  =>$tmpe['CustomerID'],
+                                            'PassWord'    =>md5($tmpe['PassWord']),
+                                            'WvPass'      =>$tmpe['PassWord'],
+                                            'LastName'    =>$userinfo['lastName'],
+                                            'FirstName'   =>$userinfo['firstName'],
+                                            'isActive'    =>$userinfo['isActive'],
+                                            'WvPass'      =>$tmpe['PassWord'],
+                                        );
+                                    $createUser = D('User')->add($map);
+                                    break;
+                                default:
+                                    //更新相关信息在本系统
+                                    $map      = array(
+                                            'PassWord'    =>md5($tmpe['PassWord']),
+                                            'WvPass'      =>$tmpe['PassWord'],
+                                            'LastName'    =>$userinfo['lastName'],
+                                            'FirstName'   =>$userinfo['firstName'],
+                                            'isActive'    =>$userinfo['isActive'],
+                                            'WvPass'      =>$tmpe['PassWord'],
+                                        );
+                                    $createUser = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->save($map);
+                                    break;
+                            }
+                            $data = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
+                            //登录后看不到产品
+                            $_SESSION['user']=array(
+                                    'id'       =>$data['iuid'],
+                                    'username' =>$data['customerid'],
+                                    'name_cn'  =>$data['lastname'].$data['firstname'],
+                                    'status'   =>2,
+                                );
+                            // p($_SESSION);die;
+                            $this->redirect('Home/Purchase/center');
+                            break;
+
+                        default:
+                            $this->error('账号格式错误');
+                            break;
+                    }
+                }else{
+                    $where = array(
+                        'CustomerID'=>trim($tmpe['CustomerID']),
+                        'PassWord'  =>md5($tmpe['PassWord'])
+                    );
+                    $data = D('User')->where($where)->find();
+                    if (empty($data)) {
+                        $this->error('账号或密码错误');
+                    }else{
+                        if(substr($data['customerid'],0,3) == 'HPL'){
+                            $_SESSION['user']=array(
+                                                'id'       =>$data['iuid'],
+                                                'username' =>$data['customerid'],
+                                                'name_cn'  =>$data['lastname'].$data['firstname'],
+                                                'status'   =>1,
+                                            );
+                        }else{
+                            $_SESSION['user']=array(
+                                    'id'       =>$data['iuid'],
+                                    'username' =>$data['customerid'],
+                                    'name_cn'  =>$data['lastname'].$data['firstname'],
+                                    'status'   =>2,
+                                );
                         }
                         $data = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
                         $this->redirect('Home/Purchase/center');

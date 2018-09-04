@@ -96,9 +96,17 @@ class HapylifeCouponController extends HomeBaseController{
 	* 给nulife传送产品信息
 	**/ 
 	public function sendPro(){
-		$data = M('Product')->where(array('is_pull'=>1))->select();
-		if($data){
-	    	$this->ajaxreturn($data);
+		$jsonStr = file_get_contents("php://input");
+	    //写入服务器日志文件
+		$log    = addUsaLog($jsonStr);
+		$data   = json_decode($jsonStr,true);
+		if($data['product_id']){
+			$result = M('Product')->where(array('ipid'=>array('in',$data['product_id'])))->select();	
+		}else{
+			$result = M('Product')->where(array('is_pull'=>1))->select();
+		}
+		if($result){
+	    	$this->ajaxreturn($result);
 		}
 	}
 	/**
@@ -153,5 +161,89 @@ class HapylifeCouponController extends HomeBaseController{
 			$map['status'] = 0;
 			$this->ajaxreturn($map);
 		}
+	}
+
+	/**
+	* 使用该通用券创建送货单
+	**/
+	public function createReceipt(){
+		$jsonStr = file_get_contents("php://input");
+	    //写入服务器日志文件
+		$log    = addUsaLog($jsonStr);
+		$data   = json_decode($jsonStr,true);
+		$coupon = $data['coupon'];
+		$userinfo = $data['userinfo'];
+		// 如果用户信息不存在,则通过订单号查询地址信息
+		if(empty($userinfo)){
+			$receipt_msg = M('Receipt')->where(array('ir_receiptnum'=>$data['operator']))->find();
+			$riuid = $receipt_msg['riuid'];
+			$rCustomerID = $receipt_msg['rCustomerID'];
+			$ia_name = $receipt_msg['ia_name'];
+			$ia_phone = $receipt_msg['ia_phone'];
+			$ia_address = $receipt_msg['ia_address'];
+		}else{
+			$riuid = $userinfo['iuid'];
+			$rCustomerID = $userinfo['customerid'];
+			$ia_name = $userinfo['lastname'].$userinfo['firstname'];
+			$ia_phone = $userinfo['phone'];
+			$ia_address = $userinfo['shopprovince'].$userinfo['shopcity'].$userinfo['shoparea'].$userinfo['shopaddress1'];
+		}
+		$order_num = 'CP'.date('YmdHis').rand(10000, 99999);
+		$con = $coupon['c_name'].$coupon['coupon_code'];
+		$receipt = array(
+			//订单编号
+            'ir_receiptnum' =>$order_num,
+            //订单创建日期
+            'ir_date'=>time(),
+            //订单的状态(0待付款 1待审核 2已支付待发货 3已发货待收货 4已收货待评价 5已评价完成 6审核未通过  7待注册)
+            'ir_status'=>2,
+            //下单用户id
+            'riuid'=>$riuid,
+            //下单用户
+            'rCustomerID'=>$rCustomerID,
+            //收货人
+            'ia_name'=>$ia_name,
+            //收货人电话
+            'ia_phone'=>$ia_phone,
+            //收货地址
+            'ia_address'=>$ia_address,
+            //订单总商品数量
+            'ir_productnum'=>1,
+            //订单总金额
+            'ir_price'=>'',
+            //订单总积分
+            'ir_point'=>'',
+            //订单待付款总金额
+            'ir_unpaid'=>'',
+            //订单待付款总积分
+            'ir_unpoint'=>'',
+            //订单备注
+            'ir_desc'=>$con,
+            //订单类型
+            'ir_ordertype' => 4,
+            // 支付时间
+            'ir_paytime' => time(),
+            // 通用券编码
+            'coucode' => $coupon['coupon_code']
+		);
+		$receiptAdd = M('Receipt')->add($receipt);
+		$receiptlist = array(
+			'ir_receiptnum' => $order_num,
+			'ipid' => '',
+			'ilid' => '',
+			'product_num' => 1,
+			'product_price' => '',
+			'product_point' => '',
+			'product_name' => $coupon['g_name'],
+			'product_picture' => $coupon['img'],
+		);
+		$receiptlistAdd = M('Receiptlist')->add($receiptlist);
+        if($receiptAdd && $receiptlistAdd){
+        	$map['status'] = 1;
+        	$this->ajaxreturn($map);
+        }else{
+        	$map['status'] = 0;
+        	$this->ajaxreturn($map);
+        }
 	}
 }
