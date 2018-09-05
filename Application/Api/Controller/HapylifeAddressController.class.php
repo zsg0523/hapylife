@@ -78,30 +78,17 @@ class HapylifeAddressController extends HomeBaseController{
             // 查询地址表信息
             $ia_road = M('Address')->where(array('iuid'=>$iuid))->getField('ia_road',true); 
             
-            if($userinfo['is_login']==0){
-                    if(!in_array($userinfo['shopaddress1'], $ia_road) && !empty($userinfo['shopaddress1'])){
-                    $message = array(
-                            'iuid'            => $userinfo['iuid'],
-                            'ia_name'         => $userinfo['lastname'].$userinfo['firstname'],
-                            'ia_phone'        => $userinfo['phone'],
-                            'ia_province'     => $userinfo['shopprovince'],
-                            'ia_town'         => $userinfo['shopcity'],
-                            'ia_region'       => $userinfo['shoparea'],
-                            'ia_road'         => $userinfo['shopaddress1'],
-                            'is_address_show' => 1
-                        );
-                    $result = M('Address')->add($message);
             if(!in_array($userinfo['shopaddress1'], $ia_road) && $userinfo['is_login'] == 0 && !empty($userinfo['shopaddress1'])){
                $message = array(
-                        'iuid'            => $userinfo['iuid'],
-                        'ia_name'         => $userinfo['lastname'].$userinfo['firstname'],
-                        'ia_phone'        => $userinfo['phone'],
-                        'ia_province'     => $userinfo['shopprovince'],
-                        'ia_town'         => $userinfo['shopcity'],
-                        'ia_region'       => $userinfo['shoparea'],
-                        'ia_road'         => $userinfo['shopaddress1'],
-                        'is_address_show' => 1
-                    );
+                    'iuid'            => $userinfo['iuid'],
+                    'ia_name'         => $userinfo['lastname'].$userinfo['firstname'],
+                    'ia_phone'        => $userinfo['phone'],
+                    'ia_province'     => $userinfo['shopprovince'],
+                    'ia_town'         => $userinfo['shopcity'],
+                    'ia_region'       => $userinfo['shoparea'],
+                    'ia_road'         => $userinfo['shopaddress1'],
+                    'is_address_show' => 1
+                );
                 $result = M('Address')->add($message);
                 if($result){
                     $arr['is_login'] = 1;
