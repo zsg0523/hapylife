@@ -97,17 +97,17 @@ class HapylifeBankController extends HomeBaseController{
             
             if(!in_array($userinfo['bankaccount'], $bankaccount) && $userinfo['is_login'] == 0 && !empty($userinfo['bankaccount'])){
                $message = array(
-                        'iuid'         => $userinfo['iuid'],
-                        'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
-                        'bankaccount'  => $userinfo['bankaccount'],
-                        'bankprovince' => $userinfo['bankprovince'],
-                        'banktown'     => $userinfo['bankcity'],
-                        'bankregion'   => $userinfo['bankarea'],
-                        'bankname'     => $userinfo['bankname'],
-                        'bankbranch'   => $userinfo['subname'],
-                        'createtime'   => time(),
-                        'isshow'       => 1,
-                    );
+                    'iuid'         => $userinfo['iuid'],
+                    'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
+                    'bankaccount'  => $userinfo['bankaccount'],
+                    'bankprovince' => $userinfo['bankprovince'],
+                    'banktown'     => $userinfo['bankcity'],
+                    'bankregion'   => $userinfo['bankarea'],
+                    'bankname'     => $userinfo['bankname'],
+                    'bankbranch'   => $userinfo['subname'],
+                    'createtime'   => time(),
+                    'isshow'       => 1,
+                );
                 $result = M('Bank')->add($message);
                 if($result){
                     $arr['is_login'] = 1;

@@ -685,7 +685,7 @@ class RegisterController extends HomeBaseController{
                     $data['WvPass'] = $data['PassWord'];
                     // $data['PassWord'] = md5($data['PassWord']);
                     $data['JoinedOn'] = time();
-                    $data['CustomerID'] = strtoupper($data['CustomerID']);
+                    $data['EnrollerID'] = strtoupper($data['EnrollerID']);
                     $data['LastName'] = trimall(I('post.LastName'));
                     $data['FirstName'] = trimall(I('post.FirstName'));
                     $data['EnLastName'] = trimall(I('post.EnLastName'));
