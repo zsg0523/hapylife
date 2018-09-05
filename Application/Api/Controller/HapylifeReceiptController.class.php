@@ -21,6 +21,7 @@ class HapylifeReceiptController extends HomeBaseController{
 					->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
 					->join('hapylife_product hp on hr.ipid=hp.ipid')
 					->where($map)
+					->order('irid desc')
 					->select();
 		if($receipt){
 			$this->ajaxreturn($receipt);
