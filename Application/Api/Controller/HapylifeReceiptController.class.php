@@ -13,7 +13,8 @@ class HapylifeReceiptController extends HomeBaseController{
 		$iuid      = I('post.iuid');
 		$map  = array(
 				'riuid'=>$iuid,
-                'ir_status'=>array('in','2,3,4,5,202')
+                'ir_status'=>array('in','0,1,2,3,4,5,202'),
+                'is_delete'=>0
 			);
 		$receipt = M('Receipt')
 					->alias('r')
@@ -54,6 +55,23 @@ class HapylifeReceiptController extends HomeBaseController{
 		if($receipt){
 			$data['status'] = 1;
 			$this->ajaxreturn($data);
+		}else{
+			$data['status'] = 0;
+			$this->ajaxreturn($data);
+		}
+	}
+	/**
+	*订单详情
+	**/
+	public function getReceiptSon(){
+		$receiptnum = I('post.ir_receiptnum');
+		$receiptson = D('receiptson')->where(array('ir_receiptnum'=>$receiptnum,'status'=>2))->select();
+		foreach ($receiptson as $key => $value) {
+			$receiptson[$key]['paytime'] = date('Y-m-d H:i:s',$value['paytime']);
+			$receiptson[$key]['keynum']  = $key+1;
+		}
+		if($receiptson){
+			$this->ajaxreturn($receiptson);
 		}else{
 			$data['status'] = 0;
 			$this->ajaxreturn($data);

@@ -311,7 +311,7 @@ class PurchaseController extends HomeBaseController{
                 $con = '月费单';
                 break;
             case '4':
-                $con = '买四送一单';
+                $con = '通用券'.$product['ip_name_zh'];
                 break;
         }
         // if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
@@ -843,13 +843,14 @@ class PurchaseController extends HomeBaseController{
                         $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$order['ir_receiptnum']);
                         if($tmpeArr['password']){
                             $usa    = new \Common\UsaApi\Usa;
-                            $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
+                            $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],'RBS,DTP');
                             if(!empty($result['result'])){
                                 $log = addUsaLog($result['result']);
                                 $maps = json_decode($result['result'],true);
                                 $wv  = array(
                                             'wvCustomerID' => $maps['wvCustomerID'],
-                                            'wvOrderID'    => $maps['wvOrderID']
+                                            'wvOrderID'    => $maps['wvOrderID'],
+                                            'Products'     => 'RBS,DTP'
                                         );
                                 $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                                 if($res){
@@ -957,15 +958,12 @@ class PurchaseController extends HomeBaseController{
     **/ 
     public function addressList(){
         $iuid = $_SESSION['user']['id'];
-        if(empty($_SESSION['user']['address'])){
-            $_SESSION['user']['address'] = 0;
-        }
         // 查询注册信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
         // 查询地址表信息
         $ia_road = M('Address')->where(array('iuid'=>$iuid))->getField('ia_road',true); 
         
-        if(!in_array($userinfo['shopaddress1'], $ia_road) && $_SESSION['user']['address'] == 0 && !empty($userinfo['shopaddress1'])){
+        if(!in_array($userinfo['shopaddress1'], $ia_road) && $userinfo['is_login'] == 0 && !empty($userinfo['shopaddress1'])){
            $message = array(
                     'iuid'            => $userinfo['iuid'],
                     'ia_name'         => $userinfo['lastname'].$userinfo['firstname'],
@@ -978,7 +976,8 @@ class PurchaseController extends HomeBaseController{
                 );
             $result = M('Address')->add($message);
             if($result){
-                $_SESSION['user']['address'] = $_SESSION['user']['address'] + 1;
+                $arr['is_login'] = 1;
+                $res = M('User')->where(array('iuid'=>$iuid))->save($arr);
             }
         }
         
@@ -1075,10 +1074,7 @@ class PurchaseController extends HomeBaseController{
         // 查询银行表信息
         $bankaccount = M('Bank')->where(array('iuid'=>$iuid))->getField('bankaccount',true); 
         
-        if(!isset($_SESSION['user']['bank'])){
-            $_SESSION['user']['bank'] = 0;
-        }
-        if(!in_array($userinfo['bankaccount'], $bankaccount) && $_SESSION['user']['bank'] == 0 && !empty($userinfo['bankaccount'])){
+        if(!in_array($userinfo['bankaccount'], $bankaccount) && $userinfo['is_login'] == 0 && !empty($userinfo['bankaccount'])){
            $message = array(
                     'iuid'         => $userinfo['iuid'],
                     'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
@@ -1093,7 +1089,8 @@ class PurchaseController extends HomeBaseController{
                 );
             $result = M('Bank')->add($message);
             if($result){
-                $_SESSION['user']['bank'] = $_SESSION['user']['bank'] + 1;
+                $arr['is_login'] = 1;
+                $res = M('User')->where(array('iuid'=>$iuid))->save($arr);
             }
         }
         
