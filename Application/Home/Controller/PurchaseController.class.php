@@ -845,13 +845,14 @@ class PurchaseController extends HomeBaseController{
                         $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$order['ir_receiptnum']);
                         if($tmpeArr['password']){
                             $usa    = new \Common\UsaApi\Usa;
-                            $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone']);
+                            $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],'RBS,DTP');
                             if(!empty($result['result'])){
                                 $log = addUsaLog($result['result']);
                                 $maps = json_decode($result['result'],true);
                                 $wv  = array(
                                             'wvCustomerID' => $maps['wvCustomerID'],
-                                            'wvOrderID'    => $maps['wvOrderID']
+                                            'wvOrderID'    => $maps['wvOrderID'],
+                                            'Products'     => 'RBS,DTP'
                                         );
                                 $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                                 if($res){
