@@ -377,8 +377,8 @@ class HapylifeController extends AdminBaseController{
 			'appkey' => 'ALL',
 		);
 		$data    = json_encode($data);
-		// $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
-		$sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/getCouponList";
+		$sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
+		// $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/getCouponList";
 		$result  = post_json_data($sendUrl,$data);
 		$back_message = json_decode($result['result'],true);
 		$CouponGroups = $back_message;
@@ -392,7 +392,7 @@ class HapylifeController extends AdminBaseController{
 			);
 		}
 		 // p($CouponGroups);die;
-		$assign=D('Product')->getAllData(D('Product'),$map);
+		$assign=D('Product')->getAllData(D('Product'),$map,'ipid desc','50');
 		$this->assign('catList',$catList);
 		$this->assign('CouponGroups',$CouponGroups);
 		$this->assign($assign);
