@@ -113,7 +113,29 @@ class PurchaseController extends HomeBaseController{
         $this->assign('product',$data);
         $this->display();
     }
-
+    /**
+    * 购买礼包
+    **/
+    public function dtPurchase(){
+        // $iuid    = $_SESSION['user']['id'];
+        $iuid    = I('post.iuid');
+        $find    = M('User')->where(array('iuid'=>$iuid))->find();
+        $products= M('Product')->where(array('ip_type'=>5,'is_pull'=>1))->select();
+        $array   = array('HPL00000181','HPL00123539');//显示测试产品账号]
+        if(in_array($find['customerid'],$array)){
+            $an_pro = M('Product')->where(array('ip_type'=>5,'is_pull'=>0))->select();
+            $product = array_merge($products,$an_pro);
+            foreach ($product as $key => $value) {
+                $data[$key]         = $value; 
+                $data[$key]['show'] = 1; 
+            }
+        }else{
+            $data = $products;
+        }
+        p($data);die;
+        $this->assign('product',$data);
+        $this->display();
+    }
 
     /**
     * 会籍激活记录
