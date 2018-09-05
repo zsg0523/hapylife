@@ -90,8 +90,8 @@
     		alert('请输入转出积分！');
     	}else if($("input[name='iu_point']").val()>point){
     		alert('您的积分不足!');
-    	}else if($("input[name='iu_point']").val()<0){
-    		alert('转出积分不能为负数!');
+    	}else if($("input[name='iu_point']").val()<1){
+    		alert('您的转账金额必须大于1EP!');
     	}else if($("input[name='iu_point']").val()==0){
         alert('转出积分不能为零!');
       }else{
