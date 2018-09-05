@@ -377,8 +377,8 @@ class HapylifeController extends AdminBaseController{
 			'appkey' => 'ALL',
 		);
 		$data    = json_encode($data);
-		// $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
-		$sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/getCouponList";
+		$sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
+		// $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/getCouponList";
 		$result  = post_json_data($sendUrl,$data);
 		$back_message = json_decode($result['result'],true);
 		$CouponGroups = $back_message;
@@ -392,7 +392,7 @@ class HapylifeController extends AdminBaseController{
 			);
 		}
 		 // p($CouponGroups);die;
-		$assign=D('Product')->getAllData(D('Product'),$map);
+		$assign=D('Product')->getAllData(D('Product'),$map,'ipid desc','50');
 		$this->assign('catList',$catList);
 		$this->assign('CouponGroups',$CouponGroups);
 		$this->assign($assign);
@@ -432,6 +432,13 @@ class HapylifeController extends AdminBaseController{
 			}
 			$data['traverse_num'] = substr($traversenum,0,-1);
 		}
+		if($data['ip_type']==5){
+			if(!$data['ip_sprice'] || !$data['ip_dt']){
+				$this->error('请填写DT折扣价和可折扣DT数量');
+			}
+		}
+		// p($data);
+		// die;
 		$result=D('Product')->addData($data);
 		if($result){
 			$this->redirect('Admin/Hapylife/product');
@@ -476,6 +483,11 @@ class HapylifeController extends AdminBaseController{
 		}
 		if(isset($upload['name'])){
 			$data['ip_picture_zh']=C('WEB_URL').$upload['name'];
+		}
+		if($data['ip_type']==5){
+			if(!$data['ip_sprice'] || !$data['ip_dt']){
+				$this->error('请填写DT折扣价和可折扣DT数量');
+			}
 		}
 		$result=D('Product')->editData($map,$data);
 		if($result){
