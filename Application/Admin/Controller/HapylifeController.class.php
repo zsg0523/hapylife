@@ -432,8 +432,6 @@ class HapylifeController extends AdminBaseController{
 			}
 			$data['traverse_num'] = substr($traversenum,0,-1);
 		}
-		p($data);
-		die;
 		$result=D('Product')->addData($data);
 		if($result){
 			$this->redirect('Admin/Hapylife/product');
@@ -1443,5 +1441,41 @@ class HapylifeController extends AdminBaseController{
         }else{
             $this->error('发送失败',U('Admin/Hapylife/sends'));
         }
+	}
+
+	/**
+	* 查询买四送一订单
+	**/ 
+	public function search(){
+		//202 未全额支付 2已支付
+		$order_status = I('get.status')-1;
+		if($order_status== -1){
+			//所有订单
+			$ir_status = '0,1,2,3,4,5,6,8,202';
+		}else{
+			$ir_status = (string)$order_status;
+		}
+		$excel     = I('get.excel');
+		$word      = trim(I('get.word',''));
+		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
+		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
+		$array  = '测试,测,试,测试点,test,testtest,测试测试,新建测试,测试地,测试点,测试账号';
+		$ipid = '47,48';
+		$assign    = D('Receipt')->getSendPagesearch(D('Receipt'),$word,$starttime,$endtime,$ir_status,$timeType,$array,$order='ir_paytime asc');
+		// 导出excel
+		if($excel == 'excel'){
+			$data = D('Receipt')->getSendPageSonAlls(D('Receipt'),$word,$starttime,$endtime,$ir_status,$timeType,$array,$order='ir_paytime asc');
+			$export_send_excel = D('Receipt')->export_send_excel($data['data']);
+		}else{
+			$this->assign($assign);
+			$this->assign('status',I('get.status'));
+			$this->assign('word',$word);
+			$this->assign('timeType',$timeType);
+			$this->assign('starttime',I('get.starttime'));
+			$this->assign('endtime',I('get.endtime'));
+			$this->assign('code',$code);
+			$this->display();
+		}
 	}
 }
