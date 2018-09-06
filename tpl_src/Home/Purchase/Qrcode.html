@@ -63,7 +63,7 @@
 <body>
 	
 	<div class="main container-fluid ">	
-			<h5 style="color: #000;text-align: center;margin-top: 100px;color: #01d10c;">请使用微信扫码支付</h5>
+			<h5 style="color: #000;text-align: center;margin-top: 30px;color: #01d10c;">请使用微信扫码支付</h5>
 			<input type="hidden" id="userid" value="{$Think.session.user.id}" />
 			<input type="hidden" id="ir_receiptnum" value="{:I('get.ir_receiptnum')}" />
 			<div class="pageDetial">
@@ -75,9 +75,11 @@
 					<i id="money">订单金额：￥{$data.ip_price_rmb}</i>
 				</div>
 			</div>
-			<div style="width: 300px;margin: auto;height: 60px;border: 1px solid #ccc;">
-				<h4 style="text-align: center;">扫码后，处理需时，请耐心等待！</h4>	
-				<h4 style="text-align: center;">如因网络延时，可能需等待一分钟！</h4>
+			<div style="width: 300px;margin: auto;height: 130px;border: 1px solid #ccc;">
+				<h4 style="text-align: center;color:red">不支持截图扫码支付</h4>	
+				<h4 style="text-align: center;color:red">需另外一台手机扫码</h4>	
+				<h4 style="text-align: center;color:red">扫码后，处理需时，请耐心等待！</h4>	
+				<h4 style="text-align: center;color:red">如因网络延时，可能需等待一分钟！</h4>
 			</div>
 			
 	</div>

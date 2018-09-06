@@ -89,7 +89,7 @@
 					success:function(ret){
 						if(ret.status==1){
 							var ipid=$('#ipid').val();
-							window.location.href="{:U('Home/Purchase/order/ipid/"+ipid+"')}"
+							window.location.href="{:U('Home/Purchase/order/ipid/"+ipid+"/isdt/1')}"
 						}else{
 							alert('不好意思！您的DT余额不足！');
 						}
