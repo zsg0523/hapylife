@@ -714,6 +714,7 @@ class HapylifeController extends AdminBaseController{
                             $data = array(
                                     'product' => $product,
                                     'userinfo' => $userinfo,
+                                    'ir_receiptnum' => $receipt['ir_receiptnum'],
                                 );
                             $data    = json_encode($data);
                             $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/addCoupon";
@@ -1488,5 +1489,15 @@ class HapylifeController extends AdminBaseController{
 			$this->assign('code',$code);
 			$this->display();
 		}
+	}
+
+	//查看订单明细
+	public function searchSon(){
+		$ir_receiptnum = I('get.ir_receiptnum');
+		$field = '*,rs.ir_price as r_price,rs.ir_point as r_point';
+		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum,$field);
+		// p($assign);
+		$this->assign($assign);
+		$this->display();
 	}
 }
