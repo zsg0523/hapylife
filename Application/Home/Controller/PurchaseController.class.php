@@ -599,7 +599,7 @@ class PurchaseController extends HomeBaseController{
                         $ir_status= 2;
                     }else{
                         $sub      = $subnum;
-                        $unp      = bcdiv($sub,100,4);
+                        $unp      = bcdiv($sub,100,2);
                         $ir_status= 202;
                     }
                     $status  = array(
@@ -770,7 +770,7 @@ class PurchaseController extends HomeBaseController{
             if($saveSon){
                 D('Receiptson')->where(array('pay_receiptnum'=>$map['outer_trade_no']))->setfield('paytime',time());
                 $order = D('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();
-                $subnum= bcsub($order['ir_unpaid'],$receipt['ir_price'],4);
+                $subnum= bcsub($order['ir_unpaid'],$receipt['ir_price'],2);
                 if($subnum==0){
                     $sub      = 0;
                     $unp      = 0;
@@ -778,7 +778,7 @@ class PurchaseController extends HomeBaseController{
                     $ir_paytime = time();
                 }else{  
                     $sub      = $subnum;
-                    $unp      = bcdiv($sub,100,4);
+                    $unp      = bcdiv($sub,100,2);
                     $ir_status= 202;
                     $ir_paytime = 0;
                 }
