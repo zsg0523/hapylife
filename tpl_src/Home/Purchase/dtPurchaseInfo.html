@@ -9,7 +9,7 @@
 	<style type="text/css">
 		body,html{margin: 0;padding: 0;width: 100%;}
     	a{text-decoration: none;color: #000;font-weight: bold;}
-      	a:hover{text-decoration: none;cursor: pointer;}
+      	a:hover, a:focus {text-decoration: none;cursor: pointer;color: #fff;}
       	.main{height: auto;margin: auto;}
 		.pageDetial{margin: auto;}
 		.icon{width: 100%;margin: auto;}
@@ -56,10 +56,11 @@
 					<span class="">零售价:<i>￥{$data.ip_price_rmb}</i></span>
 					<span style="color: #FF6600;">可抵扣DT:<i>{$data.ip_dt}DT</i></span>
 					<span style="color: #FF6600;">抵扣后价格:<i>￥{$data.ip_sprice}</i></span>
+					<input type="hidden" name="dtvalue" id="dtvalue" value="{$data.ip_dt}" />
 				</div>
 				<div class="link">
-					<a href="{:U('Home/Purchase/order',array('ipid'=>$data['ipid']))}">DT抵扣支付</a>
-					<a href="javascript:void(0);" onclick="todtpay()">零售支付</a>
+					<a href="{:U('Home/Purchase/order',array('ipid'=>$data['ipid']))}">零售支付</a>
+					<a href="javascript:void(0);" onclick="todtpay()">DT抵扣支付</a>
 				</div>
 				
 			</div>		
@@ -74,7 +75,7 @@
         	window.location.href ="{:U('Home/Purchase/dtPurchase')}";
    		}
 		function todtpay(){
-			if(confirm('确认后将会扣除您22DT!是否支付?')){
+			if(confirm('确认后将会扣除您'+$('#dtvalue').val()+'DT!是否支付?')){
 				
 			}else{
 				
