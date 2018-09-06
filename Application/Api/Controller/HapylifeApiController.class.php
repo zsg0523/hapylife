@@ -583,7 +583,7 @@ class HapylifeApiController extends HomeBaseController{
         if($address){
             $ia_name     = $address['ia_name'];    
             $phone       = $address['ia_phone'];    
-            $shopaddress = $address['ia_province'].$address['ia_town'].$address['ia_region'].$address['     ia_road '];    
+            $shopaddress = $address['ia_province'].$address['ia_town'].$address['ia_region'].$address['ia_road'];    
         }else if($userinfo['shopaddress1']){
             $ia_name     = $userinfo['lastname'].$userinfo['firstname'];
             $phone       = $userinfo['phone'];
