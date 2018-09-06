@@ -18,12 +18,12 @@
 		.icon{width: 100%;height: auto;float: left;}
 		.icon>img{width: 100%;border: 2px solid #FFF;}
 		.giftPackage>a{width:30%;height: 40px;background: #ff6600;
-		margin-bottom:2px;line-height: 40px;display:block;font-size: 16px;float:right;border-radius: 10px;text-align: center;}
+		margin-bottom:2px;line-height: 40px;display:block;font-size: 14px;float:right;border-radius: 10px;text-align: center;}
 		.giftPackage>a:hover{cursor: pointer;}
-		.intro{width: 100%;height:120px;font-size: 16px;line-height: 30px;float: left;text-indent: 5px;}
-		.intro span{width: 100%;height: 30px;display: block;text-align: left;}
-		.intro>p{width: 100%;height: 30px;display: block;margin: 0;}
-		.intro>a{width:100%;height: 30px;background: #439DFE;color: #fff; margin-bottom:2px;line-height: 30px;display:block;font-size: 16px;float:right;border-radius: 10px;text-align: center;}
+		.intro{width: 100%;height:120px;font-size: 14px;line-height: 30px;float: left;text-indent: 5px;}
+		.intro>span{width: 100%;height: 30px;display: block;text-align: left;}
+		.intro>span>i{height: 30px;line-height: 30px;display: block;float: right;margin-right: 5px;font-style: normal;}
+		.intro>a{width:100%;height: 30px;background: #439DFE;color: #fff; margin-bottom:2px;line-height: 30px;display:block;font-size: 14px;float:right;border-radius: 10px;text-align: center;}
 		/*手机*/
       @media screen and (max-width: 768px){
      .main{width:100%;}
@@ -51,29 +51,28 @@
   		<include file="Common/commonHead1" />
 	</div>
 	<div class="main row">
+		<foreach name="product" item="v">
 		
-			<div class="giftPackage col-xs-6 col-sm-6 col-md-6" id="giftPackage" onclick='window.location.href="{:U('Home/Purchase/dtPpurchaseInfo',array('ipid'=>$v['ipid']))}";'>
-				<div class="icon"><img src="__PUBLIC_IMAGE__/1.jpg"></div>
+			<div class="giftPackage col-xs-6 col-sm-6 col-md-6" id="giftPackage" onclick='window.location.href="{:U('Home/Purchase/dtPurchaseInfo',array('ipid'=>$v['ipid']))}";'>
+				<div class="icon"><img src="{$v.ip_picture_zh}"></div>
 				<div class="intro">
-					<span>名称:低聚木糖</span>
-					<p>零售价:￥998</p>
-					<p style="color: #FF6600;">可抵用DT:45DT</p>
-					<p style="color: #FF6600;">DT折后价:￥888</p>
-				
-					<!--<a href="{:U('Home/Purchase/purchaseInfo',array('ipid'=>$v['ipid']))}">查看详情</a>-->
+					<span class="">产品名称:<i>{$v.ip_name_zh}</i></span>
+					<span class="">零售价:<i>￥{$v.ip_price_rmb}</i></span>
+					<span style="color: #FF6600;">可抵扣DT:<i>{$v.ip_dt}DT</i></span>
+					<span style="color: #FF6600;">抵扣后价格:<i>￥{$v.ip_sprice}</i></span>
 				</div>
 			</div>
-			<div class="giftPackage col-xs-6 col-sm-6 col-md-6" id="giftPackage">
+		</foreach>
+			<!--<div class="giftPackage col-xs-6 col-sm-6 col-md-6" id="giftPackage" onclick='window.location.href="{:U('Home/Purchase/dtPurchaseInfo',array('ipid'=>$v['ipid']))}";'>
 				<div class="icon"><img src="__PUBLIC_IMAGE__/1.jpg"></div>
 				<div class="intro">
-					<span>名称:低聚木糖</span>
-					<p>零售价:￥998</p>
-					<p style="color: #FF6600;">可抵用DT:45DT</p>
-					<p style="color: #FF6600;">DT折后价:￥888</p>
-				
-					<!--<a href="{:U('Home/Purchase/purchaseInfo',array('ipid'=>$v['ipid']))}">查看详情</a>-->
+					<span class="">产品名称:<i>低聚木糖</i></span>
+					<span class="">零售价:<i>￥1088</i></span>
+					<span style="color: #FF6600;">可抵扣DT:<i>45DT</i></span>
+					<span style="color: #FF6600;">抵扣后价格:<i>￥988</i></span>
 				</div>
-			</div>
+			</div>-->
+
 			
 	    
 	</div>

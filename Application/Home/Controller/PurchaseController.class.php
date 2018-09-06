@@ -114,11 +114,10 @@ class PurchaseController extends HomeBaseController{
         $this->display();
     }
     /**
-    * 购买礼包
+    * 购买DT礼包
     **/
     public function dtPurchase(){
-        // $iuid    = $_SESSION['user']['id'];
-        $iuid    = I('post.iuid');
+        $iuid    = $_SESSION['user']['id'];
         $find    = M('User')->where(array('iuid'=>$iuid))->find();
         $products= M('Product')->where(array('ip_type'=>5,'is_pull'=>1))->select();
         $array   = array('HPL00000181','HPL00123539');//显示测试产品账号]
@@ -132,8 +131,18 @@ class PurchaseController extends HomeBaseController{
         }else{
             $data = $products;
         }
-        p($data);die;
         $this->assign('product',$data);
+        $this->display();
+    }
+    /**
+    * 购买DT礼包详情
+    **/
+    public function dtPurchaseInfo(){
+        $ipid = I('get.ipid');
+        $data = M('Product')
+              ->where(array('ipid'=>$ipid))
+              ->find();
+        $this->assign('data',$data);
         $this->display();
     }
 
