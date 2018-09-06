@@ -114,11 +114,10 @@ class PurchaseController extends HomeBaseController{
         $this->display();
     }
     /**
-    * 购买礼包
+    * 购买DT礼包
     **/
     public function dtPurchase(){
-        // $iuid    = $_SESSION['user']['id'];
-        $iuid    = I('post.iuid');
+        $iuid    = $_SESSION['user']['id'];
         $find    = M('User')->where(array('iuid'=>$iuid))->find();
         $products= M('Product')->where(array('ip_type'=>5,'is_pull'=>1))->select();
         $array   = array('HPL00000181','HPL00123539');//显示测试产品账号]
@@ -132,8 +131,18 @@ class PurchaseController extends HomeBaseController{
         }else{
             $data = $products;
         }
-        p($data);die;
         $this->assign('product',$data);
+        $this->display();
+    }
+    /**
+    * 购买DT礼包详情
+    **/
+    public function dtPurchaseInfo(){
+        $ipid = I('get.ipid');
+        $data = M('Product')
+              ->where(array('ipid'=>$ipid))
+              ->find();
+        $this->assign('data',$data);
         $this->display();
     }
 
@@ -307,13 +316,15 @@ class PurchaseController extends HomeBaseController{
     public function order(){
         $iuid = $_SESSION['user']['id'];
         $ipid = trim(I('get.ipid'));
+        $isdt = trim(I('get.isdt'));
         //商品信息
         $product = M('Product')->where(array('ipid'=>$ipid))->find();
         //用户信息
         $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
         // 查询是否存在未支付的订单
         $ir_receiptnum = M('Receipt')->where(array('riuid'=>$iuid,'ir_ordertype'=>$product['ip_type'],'ir_status'=>0))->getfield('ir_receiptnum');
-        
+        //查看地址
+        $address   = M('Address')->where(array('iuid'=>$iuid,'is_address_show'=>1))->find(); 
         if(!empty($ir_receiptnum)){
             $result = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->delete();
             if($result){
@@ -335,17 +346,41 @@ class PurchaseController extends HomeBaseController{
             case '4':
                 $con = '通用券'.$product['ip_name_zh'];
                 break;
+            case '5':
+                $con = 'DT商店'.$product['ip_name_zh'];
+                break;
+        }
+        switch ($isdt){
+            case '1':
+                $rmb   = $product['ip_sprice'];
+                $point = bcdiv($product['ip_sprice'],100,2);
+                $irdt  = $product['ip_dt'];
+                break;
+            default:
+                $rmb   = $product['ip_price_rmb'];
+                $point = $product['ip_point'];
+                $irdt  = 0;
+                break;
         }
         // if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
         //     $this->error('请先填写个人信息的地区和详细地址');
         // }
+        if($address){
+            $ia_name     = $address['ia_name'];    
+            $phone       = $address['ia_phone'];    
+            $shopaddress = $address['ia_province'].$address['ia_town'].$address['ia_region'].$address['ia_road'];    
+        }else if($userinfo['shopaddress1']){
+            $ia_name     = $userinfo['lastname'].$userinfo['firstname'];
+            $phone       = $userinfo['phone'];
+            $shopaddress = $userinfo['shopaddress1'];
+        }
         $ia_name  = $userinfo['lastname'].$userinfo['firstname'];
         $order = array(
             //订单编号
             'ir_receiptnum' =>$order_num,
             //订单创建日期
             'ir_date'       =>time(),
-            //订单的状态(0待生成订单，1待支付订单，2已付款订单)
+            //订单的状态(0待生成订单，1待支付订单，202未全额,2已付款订单)
             'ir_status'     =>0,
             //下单用户id==
             'riuid'          =>$iuid,
@@ -354,17 +389,17 @@ class PurchaseController extends HomeBaseController{
             //收货人
             'ia_name'       =>$ia_name,
             //收货人电话
-            'ia_phone'      =>$userinfo['phone'],
+            'ia_phone'      =>$phone,
             //收货地址
-            'ia_address'    =>$userinfo['shopaddress1'],
+            'ia_address'    =>$shopaddress,
             //订单总商品数量
             'ir_productnum' =>1,
             //订单总金额
-            'ir_price'      =>$product['ip_price_rmb'],
-            'ir_unpaid'     =>$product['ip_price_rmb'],
+            'ir_price'      =>$rmb,
+            'ir_unpaid'     =>$rmb,
             //订单总积分
-            'ir_point'      =>$product['ip_point'],
-            'ir_unpoint'    =>$product['ip_point'],
+            'ir_point'      =>$point,
+            'ir_unpoint'    =>$point,
             //订单备注
             'ir_desc'       =>$con,
             //订单类型
@@ -398,12 +433,37 @@ class PurchaseController extends HomeBaseController{
         $addlog = M('Log')->add($log);
         // 设置session时间
         if($addlog){
-            if($product['ip_type'] == 1){
-                $this->redirect('Home/Pay/choosePay1',array('ir_unpoint'=>$product['ip_point'],'ir_price'=>$product['ip_price_rmb'],'ir_point'=>$product['ip_point'],'ir_unpaid'=>$product['ip_price_rmb'],'ir_receiptnum'=>$order_num));
-            }else if($product['ip_type'] == 4){
-                $this->redirect('Home/Pay/choosePay2',array('ir_unpoint'=>$product['ip_point'],'ir_price'=>$product['ip_price_rmb'],'ir_point'=>$product['ip_point'],'ir_unpaid'=>$product['ip_price_rmb'],'ir_receiptnum'=>$order_num));
-            }else{
-                $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$product['ip_point'],'ir_price'=>$product['ip_price_rmb'],'ir_point'=>$product['ip_point'],'ir_unpaid'=>$product['ip_price_rmb'],'ir_receiptnum'=>$order_num));
+            switch ($product['ip_type']) {
+                case '1':
+                    $this->redirect('Home/Pay/choosePay1',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
+                    break;
+                case '3':
+                    $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
+                    break;
+                case '4':
+                    $this->redirect('Home/Pay/choosePay2',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
+                    break;
+                case '5':
+                    if($isdt){
+                        $dt    = M('Wvdt')->where(array('account'=>$userinfo['customerid']))->getfield('dt');
+                        $bcsub = bcsub($dt,$product['ip_dt'],2);
+                        if($bcsub>=0){
+                            $saveDt= M('Wvdt')->where(array('account'=>$userinfo['customerid']))->setfield('dt',$bcsub);
+                            if($saveDt){
+                                $save  = M('Receipt')->where(array('ipid'=>$receipt))->setfield('ir_status',202);
+                                $this->redirect('Home/Pay/choosePay2',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
+                            }else{
+                                $save  = M('Receipt')->where(array('ipid'=>$receipt))->setfield('ir_status',202);
+                                $this->error('订单生成失败');
+                            }
+                        }else{
+                            $save  = M('Receipt')->where(array('ipid'=>$receipt))->setfield('ir_status',7);
+                            $this->error('订单生成失败');
+                        }
+                    }else{
+                        $this->redirect('Home/Pay/choosePay2',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
+                    }
+                    break;
             }
         }else{
             $this->error('订单生成失败');

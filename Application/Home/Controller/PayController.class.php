@@ -448,7 +448,26 @@ class PayController extends HomeBaseController{
             $this->ajaxreturn($receipt);
         }
     }
-
+    /**
+    *检查用户DT是否足够支付
+    **/
+    public function getUserDt(){
+        $iuid    = $_SESSION['user']['id'];
+//      $iuid    = I('post.iuid');
+        $ip_dt   = I('post.ip_dt');
+        $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
+        $dt      = M('Wvdt')->where(array('account'=>$userinfo['customerid']))->getfield('dt');
+        $bcsub   = bcsub($dt,$ip_dt,2);
+        if($bcsub>=0){
+            $data['status']=1;
+            $data['msg']   ='DT充足';
+            $this->ajaxreturn($data);
+        }else{
+            $data['status']=0;
+            $data['msg']   ='DT不足';
+            $this->ajaxreturn($data);
+        }
+    }
 
 
 

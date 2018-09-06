@@ -54,6 +54,12 @@
 					<a style="color: #ff8b9a;border: 1px solid #ff8b9a;" href="{:U('Home/Purchase/purchase')}">购买礼包</a>
 				</div>
 			</li>
+			<li onclick='window.location.href="{:U('Home/Purchase/purchase')}";'>
+				<img src="__PUBLIC_IMAGE__/shop.png"/>
+				<div>
+					<a style="color: #7950df;border: 1px solid #7950df;" href="{:U('Home/Purchase/dtPurchase')}">商店</a>
+				</div>
+			</li>
 			<li onclick='window.location.href="{:U('Home/Purchase/myOrder')}";'>
 				<img src="__PUBLIC_IMAGE__/订单.png"/>
 				<div>
@@ -75,7 +81,7 @@
 			<li onclick='window.location.href="{:U('Home/Pay/toCheckPassword')}";'>
 				<img src="__PUBLIC_IMAGE__/积分.png"/>
 				<div>
-					<a style="color: #737aff;border: 1px solid #737aff;" href="{:U('Home/Pay/toCheckPassword')}">积分</a>
+					<a style="color: #f2643f;border: 1px solid #f2643f;" href="{:U('Home/Pay/toCheckPassword')}">积分</a>
 				</div>
 			</li>
 			<input type="hidden" name="username" value="{$Think.session.user.username}">
@@ -84,7 +90,7 @@
 			<li onclick='tocoupon();'}>
 				<img src="__PUBLIC_IMAGE__/通用券.png"/>
 				<div>
-					<a style="color: #737aff;border: 1px solid #737aff;" onclick="tocoupon()">通用券</a>
+					<a style="color: #3ed3f2;border: 1px solid #3ed3f2;" onclick="tocoupon()">通用券</a>
 				</div>
 			</li>
 			<li onclick='window.location.href="{:U('Home/Purchase/bankList')}";'>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>DT产品详情</title>
+	<link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
+	<style type="text/css">
+		body,html{margin: 0;padding: 0;width: 100%;}
+    	a{text-decoration: none;color: #000;font-weight: bold;}
+      	a:hover, a:focus {text-decoration: none;cursor: pointer;color: #fff;}
+      	.main{height: auto;margin: auto;}
+		.pageDetial{margin: auto;}
+		.icon{width: 100%;margin: auto;}
+		.icon>img{width: 100%;border: 2px solid #fff;border-radius: 5px;}
+		.title{width: 100%;margin: auto;text-indent: 5px;}
+		.title>span{width: 100%;height: 30px;display: block;line-height: 30px;}
+		.title>span>i{height: 30px;line-height: 30px;display: block;float: right;margin-right: 5px;font-style: normal;}
+		.link{width: 100%;margin: auto;}
+		.link>a{width:50%;height: 35px;background: #439DFE;color: #fff; margin-bottom:2px;line-height: 35px;display:block;font-size: 16px;float:right;border: 1px solid #fff; border-radius: 5px;text-align: center;}
+		/*手机*/
+      	@media screen and (max-width: 768px){
+     		.main{width:100%;}
+     		.pageDetial{width: 100%;}
+      	}
+      	/*平板*/
+      	@media screen and (min-width: 768px){
+       		.main{width:100%;}
+       		.pageDetial{width: 600px;margin: auto;}
+      	}
+        /*中等屏幕*/
+      	@media screen and (min-width: 992px){
+         	.main{width:100%;}
+         	.pageDetial{width: 600px;margin: auto;}
+      	}
+      	/*大屏幕*/
+      	@media screen and (min-width: 1200px){
+        	.main{width:1200px;}
+        	.pageDetial{width: 600px;margin: auto;}
+      	}
+	</style>
+</head>
+<body>
+	<div class="commonHead">
+  		<include file="Common/commonHead1" />
+	</div>
+	<div class="main">
+			<div class="pageDetial">
+				<div class="icon">
+					<img class="" src="{$data.ip_picture_zh}">
+				</div>
+				
+				<div class="title">
+					<span class="">产品名称:<i>{$data.ip_name_zh}</i></span>
+					<span class="">零售价:<i>￥{$data.ip_price_rmb}</i></span>
+					<span style="color: #FF6600;">可抵扣DT:<i>{$data.ip_dt}DT</i></span>
+					<span style="color: #FF6600;">抵扣后价格:<i>￥{$data.ip_sprice}</i></span>
+					<input type="hidden" name="dtvalue" id="dtvalue" value="{$data.ip_dt}" />
+					<input type="hidden" name="ipid" id="ipid" value="{$data.ipid}" />
+				</div>
+				<div class="link">
+					<a href="{:U('Home/Purchase/order',array('ipid'=>$data['ipid']))}">零售支付</a>
+					<a href="javascript:void(0);" onclick="todtpay()">DT抵扣支付</a>
+				</div>
+				
+			</div>		
+	</div>
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
+    <script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+		$(document).ready(function(){
+	   		changeCommonHead('DT产品详情');
+		});
+		function back(){
+        	window.location.href ="{:U('Home/Purchase/dtPurchase')}";
+   		}
+		function todtpay(){
+			if(confirm('确认后将会扣除您'+$('#dtvalue').val()+'DT!是否支付?')){
+				var ip_dt=$('#dtvalue').val();
+				$.ajax({
+					type:"post",
+					url:"{:U('Home/Pay/getUserDt')}",
+					async:true, 
+					dataType: 'json',
+					data:{
+						ip_dt:ip_dt,
+					},
+					success:function(ret){
+						if(ret.status==1){
+							var ipid=$('#ipid').val();
+							window.location.href="{:U('Home/Purchase/order/ipid/"+ipid+"')}"
+						}else{
+							alert('不好意思！您的DT余额不足！');
+						}
+			
+					},
+					error:function(){
+					}
+				});
+			}else{
+				
+			}
+		}
+    </script>
+</body>
+</html>
