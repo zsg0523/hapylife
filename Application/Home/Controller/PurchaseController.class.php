@@ -813,6 +813,16 @@ class PurchaseController extends HomeBaseController{
                         //更新订单信息
                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
                     }else if($order['ir_ordertype'] == 4){
+                        $userinfo= D('User')->where(array('iuid'=>$order['riuid']))->find();
+                        $status  = array(
+                            'ir_status'  =>$ir_status,
+                            'riuid'      =>$userinfo['iuid'],
+                            'ir_unpaid'  =>$sub,
+                            'ir_unpoint' =>$unp,
+                            'ir_paytime' =>$ir_paytime,
+                        );
+                        //更新订单信息
+                        $updateReceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
                         // 添加通用券
                         $product = M('Receipt')
                                         ->alias('r')
