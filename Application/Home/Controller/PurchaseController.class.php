@@ -354,10 +354,12 @@ class PurchaseController extends HomeBaseController{
             case '1':
                 $rmb   = $product['ip_sprice'];
                 $point = bcdiv($product['ip_sprice'],100,2);
+                $irdt  = $product['ip_dt'];
                 break;
             default:
                 $rmb   = $product['ip_price_rmb'];
                 $point = $product['ip_point'];
+                $irdt  = 0;
                 break;
         }
         // if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){

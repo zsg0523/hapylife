@@ -81,7 +81,7 @@
    		var mypoint;
    		function getReceiptInfo(){
    			var ir_receiptnum=$('#ir_receiptnum').val();
-   			 $.ajax({
+   			$.ajax({
 				type:"post",
 				url:"{:U('Home/Pay/getReceipt')}",
 				async:true, 

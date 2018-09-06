@@ -57,6 +57,7 @@
 					<span style="color: #FF6600;">可抵扣DT:<i>{$data.ip_dt}DT</i></span>
 					<span style="color: #FF6600;">抵扣后价格:<i>￥{$data.ip_sprice}</i></span>
 					<input type="hidden" name="dtvalue" id="dtvalue" value="{$data.ip_dt}" />
+					<input type="hidden" name="ipid" id="ipid" value="{$data.ipid}" />
 				</div>
 				<div class="link">
 					<a href="{:U('Home/Purchase/order',array('ipid'=>$data['ipid']))}">零售支付</a>
@@ -76,7 +77,27 @@
    		}
 		function todtpay(){
 			if(confirm('确认后将会扣除您'+$('#dtvalue').val()+'DT!是否支付?')){
-				
+				var ip_dt=$('#dtvalue').val();
+				$.ajax({
+					type:"post",
+					url:"{:U('Home/Pay/getUserDt')}",
+					async:true, 
+					dataType: 'json',
+					data:{
+						ip_dt:ip_dt,
+					},
+					success:function(ret){
+						if(ret.status==1){
+							var ipid=$('#ipid').val();
+							window.location.href="{:U('Home/Purchase/order/ipid/"+ipid+"')}"
+						}else{
+							alert('不好意思！您的DT余额不足！');
+						}
+			
+					},
+					error:function(){
+					}
+				});
 			}else{
 				
 			}
