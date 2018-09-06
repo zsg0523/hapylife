@@ -207,9 +207,17 @@ class ReceiptsonModel extends BaseModel{
             }
             $content[$k]['ir_price']       = $v['ir_price'];
             //订货人
-            $content[$k]['ia_name']        = $v['ia_name'];
+            if(!$v['ia_name']){
+                $content[$k]['ia_name']        = ' ';
+            }else{
+                $content[$k]['ia_name']        = $v['ia_name'];
+            }
             //收货人
-            $content[$k]['ib_name']        = $v['ia_name'];
+            if(!$v['ia_name']){
+                $content[$k]['ib_name']        = ' ';
+            }else{
+                $content[$k]['ib_name']        = $v['ia_name'];
+            }
             //收货详细地址
             $content[$k]['ia_address']     = $v['shopprovince'].$v['shopcity'].$v['shoparea'].$v['ia_address'];
             //收货人电话

@@ -267,6 +267,7 @@ class ReceiptModel extends BaseModel{
                 ->limit($page->firstRow.','.$page->listRows)
                 ->select();         
         }
+        // 2018082917465476913/
         // p($list);
         foreach ($list as $key => $value) {
             $ia_address = '';
@@ -508,7 +509,7 @@ class ReceiptModel extends BaseModel{
             $list=$model
                 ->alias('r')
                 ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'LastName|FirstName'=>array('not in',$test)))
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('not in',$test)))
                 ->order('ir_paytime desc')
                 ->select();
         }else{
@@ -516,7 +517,7 @@ class ReceiptModel extends BaseModel{
                 ->alias('r')
                 ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
                 ->field($field)
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'LastName|FirstName'=>array('not in',$test)))
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('not in',$test)))
                 ->order('ir_paytime desc')
                 ->select();         
         }
@@ -829,16 +830,16 @@ class ReceiptModel extends BaseModel{
         if (empty($field)) {
             $list=$model
                 ->alias('r')
-                ->join('hapylife_user u on r.riuid = u.iuid')
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>48,'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>48,'r.ia_name'=>array('NOT IN',$array)))
                 ->order('ir_paytime desc')
                 ->select();
         }else{
             $list=$model
                 ->alias('r')
-                ->join('hapylife_user u on r.riuid = u.iuid')
+                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
                 ->field($field)
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>48,'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>48,'r.ia_name'=>array('NOT IN',$array)))
                 ->order('ir_paytime desc')
                 ->select();         
         }
@@ -952,7 +953,11 @@ class ReceiptModel extends BaseModel{
             $content[$k]['ir_desc']              = $v['ir_desc'];
             $content[$k]['ir_price']             = $v['ir_price'];
             //订货人
-            $content[$k]['ia_name']              = $v['lastname'].$v['firstname'];
+            if(!$v['lastname'] && !$v['firstname']){
+                $content[$k]['ia_name']              = ' ';
+            }else{      
+                $content[$k]['ia_name']              = $v['lastname'].$v['firstname'];
+            }
             //收货人
             $content[$k]['ib_name']              = $v['ia_name'];
             //收货详细地址
