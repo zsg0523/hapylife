@@ -453,7 +453,7 @@ class PayController extends HomeBaseController{
     **/
     public function getUserDt(){
         $iuid    = $_SESSION['user']['id'];
-        // $iuid    = I('post.iuid');
+//         $iuid    = I('post.iuid');
         $ip_dt   = I('post.ip_dt');
         $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
         $bcsub   = bcsub($userinfo['iu_dt'],$ip_dt,2);

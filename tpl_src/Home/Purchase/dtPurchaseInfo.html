@@ -76,31 +76,32 @@
         	window.location.href ="{:U('Home/Purchase/dtPurchase')}";
    		}
 		function todtpay(){
-			if(confirm('确认后将会扣除您'+$('#dtvalue').val()+'DT!是否支付?')){
-				var ip_dt=$('#dtvalue').val();
-				$.ajax({
-					type:"post",
-					url:"{:U('Home/Pay/getUserDt')}",
-					async:true, 
-					dataType: 'json',
-					data:{
-						ip_dt:ip_dt,
-					},
-					success:function(ret){
+			var ip_dt=$('#dtvalue').val();
+			$.ajax({
+				type:"post",
+				url:"{:U('Home/Pay/getUserDt')}",
+				async:true, 
+				dataType: 'json',
+				data:{
+					ip_dt:ip_dt,
+				},
+				success:function(ret){
+					if(confirm('您的DT余额为：'+ret.iu_dt+',确认后将会扣除您'+$('#dtvalue').val()+'DT!是否支付?')){
 						if(ret.status==1){
 							var ipid=$('#ipid').val();
 							window.location.href="{:U('Home/Purchase/order/ipid/"+ipid+"/isdt/1')}"
 						}else{
-							alert('不好意思！您的DT余额不足！');
+							alert('不好意思！您的DT余额为：'+ret.iu_dt+'！您的DT余额不足！');
 						}
-			
-					},
-					error:function(){
+					}else{
+					
 					}
-				});
-			}else{
-				
-			}
+					
+		
+				},
+				error:function(){
+				}
+			});
 		}
     </script>
 </body>
