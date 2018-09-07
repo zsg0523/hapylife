@@ -145,7 +145,25 @@ class PurchaseController extends HomeBaseController{
         $this->assign('data',$data);
         $this->display();
     }
-
+	/**
+    *检查用户DT
+    **/
+    public function dtpay(){
+        $iuid    = $_SESSION['user']['id'];
+        $ip_dt   = I('get.ip_dt');
+        $ipid    = I('get.ipid');
+        $data    = M('User')->where(array('iuid'=>$iuid))->find();
+        $bcsub   = bcsub($data['iu_dt'],$ip_dt,2);
+        $data['bc_dt'] =$bcsub;
+        $data['ipid']  =$ipid;
+        $data['ip_dt'] =$ip_dt;
+        if($data){
+        	$this->assign('data',$data);
+        	$this->display();
+        }else{
+        	$this->error('登录过期!请重新登录');
+        }
+    }
     /**
     * 会籍激活记录
     **/
@@ -461,6 +479,7 @@ class PurchaseController extends HomeBaseController{
                                     'paytime'         =>time(),
                                     'ir_point'        =>0,
                                     'ir_dt'           =>$irdt,
+                                    'status'          =>2,
                                 );
                                 $add  = D('receiptson')->add($mape);
                                 $where= array('ir_status'=>202,'ir_dt'=>0);

@@ -56,14 +56,11 @@
 					<span class="">零售价:<i>￥{$data.ip_price_rmb}</i></span>
 					<span style="color: #FF6600;">可抵扣DT:<i>{$data.ip_dt}DT</i></span>
 					<span style="color: #FF6600;">抵扣后价格:<i>￥{$data.ip_sprice}</i></span>
-					<input type="hidden" name="dtvalue" id="dtvalue" value="{$data.ip_dt}" />
-					<input type="hidden" name="ipid" id="ipid" value="{$data.ipid}" />
 				</div>
 				<div class="link">
 					<a href="{:U('Home/Purchase/order',array('ipid'=>$data['ipid']))}">零售支付</a>
-					<a href="javascript:void(0);" onclick="todtpay()">DT抵扣支付</a>
+					<a href="{:U('Home/Purchase/dtpay',array('ipid'=>$data['ipid'],'ip_dt'=>$data['ip_dt']))}">DT抵扣支付</a>
 				</div>
-				
 			</div>		
 	</div>
 	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
@@ -75,34 +72,7 @@
 		function back(){
         	window.location.href ="{:U('Home/Purchase/dtPurchase')}";
    		}
-		function todtpay(){
-			var ip_dt=$('#dtvalue').val();
-			$.ajax({
-				type:"post",
-				url:"{:U('Home/Pay/getUserDt')}",
-				async:true, 
-				dataType: 'json',
-				data:{
-					ip_dt:ip_dt,
-				},
-				success:function(ret){
-					if(confirm('您的DT余额为：'+ret.iu_dt+',确认后将会扣除您'+$('#dtvalue').val()+'DT!是否支付?')){
-						if(ret.status==1){
-							var ipid=$('#ipid').val();
-							window.location.href="{:U('Home/Purchase/order/ipid/"+ipid+"/isdt/1')}"
-						}else{
-							alert('不好意思！您的DT余额为：'+ret.iu_dt+'！您的DT余额不足！');
-						}
-					}else{
-					
-					}
-					
 		
-				},
-				error:function(){
-				}
-			});
-		}
     </script>
 </body>
 </html>
