@@ -447,10 +447,9 @@ class PurchaseController extends HomeBaseController{
                     break;
                 case '5':
                     if($isdt){
-                        $dt    = M('Wvdt')->where(array('account'=>$userinfo['customerid']))->getfield('dt');
-                        $bcsub = bcsub($dt,$product['ip_dt'],2);
+                        $bcsub = bcsub($userinfo['iu_dt'],$product['ip_dt'],2);
                         if($bcsub>=0){
-                            $saveDt= M('Wvdt')->where(array('account'=>$userinfo['customerid']))->setfield('dt',$bcsub);
+                            $saveDt= M('User')->where(array('CustomerId'=>$userinfo['customerid']))->setfield('iu_dt',$bcsub);
                             if($saveDt){
                                 $mape            = array(
                                     'ir_receiptnum'   =>$order_num,
