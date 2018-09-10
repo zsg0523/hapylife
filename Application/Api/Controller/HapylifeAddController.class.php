@@ -342,6 +342,37 @@ class HapylifeAddController extends HomeBaseController{
             }
         }
     }
+    public function addDt(){
+        $user = M('User')->select();
+        foreach ($user as $key => $value) {
+            // if($value['distributortype']=='Platinum'||strlen($value['customerid'])==8){
+                $iu_dt= 180;
+                $bcsub = bcadd($value['iu_dt'],$iu_dt,2);
+                $save = M('User')->where(array('iuid'=>$value['iuid']))->setfield('iu_dt',$bcsub);
+                if($save){
+                    $dtNo = 'DT'.date('YmdHis').rand(10000, 99999);
+                    $tmp     = array(
+                        'iuid'           =>$value['iuid'],
+                        'pointNo'        =>$dtNo,
+                        'hu_username'    =>$value['lastname'].$value['firstname'],
+                        'hu_nickname'    =>$value['customerid'],
+                        'getdt'          =>$iu_dt,
+                        'leftdt'         =>$bcsub,
+                        'date'           =>date('Y-m-d H:i:s'),
+                        'status'         =>2,
+                        'dttype'         =>2,
+                        'content'        =>'在'.date('Y-m-d H:i:s').'时系统增加'.$iu_dt.'DT到'.'您的账户'.',剩DT余额'.$bcsub.',流水号为:'.$dtNo,
+                        'opename'        =>'系统',
+                        'send'           =>'系统',
+                        'received'       =>$value['customerid']
+                    );
+                    $add     = D('Getdt')->add($tmp);
+                    $num++;
+                }
+            // }
+        }
+        p($num);die;
+    }
 
 
 

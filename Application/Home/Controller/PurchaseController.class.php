@@ -502,7 +502,7 @@ class PurchaseController extends HomeBaseController{
                                 $addtmp = M('Getdt')->add($tmp);
                                 $where= array('ir_status'=>202,'ir_dt'=>0);
                                 $save = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->setfield('ir_status',202);
-                                $this->redirect('Home/Pay/choosePay2',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
+                                $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
                             }else{
                                 $save  = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->setfield('ir_status',202);
                                 $this->error('订单生成失败');
@@ -512,7 +512,7 @@ class PurchaseController extends HomeBaseController{
                             $this->error('订单生成失败');
                         }
                     }else{
-                        $this->redirect('Home/Pay/choosePay2',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
+                        $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
                     }
                     break;
             }
