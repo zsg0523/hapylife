@@ -84,6 +84,13 @@
 					<a style="color: #f2643f;border: 1px solid #f2643f;" href="{:U('Home/Pay/toCheckPassword')}">积分</a>
 				</div>
 			</li>
+			<li onclick='window.location.href="{:U('Home/DTPoint/myDTPoint')}";'>
+				<img src="__PUBLIC_IMAGE__/DT积分.png"/>
+				<div>
+					<a style="color: #bc32ff;border: 1px solid #bc32ff;" href="{:U('Home/DTPoint/myDTPoint')}">DT积分</a>
+				</div>
+			</li>
+			
 			<input type="hidden" name="username" value="{$Think.session.user.username}">
 			<input type="hidden" name="userid" value="{$Think.session.user.id}">
 			<input type="hidden" name="cu_id" value="">
