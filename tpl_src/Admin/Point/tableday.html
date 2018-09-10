@@ -1,22 +1,22 @@
 <extend name="Public:base" />
 
-<block name="title">积分报表</block>
+<block name="title">{$date}月EP报表</block>
 <block name="content">
     <!-- 导航栏开始 -->
     <div class="page-header">
         <h1>
             首页
             &gt;
-			积分报表
+			EP报表
 			&gt;
-			{$date}月积分报表
+			{$date}月EP报表
         </h1>
     </div>
     <div class="col-xs-12">
         <div class="tabbable">
             <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
 			  	<li class="active">
-					<a href="#home" data-toggle="tab">{$date}月积分报表</a>
+					<a href="#home" data-toggle="tab">{$date}月EP报表</a>
 			    </li>
             </ul>
             <div class="tab-content">
@@ -67,14 +67,14 @@
 						&times;
 					</button>
 					<h4 class="modal-title" id="myModalLabel">
-						添加积分
+						添加EP
 					</h4>
 				</div>
 				<div class="modal-body">
 					<form id="bjy-form" class="form-inline" action="{:U('Admin/Rule/add_group')}" method="post">
 						<table class="table table-striped table-bordered table-hover table-condensed">
 							<tr>
-								<th width="15%">积分名：</th>
+								<th width="15%">EP名：</th>
 								<td>
 									<input class="input-medium" type="text" name="title">
 								</td>

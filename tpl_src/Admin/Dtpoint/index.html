@@ -1,25 +1,25 @@
 <extend name="Public:base" />
 
-<block name="title">会员EP列表</block>
+<block name="title">会员DT列表</block>
 <block name="content">
     <!-- 导航栏开始 -->
     <div class="page-header">
         <h1>
             首页
             &gt;
-			EP管理
+			DT管理
 			&gt;
-			会员EP列表
+			会员DT列表
         </h1>
     </div>
     <div class="col-xs-12">
         <div class="tabbable">
             <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
 			  	<li class="active">
-					<a href="#home" data-toggle="tab">会员EP列表</a>
+					<a href="#home" data-toggle="tab">会员DT列表</a>
 			    </li>
 			    <li>
-					<form action="{:U('Admin/Point/index')}" method="get">
+					<form action="{:U('Admin/Dtpoint/index')}" method="get">
                         <input name="word" type="text" placeholder="关键词" value="{$word}" size="20" />
                         <input class='btn btn-sm' type="submit" value="筛选" />
                 	</form>
@@ -31,20 +31,15 @@
 						<th>账号</th>
 						<th>中文姓名</th>
 						<th>英文姓名</th>
-						<th>团队标签</th>
-						<th>现在可用</th>
+						<!-- <th>团队标签</th> -->
+						<th>可用DT</th>
 						<th>偏差值</th>
-						<th>现在冻结</th>
-						<th>共提现</th>
 						<th>共消费</th>
-						<th>共转入</th>
-						<th>共转出</th>
-						<th>增加奖金</th>
+						<th>增加入</th>
 						<th>系统增加</th>
 						<th>系统减少</th>
 						<!-- <th>查看360明细</th> -->
 						<th>明細</th>
-						<th>日誌</th>
 						<th>操作</th>
 						<th>操作</th>
 					</tr>
@@ -53,29 +48,22 @@
 							<td>{$v['hu_nickname']}</td>
 							<td>{$v['hu_username']}</td>
 							<td>{$v['hu_username_en']}</td>
-							<td>{$v['teamcode']}</td>
-							<td align="right">{$v['iu_point']?$v['iu_point']:0}</td>
+							<!-- <td>{$v['teamcode']}</td> -->
+							<td align="right">{$v['iu_dt']?$v['iu_dt']:0}</td>
 							<td align="right">{$v['deviation']?$v['deviation']:0}
 							</td>
-							<td align="right">{$v['iu_unpoint']?$v['iu_unpoint']:0}</td>
-							<td align="right">{$v['realpoint6']?$v['realpoint6']:0}</td>
-							<td align="right">{$v['realpoint7']?$v['realpoint7']:0}</td>
-							<td align="right">{$v['realpoint5']?$v['realpoint5']:0}</td>
 							<td align="right">{$v['realpoint4']?$v['realpoint4']:0}</td>
 							<td align="right">{$v['realpoint3']?$v['realpoint3']:0}</td>
 							<td align="right">{$v['realpoint2']?$v['realpoint2']:0}</td>
 							<td align="right">{$v['realpoint1']?$v['realpoint1']:0}</td>
 							<!-- <td align="center">
-								<a href="{:U('Admin/Point/getAllWalletdetail',array('hu_nickname'=>$v['hu_nickname'],'iuid'=>$v['iuid']))}">查看360明細</a> 
+								<a href="{:U('Admin/Dtpoint/getAllWalletdetail',array('hu_nickname'=>$v['hu_nickname'],'iuid'=>$v['iuid']))}">查看360明細</a> 
 							</td> -->
 							<td align="center">
-								<a href="{:U('Admin/Point/userpoint',array('hu_nickname'=>$v['hu_nickname'],'iuid'=>$v['iuid']))}">查看明細</a> 
-							</td>
-							<td align="center">
-								<a href="{:U('Admin/Point/userlog',array('hu_nickname'=>$v['hu_nickname'],'iuid'=>$v['iuid']))}">查看日誌</a> 
+								<a href="{:U('Admin/Dtpoint/userpoint',array('hu_nickname'=>$v['hu_nickname'],'iuid'=>$v['iuid']))}">查看明細</a> 
 							</td>
 							<td align="center"><a href="javascript:;" type="2" nickname="{$v['hu_nickname']}" onclick="addpoint(this)">增加</a></td>
-							<!-- <td><a href="{:U('Admin/Point/opepoint',array('type'=>2,'hu_nickname'=>$v['hu_nickname']))}">增加</a> </td> -->
+							<!-- <td><a href="{:U('Admin/Dtpoint/opepoint',array('type'=>2,'hu_nickname'=>$v['hu_nickname']))}">增加</a> </td> -->
 							<td align="center"><a href="javascript:;" type="1" nickname="{$v['hu_nickname']}" onclick="redpoint(this)">减少</a> </td>
 						</tr>
 					</foreach>
@@ -95,12 +83,12 @@
 						&times;
 					</button>
 					<h4 class="modal-title" id="myModalLabel">
-						系统增加EP
+						系统增加DT
 					</h4>
 				</div>
 				<div class="modal-body">
-					<form id="bjy-form" class="form-inline" action="{:U('Admin/Point/opepoint')}" method="post">
-						<input type="hidden" name="pointtype">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Dtpoint/opepoint')}" method="post">
+						<input type="hidden" name="dttype">
 						<input type="hidden" name="hu_nickname">
 						<table class="table table-striped table-bordered table-hover table-condensed">
 							<tr>
@@ -110,7 +98,7 @@
 								</td>
 							</tr>
 							<tr>
-								<th width="12%">增加EP数量：</th>
+								<th width="12%">增加DT数量：</th>
 								<td>
 									<input class="input-medium" type="text" name="realpoint">
 								</td>
@@ -130,7 +118,7 @@
 							<tr>
 								<th></th>
 								<td>
-									<input class="btn btn-success" type="submit" value="增加EP">
+									<input class="btn btn-success" type="submit" value="增加DT">
 								</td>
 							</tr>
 						</table>
@@ -149,12 +137,12 @@
 						&times;
 					</button>
 					<h4 class="modal-title" id="myModalLabel">
-						系统减少EP
+						系统减少DT
 					</h4>
 				</div>
 				<div class="modal-body">
-					<form id="bjy-form" class="form-inline" action="{:U('Admin/Point/opepoint')}" method="post">
-						<input type="hidden" name="pointtype">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Dtpoint/opepoint')}" method="post">
+						<input type="hidden" name="dttype">
 						<input type="hidden" name="hu_nickname">
 						<table class="table table-striped table-bordered table-hover table-condensed">
 							<tr>
@@ -164,7 +152,7 @@
 								</td>
 							</tr>
 							<tr>
-								<th width="12%">减少EP数量：</th>
+								<th width="12%">减少DT数量：</th>
 								<td>
 									<input class="input-medium" type="text" name="realpoint">
 								</td>
@@ -202,7 +190,7 @@
 		var nickname=$(obj).attr('nickname');
 		var type=$(obj).attr('type');
 		$("input[name='hu_nickname']").val(nickname);
-		$("input[name='pointtype']").val(type);
+		$("input[name='dttype']").val(type);
 		$('#bjy-add').modal('show');
 	}
 	// 系统减少菜单
@@ -210,7 +198,7 @@
 		var nickname=$(obj).attr('nickname');
 		var type=$(obj).attr('type');
 		$("input[name='hu_nickname']").val(nickname);
-		$("input[name='pointtype']").val(type);
+		$("input[name='dttype']").val(type);
 		$('#bjy-edit').modal('show');
 	}
 	</script>

@@ -1,32 +1,32 @@
 <extend name="Public:base" />
 
-<block name="title">新增(奖金兑换)EP列表</block>
+<block name="title">系统增加或减少DT列表</block>
 <block name="content">
     <!-- 导航栏开始 -->
     <div class="page-header">
         <h1>
             首页
             &gt;
-			EP管理
+			DT管理
 			&gt;
-			新增(奖金兑换)EP列表
+			DT系统(+-)列表
         </h1>
     </div>
     <div class="col-xs-12">
         <div class="tabbable">
             <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
 			  	<li class="active">
-					<a href="#home" data-toggle="tab">新增(奖金兑换)EP列表</a>
+					<a href="#home" data-toggle="tab">DT系统(+-)列表</a>
 			    </li>
 			    <li>
-					<form action="{:U('Admin/Point/newpoint')}" method="get">
+			    	<form action="{:U('Admin/Dtpoint/syspoint')}" method="get">
 			    		<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
 				    	<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
 				    	<input name="hu_nickname" type="text" placeholder="会员号" value="{$hu_nickname}" size="20" />
                         <input class='btn btn-sm' type="submit" value="筛选" />
-                        <input class='btn btn-sm' type="submit" name='excel' value="excel" />
+                        <!-- <input class='btn btn-sm' type="submit" name='excel' value="excel" /> -->
                 	</form>
-				</li>
+			    </li>
             </ul>
             <div class="tab-content">
 				<table class="table table-striped table-bordered table-hover table-condensed">
@@ -35,14 +35,13 @@
 						<th>日期</th>
 						<th>会员</th>
 						<th>姓名</th>
-						<th>团队</th>
 						<th>类型</th>
 						<th>发送者</th>
 						<th>接收者</th>
-						<th>处理时间</th>
+						<!-- <th>处理时间</th> -->
 						<th>操作者</th>
 						<th>备注</th>
-						<th>EP</th>
+						<th>DT</th>
 						<th>余额</th>
 					</tr>
 					<foreach name="data" item="v">
@@ -51,25 +50,20 @@
 							<td width="200px">{$v['date']}</td>
 							<td width="200px">{$v['hu_nickname']}</td>
 							<td width="200px">{$v['hu_username']}</td>
-							<td width="200px">{$v['teamcode']}</td>
 							<td width="200px">
-								<if 	condition="$v['pointtype'] eq 1">系统减少
-                                <elseif condition="$v['pointtype'] eq 2"/>系统增加
-                                <elseif condition="$v['pointtype'] eq 3"/>新增EP
-                                <elseif condition="$v['pointtype'] eq 4"/>转账出
-                                <elseif condition="$v['pointtype'] eq 5"/>转账入
-                                <elseif condition="$v['pointtype'] eq 6"/>提现
-                                <elseif condition="$v['pointtype'] eq 7"/>消费出
-                                <elseif condition="$v['pointtype'] eq 8"/>提现驳回
-                                </if>			    		
+								<if 	condition="$v['dttype'] eq 1">系统减少
+                                <elseif condition="$v['dttype'] eq 2"/>系统增加
+                                <elseif condition="$v['dttype'] eq 3"/>新增DT
+                                <elseif condition="$v['dttype'] eq 4"/>消费出
+                                </if>				    		
 					    	</td>
 					    	<td width="100px">{$v['send']}</td>
 					    	<td width="100px">{$v['received']}</td>
-							<td width="100px">{$v['handletime']}</td>
+							<!-- <td width="100px">{$v['handletime']}</td> -->
 					    	<td width="100px">{$v['opename']}</td>
 					    	<td width="100px">{$v['content']}</td>
-							<td width="100px" align="right">{$v['getpoint']}</td>
-							<td width="100px" align="right">{$v['leftpoint']}</td>
+							<td width="100px" align="right">{$v['getdt']}</td>
+							<td width="100px" align="right">{$v['leftdt']}</td>
 						</tr>
 					</foreach>
 				</table>
@@ -88,14 +82,14 @@
 						&times;
 					</button>
 					<h4 class="modal-title" id="myModalLabel">
-						添加EP
+						添加DT
 					</h4>
 				</div>
 				<div class="modal-body">
 					<form id="bjy-form" class="form-inline" action="{:U('Admin/Rule/add_group')}" method="post">
 						<table class="table table-striped table-bordered table-hover table-condensed">
 							<tr>
-								<th width="15%">EP名：</th>
+								<th width="15%">DT名：</th>
 								<td>
 									<input class="input-medium" type="text" name="title">
 								</td>
