@@ -3,7 +3,7 @@
 <head>  
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">  
-    <title>我的积分</title>  
+    <title>我的DT积分</title>  
     <link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css">
     <link rel="stylesheet" href="__PUBLIC_CSS__/common.css" />
     <style type="text/css">
@@ -36,10 +36,9 @@
     <div class="main">  
   		<div class="EP_top">
   			<div style="height: 20px;width: 100%;"></div>
-  			<h3 class="tc">EP</h3>
-  			<h3 class="tc">{$data['iu_point']}</h3>
-  			<span class="tc">冻结:{$data['iu_unpoint']}</span>
-  			<a onclick='window.location.href="{:U('Home/Purchase/myPointMonth')}";'>DT积分明细</a>
+  			<h3 class="tc">DT</h3>
+  			<h3 class="tc">{$assign['data']['iu_dt']}</h3>
+  			<a onclick='window.location.href="{:U('Home/DTPoint/myDtMonth')}";'>DT积分明细</a>
   		</div>
   		<div class="EP_btn">
   			 <!--<div class=" transfer_btn" style="cursor:pointer" onclick='window.location.href="{:U('Home/Purchase/EPtransfer')}";'>DT转账</div>-->
@@ -52,27 +51,19 @@
   		<div class="recordList">
   			<div>最近记录</div>
   			<ul>
-          <foreach name="log" item="v">
+          <foreach name="assign['getdt']" item="v">
   	  			<li>
   	  				<div>
-                <if condition="$v['action'] eq 0">
-                  <span class="fl">积分提现</span>
-                <elseif condition ="$v['action'] eq 1" />
-                  <span class="fl">积分转出</span>
-                <elseif condition ="$v['action'] eq 2" />
-                  <span class="fl">积分转入</span>
-                <elseif condition ="$v['action'] eq 3" />
-                  <span class="fl">积分支付</span>
-                <elseif condition ="$v['action'] eq 4" />
-                  <span class="fl">积分提现审核</span>
-                <elseif condition ="$v['action'] eq 5" />
-                  <span class="fl">系统发放</span>
-                <elseif condition ="$v['action'] eq 6" />
-                  <span class="fl">RD转EP</span>
-                <elseif condition ="$v['action'] eq 7" />
+                <if condition="$v['dttype'] eq 1">
                   <span class="fl">系统减少</span>
+                <elseif condition ="$v['dttype'] eq 2" />
+                  <span class="fl">系统增加</span>
+                <elseif condition ="$v['dttype'] eq 3" />
+                  <span class="fl">新增入</span>
+                <elseif condition ="$v['dttype'] eq 4" />
+                  <span class="fl">消费出</span>
                 </if>
-                <i class="fr">{:date('Y-m-d H:i:s',$v['create_time'])}</i>
+                <i class="fr">{$v['date']}</i>
               </div>
   	  				<p>{$v['content']}</p>
   	  			</li>
@@ -88,7 +79,7 @@
 	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>  
 	<script type="text/javascript">  
 		$(document).ready(function(){
-	   		changeCommonHead('我的积分');
+	   		changeCommonHead('我的DT积分');
 		});
 		function back(){
         	window.location.href ="{:U('Home/Purchase/center')}";

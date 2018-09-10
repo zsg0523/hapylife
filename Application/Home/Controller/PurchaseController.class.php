@@ -469,11 +469,12 @@ class PurchaseController extends HomeBaseController{
                         if($bcsub>=0){
                             $saveDt= M('User')->where(array('CustomerId'=>$userinfo['customerid']))->setfield('iu_dt',$bcsub);
                             if($saveDt){
+                                $dtNo = 'DT'.date('YmdHis').rand(10000, 99999);
                                 $mape            = array(
                                     'ir_receiptnum'   =>$order_num,
                                     'ir_paytype'      =>7,
                                     'ir_price'        =>0,
-                                    'pay_receiptnum'  =>date('YmdHis').rand(10000, 99999),
+                                    'pay_receiptnum'  =>$dtNo,
                                     'riuid'           =>$iuid,
                                     'cretime'         =>time(),
                                     'paytime'         =>time(),
@@ -481,7 +482,24 @@ class PurchaseController extends HomeBaseController{
                                     'ir_dt'           =>$irdt,
                                     'status'          =>2,
                                 );
-                                $add  = D('receiptson')->add($mape);
+                                $add     = D('receiptson')->add($mape);
+                                //写入DT记录表
+                                $tmp     = array(
+                                    'iuid'           =>$userinfo['iuid'],
+                                    'pointNo'        =>$dtNo,
+                                    'hu_username'    =>$userinfo['lastname'].$userinfo['firstname'],
+                                    'hu_nickname'    =>$userinfo['customerid'],
+                                    'getdt'          =>$product['ip_dt'],
+                                    'leftdt'         =>$bcsub,
+                                    'date'           =>date('Y-m-d H:i:s'),
+                                    'status'         =>2,
+                                    'dttype'         =>4,
+                                    'content'        =>'您在'.date('Y-m-d H:i:s').'时消费出'.$product['ip_dt'].'DT到'.'系统'.',剩DT余额'.$bcsub.',流水号为:'.$dtNo,
+                                    'opename'        =>$userinfo['customerid'],
+                                    'send'           =>$userinfo['customerid'],
+                                    'received'       =>'系统'
+                                );
+                                $addtmp = M('Getdt')->add($tmp);
                                 $where= array('ir_status'=>202,'ir_dt'=>0);
                                 $save = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->setfield('ir_status',202);
                                 $this->redirect('Home/Pay/choosePay2',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
