@@ -3,7 +3,7 @@
 <head>  
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">  
-    <title>每日积分</title>  
+    <title>每日DT</title>  
     <link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css">
     <link rel="stylesheet" href="__PUBLIC_CSS__/common.css" />
     <style type="text/css">
@@ -37,7 +37,7 @@
 		
 		<div id="wrap">	
             <foreach name="data" item="v">
-                <div class="note btn_go2" onclick='window.location.href="{:U('Home/Purchase/myPointDaily',array('date'=>$v['date']))}";'>
+                <div class="note btn_go2" onclick='window.location.href="{:U('Home/DTPoint/myDtDaily',array('date'=>$v['date']))}";'>
                     <div class="note_date">{$v['date']}</div>
                     <div class="note_increase">+{$v['increase']}</div>
                     <div class="note_reduce">-{$v['reduce']}</div>
@@ -52,10 +52,10 @@
 	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>  
 	<script type="text/javascript">  
 	 $(document).ready(function(){
-   		changeCommonHead('每日积分');
+   		changeCommonHead('每日DT');
 	});
  	function back(){
-        window.location.href ="{:U('Home/Purchase/myPointMonth')}";
+        window.location.href ="{:U('Home/DTPoint/myDtMonth')}";
     }
 	</script>  
 </body>  
