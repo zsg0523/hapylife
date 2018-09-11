@@ -12,7 +12,7 @@ class DTPointController extends HomeBaseController{
 		$iuid = $_SESSION['user']['id'];
 		if($iuid){
 			$data  = M('User')->where(array('iuid'=>$iuid))->find();
-			$getdt = M('Getdt')->where(array('iuid'=>$iuid))->select();
+			$getdt = M('Getdt')->where(array('iuid'=>$iuid))->order('igid desc')->select();
 			$assign= array(
 				'data' =>$data,
 				'getdt'=>$getdt

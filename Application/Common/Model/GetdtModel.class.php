@@ -171,7 +171,7 @@ class GetdtModel extends BaseModel{
 	/**
 	* 获取所有成功操作积分--总额详情
 	**/
-	public function getAllDtInfo($model,$type,$date,$hu_nickname,$starttime='',$endtime='',$limit=50,$field='',$order=''){
+	public function getAllDtInfo($model,$type,$date,$hu_nickname,$starttime='',$endtime='',$limit=50,$field='',$order='igid desc'){
 		if($hu_nickname){
 			if($type){
 				if($date){

@@ -345,9 +345,9 @@ class HapylifeAddController extends HomeBaseController{
     public function addDt(){
         $user = M('User')->select();
         foreach ($user as $key => $value) {
-            // if($value['distributortype']=='Platinum'||strlen($value['customerid'])==8){
+            if(strlen($value['customerid'])!=8){
                 $iu_dt= 180;
-                $bcsub = bcadd($value['iu_dt'],$iu_dt,2);
+                $bcsub= bcadd($value['iu_dt'],$iu_dt,2);
                 $save = M('User')->where(array('iuid'=>$value['iuid']))->setfield('iu_dt',$bcsub);
                 if($save){
                     $dtNo = 'DT'.date('YmdHis').rand(10000, 99999);
@@ -369,7 +369,7 @@ class HapylifeAddController extends HomeBaseController{
                     $add     = D('Getdt')->add($tmp);
                     $num++;
                 }
-            // }
+            }
         }
         p($num);die;
     }

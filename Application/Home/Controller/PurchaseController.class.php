@@ -501,7 +501,7 @@ class PurchaseController extends HomeBaseController{
                                 );
                                 $addtmp = M('Getdt')->add($tmp);
                                 $where= array('ir_status'=>202,'ir_dt'=>0);
-                                $save = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->setfield('ir_status',202);
+                                $save = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->save($where);
                                 $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
                             }else{
                                 $save  = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->setfield('ir_status',202);
