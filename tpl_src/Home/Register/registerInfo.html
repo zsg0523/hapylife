@@ -294,11 +294,14 @@
 				</div>	
 			</div>
 			<if condition="empty($cu_id) eq true">
-				<a class="col-md-12" href="{:U('Home/Register/regsuccess',array('htid'=>$userinfo['htid']))}">确认注册</a>
+				<a class="col-md-12" id="regBtn" href="{:U('Home/Register/regsuccess',array('htid'=>$userinfo['htid']))}">确认注册</a>
 			<else />
-				<a class="col-md-12" href="{:U('Home/Register/regsuccess',array('cu_id'=>$cu_id,'hu_nickname'=>$hu_nickname,'htid'=>$userinfo['htid']))}">确认注册</a>
+				<a class="col-md-12" id="regBtn" href="{:U('Home/Register/regsuccess',array('cu_id'=>$cu_id,'hu_nickname'=>$hu_nickname,'htid'=>$userinfo['htid']))}">确认注册</a>
 			</if>
 		<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>	
+		<script type="text/javascript">
+			
+		</script>
 		</div>
 	</body>
 

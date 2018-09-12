@@ -74,6 +74,9 @@ class usa
 		$data    = json_encode($data);
 		$sendUrl = $url."/api/Hpl/CreateCustomer";
 		$result  = post_json_data($sendUrl,$data);
+		$result = json_decode($result['result'],true);
+		$result['error']['happyLifeID'] = $map['happyLifeID'];
+		$result = json_encode($result);
 		return $result;
 	}
 

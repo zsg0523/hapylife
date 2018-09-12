@@ -94,7 +94,11 @@
 			</li>
 				<foreach name="data['receiptson']" key="key" item='v'>
 					<li><span class="fl">&nbsp;#{$key+1}流水号:</span><span class="fr">{$v.pay_receiptnum}&nbsp;</span></li>
-					<li><span class="fl">&nbsp;流水金额:</span><span class="fr">{$v.ir_price}&nbsp;</span></li>
+					<if condition="$v['ir_paytype'] eq 7">
+						<li><span class="fl">&nbsp;流水DT:</span><span class="fr">{$v.ir_dt}&nbsp;</span></li>
+					<else/>
+						<li><span class="fl">&nbsp;流水金额:</span><span class="fr">{$v.ir_price}&nbsp;</span></li>
+					</if>
 					<li style="border-bottom: 5px solid #DEDEDE;"><span class="fl">&nbsp;支付时间:</span><span class="fr">{:date('Y-m-d H:i:s',$v['paytime'])}&nbsp;</span></li>
 				</foreach>
 			<div style="width: 100%;height: 40px;"></div>
@@ -108,7 +112,7 @@
 					 	继续支付
 					</a>
 				</div>
-			<elseif condition="$data['ir_ordertype'] eq 4"/>
+			<elseif condition="$data['ir_ordertype'] eq 4 || $v['ir_ordertype'] eq 5"/>
 				<div class="cart_total">
 					<a href="{:U('Home/Pay/choosePay2',array('ir_unpoint'=>$data['ir_unpoint'],'ir_price'=>$data['ir_price'],'ir_point'=>$data['ir_point'],'ir_unpaid'=>$data['ir_unpaid'],'ir_receiptnum'=>$data['ir_receiptnum']))}" id="pay">
 					 	继续支付
