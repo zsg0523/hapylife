@@ -241,7 +241,7 @@ class PointController extends AdminBaseController{
                     $data['received']   = $tmpe['received']?$tmpe['received']:'系统';
                     $type               = '系统减少';
                     $data['status']     = 2;
-                    $data['pointtype']  = 7;
+                    $data['pointtype']  = 1;
                     break;
                 case '2':
                     $data['feepoint']   = 0;
