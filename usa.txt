@@ -211,5 +211,225 @@
 2018-09-04 10:07:24**********{"coupon":{"cu_id":"139","coupon_id":"2","coupon_name":"\u793c\u54c1\u5238","cg_id":"47","coupon_code":"xr2i7hhS3879","user_id":"978651","user_name":"HPL00000181","user_named":"\u6d4b\u8bd5\u6d4b\u8bd5","redeem_time":null,"add_time":"1535706335","is_used":"0","passto":"","use_time":null,"status":"1","remark":"","qrcode":"localhost\/testnulife\/Public\/codepic\/ZETA18f25f4d3e8a4a8ba3eacd2656e6a2cd.png","condition":"1","hr_number":"","operator":"2018083117063483977","gid":"47","use_channels":"1","cid":"2","type":"","c_name":"4\u74f6\u76ca\u8eab\u80f6\u56ca\u793c\u54c1\u5238","g_name":"4\u74f6\u76ca\u8eab\u80f6\u56ca","c_number":"","number":"1","original_money":"0.00","discount":"","discount_money":"0.00","conditions":"1","start_time":"1535126340","end_time":"1566835140","description":"\u6210\u529f\u8d2d\u4e70\u2018\u4e70\u56db\u9001\u4e00\u2019\u989d\u5916\u8d60\u90014\u74f6\u76ca\u8eab\u80f6\u56ca","location":"","which_app":"5","pro_name":"","product_id":"0","create_time":"0000-00-00 00:00:00","update_time":null,"img":"http:\/\/apps.nulifeshop.com\/nulife\/Upload\/file\/2018-08-24\/5b7fa7cc1751c.jpg","pro_img":"http:\/\/apps.nulifeshop.com\/nulife\/Upload\/file\/2018-08-24\/5b7fa7cc17c55.jpg","bg_img":"http:\/\/apps.nulifeshop.com\/nulife\/Upload\/file\/2018-08-24\/5b7fa7cc18413.jpg","tid":"3","exchange":"0","exnum":"0","app_area":"2","sale_priece":"0","sale_point":"0","is_dt":"0"},"operator":"2018083117063483977"}**********
 2018-09-04 10:18:08**********{"coupon":{"cu_id":"94","coupon_id":"2","coupon_name":"\u793c\u54c1\u5238","cg_id":"47","coupon_code":"3r26CJcy5574","user_id":"979317","user_name":"63635277","user_named":"ZhaoYan","redeem_time":null,"add_time":"1535536514","is_used":"0","passto":"","use_time":null,"status":"1","remark":"","qrcode":"http:\/\/apps.nulifeshop.com\/nulife\/Public\/codepic\/ZETAe131a878c6b4e27b0171b24fbaeec69e.png","condition":"1","hr_number":"","operator":"2018082917470115446","gid":"47","use_channels":"1","cid":"2","type":"","c_name":"4\u74f6\u76ca\u8eab\u80f6\u56ca\u793c\u54c1\u5238","g_name":"4\u74f6\u76ca\u8eab\u80f6\u56ca","c_number":"","number":"1","original_money":"0.00","discount":"","discount_money":"0.00","conditions":"1","start_time":"1535126340","end_time":"1566835140","description":"\u6210\u529f\u8d2d\u4e70\u2018\u4e70\u56db\u9001\u4e00\u2019\u989d\u5916\u8d60\u90014\u74f6\u76ca\u8eab\u80f6\u56ca","location":"","which_app":"5","pro_name":"","product_id":"0","create_time":"0000-00-00 00:00:00","update_time":null,"img":"http:\/\/apps.nulifeshop.com\/nulife\/Upload\/file\/2018-08-24\/5b7fa7cc1751c.jpg","pro_img":"http:\/\/apps.nulifeshop.com\/nulife\/Upload\/file\/2018-08-24\/5b7fa7cc17c55.jpg","bg_img":"http:\/\/apps.nulifeshop.com\/nulife\/Upload\/file\/2018-08-24\/5b7fa7cc18413.jpg","tid":"3","exchange":"0","exnum":"0","app_area":"2","sale_priece":"0","sale_point":"0","is_dt":"0"},"operator":"2018082917470115446"}**********
 2018-09-04 10:18:30**********{"coupon":{"cu_id":"128","coupon_id":"2","coupon_name":"\u793c\u54c1\u5238","cg_id":"47","coupon_code":"Br2fThoe9976","user_id":"979338","user_name":"66044358","user_named":"QiuLi","redeem_time":null,"add_time":"1535673446","is_used":"0","passto":"","use_time":null,"status":"1","remark":"","qrcode":"http:\/\/apps.nulifeshop.com\/nulife\/Public\/codepic\/ZETA752b25d8479e75e83d320ad6c326b5d8.png","condition":"1","hr_number":"","operator":"2018082917465349137","gid":"47","use_channels":"1","cid":"2","type":"","c_name":"4\u74f6\u76ca\u8eab\u80f6\u56ca\u793c\u54c1\u5238","g_name":"4\u74f6\u76ca\u8eab\u80f6\u56ca","c_number":"","number":"1","original_money":"0.00","discount":"","discount_money":"0.00","conditions":"1","start_time":"1535126340","end_time":"1566835140","description":"\u6210\u529f\u8d2d\u4e70\u2018\u4e70\u56db\u9001\u4e00\u2019\u989d\u5916\u8d60\u90014\u74f6\u76ca\u8eab\u80f6\u56ca","location":"","which_app":"5","pro_name":"","product_id":"0","create_time":"0000-00-00 00:00:00","update_time":null,"img":"http:\/\/apps.nulifeshop.com\/nulife\/Upload\/file\/2018-08-24\/5b7fa7cc1751c.jpg","pro_img":"http:\/\/apps.nulifeshop.com\/nulife\/Upload\/file\/2018-08-24\/5b7fa7cc17c55.jpg","bg_img":"http:\/\/apps.nulifeshop.com\/nulife\/Upload\/file\/2018-08-24\/5b7fa7cc18413.jpg","tid":"3","exchange":"0","exnum":"0","app_area":"2","sale_priece":"0","sale_point":"0","is_dt":"0"},"operator":"2018082917465349137"}**********
+<<<<<<< HEAD
+2018-09-05 22:22:14**********{
+        "Date": "2018-08-04T00:00:00.000",
+        "NotificationType": 1,
+        "NofiticationDescription": "Monthly fee payment reminder",
+        "Customers": [{
+            "OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"
+        },
+        {
+        "OrderId": 8901234,
+        "CustomerId": 12334355,
+        "HplId": "HPL00002",
+        "OrderStatus": "Pending",
+        "OrderDate": "2018-08-25T15:20:00",
+        "CustomerName": "Test2"
+        }]
+ }**********
+2018-09-05 22:24:38**********{
+        "Date": "2018-08-04T00:00:00.000",
+        "NotificationType": 1,
+        "NofiticationDescription": "Monthly fee payment reminder",
+        "Customers": [{
+            "OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"
+        },
+        {
+        "OrderId": 8901234,
+        "CustomerId": 12334355,
+        "HplId": "HPL00002",
+        "OrderStatus": "Pending",
+        "OrderDate": "2018-08-25T15:20:00",
+        "CustomerName": "Test2"
+        }]
+ }**********
+2018-09-05 22:25:19**********{
+        "Date": "2018-08-04T00:00:00.000",
+        "NotificationType": 1,
+        "NofiticationDescription": "Monthly fee payment reminder",
+        "Customers": [{
+            "OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"
+        },
+        {
+        "OrderId": 8901234,
+        "CustomerId": 12334355,
+        "HplId": "HPL00002",
+        "OrderStatus": "Pending",
+        "OrderDate": "2018-08-25T15:20:00",
+        "CustomerName": "Test2"
+        }]
+ }**********
+2018-09-05 22:34:02**********[
+        {"Customers":["OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":["OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":["OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":["OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"}
+        ]**********
+2018-09-05 22:35:16**********[
+        {"Customers":["OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":["OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":["OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":["OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"}
+        ]**********
+2018-09-05 22:37:21**********[
+        {"Customers":{
+        	"OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"},"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":{"OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"},"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":{"OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"},"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":{"OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"},"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"}
+        ]**********
+2018-09-05 22:37:45**********[
+        {"Customers":{
+        	"OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"},"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":{"OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"},"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":{"OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"},"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":{"OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"},"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"}
+        ]**********
+2018-09-05 22:37:55**********[
+        {"Customers":{
+        	"OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"},"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":{"OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"},"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":{"OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"},"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
+        {"Customers":{"OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"},"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"}
+        ]**********
+2018-09-05 22:49:03**********{
+        "Date": "2018-08-04T00:00:00.000",
+        "NotificationType": 1,
+        "NofiticationDescription": "Monthly fee payment reminder",
+        "Customers": [{
+            "OrderId": 1234567,
+            "CustomerId": 12334343,
+            "HplId": "HPL00001",
+            "OrderStatus": "Pending",
+            "OrderDate": "2018-08-20T15:20:00.000",
+            "CustomerName": "Test"
+        },
+        {
+        "OrderId": 8901234,
+        "CustomerId": 12334355,
+        "HplId": "HPL00002",
+        "OrderStatus": "Pending",
+        "OrderDate": "2018-08-25T15:20:00",
+        "CustomerName": "Test2"
+        }]
+        }**********
+=======
 2018-09-06 12:40:06**********{"hu_nickname":"62142381"}**********
 2018-09-06 12:40:10**********{"hu_nickname":"62142381"}**********
+>>>>>>> a6bde41f7351408a225895313095a4e97f538a0d

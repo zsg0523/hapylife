@@ -117,28 +117,28 @@ class ReceiptModel extends BaseModel{
             foreach ($son as $k => $v) {
                 switch ($v['ir_paytype']) {
                     case '1':
-                        $ir_paytype .= 'IPS'.' /';
-                        $receiptson .= $v['ips_trade_no'].' /';
+                        $ir_paytype .= 'IPS'.'<br/>';
+                        $receiptson .= $v['ips_trade_no'].'<br/>';
                         break;
                     case '2':
-                        $ir_paytype .= '积分'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '积分'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '3':
                         // $ir_paytype .= '积分'.'/';
-                        // $receiptson .= $v['pay_receiptnum'].' /';
+                        // $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '4':
-                        $ir_paytype .= '畅捷'.' /';
-                        $receiptson .= $v['inner_trade_no'].' /';
+                        $ir_paytype .= '畅捷'.'<br/>';
+                        $receiptson .= $v['inner_trade_no'].'<br/>';
                         break;
                     case '5':
-                        $ir_paytype .= '现金'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '现金'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                     case '6':
-                        $ir_paytype .= '接龙易'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '接龙易'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                 }
             }
@@ -453,28 +453,28 @@ class ReceiptModel extends BaseModel{
             foreach ($son as $k => $v) {
                 switch ($v['ir_paytype']) {
                    case '1':
-                        $ir_paytype .= 'IPS'.' /';
-                        $receiptson .= $v['ips_trade_no'].' /';
+                        $ir_paytype .= 'IPS'.'<br/>';
+                        $receiptson .= $v['ips_trade_no'].'<br/>';
                         break;
                     case '2':
-                        $ir_paytype .= '积分'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '积分'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '3':
                         // $ir_paytype .= '积分'.'/';
-                        // $receiptson .= $v['pay_receiptnum'].' /';
+                        // $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '4':
-                        $ir_paytype .= '畅捷'.' /';
-                        $receiptson .= $v['inner_trade_no'].' /';
+                        $ir_paytype .= '畅捷'.'<br/>';
+                        $receiptson .= $v['inner_trade_no'].'<br/>';
                         break;
                     case '5':
-                        $ir_paytype .= '现金'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '现金'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                     case '6':
-                        $ir_paytype .= '接龙易'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '接龙易'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                 }
             }
@@ -548,28 +548,28 @@ class ReceiptModel extends BaseModel{
             foreach ($son as $k => $v) {
                 switch ($v['ir_paytype']) {
                     case '1':
-                        $ir_paytype .= 'IPS'.' /';
-                        $receiptson .= $v['ips_trade_no'].' /';
+                        $ir_paytype .= 'IPS'.'<br/>';
+                        $receiptson .= $v['ips_trade_no'].'<br/>';
                         break;
                     case '2':
-                        $ir_paytype .= '积分'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '积分'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '3':
                         // $ir_paytype .= '积分'.'/';
-                        // $receiptson .= $v['pay_receiptnum'].' /';
+                        // $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '4':
-                        $ir_paytype .= '畅捷'.' /';
-                        $receiptson .= $v['inner_trade_no'].' /';
+                        $ir_paytype .= '畅捷'.'<br/>';
+                        $receiptson .= $v['inner_trade_no'].'<br/>';
                         break;
                     case '5':
-                        $ir_paytype .= '现金'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '现金'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                     case '6':
-                        $ir_paytype .= '接龙易'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '接龙易'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                 }
             }
@@ -674,28 +674,28 @@ class ReceiptModel extends BaseModel{
             foreach ($son as $k => $v) {
                 switch ($v['ir_paytype']) {
                     case '1':
-                        $ir_paytype .= 'IPS'.' /';
-                        $receiptson .= $v['ips_trade_no'].' /';
+                        $ir_paytype .= 'IPS'.'<br/>';
+                        $receiptson .= $v['ips_trade_no'].'<br/>';
                         break;
                     case '2':
-                        $ir_paytype .= '积分'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '积分'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '3':
                         // $ir_paytype .= '积分'.'/';
-                        // $receiptson .= $v['pay_receiptnum'].' /';
+                        // $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '4':
-                        $ir_paytype .= '畅捷'.' /';
-                        $receiptson .= $v['inner_trade_no'].' /';
+                        $ir_paytype .= '畅捷'.'<br/>';
+                        $receiptson .= $v['inner_trade_no'].'<br/>';
                         break;
                     case '5':
-                        $ir_paytype .= '现金'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '现金'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                     case '6':
-                        $ir_paytype .= '接龙易'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '接龙易'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                 }
             }
@@ -772,28 +772,28 @@ class ReceiptModel extends BaseModel{
             foreach ($son as $k => $v) {
                 switch ($v['ir_paytype']) {
                     case '1':
-                        $ir_paytype .= 'IPS'.' /';
-                        $receiptson .= $v['ips_trade_no'].' /';
+                        $ir_paytype .= 'IPS'.'<br/>';
+                        $receiptson .= $v['ips_trade_no'].'<br/>';
                         break;
                     case '2':
-                        $ir_paytype .= '积分'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '积分'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '3':
                         // $ir_paytype .= '积分'.'/';
-                        // $receiptson .= $v['pay_receiptnum'].' /';
+                        // $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '4':
-                        $ir_paytype .= '畅捷'.' /';
-                        $receiptson .= $v['inner_trade_no'].' /';
+                        $ir_paytype .= '畅捷'.'<br/>';
+                        $receiptson .= $v['inner_trade_no'].'<br/>';
                         break;
                     case '5':
-                        $ir_paytype .= '现金'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '现金'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                     case '6':
-                        $ir_paytype .= '接龙易'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '接龙易'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                 }
             }
@@ -964,7 +964,7 @@ class ReceiptModel extends BaseModel{
             if(empty($v['ia_address'])){
                 $content[$k]['ia_address']       = $v['shopprovince'].$v['shopcity'].$v['shoparea'].$v['shopaddress1'];
             }else{
-                $content[$k]['ia_address']       = $v['ia_address'];
+                $content[$k]['ia_address']       = $v['shopprovince'].$v['shopcity'].$v['shoparea'].$v['ia_address'];
             }
             //收货人电话
             $content[$k]['ia_phone']             = $v['ia_phone'];

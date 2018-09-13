@@ -91,6 +91,7 @@ class PurchaseController extends HomeBaseController{
                 }
                 break;
         }  
+
         $array   = array('HPL00000181','HPL00123539');//显示测试产品账号
         $arrayTo = array('61338465','64694832','65745561','HPL00123556','61751610','61624356','61695777','68068002');//显示真实产品账号
         if(in_array($find['customerid'],$array)){
@@ -100,6 +101,7 @@ class PurchaseController extends HomeBaseController{
                 $data[$key]         = $value; 
                 $data[$key]['show'] = 1; 
             }
+
         // }else if(in_array($find['customerid'],$arrayTo)){
         //     $an_pro = M('Product')->where(array('ipid'=>48,'is_pull'=>0))->select();
         //     $product = array_merge($products,$an_pro);
@@ -501,8 +503,8 @@ class PurchaseController extends HomeBaseController{
                                 );
                                 $addtmp = M('Getdt')->add($tmp);
                                 $where= array('ir_status'=>202,'ir_dt'=>0);
-                                $save = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->setfield('ir_status',202);
-                                $this->redirect('Home/Pay/choosePay2',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
+                                $save = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->save($where);
+                                $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
                             }else{
                                 $save  = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->setfield('ir_status',202);
                                 $this->error('订单生成失败');
@@ -512,7 +514,7 @@ class PurchaseController extends HomeBaseController{
                             $this->error('订单生成失败');
                         }
                     }else{
-                        $this->redirect('Home/Pay/choosePay2',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
+                        $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
                     }
                     break;
             }

@@ -54,7 +54,7 @@ class usa
 	/**
 	* CREATE CUSTOMER
 	**/
-	public function createCustomer($happyLifeID,$password,$sponsorID,$firstName_EN,$lastName_EN,$emailAddress,$phone,$products='RBS,DTP',$dob='2000-1-1')
+	public function createCustomer($happyLifeID,$password,$sponsorID,$firstName_EN,$lastName_EN,$emailAddress,$phone,$products,$dob='2000-1-1')
 	{
 		// ='RBS,DTP,SIGNUP4,SIGNUP5'
 		$key  = $this->key;
@@ -74,9 +74,6 @@ class usa
 		$data    = json_encode($data);
 		$sendUrl = $url."/api/Hpl/CreateCustomer";
 		$result  = post_json_data($sendUrl,$data);
-		$result = json_decode($result['result'],true);
-		$result['error']['happyLifeID'] = $map['happyLifeID'];
-		$result = json_encode($result);
 		return $result;
 	}
 
