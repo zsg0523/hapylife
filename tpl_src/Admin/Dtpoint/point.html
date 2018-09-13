@@ -1,0 +1,210 @@
+<extend name="Public:base" />
+
+<block name="title">会员EP余额列表</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            首页
+            &gt;
+			EP管理
+			&gt;
+			会员EP余额列表
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+			  	<li class="active">
+					<a href="#home" data-toggle="tab">会员EP余额列表</a>
+			    </li>
+			    <li>
+					<form action="{:U('Admin/Point/point')}" method="get">
+				    		<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
+				    		<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
+	                        <input name="word" type="text" placeholder="关键词" value="{$word}" size="20" />
+	                        <input class='btn btn-sm' type="submit" value="筛选" />
+	                        <input class='btn btn-sm' type="submit" name='excel' value="excel" />
+	                	</form>
+				</li>
+            </ul>
+            <div class="tab-content">
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<tr>
+						<th>账号</th>
+						<th>中文姓名</th>
+						<th>英文姓名</th>
+						<th>团队标签</th>
+						<th>Open</th>
+						<th>共提现</th>
+						<th>共消费</th>
+						<th>共转入</th>
+						<th>共转出</th>
+						<th>增加奖金</th>
+						<th>系统增加</th>
+						<th>系统减少</th>
+						<th>End</th>
+						<th>余额偏差值</th>
+						<th>余额明細</th>
+						<th>现在可用</th>
+						<th>现在冻结</th>
+					</tr>
+					<foreach name="data" item="v">
+						<tr>
+							<td width="200px">{$v['hu_nickname']}</td>
+							<td width="200px">{$v['hu_username']}</td>
+							<td>{$v['hu_username_en']}</td>
+							<td>{$v['teamcode']}</td>
+							<td>{$v['open']}</td>
+							<td align="right">{$v['realpoint9']?$v['realpoint9']:0}</td>
+							<td align="right">{$v['realpoint7']?$v['realpoint7']:0}</td>
+							<td align="right">{$v['realpoint5']?$v['realpoint5']:0}</td>
+							<td align="right">{$v['realpoint4']?$v['realpoint4']:0}</td>
+							<td align="right">{$v['realpoint3']?$v['realpoint3']:0}</td>
+							<td align="right">{$v['realpoint2']?$v['realpoint2']:0}</td>
+							<td align="right">{$v['realpoint1']?$v['realpoint1']:0}</td>
+							<td align="right">{$v['end']}</td>
+							<td align="right">{$v['deviation']}</td>
+							<td align="center">
+								<a href="{:U('Admin/Point/surplus',array('hu_nickname'=>$v['hu_nickname'],'iuid'=>$v['iuid']))}">查看余额明細</a> 
+							</td>
+							<td align="right">{$v['iu_point']?$v['iu_point']:0}</td>
+							<td align="right">{$v['iu_unpoint']?$v['iu_unpoint']:0}</td>
+						</tr>
+					</foreach>
+				</table>
+				<div class="page">
+					{$page}
+				</div>
+            </div>
+        </div>
+    </div>
+	<!-- 增加菜单模态框开始 -->
+	<div class="modal fade" id="bjy-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						系统增加EP
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Point/opepoint')}" method="post">
+						<input type="hidden" name="pointtype">
+						<input type="hidden" name="hu_nickname">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="12%">会员账号：</th>
+								<td>
+									<input class="input-medium" disabled='disabled' type="text" name="hu_nickname">
+								</td>
+							</tr>
+							<tr>
+								<th width="12%">增加EP数量：</th>
+								<td>
+									<input class="input-medium" type="text" name="realpoint">
+								</td>
+							</tr>
+							<tr>
+								<th width="12%">备注(原因)：</th>
+								<td>
+									<input class="input-medium" type="text" name="content">
+								</td>
+							</tr>
+							<tr>
+								<th width="12%">管理员登录密码：</th>
+								<td>
+									<input class="input-medium" type="password" name="password">
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="增加EP">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 增加菜单模态框结束 -->
+	<!-- 减少菜单模态框开始 -->
+	<div class="modal fade" id="bjy-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						系统减少EP
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Point/opepoint')}" method="post">
+						<input type="hidden" name="pointtype">
+						<input type="hidden" name="hu_nickname">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="12%">会员账号：</th>
+								<td>
+									<input class="input-medium" disabled='disabled' type="text" name="hu_nickname">
+								</td>
+							</tr>
+							<tr>
+								<th width="12%">减少EP数量：</th>
+								<td>
+									<input class="input-medium" type="text" name="realpoint">
+								</td>
+							</tr>
+							<tr>
+								<th width="12%">备注(原因)：</th>
+								<td>
+									<input class="input-medium" type="text" name="content">
+								</td>
+							</tr>
+							<tr>
+								<th width="12%">管理员登录密码：</th>
+								<td>
+									<input class="input-medium" type="password" name="password">
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="提交">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 减少菜单模态框结束 -->
+</block>
+<block name="js">
+	<script>
+	// 系统增加菜单
+	function addpoint(obj){
+		var nickname=$(obj).attr('nickname');
+		var type=$(obj).attr('type');
+		$("input[name='hu_nickname']").val(nickname);
+		$("input[name='pointtype']").val(type);
+		$('#bjy-add').modal('show');
+	}
+	// 系统减少菜单
+	function redpoint(obj){
+		var nickname=$(obj).attr('nickname');
+		var type=$(obj).attr('type');
+		$("input[name='hu_nickname']").val(nickname);
+		$("input[name='pointtype']").val(type);
+		$('#bjy-edit').modal('show');
+	}
+	</script>
+</block>

@@ -1,0 +1,198 @@
+<extend name="Public:base" />
+
+<block name="title">{$hu_nickname}会员EP余额详情</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            首页
+            &gt;
+			EP管理
+            &gt;
+			会员EP余额列表
+         	&gt;
+			{$hu_nickname}会员EP余额详情
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+			  	<li class="active">
+					<a href="{:U('Admin/Point/point')}">会员EP余额列表</a>
+			    </li>
+	            <li class="active">
+					<a href="#home" data-toggle="tab">{$hu_nickname}会员EP余额详情</a>
+			    </li>
+			    <li class="active">
+					<a href="#home" data-toggle="tab">余额偏差值:{$deviation}</a>
+			    </li>
+			    <li>
+			    	<form action="{:U('Admin/Point/surplus',array('hu_nickname'=>$hu_nickname,'iuid'=>$iuid))}" method="get">
+			    		<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
+				    	<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
+                        <input class='btn btn-sm' type="submit" value="筛选" />
+                	</form>
+			    </li>
+            </ul>
+            <div class="tab-content">
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<tr>
+						<th>单号</th>
+						<th>日期</th>
+						<th>会员</th>
+						<th>姓名</th>
+						<th>类型</th>
+						<th>发送者</th>
+						<th>接收者</th>
+						<th>处理时间</th>
+						<th>操作者</th>
+						<th>备注</th>
+						<th>EP</th>
+						<th>余额</th>
+						<!-- <th>操作</th> -->
+					</tr>
+					<foreach name="data" item="v">
+						<tr>
+							<td width="200px">{$v['pointno']}</td>
+							<td width="200px">{$v['date']}</td>
+							<td width="200px">{$v['hu_nickname']}</td>
+							<td width="200px">{$v['hu_username']}</td>
+							<td width="200px">
+								<if 	condition="$v['pointtype'] eq 1">系统减少
+                                <elseif condition="$v['pointtype'] eq 2"/>系统增加
+                                <elseif condition="$v['pointtype'] eq 3"/>新增EP
+                                <elseif condition="$v['pointtype'] eq 4"/>转账出
+                                <elseif condition="$v['pointtype'] eq 5"/>转账入
+                                <elseif condition="$v['pointtype'] eq 6"/>提现
+                                <elseif condition="$v['pointtype'] eq 7"/>消费出
+                                <elseif condition="$v['pointtype'] eq 8"/>提现驳回
+                                </if>				    		
+					    	</td>
+					    	<td width="100px">{$v['send']}</td>
+					    	<td width="100px">{$v['received']}</td>
+							<td width="100px">{$v['handletime']}</td>
+					    	<td width="100px">{$v['opename']}</td>
+					    	<td width="100px">{$v['content']}</td>
+							<td width="100px" align="right">{$v['getpoint']}</td>
+							<td width="100px" align="right">{$v['leftpoint']}</td>
+<!-- 							<td width="200px">
+								<a href="javascript:;" igid="{$v['igid']}" nickname="{$v['hu_nickname']}" date="{$v['date']}" pointno="{$v['pointno']}" send="{$v['send']}" received="{$v['received']}" content="{$v['content']}" getpoint="{$v['getpoint']}" leftpoint="{$v['leftpoint']}" pointtype="{$v['pointtype']}" onclick="edit(this)">修改</a>
+							</td> -->
+						</tr>
+					</foreach>
+				</table>
+				<div class="page">
+					{$page}
+				</div>
+            </div>
+        </div>
+    </div>
+	<!-- 添加菜单模态框结束 -->
+	<!-- 编辑菜单模态框开始 -->
+	<div class="modal fade" id="bjy-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						编辑EP记录
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Point/edit_point')}" method="post">
+						<input type="hidden" value="{$hu_nickname}" name="hu_nickname">
+						<input type="hidden" value="" name="igid">
+						<input type="hidden" value="" name="pointtype">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="12%">单号：</th>
+								<td>
+									<input class="input-medium" type="text" name="pointNo">
+								</td>
+							</tr>
+							<tr>
+								<th width="12%">日期：</th>
+								<td>
+									<input class="input-medium" type="text" name="date">
+								</td>
+							</tr>
+							<tr>
+								<th width="12%">发送者：</th>
+								<td>
+									<input class="input-medium" type="text" name="send">
+								</td>
+							</tr>
+							<tr>
+								<th width="12%">接收者：</th>
+								<td>
+									<input class="input-medium" type="text" name="received">
+								</td>
+							</tr>
+								<th width="12%">EP：</th>
+								<td>
+									<input class="input-medium" type="text" name="getpoint">
+								</td>
+							</tr>
+							<tr>
+								<th width="12%">余额：</th>
+								<td>
+									<input class="input-medium" type="text" name="leftpoint">
+								</td>
+							</tr>
+							<tr>
+							<tr>
+								<th width="12%">备注：</th>
+								<td>
+									<textarea name="content" id="" cols="30" rows="10"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="修改">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 编辑菜单模态框结束 -->
+</block>
+<block name="js">
+	<script>
+	// 添加菜单
+	function add(){
+		// $("input[name='title']").val('');
+		$('#bjy-add').modal('show');
+	}
+	// 修改菜单
+	function edit(obj){
+		var igid=$(obj).attr('igid');
+		var nickname=$(obj).attr('nickname');
+		var pointno=$(obj).attr('pointno');
+		var date=$(obj).attr('date');
+		var send=$(obj).attr('send');
+		var received=$(obj).attr('received');
+		var content=$(obj).attr('content');
+		var getpoint=$(obj).attr('getpoint');
+		var leftpoint=$(obj).attr('leftpoint');
+		var pointtype=$(obj).attr('pointtype');
+		$("input[name='igid']").val(igid);
+		$("input[name='hu_nickname']").val(nickname);
+		$("input[name='pointNo']").val(pointno);
+		$("input[name='date']").val(date);
+		$("input[name='send']").val(send);
+		$("input[name='received']").val(received);
+		$("textarea[name='content']").val(content);
+		$("input[name='getpoint']").val(getpoint);
+		$("input[name='leftpoint']").val(leftpoint);
+		$("input[name='leftpoint']").val(leftpoint);
+		$("input[name='pointtype']").val(pointtype);
+		$('#bjy-edit').modal('show');
+	}
+	</script>
+</block>

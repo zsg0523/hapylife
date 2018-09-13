@@ -1,27 +1,27 @@
 <extend name="Public:base" />
 
-<block name="title">积分报表</block>
+<block name="title">{$hu_nickname}会员EP余额详情</block>
 <block name="content">
     <!-- 导航栏开始 -->
     <div class="page-header">
         <h1>
             首页
             &gt;
-			积分管理
+			EP管理
             &gt;
-			会员积分余额列表
+			会员EP余额列表
          	&gt;
-			{$hu_nickname}会员积分余额详情
+			{$hu_nickname}会员EP余额详情
         </h1>
     </div>
     <div class="col-xs-12">
         <div class="tabbable">
             <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
 			  	<li class="active">
-					<a href="{:U('Admin/Point/point')}">会员积分余额列表</a>
+					<a href="{:U('Admin/Point/point')}">会员EP余额列表</a>
 			    </li>
 	            <li class="active">
-					<a href="#home" data-toggle="tab">{$hu_nickname}会员积分余额详情</a>
+					<a href="#home" data-toggle="tab">{$hu_nickname}会员EP余额详情</a>
 			    </li>
 			    <li class="active">
 					<a href="#home" data-toggle="tab">余额偏差值:{$deviation}</a>
@@ -47,7 +47,7 @@
 						<th>处理时间</th>
 						<th>操作者</th>
 						<th>备注</th>
-						<th>积分</th>
+						<th>EP</th>
 						<th>余额</th>
 						<!-- <th>操作</th> -->
 					</tr>
@@ -97,7 +97,7 @@
 						&times;
 					</button>
 					<h4 class="modal-title" id="myModalLabel">
-						编辑积分记录
+						编辑EP记录
 					</h4>
 				</div>
 				<div class="modal-body">
@@ -130,7 +130,7 @@
 									<input class="input-medium" type="text" name="received">
 								</td>
 							</tr>
-								<th width="12%">积分：</th>
+								<th width="12%">EP：</th>
 								<td>
 									<input class="input-medium" type="text" name="getpoint">
 								</td>

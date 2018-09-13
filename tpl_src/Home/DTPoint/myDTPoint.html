@@ -1,0 +1,89 @@
+<!DOCTYPE html>  
+<html lang="zh-cn">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">  
+    <title>我的DT积分</title>  
+    <link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css">
+    <link rel="stylesheet" href="__PUBLIC_CSS__/common.css" />
+    <style type="text/css">
+    	.main{width:100%;min-height:150px;margin:0px auto;background-color: #fff;}	
+    	.commonHead{width:100%;position: fixed;top: 0;left: 0;z-index: 20;}
+      .EP_top>h3{margin: 0;}
+    	.EP_top{width: 100%;height: 160px;background: #31bafa;color: #fff;}
+    	.EP_top>span{width: 100%;height: 30px;line-height: 30px;display: block;}
+    	.EP_top>a{width: 100%;height: 30px;line-height: 30px;display: block;color: #fff;text-align: center;font-size: 15px;margin-top: 5px;}
+    	
+    	.EP_btn{width: 94%;height: auto;margin: auto;}
+    	.transfer_btn{width: 100%;height: 40px;line-height: 40px;text-align: center;border: 1px solid #dedede;border-radius: 5px;margin: 10px auto;}
+    	.rd{width: 100%;height: 40px;line-height: 40px;border-bottom: 1px solid #dedede;margin: 10px auto;}
+    	.recordList{width: 94%;height: auto;margin: auto;}
+    	.recordList>div{color: #2491EE;width: 100%; height: 30px;line-height: 30px; border-bottom: 1px solid #DEDEDE;}
+    	.recordList>ul{width: 100%;height: auto;}
+    	.recordList>ul>li{width: 100%;height: auto;border-bottom: 1px solid #DEDEDE;}
+    	.recordList>ul>li>div{height: 30px;width: 100%;line-height: 30px;}
+    	.recordList>ul>li>div>i{font-size: 12px;}
+    	.recordList>ul>li>p{text-indent: 2em;line-height: 20px;font-size: 12px;}
+    	@media screen and (min-width:1200px) {
+			.main{width: 1200px;}
+		}
+    </style>
+</head>  
+<body >  
+     <div class="commonHead1">
+  			<include file="Common/commonHead1" />
+  	</div> 
+    <div class="main">  
+  		<div class="EP_top">
+  			<div style="height: 20px;width: 100%;"></div>
+  			<h4 class="tc" style="color:red">新会员可获得380DT积分，其中180DT积分可以在HapyLife使用</h2>
+        <h4 class="tc">Hapylife可用DT:{$assign['data']['iu_dt']}</h3>
+  			<a onclick='window.location.href="{:U('Home/DTPoint/myDtMonth')}";'>查看明细</a>
+  		</div>
+  		<div class="EP_btn">
+  			 <!--<div class=" transfer_btn" style="cursor:pointer" onclick='window.location.href="{:U('Home/Purchase/EPtransfer')}";'>DT转账</div>-->
+  			 <!--<div class="rd">
+  			 	<i>RD</i>
+  			 	<span class="fr" id="rd">{$rd}</span>
+  			 </div>-->
+  			 <!--<div class=" transfer_btn" onclick='toRDchangeEP();'>RD转EP</div>-->
+  		</div> 
+  		<div class="recordList">
+  			<div>最近记录</div>
+  			<ul>
+          <foreach name="assign['getdt']" item="v">
+  	  			<li>
+  	  				<div>
+                <if condition="$v['dttype'] eq 1">
+                  <span class="fl">系统减少</span>
+                <elseif condition ="$v['dttype'] eq 2" />
+                  <span class="fl">系统增加</span>
+                <elseif condition ="$v['dttype'] eq 3" />
+                  <span class="fl">新增入</span>
+                <elseif condition ="$v['dttype'] eq 4" />
+                  <span class="fl">消费出</span>
+                </if>
+                <i class="fr">{$v['date']}</i>
+              </div>
+  	  				<p>{$v['content']}</p>
+  	  			</li>
+          </foreach>
+  			</ul>
+  		</div>
+  		
+    </div>  
+  
+  
+  
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>  
+	<script type="text/javascript">  
+		$(document).ready(function(){
+	   		changeCommonHead('我的DT积分');
+		});
+		function back(){
+        	window.location.href ="{:U('Home/Purchase/center')}";
+   		}
+	</script>  
+</body>  
+</html>  

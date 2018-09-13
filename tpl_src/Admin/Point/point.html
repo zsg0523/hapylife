@@ -1,22 +1,22 @@
 <extend name="Public:base" />
 
-<block name="title">积分管理</block>
+<block name="title">会员EP余额列表</block>
 <block name="content">
     <!-- 导航栏开始 -->
     <div class="page-header">
         <h1>
             首页
             &gt;
-			积分管理
+			EP管理
 			&gt;
-			会员积分余额列表
+			会员EP余额列表
         </h1>
     </div>
     <div class="col-xs-12">
         <div class="tabbable">
             <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
 			  	<li class="active">
-					<a href="#home" data-toggle="tab">会员积分余额列表</a>
+					<a href="#home" data-toggle="tab">会员EP余额列表</a>
 			    </li>
 			    <li>
 					<form action="{:U('Admin/Point/point')}" method="get">
@@ -88,7 +88,7 @@
 						&times;
 					</button>
 					<h4 class="modal-title" id="myModalLabel">
-						系统增加积分
+						系统增加EP
 					</h4>
 				</div>
 				<div class="modal-body">
@@ -103,7 +103,7 @@
 								</td>
 							</tr>
 							<tr>
-								<th width="12%">增加积分数量(EP)：</th>
+								<th width="12%">增加EP数量：</th>
 								<td>
 									<input class="input-medium" type="text" name="realpoint">
 								</td>
@@ -123,7 +123,7 @@
 							<tr>
 								<th></th>
 								<td>
-									<input class="btn btn-success" type="submit" value="增加积分">
+									<input class="btn btn-success" type="submit" value="增加EP">
 								</td>
 							</tr>
 						</table>
@@ -142,7 +142,7 @@
 						&times;
 					</button>
 					<h4 class="modal-title" id="myModalLabel">
-						系统减少积分
+						系统减少EP
 					</h4>
 				</div>
 				<div class="modal-body">
@@ -157,7 +157,7 @@
 								</td>
 							</tr>
 							<tr>
-								<th width="12%">减少积分数量(EP)：</th>
+								<th width="12%">减少EP数量：</th>
 								<td>
 									<input class="input-medium" type="text" name="realpoint">
 								</td>

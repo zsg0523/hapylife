@@ -1,15 +1,15 @@
 <extend name="Public:base" />
 
-<block name="title">消费管理</block>
+<block name="title">EP消费管理</block>
 <block name="content">
     <!-- 导航栏开始 -->
     <div class="page-header">
         <h1>
             首页
             &gt;
-            消费管理
+            EP管理
             &gt;
-			Nlc消费管理
+			EP消费管理
         </h1>
     </div>
     <div class="col-xs-12">
@@ -43,7 +43,7 @@
 						<th >姓名</th>
 						<th >团队标签</th>
                         <th >总金额(RMB)</th>
-                        <th >总积分</th>
+                        <th >总EP</th>
                         <th >支付类型</th>
                         <th >创建时间</th>
                         <th >支付时间</th>
@@ -60,7 +60,7 @@
 							<td>{$v['ir_point']}</td>
 							<td>
 								<if 	condition="$v['ir_paytype'] eq 1">微信支付
-                                <elseif condition="$v['ir_paytype'] eq 2"/>积分支付
+                                <elseif condition="$v['ir_paytype'] eq 2"/>EP支付
                                 <elseif condition="$v['ir_paytype'] eq 3"/>单据转账
                                 <elseif condition="$v['ir_paytype'] eq 4"/>快钱支付
                                 </if>

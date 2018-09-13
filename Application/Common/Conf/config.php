@@ -5,7 +5,7 @@ return array(
     'SHOW_PAGE_TRACE'        => false,                           // 是否显示调试面板
     'URL_CASE_INSENSITIVE'   => false,                           // url区分大小写
     'TAGLIB_BUILD_IN'        => 'Cx,Common\Tag\My',              // 加载自定义标签
-    'LOAD_EXT_CONFIG'        => 'db,alipay,oauth',               // 加载网站设置文件
+    'LOAD_EXT_CONFIG'        => 'db,alipay,oauth',                // 加载网站设置文件
     'TMPL_PARSE_STRING'      => array(                           // 定义常用路径
         '__OSS__'            => OSS_URL,
         '__PUBLIC__'         => OSS_URL.__ROOT__.'/Public',

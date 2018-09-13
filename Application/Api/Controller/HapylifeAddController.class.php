@@ -33,6 +33,7 @@ class HapylifeAddController extends HomeBaseController{
             //异常处理
             foreach($data as $key=>$value){
                 //添加bonus记录
+                $value['Bonuses'] = json_encode($value['Bonuses']);
                 $res = M('wvBonus')->add($value);
                 if(!$res){
                     E("错误信息");
@@ -93,9 +94,12 @@ class HapylifeAddController extends HomeBaseController{
         $catch_result = true;
         try {
             //异常处理
-            foreach($data as $key=>$value){
+            foreach($data['Customers'] as $key=>$value){
                 //添加bonus记录
-                $value['Customers'] = json_encode($value['Customers']);
+                $value['Date']                    = $data['Date'];
+                $value['NotificationType']        = $data['NotificationType'];
+                $value['NofiticationDescription'] = $data['NofiticationDescription'];
+                $value['Customers']               = json_encode($value);
                 $res = M('wvNotification')->add($value);
                 if(!$res){
                     E("错误信息");
@@ -248,53 +252,53 @@ class HapylifeAddController extends HomeBaseController{
 
     public function addReceipt(){
         $hu_nickname = I('post.hu_nickname');
-        $ia_name = I('post.ia_name');
-        $lastname = I('post.lastname');
-        $firstname = I('post.firstname');
-        $ia_road = I('post.ia_road');
-        $ia_phone = I('post.ia_phone');
-        $time = strtotime(I('post.time'));
-        $ipid = I('post.ipid');
-        $product = M('Product')->where(array('ipid'=>$ipid))->find();
+        $lastname    = I('post.lastname');
+        $firstname   = I('post.firstname');
+        $ia_name     = I('post.ia_name');
+        $ia_road     = I('post.ia_road');
+        $ia_phone    = I('post.ia_phone');
+        $time        = strtotime(I('post.time'));
+        $ipid        = I('post.ipid');
+        $product     = M('Product')->where(array('ipid'=>$ipid))->find();
         $receipt = array(
-            'rCustomerID' => $hu_nickname,
+            'rCustomerID'   => $hu_nickname,
             'ir_receiptnum' => date('YmdHis').rand(10000, 99999),
-            'ir_desc' => $product['ip_name_zh'],
-            'ir_status' => 2,
-            'ipid' => $ipid,
+            'ir_desc'       => $product['ip_name_zh'],
+            'ir_status'     => 2,
+            'ipid'          => $ipid,
             'ir_productnum' => 1,
-            'ir_point' => $product['ip_point'],
-            'ir_unpoint' => 0,
-            'ir_price' => $product['ip_price_rmb'],
-            'ir_unpaid' => 0,
-            'ia_name' => $ia_name,
-            'ia_phone' => $ia_phone,
-            'ia_address' => $ia_road,
-            'ir_ordertype' => 4,
-            'ir_date' => $time,
-            'ir_paytime' => $time,
+            'ir_point'      => $product['ip_point'],
+            'ir_unpoint'    => 0,
+            'ir_price'      => $product['ip_price_rmb'],
+            'ir_unpaid'     => 0,
+            'ia_name'       => $ia_name,
+            'ia_phone'      => $ia_phone,
+            'ia_address'    => $ia_road,
+            'ir_ordertype'  => 4,
+            'ir_date'       => $time,
+            'ir_paytime'    => $time,
         );
         $receipt_result = M('Receipt')->add($receipt);
         $receiptson = array(
-            'ir_receiptnum' => $receipt['ir_receiptnum'],
+            'ir_receiptnum'  => $receipt['ir_receiptnum'],
             'pay_receiptnum' => date('YmdHis').rand(100000, 999999),
-            'ir_price' => $product['ip_price_rmb'],
-            'ir_point' => $product['ip_price_rmb'],
-            'ir_paytype' => 5,
-            'cretime' => $time,
-            'paytime' => $time,
-            'status' => 2,
-            'operator' => '系统',
+            'ir_price'       => $product['ip_price_rmb'],
+            'ir_point'       => $product['ip_price_rmb'],
+            'ir_paytype'     => 5,
+            'cretime'        => $time,
+            'paytime'        => $time,
+            'status'         => 2,
+            'operator'       => '系统',
         );
         $receiptson_result = M('Receiptson')->add($receiptson);
         $receiptlist = array(
-            'ir_receiptnum' => $receipt['ir_receiptnum'],
-            'ipid' => $ipid,
-            'ilid' => 0,
-            'product_num' => 1,
-            'product_price' => $product['ip_price_rmb'],
-            'product_point' => $product['ip_point'],
-            'product_name' => $product['ip_name_zh'],
+            'ir_receiptnum'   => $receipt['ir_receiptnum'],
+            'ipid'            => $ipid,
+            'ilid'            => 0,
+            'product_num'     => 1,
+            'product_price'   => $product['ip_price_rmb'],
+            'product_point'   => $product['ip_point'],
+            'product_name'    => $product['ip_name_zh'],
             'product_picture' => $product['ip_picture_zh'],
         );
         $receiptlist_result = M('receiptlist')->add($receiptlist);
@@ -305,14 +309,14 @@ class HapylifeAddController extends HomeBaseController{
             $sms        = D('Smscode')->sms(86,$ia_phone,$params,$templateId);
             if($sms['errmsg'] == 'OK'){
                 $contents = array(
-                    'acnumber' => 86,
-                    'phone' => $ia_phone,
-                    'operator' => '系统',
-                    'addressee' => $ia_road,
+                    'acnumber'     => 86,
+                    'phone'        => $ia_phone,
+                    'operator'     => '系统',
+                    'addressee'    => $ia_road,
                     'product_name' => $product['ip_name_zh'],
-                    'date' => time(),
-                    'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product['ip_name_zh'].'，支付成功。',
-                    'customerid' => $hu_nickname
+                    'date'         => time(),
+                    'content'      => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product['ip_name_zh'].'，支付成功。',
+                    'customerid'   => $hu_nickname
                 );
                 $logs = M('SmsLog')->add($contents);
                 if($logs){
@@ -341,6 +345,72 @@ class HapylifeAddController extends HomeBaseController{
                 }
             }
         }
+    }
+    public function addDt(){
+        $user = M('User')->select();
+        foreach ($user as $key => $value) {
+            if(strlen($value['customerid'])!=8){
+                $iu_dt= 180;
+                $bcsub= bcadd($value['iu_dt'],$iu_dt,2);
+                $save = M('User')->where(array('iuid'=>$value['iuid']))->setfield('iu_dt',$bcsub);
+                if($save){
+                    $dtNo = 'DT'.date('YmdHis').rand(10000, 99999);
+                    $tmp     = array(
+                        'iuid'           =>$value['iuid'],
+                        'pointNo'        =>$dtNo,
+                        'hu_username'    =>$value['lastname'].$value['firstname'],
+                        'hu_nickname'    =>$value['customerid'],
+                        'getdt'          =>$iu_dt,
+                        'leftdt'         =>$bcsub,
+                        'date'           =>date('Y-m-d H:i:s'),
+                        'status'         =>2,
+                        'dttype'         =>2,
+                        'content'        =>'在'.date('Y-m-d H:i:s').'时系统增加'.$iu_dt.'DT到'.'您的账户'.',剩DT余额'.$bcsub.',流水号为:'.$dtNo,
+                        'opename'        =>'系统',
+                        'send'           =>'系统',
+                        'received'       =>$value['customerid']
+                    );
+                    $add     = D('Getdt')->add($tmp);
+                    $num++;
+                }
+            }
+        }
+        p($num);die;
+    }
+
+
+
+
+    public function addDt(){
+        $user = M('User')->select();
+        foreach ($user as $key => $value) {
+            if(strlen($value['customerid'])!=8){
+                $iu_dt= 180;
+                $bcsub= bcadd($value['iu_dt'],$iu_dt,2);
+                $save = M('User')->where(array('iuid'=>$value['iuid']))->setfield('iu_dt',$bcsub);
+                if($save){
+                    $dtNo = 'DT'.date('YmdHis').rand(10000, 99999);
+                    $tmp     = array(
+                        'iuid'           =>$value['iuid'],
+                        'pointNo'        =>$dtNo,
+                        'hu_username'    =>$value['lastname'].$value['firstname'],
+                        'hu_nickname'    =>$value['customerid'],
+                        'getdt'          =>$iu_dt,
+                        'leftdt'         =>$bcsub,
+                        'date'           =>date('Y-m-d H:i:s'),
+                        'status'         =>2,
+                        'dttype'         =>2,
+                        'content'        =>'在'.date('Y-m-d H:i:s').'时系统增加'.$iu_dt.'DT到'.'您的账户'.',剩DT余额'.$bcsub.',流水号为:'.$dtNo,
+                        'opename'        =>'系统',
+                        'send'           =>'系统',
+                        'received'       =>$value['customerid']
+                    );
+                    $add     = D('Getdt')->add($tmp);
+                    $num++;
+                }
+            }
+        }
+        p($num);die;
     }
 
 
