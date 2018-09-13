@@ -557,6 +557,7 @@ class HapylifeApiController extends HomeBaseController{
     public function order(){
         $iuid = trim(I('post.iuid'));
         $ipid = trim(I('post.ipid'));
+        $isdt = trim(I('post.isdt'));
         //商品信息
         $product   = M('Product')->where(array('ipid'=>$ipid))->find();
         //用户信息
@@ -579,6 +580,21 @@ class HapylifeApiController extends HomeBaseController{
             case '4':
                 $con = '通用券'.$product['ip_name_zh'];
                 break;
+            case '5':
+                $con = 'DT商店'.$product['ip_name_zh'];
+                break;
+        }
+        switch ($isdt){
+            case '1':
+                $rmb   = $product['ip_sprice'];
+                $point = bcdiv($product['ip_sprice'],100,2);
+                $irdt  = $product['ip_dt'];
+                break;
+            default:
+                $rmb   = $product['ip_price_rmb'];
+                $point = $product['ip_point'];
+                $irdt  = 0;
+                break;
         }
         if($address){
             $ia_name     = $address['ia_name'];    
@@ -587,7 +603,7 @@ class HapylifeApiController extends HomeBaseController{
         }else if($userinfo['shopaddress1']){
             $ia_name     = $userinfo['lastname'].$userinfo['firstname'];
             $phone       = $userinfo['phone'];
-            $shopaddress = $userinfo['shopaddress1'];
+            $shopaddress = $userinfo['shopprovince'].$userinfo['shopcity'].$userinfo['shoparea'].$userinfo['shopaddress1'];
         }else{
             $order['status'] = 3;
             $order['msg']    = '请确保有个人资料详细地址或收货地址';
@@ -613,19 +629,21 @@ class HapylifeApiController extends HomeBaseController{
             //订单总商品数量
             'ir_productnum'=>1,
             //订单总金额
-            'ir_price'=>$product['ip_price_rmb'],
+            'ir_price'      =>$rmb,
             //订单总积分
-            'ir_point'=>$product['ip_point'],
+            'ir_unpaid'     =>$rmb,
             //订单待付款总金额
-            'ir_unpaid'=>$product['ip_price_rmb'],
+            'ir_point'      =>$point,
             //订单待付款总积分
-            'ir_unpoint'=>$product['ip_point'],
+            'ir_unpoint'    =>$point,
             //订单备注
             'ir_desc'=>$con,
             //订单类型
             'ir_ordertype' => $product['ip_type'],
             //产品id
-            'ipid'         => $product['ipid']
+            'ipid'         => $product['ipid'],
+            // 总DT
+            'ir_dt'         =>$irdt,
         );
         $receipt = M('Receipt')->add($order);
         if($receipt){
@@ -651,9 +669,82 @@ class HapylifeApiController extends HomeBaseController{
         );
         $addlog = M('Log')->add($log);
         if($addlog){
-            $order['status'] = 1;
-            $order['msg']    = '订单已生成';
-            $this->ajaxreturn($order);
+            switch ($product['ip_type']) {
+                case '1':
+                    $order['status'] = 1;
+                    $order['msg']    = '订单已生成';
+                    $this->ajaxreturn($order);
+                    break;
+                case '3':
+                    $order['status'] = 1;
+                    $order['msg']    = '订单已生成';
+                    $this->ajaxreturn($order);
+                    break;
+                case '4':
+                    $order['status'] = 1;
+                    $order['msg']    = '订单已生成';
+                    $this->ajaxreturn($order);
+                    break;
+                case '5':
+                    if($isdt){
+                        $bcsub = bcsub($userinfo['iu_dt'],$product['ip_dt'],2);
+                        if($bcsub>=0){
+                            $saveDt= M('User')->where(array('CustomerId'=>$userinfo['customerid']))->setfield('iu_dt',$bcsub);
+                            if($saveDt){
+                                $dtNo = 'DT'.date('YmdHis').rand(10000, 99999);
+                                $mape            = array(
+                                    'ir_receiptnum'   =>$order_num,
+                                    'ir_paytype'      =>7,
+                                    'ir_price'        =>0,
+                                    'pay_receiptnum'  =>$dtNo,
+                                    'riuid'           =>$iuid,
+                                    'cretime'         =>time(),
+                                    'paytime'         =>time(),
+                                    'ir_point'        =>0,
+                                    'ir_dt'           =>$irdt,
+                                    'status'          =>2,
+                                );
+                                $add     = D('receiptson')->add($mape);
+                                //写入DT记录表
+                                $tmp     = array(
+                                    'iuid'           =>$userinfo['iuid'],
+                                    'pointNo'        =>$dtNo,
+                                    'hu_username'    =>$userinfo['lastname'].$userinfo['firstname'],
+                                    'hu_nickname'    =>$userinfo['customerid'],
+                                    'getdt'          =>$product['ip_dt'],
+                                    'leftdt'         =>$bcsub,
+                                    'date'           =>date('Y-m-d H:i:s'),
+                                    'status'         =>2,
+                                    'dttype'         =>4,
+                                    'content'        =>'您在'.date('Y-m-d H:i:s').'时消费出'.$product['ip_dt'].'DT到'.'系统'.',剩DT余额'.$bcsub.',流水号为:'.$dtNo,
+                                    'opename'        =>$userinfo['customerid'],
+                                    'send'           =>$userinfo['customerid'],
+                                    'received'       =>'系统'
+                                );
+                                $addtmp = M('Getdt')->add($tmp);
+                                $where= array('ir_status'=>202,'ir_dt'=>0);
+                                $save = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->save($where);
+                                $order['status'] = 1;
+                                $order['msg']    = '订单已生成';
+                                $this->ajaxreturn($order);
+                            }else{
+                                $save  = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->setfield('ir_status',202);
+                                $order['status'] = 0;
+                                $order['msg']    = '订单生成失败';
+                                $this->ajaxreturn($order);
+                            }
+                        }else{
+                            $save  = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->setfield('ir_status',7);
+                            $order['status'] = 2;
+                            $order['msg']    = 'DT不足';
+                            $this->ajaxreturn($order);
+                        }
+                    }else{
+                        $order['status'] = 1;
+                        $this->ajaxreturn($order);
+                    }
+                    break;
+            }
         }else{
             $order['status'] = 0;
             $order['msg']    = '订单生成失败';
