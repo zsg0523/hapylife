@@ -251,7 +251,7 @@ class HapylifeApiController extends HomeBaseController{
     public function login(){
         if(IS_POST){
             $tmpe = I('post.');
-            $data = D('User')->where(array('CustomerID'=>$tmpe['CustomerID']))->find();
+            $data = D('User')->where(array('CustomerID|wvCustomerID'=>$tmpe['CustomerID']))->find();
             if($data){
                 if($data['password']==md5($tmpe['PassWord'])){
                     $data['status'] =1;

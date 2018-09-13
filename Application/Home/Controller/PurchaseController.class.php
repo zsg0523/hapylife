@@ -948,7 +948,7 @@ class PurchaseController extends HomeBaseController{
                                 $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                                 if($res){
                                     $templateId ='178952';
-                                    $params     = array($CustomerID);
+                                    $params     = array($userinfo['customerid']);
                                     $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                     if($sms['errmsg'] == 'OK'){
                                         $contents = array(
@@ -958,8 +958,8 @@ class PurchaseController extends HomeBaseController{
                                                     'addressee' => $userinfo['shopaddress1'],
                                                     'product_name' => $receiptlist['product_name'],
                                                     'date' => time(),
-                                                    'content' => '恭喜您创建成功，您的会员号码是'.$CustomerID.'，同时注意查收Rovia邮件。',
-                                                    'customerid' => $CustomerID
+                                                    'content' => '恭喜您创建成功，您的会员号码是'.$userinfo['customerid'].'，同时注意查收Rovia邮件。',
+                                                    'customerid' => $userinfo['customerid']
                                         );
                                         $logs = M('SmsLog')->add($contents);
                                     }
