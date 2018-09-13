@@ -41,8 +41,9 @@
         <h4 style="color: red;text-align: center;">点击确认支付按钮将会扣除您{$data.ip_dt}DT!</h4>
         <input type="hidden" name="ipid" id="ipid" value="{$data['ipid']}" />
         <input type="hidden" name="dtvalue" id="dtvalue" value="{$data.ip_dt}" />
+        <input type="hidden" name="havedt" id="havedt" value="{$data.bc_dt}" />
         <a class="tc" onclick='todtpay();'>确认支付</a>                            
-        
+
     </div>  
     
 	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
@@ -53,31 +54,37 @@
 	});
 	function todtpay(){
 		var ip_dt=$('#dtvalue').val();
-		$.ajax({
-			type:"post",
-			url:"{:U('Home/Pay/getUserDt')}",
-			async:true, 
-			dataType: 'json',
-			data:{
-				ip_dt:ip_dt,
-			},
-			success:function(ret){
-				if(confirm('您的DT余额为：'+ret.iu_dt+',确认后将会扣除您'+$('#dtvalue').val()+'DT!是否支付?')){
-					if(ret.status==1){
-						var ipid=$('#ipid').val();
-						window.location.href="{:U('Home/Purchase/order/ipid/"+ipid+"/isdt/1')}"
+		var havedt=$('#havedt').val();
+		if(havedt>=0){
+			$.ajax({
+				type:"post",
+				url:"{:U('Home/Pay/getUserDt')}",
+				async:true, 
+				dataType: 'json',
+				data:{
+					ip_dt:ip_dt,
+				},
+				success:function(ret){
+					if(confirm('您的DT余额为：'+ret.iu_dt+',确认后将会扣除您'+$('#dtvalue').val()+'DT!是否支付?')){
+						if(ret.status==1){
+							var ipid=$('#ipid').val();
+							window.location.href="{:U('Home/Purchase/order/ipid/"+ipid+"/isdt/1')}"
+						}else{
+							alert('不好意思！您的DT余额为：'+ret.iu_dt+'！您的DT余额不足！');
+						}
 					}else{
-						alert('不好意思！您的DT余额为：'+ret.iu_dt+'！您的DT余额不足！');
+					
 					}
-				}else{
-				
+					
+		
+				},
+				error:function(){
 				}
-				
-	
-			},
-			error:function(){
-			}
-		});
+			});
+		}else{
+			alert('不好意思!您的DT余额不足!');
+		}
+		
 	}
 	  
 	</script>  
