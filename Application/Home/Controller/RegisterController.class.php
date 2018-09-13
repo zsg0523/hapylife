@@ -150,7 +150,6 @@ class RegisterController extends HomeBaseController{
                 }
             }
         }else{
-            $data['status'] = 0;
             $this->ajaxreturn($data);           
         }
     }

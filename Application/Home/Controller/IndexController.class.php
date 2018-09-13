@@ -180,16 +180,41 @@ class IndexController extends HomeBaseController{
                                     'status'   =>2,
                                 );
                         }
+                        $data = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
                         $this->redirect('Home/Purchase/center');
-                    }
+                        break;
+
+                    default:
+                        $this->error('账号格式错误');
+                        break;
                 }
             }else{
-                $data=check_login();
-                if($data){
-                    $this->redirect('Home/Purchase/center');
+                $where = array(
+                    'CustomerID'=>trim($tmpe['CustomerID']),
+                    'PassWord'  =>md5($tmpe['PassWord'])
+                );
+                $data = D('User')->where($where)->find();
+                if (empty($data)) {
+                    $this->error('账号或密码错误');
                 }else{
-                    $this->display('Login/login');
+                    $_SESSION['user']=array(
+                                        'id'       =>$data['iuid'],
+                                        'username' =>$data['customerid'],
+                                        'name_cn'  =>$data['lastname'].$data['firstname'],
+                                        'status'   =>1,
+                                        'address'  =>0,
+                                        'bank'     =>0,
+                                    );
+                    $this->redirect('Home/Purchase/center');
                 }
+            }
+        }else{
+            //检查是否已存在$_SESSION['user']['id']
+            $data=check_login();
+            if($data){
+                $this->redirect('Home/Purchase/center');
+            }else{
+                $this->display('Login/login');
             }
         }
     }
