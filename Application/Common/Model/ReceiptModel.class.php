@@ -763,7 +763,7 @@ class ReceiptModel extends BaseModel{
             }
             if(empty($v['productno'])){
                 $mape[$key]['productno']   = '';
-                $mape[$key]['productnams'] .= $v['ir_desc'];
+                $mape[$key]['productnams'] = substr($value['ir_desc'],0,-21);
             }else{
                 $mape[$key]['productno']   = $v['productno'];
                 $mape[$key]['productnams'] = $v['product_name'];
@@ -818,7 +818,6 @@ class ReceiptModel extends BaseModel{
             // $mape[$key]['endtime'] = $times[$k];
 
         }
-        p($mape);die;
         $data=array(
             'data'=>$mape,
             );
@@ -950,18 +949,18 @@ class ReceiptModel extends BaseModel{
             // 商品编号
             $content[$k]['productno'] = $v['productno'];
             // 商品数量
-            $content[$k]['productname'] = $v['productname'];
-            // switch ($v['ipid']) {
-            //     case '31':
-            //         $content[$k]['productname'] = $v['productnams'].'*8瓶';
-            //         break;
-            //     case '39':
-            //         $content[$k]['productname'] = $v['productnams'].'*2瓶';
-            //         break;
-            //     default:
-            //         $content[$k]['productname'] = $v['productnams'].'*1套';
-            //         break;
-            // }
+            // $content[$k]['productname'] = $v['productname'];
+            switch ($v['ipid']) {
+                case '31':
+                    $content[$k]['productname'] = $v['productnams'].'*8瓶';
+                    break;
+                case '39':
+                    $content[$k]['productname'] = $v['productnams'].'*2瓶';
+                    break;
+                default:
+                    $content[$k]['productname'] = $v['productnams'].'*1套';
+                    break;
+            }
             // 支付日期
             $content[$k]['ir_paytime'] = date('Y-m-d H:i:s',$v['ir_paytime']);
             // 收货人姓名
