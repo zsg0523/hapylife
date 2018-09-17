@@ -83,16 +83,18 @@
 	});
 	function checkPassword(){
     	var form=$('#EP_top');
-    	var point=$("input[name='iu_point']").attr("data-point");
+			var point=parseFloat( $("input[name='iu_point']").attr("data-point"));
+			var usepoint=parseFloat($("input[name='iu_point']").val());
+			// var point=$("input[name='iu_point']").attr("data-point");
     	if($("input[name='CustomerID']").val()==""){
     		alert('请输入转入账号！');
-    	}else if($("input[name='iu_point']").val()==""){
+			}else if(usepoint==""){
     		alert('请输入转出积分！');
-    	}else if($("input[name='iu_point']").val()>point){
+			}else if(usepoint>point){
     		alert('您的积分不足!');
-    	}else if($("input[name='iu_point']").val()<1){
+			}else if(usepoint<1) {
     		alert('您的转账金额必须大于1EP!');
-    	}else if($("input[name='iu_point']").val()==0){
+			}else if(usepoint==0){
         alert('转出积分不能为零!');
       }else{
     		form.submit();
