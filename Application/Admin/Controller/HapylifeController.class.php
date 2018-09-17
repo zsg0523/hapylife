@@ -1500,4 +1500,49 @@ class HapylifeController extends AdminBaseController{
 		$this->assign($assign);
 		$this->display();
 	}
+
+	/**
+	* 奖金报表
+	**/ 
+	public function wvbonus(){
+		$word      = trim(I('get.word',''));
+		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
+		
+		$assign    = D('WvBonus')->getSendPage(D('WvBonus'),$word,$starttime,$endtime,$order='');
+		foreach($assign['data'] as $key=>$value){
+			$assign['data'][$key]['bonuses'] = json_decode($value['bonuses'],true);
+		}
+
+		$this->assign($assign);
+		$this->assign('bonuses',$bonuses);
+		$this->display();
+	}
+
+	/**
+	* 发放奖金
+	**/ 
+	public function addBonus(){
+		$customerid = I('get.customerid');
+		$amount = bcdiv(I('get.amount')*6.8,100,2);
+		$userinfo = M('User')->where(array('customerid'=>$customerid))->find();
+		$result = M('User')->where(array('customerid'=>$customerid))->setfield('iu_point',$amount);
+		if($result){
+			$saveStatus = M('WvBonus')->where(array('HplId'=>$customerid))->setfield('BonusStatus',1);
+			$content = $_SESSION['user']['username'].'在'.date('Y-m-d H:i:s').',给'.$customerid.'发放了'.$amount.'EP';
+			$log = array(
+				'customerid' => $customerid,
+				'operator' => $_SESSION['user']['username'],
+				'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+				'date' => time(),
+				'content' => $content,
+			);
+			$log_result = M('WvBonusLog')->add($log);
+		}
+		if($log_result){
+			$this->success('发放成功',U('Admin/Hapylife/wvbonus'));
+		}else{
+			$this->error('发放失败',U('Admin/Hapylife/wvbonus'));
+		}
+	}
 }

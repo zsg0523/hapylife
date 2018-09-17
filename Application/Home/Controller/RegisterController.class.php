@@ -1037,7 +1037,7 @@ class RegisterController extends HomeBaseController{
                 //收货人电话
                 'ia_phone'=>$userinfo['phone'],
                 //收货地址
-                'ia_address'=>$userinfo['shopaddress1'],
+                'ia_address'=>$userinfo['shopprovince'].$userinfo['shopcity'].$userinfo['shoparea'].$userinfo['shopaddress1'],
                 //订单总商品数量
                 'ir_productnum'=>1,
                 //订单总金额
