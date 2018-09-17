@@ -1438,63 +1438,67 @@ class PurchaseController extends HomeBaseController{
             $bank       = M('Bank')->where(array('iuid'=>$iuid,'isshow'=>1))->find();
 
             if($tohu_nickname === $userinfo['customerid']){
-                //提现
-                $iuid       = $userinfo['iuid'];
-                $unpoint    = $point;
-                $iu_point   = $userinfo['iu_point'];
-                $iu_unpoint = $userinfo['iu_unpoint'];
-                //更新用户积分
-                $point      = bcsub($iu_point,$unpoint,4);
-                $newunpoint = bcadd($iu_unpoint,$unpoint,4);
-                
-                if($point<0){
-                    $this->error('积分余额不足',U('Home/Purchase/myPoint'));
-                }
-                $map     = array(
-                            'iuid'      =>$userinfo['iuid'],
-                            'iu_point'  =>$point,
-                            'iu_unpoint'=>$newunpoint
-                        );
-                $feepoint =$unpoint*0.05;
-                $realpoint=bcsub($unpoint,$feepoint,4);
-                //生成提现订单
-                $pointNo = 'EP'.date('YmdHis').rand(10000, 99999);
-                //更新用户积分
-                $save   = M('User')->save($map);
-                if($save){
-                    $content = '单号:'.$pointNo.',提取积分:'.$unpoint.',剩余积分:'.$point;
-                    $tmp     = array(
-                        'iuid'           =>$userinfo['iuid'],
-                        'pointNo'        =>$pointNo,
-                        'hu_username'    =>$userinfo['lastname'].$userinfo['firstname'],
-                        'hu_nickname'    =>$userinfo['customerid'],
-                        'iu_bank'        =>$bank['bankname'],
-                        'iu_bankbranch'  =>$bank['bankbranch'],
-                        'iu_bankaccount' =>$bank['bankaccount'],
-                        'iu_bankprovince'=>$bank['bankprovince'],
-                        'iu_bankcity'    =>$bank['bankregion'],
-                        'iu_bankuser'    =>$bank['iu_name'],
-                        'getpoint'       =>$unpoint,
-                        'feepoint'       =>$feepoint,
-                        'realpoint'      =>$realpoint,
-                        'unpoint'        =>$newunpoint,
-                        'leftpoint'      =>$point,
-                        'date'           =>date('Y-m-d H:i:s'),
-                        'status'         =>0,
-                        'pointtype'      =>6,
-                        'whichApp'       =>$whichApp,
-                        'send'           =>$userinfo['customerid'],
-                        'received'       =>'系统冻结',
-                        'content'        =>$userinfo['customerid'].'在'.date('Y-m-d H:i:s').'时,提现冻结'.$unpoint.'EP到'.'系统冻结'.',剩EP余额'.$point
-                    );
-                    $addtmp = M('Getpoint')->add($tmp);
-                    //写入日志记录
-                    $add     = addLog($iuid,$content,$action=0,$type=1);
-                    if($add && $addtmp){
-                        $this->success('提现成功',U('Home/Purchase/myPoint'));
-                    }else{
-                        $this->error('提现失败',U('Home/Purchase/myPoint'));
+                if(!empty($bank)){
+                    //提现
+                    $iuid       = $userinfo['iuid'];
+                    $unpoint    = $point;
+                    $iu_point   = $userinfo['iu_point'];
+                    $iu_unpoint = $userinfo['iu_unpoint'];
+                    //更新用户积分
+                    $point      = bcsub($iu_point,$unpoint,4);
+                    $newunpoint = bcadd($iu_unpoint,$unpoint,4);
+                    
+                    if($point<0){
+                        $this->error('积分余额不足',U('Home/Purchase/myPoint'));
                     }
+                    $map     = array(
+                                'iuid'      =>$userinfo['iuid'],
+                                'iu_point'  =>$point,
+                                'iu_unpoint'=>$newunpoint
+                            );
+                    $feepoint =$unpoint*0.05;
+                    $realpoint=bcsub($unpoint,$feepoint,4);
+                    //生成提现订单
+                    $pointNo = 'EP'.date('YmdHis').rand(10000, 99999);
+                    //更新用户积分
+                    $save   = M('User')->save($map);
+                    if($save){
+                        $content = '单号:'.$pointNo.',提取积分:'.$unpoint.',剩余积分:'.$point;
+                        $tmp     = array(
+                            'iuid'           =>$userinfo['iuid'],
+                            'pointNo'        =>$pointNo,
+                            'hu_username'    =>$userinfo['lastname'].$userinfo['firstname'],
+                            'hu_nickname'    =>$userinfo['customerid'],
+                            'iu_bank'        =>$bank['bankname'],
+                            'iu_bankbranch'  =>$bank['bankbranch'],
+                            'iu_bankaccount' =>$bank['bankaccount'],
+                            'iu_bankprovince'=>$bank['bankprovince'],
+                            'iu_bankcity'    =>$bank['bankregion'],
+                            'iu_bankuser'    =>$bank['iu_name'],
+                            'getpoint'       =>$unpoint,
+                            'feepoint'       =>$feepoint,
+                            'realpoint'      =>$realpoint,
+                            'unpoint'        =>$newunpoint,
+                            'leftpoint'      =>$point,
+                            'date'           =>date('Y-m-d H:i:s'),
+                            'status'         =>0,
+                            'pointtype'      =>6,
+                            'whichApp'       =>$whichApp,
+                            'send'           =>$userinfo['customerid'],
+                            'received'       =>'系统冻结',
+                            'content'        =>$userinfo['customerid'].'在'.date('Y-m-d H:i:s').'时,提现冻结'.$unpoint.'EP到'.'系统冻结'.',剩EP余额'.$point
+                        );
+                        $addtmp = M('Getpoint')->add($tmp);
+                        //写入日志记录
+                        $add     = addLog($iuid,$content,$action=0,$type=1);
+                        if($add && $addtmp){
+                            $this->success('提现成功',U('Home/Purchase/myPoint'));
+                        }else{
+                            $this->error('提现失败',U('Home/Purchase/myPoint'));
+                        }
+                    }
+                }else{
+                   $this->error('请填写默认银行地址',U('Home/Purchase/myPoint')); 
                 }
             }else{
                 $leftpoint_user  = bcsub($userinfo['iu_point'],$point,4);
