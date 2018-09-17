@@ -215,12 +215,14 @@ class HapylifeCouponController extends HomeBaseController{
             // 支付时间
             'ir_paytime' => time(),
             // 通用券编码
-            'coucode' => $coupon['coupon_code']
+            'coucode' => $coupon['coupon_code'],
+            // 产品id
+            'ipid'	 => $coupon['product_id'],
 		);
 		$receiptAdd = M('Receipt')->add($receipt);
 		$receiptlist = array(
 			'ir_receiptnum' => $order_num,
-			'ipid' => '',
+			'ipid' => $coupon['product_id'],
 			'ilid' => '',
 			'product_num' => 1,
 			'product_price' => '',

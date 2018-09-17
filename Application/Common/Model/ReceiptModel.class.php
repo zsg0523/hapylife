@@ -105,7 +105,7 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-                $list[$key]['productno']   = $v['productno'];
+                $list[$key]['productno']   = $v['ip_bh'];
                 $list[$key]['productnams'] = $v['product_name'];
             }
             $list[$key]['productname'] = substr($productname,0,-1);
@@ -205,7 +205,7 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
@@ -267,8 +267,6 @@ class ReceiptModel extends BaseModel{
                 ->limit($page->firstRow.','.$page->listRows)
                 ->select();         
         }
-        // 2018082917465476913/
-        // p($list);
         foreach ($list as $key => $value) {
             $ia_address = '';
             $mape[$key] = $value;
@@ -281,11 +279,10 @@ class ReceiptModel extends BaseModel{
                     ->join('hapylife_product on hapylife_receiptlist.ipid = hapylife_product.ipid')
                     ->where(array('ir_receiptnum'=>$value['ir_receiptnum']))
                     ->select();
-                    // p($arr);
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
@@ -295,7 +292,6 @@ class ReceiptModel extends BaseModel{
                         ->join('hapylife_activation AS a ON r.riuid = a.iuid')
                         ->where(array('r.ir_receiptnum'=>$value['ir_receiptnum']))
                         ->select();
-                        // p($time);
             foreach($time as $v){
                 // $times[$k] = $v['endtime'];
                 $mape[$key]['endtime'] = $v['endtime'];
@@ -303,7 +299,6 @@ class ReceiptModel extends BaseModel{
             // 获取会籍到期时间
             // $mape[$key]['endtime'] = $times[$k];
         }
-        // p($mape);
         $data=array(
             'data'=>$mape,
             'page'=>$page->show()
@@ -364,7 +359,7 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
@@ -441,7 +436,7 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
@@ -536,7 +531,7 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
@@ -662,7 +657,7 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
@@ -745,6 +740,7 @@ class ReceiptModel extends BaseModel{
                 ->order('ir_paytime desc')
                 ->select();         
         }
+        // p($list);die;
         foreach ($list as $key => $value) {
             $ia_address = '';
             $mape[$key] = $value;
@@ -760,14 +756,10 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-            }
-            if(empty($v['productno'])){
-                $mape[$key]['productno']   = '';
-                $mape[$key]['productnams'] = substr($value['ir_desc'],0,-21);
-            }else{
-                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
             }
+            
             $mape[$key]['productname'] = substr($productname,0,-1);
             $son = D('Receiptson')
                  ->where(array('ir_receiptnum'=>$value['ir_receiptnum'],'status'=>2))
@@ -818,6 +810,7 @@ class ReceiptModel extends BaseModel{
             // $mape[$key]['endtime'] = $times[$k];
 
         }
+        // p($mape);die;
         $data=array(
             'data'=>$mape,
             );
@@ -863,7 +856,7 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);

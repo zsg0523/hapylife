@@ -382,6 +382,8 @@ class PayController extends HomeBaseController{
                                         if($back_msg['status']){
                                             $this->success('完成支付',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receiptson['ir_receiptnum'])));
                                         }
+                                    }else if($ir_ordertype == 5){
+                                        $this->success('完成支付',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
                                     }else{
                                         $userinfo   = D('User')->where(array('iuid'=>$receipt['riuid']))->find();
                                         //修改用户最近订单日期/是否通过/等级/数量

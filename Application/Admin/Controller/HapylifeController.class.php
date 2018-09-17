@@ -1505,6 +1505,7 @@ class HapylifeController extends AdminBaseController{
 	* 奖金报表
 	**/ 
 	public function wvbonus(){
+		$data = M('WvBonusParities')->select();
 		$word      = trim(I('get.word',''));
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
@@ -1512,10 +1513,11 @@ class HapylifeController extends AdminBaseController{
 		$assign    = D('WvBonus')->getSendPage(D('WvBonus'),$word,$starttime,$endtime,$order='');
 		foreach($assign['data'] as $key=>$value){
 			$assign['data'][$key]['bonuses'] = json_decode($value['bonuses'],true);
+			$assign['data'][$key]['ep'] = bcdiv(bcmul($assign['data'][$key]['bonuses'][0]['Amount'],$data[0]['parities'],2),100,2);
 		}
 
 		$this->assign($assign);
-		$this->assign('bonuses',$bonuses);
+		$this->assign('parities',$data[0]['parities']);
 		$this->display();
 	}
 
@@ -1523,8 +1525,9 @@ class HapylifeController extends AdminBaseController{
 	* 发放奖金
 	**/ 
 	public function addBonus(){
+		$data = M('WvBonusParities')->select();
 		$customerid = I('get.customerid');
-		$amount = bcdiv(I('get.amount')*6.8,100,2);
+		$amount = bcdiv(bcmul(I('get.amount'),$data[0]['parities'],2),100,2);
 		$userinfo = M('User')->where(array('customerid'=>$customerid))->find();
 		$result = M('User')->where(array('customerid'=>$customerid))->setfield('iu_point',$amount);
 		if($result){
@@ -1543,6 +1546,24 @@ class HapylifeController extends AdminBaseController{
 			$this->success('发放成功',U('Admin/Hapylife/wvbonus'));
 		}else{
 			$this->error('发放失败',U('Admin/Hapylife/wvbonus'));
+		}
+	}
+
+	/**
+	* 修改当前汇率
+	**/ 
+	public function editParities(){
+		$parities = I('post.parities');
+		$data = M('WvBonusParities')->select();
+		if($parities != $data[0]['parities']){
+			$result = M('WvBonusParities')->where(array('pid'=>1))->setfield('parities',$parities);
+			if($result){
+				$this->redirect('Admin/Hapylife/wvbonus');
+			}else{
+				$this->error('修改失败',U('Admin/Hapylife/wvbonus'));
+			}
+		}else{
+			$this->redirect('Admin/Hapylife/wvbonus');
 		}
 	}
 }
