@@ -1566,4 +1566,33 @@ class HapylifeController extends AdminBaseController{
 			$this->redirect('Admin/Hapylife/wvbonus');
 		}
 	}
+
+	/**
+	* wv国际会员推荐人数统计
+	**/ 
+	public function wvRecommend(){
+		$data = M('User')->select();
+		foreach($data as $key=>$value){
+			if(strlen($value['customerid']) == 8){
+				$array[$key]['son'] = M('User')->where(array('EnrollerID'=>$value['customerid']))->select();	
+			}
+		}
+		foreach($array as $key=>$value){
+			// 数组去空值
+			$list[] = array_filter($value);	
+		}
+		$son = array();
+		$son = array_filter($list);
+		foreach($son as $key=>$value){
+			foreach($value as $ke=>$val){
+				foreach($val as $k=>$v){
+					$son[$key]['userinfo'] = M('User')->where(array('customerid'=>$v['enrollerid']))->find();
+				}
+				$son[$key]['num'] = count($val);
+			}
+		}
+		
+		$this->assign('data',$son);
+		$this->display();
+	}
 }
