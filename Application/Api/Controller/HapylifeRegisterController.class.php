@@ -744,6 +744,142 @@ class HapylifeRegisterController extends HomeBaseController{
     }
 
 
+    // 有券注册
+    public function hadCoupon(){
+        $iuid = I('post.iuid');
+        $cu_id = I('post.cu_id');
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
+        $data = array(
+                    'hu_nickname' => $userinfo['customerid'],
+                    'cu_id' => $cu_id,
+                );
+        $data    = json_encode($data);
+        $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/use_coupon";
+        // $sendUrl = "http://localhost/nulife/index.php/Api/Couponapi/use_coupon";
+        $results  = post_json_data($sendUrl,$data);
+        $back_result = json_decode($results['result'],true);
+        if($back_result['status']){
+            $ipid = $back_result['ipid'];
+            //商品信息
+            $product = M('Product')->where(array('ipid'=>$ipid))->find();
+            //生成唯一订单号
+            $order_num = 'CP'.date('YmdHis').rand(10000, 99999);
+            $con = $back_result['c_name'].$back_result['coupon_code'];
+            $order = array(
+                //订单编号
+                'ir_receiptnum' =>$order_num,
+                //订单创建日期
+                'ir_date'=>time(),
+                //订单的状态(0待付款 1待审核 2已支付待发货 3已发货待收货 4已收货待评价 5已评价完成 6审核未通过  7待注册)
+                'ir_status'=>2,
+                //下单用户id
+                'riuid'=>$iuid,
+                //下单用户
+                'rCustomerID'=>$userinfo['customerid'],
+                //收货人
+                'ia_name'=>$userinfo['lastname'].$userinfo['firstname'],
+                //收货人电话
+                'ia_phone'=>$userinfo['phone'],
+                //收货地址
+                'ia_address'=>$userinfo['shopprovince'].$userinfo['shopcity'].$userinfo['shoparea'].$userinfo['shopaddress1'],
+                //订单总商品数量
+                'ir_productnum'=>1,
+                //订单总金额
+                'ir_price'=>$product['ip_price_rmb'],
+                //订单总积分
+                'ir_point'=>$product['ip_point'],
+                //订单待付款总金额
+                'ir_unpaid'=>0,
+                //订单待付款总积分
+                'ir_unpoint'=>0,
+                //订单备注
+                'ir_desc'=>$con,
+                //订单类型
+                'ir_ordertype' => $product['ip_type'],
+                //产品id
+                'ipid'         => $product['ipid'],
+                // 订单支付时间
+                'ir_paytime' => time(),
+                // 通用券标号
+                'coucode' => $back_result['coupon_code'],
+                
+            );
+            $receipt = M('Receipt')->add($order);
+            if($receipt){
+                $map = array(
+                    'ir_receiptnum'     =>  $order_num,
+                    'ipid'              =>  $product['ipid'],
+                    'product_num'       =>  1,
+                    'product_point'     =>  $product['ip_point'],
+                    'product_price'     =>  $product['ip_price_rmb'],
+                    'product_name'      =>  $product['ip_name_zh'],
+                    'product_picture'   =>  $product['ip_picture_zh']
+                );
+                $addReceiptlist = M('Receiptlist')->add($map);
+            }
+            //生成日志记录
+            $content = '您帮代理进行的'.$con.'订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
+            $log = array(
+                'iuid'      =>$back_result['iuid'],
+                'content'   =>$content,
+                'action'    =>0,
+                'type'      =>2,
+                'create_time'   =>time(),
+                'create_month'   =>date('Y-m'),
+            );
+            $addlog = M('Log')->add($log);
+            if($addlog){
+                if($back_result['is_dt'] == 1){
+                    $products = 'RBS,DTP,SIGNUP4';
+                }else{
+                    $products = 'RBS,DTP,SIGNUP5';
+                }
+                $usa    = new \Common\UsaApi\Usa;
+                $result = $usa->createCustomer($userinfo['customerid'],$userinfo['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
+                if(!empty($result['result'])){
+                    $log = addUsaLog($result['result']);
+                    $maps = json_decode($result['result'],true);
+                    $wv  = array(
+                        'wvCustomerID' => $maps['wvCustomerID'],
+                        'wvOrderID'    => $maps['wvOrderID'],
+                        'DistributorType' => $product['ip_after_grade'],
+                        'Products'      => $products,
+                    );
+                    $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
+                    if($res){
+                        // 发送短信提示
+                        $templateId ='183054';
+                        $params     = array();
+                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                        if($sms['errmsg'] == 'OK'){
+                            $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$order_num))->find();
+                            $contents = array(
+                                        'acnumber' => $userinfo['acnumber'],
+                                        'phone' => $userinfo['phone'],
+                                        'operator' => '系统',
+                                        'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                        'product_name' => $receiptlist['product_name'],
+                                        'date' => time(),
+                                        'content' => '恭喜您注册成功。',
+                                        'customerid' => $userinfo['customerid']
+                            );
+                            $logs = M('SmsLog')->add($contents);
+                        }
+                        $sample['status'] = 1;
+                        $this->ajaxreturn($sample);
+                    }else{
+                        $sample['status'] = 0;
+                        $this->ajaxreturn($sample);
+                    }
+                }
+            }
+        }else{
+            $sample['status'] = 0;
+            $this->ajaxreturn($sample);
+        }
+    }
+
+
 
 
 

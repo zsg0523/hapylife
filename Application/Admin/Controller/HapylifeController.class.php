@@ -1591,7 +1591,7 @@ class HapylifeController extends AdminBaseController{
 				$son[$key]['num'] = count($val);
 			}
 		}
-
+		
 		$this->assign('data',$son);
 		$this->display();
 	}

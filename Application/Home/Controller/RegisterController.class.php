@@ -1098,7 +1098,7 @@ class RegisterController extends HomeBaseController{
                     $wv  = array(
                         'wvCustomerID' => $maps['wvCustomerID'],
                         'wvOrderID'    => $maps['wvOrderID'],
-                        'DistributorType' => 'Platinum',
+                        'DistributorType' => $product['ip_after_grade'],
                         'Products'      => $products,
                     );
                     $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
@@ -1120,14 +1120,12 @@ class RegisterController extends HomeBaseController{
                                         'customerid' => $userinfo['customerid']
                             );
                             $logs = M('SmsLog')->add($contents);
-                            if($logs){
-                                $sample['status'] = 1;
-                                $this->ajaxreturn($sample);
-                            }else{
-                                $sample['status'] = 0;
-                                $this->ajaxreturn($sample);
-                            }
                         }
+                        $sample['status'] = 1;
+                        $this->ajaxreturn($sample);
+                    }else{
+                        $sample['status'] = 0;
+                        $this->ajaxreturn($sample);
                     }
                 }
             }
