@@ -377,8 +377,8 @@ class HapylifeController extends AdminBaseController{
 			'appkey' => 'ALL',
 		);
 		$data    = json_encode($data);
-		$sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
-		// $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/getCouponList";
+		// $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
+		$sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/getCouponList";
 		$result  = post_json_data($sendUrl,$data);
 		$back_message = json_decode($result['result'],true);
 		$CouponGroups = $back_message;
@@ -1399,6 +1399,7 @@ class HapylifeController extends AdminBaseController{
 	public function add_sends(){
 		$data = I('post.');
 		$remove = explode('-',$data['username']);
+
 		if($data['psd'] == 146228){
 			// 物流信息通知
 			$spotemplate = 146228;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
@@ -1409,6 +1410,13 @@ class HapylifeController extends AdminBaseController{
 		if($data['psd'] == 146227){
 			// 续费信息通知
 			$spotemplate = 146227;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
+			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
+			$spoparams = array($remove[0],$data['endtime']);
+		}
+
+		if($data['psd'] == 196995){
+			// 续费信息通知
+			$spotemplate = 196995;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
 			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
 			$spoparams = array($remove[0],$data['endtime']);
 		}
@@ -1424,7 +1432,8 @@ class HapylifeController extends AdminBaseController{
                     'date'    =>time(),
                     'operator' => $_SESSION['user']['username'],
                     'addressee' => $remove[0],
-                    'customerid' => $remove[1]
+                    'customerid' => $remove[1],
+                    'product_name' => '月费购买通知消息'
                 );
                 $add = D('SmsLog')->add($mape);
                 if($add){
@@ -1443,6 +1452,24 @@ class HapylifeController extends AdminBaseController{
                     'product_name' => $data['productnams'],
                     'addressee' => $remove[0],
                     'customerid' => $remove[1]
+                );
+                $add = D('SmsLog')->add($mape);
+                if($add){
+					$this->success('发送成功',U('Admin/Hapylife/sends'));
+                }else{
+                	$this->error('发送失败',U('Admin/Hapylife/sends'));
+                }
+        	}
+        	if($data['psd'] == 196995){
+        		$mape  = array(
+                    'phone'   =>$data['phone'],
+                    'content'    =>'尊敬的'.$remove[0].'会员，您的免月费优惠期为'.$data['endtime'].'，请在优惠期结束前购买月费包。',
+                    'acnumber'=>$data['acnumber'],
+                    'date'    =>time(),
+                    'operator' => $_SESSION['user']['username'],
+                    'addressee' => $remove[0],
+                    'customerid' => $remove[1],
+                    'product_name' => '优惠月费通知消息'
                 );
                 $add = D('SmsLog')->add($mape);
                 if($add){
