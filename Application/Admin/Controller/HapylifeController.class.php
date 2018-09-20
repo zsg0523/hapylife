@@ -377,8 +377,8 @@ class HapylifeController extends AdminBaseController{
 			'appkey' => 'ALL',
 		);
 		$data    = json_encode($data);
-		// $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
-		$sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/getCouponList";
+		$sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
+		// $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/getCouponList";
 		$result  = post_json_data($sendUrl,$data);
 		$back_message = json_decode($result['result'],true);
 		$CouponGroups = $back_message;
@@ -456,31 +456,6 @@ class HapylifeController extends AdminBaseController{
 			'ipid'=>$data['id']
 			);
 		$upload=post_upload();
-		foreach($data['gidnumArr'] as $key => $value){
-			if(empty($value)){
-				$keys[] = $key;
-			}
-		}
-		if($data['gidArr']){
-			foreach($keys as $value){
-				unset($data['gidArr'][$value]);
-			}
-			foreach ($data['gidArr'] as $key => $value) {
-				$mape         = explode(',',$value);
-				$getCoupn    .= $mape[0].',';
-			}
-			$data['get_coupon'] = substr($getCoupn,0,-1);
-		}
-		if($data['gidnumArr']){
-			foreach($keys as $value){
-				unset($data['gidnumArr'][$value]);
-			}
-			foreach ($data['gidnumArr'] as $key => $value) {
-				$mape         = explode(',',$value);
-				$traversenum .= $mape[0].',';
-			}
-			$data['traverse_num'] = substr($traversenum,0,-1);
-		}
 		if(isset($upload['name'])){
 			$data['ip_picture_zh']=C('WEB_URL').$upload['name'];
 		}
@@ -489,6 +464,23 @@ class HapylifeController extends AdminBaseController{
 				$this->error('请填写DT折扣价和可折扣DT数量');
 			}
 		}
+		if($data['gidnumArr1']){
+			foreach($data['gidnumArr1'] as $key=>$value){
+				if($value <= 0){
+					unset($data['gidArr1'][$key]);
+					unset($data['gidnumArr1'][$key]);
+				}
+			}
+		}
+		foreach($data['gidArr1'] as $key=>$value){
+			$getCoupn .= substr($value,0,strpos($value, ',')).',';
+		}
+		foreach($data['gidnumArr1'] as $key=>$value){
+			$traversenum .= $value.',';
+		}	
+		$data['get_coupon'] = substr($getCoupn,0,-1);
+		$data['traverse_num'] = substr($traversenum,0,-1);
+		// p($data);die;
 		$result=D('Product')->editData($map,$data);
 		if($result){
 			redirect($_SERVER['HTTP_REFERER']);
