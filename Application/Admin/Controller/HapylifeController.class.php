@@ -412,26 +412,23 @@ class HapylifeController extends AdminBaseController{
 				$keys[] = $key;
 			}
 		}
-		if($data['gidArr']){
-			foreach($keys as $value){
-				unset($data['gidArr'][$value]);
-			}
-			foreach ($data['gidArr'] as $key => $value) {
-				$mape         = explode(',',$value);
-				$getCoupn    .= $mape[0].',';
-			}
-			$data['get_coupon'] = substr($getCoupn,0,-1);
-		}
 		if($data['gidnumArr']){
-			foreach($keys as $value){
-				unset($data['gidnumArr'][$value]);
+			foreach($data['gidnumArr'] as $key=>$value){
+				if($value <= 0){
+					unset($data['gidArr'][$key]);
+					unset($data['gidnumArr'][$key]);
+				}
 			}
-			foreach ($data['gidnumArr'] as $key => $value) {
-				$mape         = explode(',',$value);
-				$traversenum .= $mape[0].',';
-			}
-			$data['traverse_num'] = substr($traversenum,0,-1);
 		}
+		foreach($data['gidArr'] as $key=>$value){
+			$getCoupn .= $value.',';
+		}
+		foreach($data['gidnumArr'] as $key=>$value){
+			$traversenum .= $value.',';
+		}	
+		$data['get_coupon'] = substr($getCoupn,0,-1);
+		$data['traverse_num'] = substr($traversenum,0,-1);
+
 		if($data['ip_type']==5){
 			if(!$data['ip_sprice'] || !$data['ip_dt']){
 				$this->error('请填写DT折扣价和可折扣DT数量');
@@ -459,11 +456,6 @@ class HapylifeController extends AdminBaseController{
 		if(isset($upload['name'])){
 			$data['ip_picture_zh']=C('WEB_URL').$upload['name'];
 		}
-		if($data['ip_type']==5){
-			if(!$data['ip_sprice'] || !$data['ip_dt']){
-				$this->error('请填写DT折扣价和可折扣DT数量');
-			}
-		}
 		if($data['gidnumArr1']){
 			foreach($data['gidnumArr1'] as $key=>$value){
 				if($value <= 0){
@@ -473,13 +465,19 @@ class HapylifeController extends AdminBaseController{
 			}
 		}
 		foreach($data['gidArr1'] as $key=>$value){
-			$getCoupn .= substr($value,0,strpos($value, ',')).',';
+			$getCoupn .= $value.',';
 		}
 		foreach($data['gidnumArr1'] as $key=>$value){
 			$traversenum .= $value.',';
 		}	
 		$data['get_coupon'] = substr($getCoupn,0,-1);
 		$data['traverse_num'] = substr($traversenum,0,-1);
+		
+		if($data['ip_type']==5){
+			if(!$data['ip_sprice'] || !$data['ip_dt']){
+				$this->error('请填写DT折扣价和可折扣DT数量');
+			}
+		}
 		// p($data);die;
 		$result=D('Product')->editData($map,$data);
 		if($result){
