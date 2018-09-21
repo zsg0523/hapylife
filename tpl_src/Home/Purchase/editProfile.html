@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<meta http-equiv="X-UA-Compatible" content="IE=9" />
+		<title>修改个人资料</title>		
+
+	<!--<link rel="stylesheet" href="css/bootstrap.min.css" />-->
+		<link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
+	<style>
+		/*上传身份证css*/
+		.content {
+			display: flex;
+		}
+		.img-area {
+			flex: 1
+		}
+		.container2 {
+			position: relative;	
+		}
+		.container2 div {
+			text-align: center;
+			background-color: #e7e7e7;
+			padding-top:20px;
+			padding-bottom: 10px;
+		}
+		.container2 input {
+			opacity: 0;
+			filter: alpha(opacity=0);
+			height: 100%;
+			width: 100%;
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 9;
+		}
+		.container2 p {
+			font-size: 0.9rem;
+			color: #999
+		}
+		*{margin: 0;padding: 0;}
+    	ul,li{list-style: none;display: block;}
+    	a{text-decoration: none;color: #000;font-weight: bold;}
+      	a:hover{text-decoration: none;cursor: pointer;}
+	    p{margin: 0;padding: 0;}
+    
+		
+		.main{height: auto;margin:50px auto 10px auto;}	
+		.commonHead{width:100%;position: fixed;top: 0;left: 0;z-index: 20;}
+      	
+      
+		.err{color:#FF0000;font-size: 14px;text-align:center;}
+		#btn-info{background-color: #2490ed;}
+		
+		.form-horizontal .form-group{margin-left: 15px;margin-right: 15px;}
+		.form-horizontal .control-label{text-align: left;}
+		
+		.main{height: auto;margin:60px auto 10px auto;}	
+		.commonHead{width:100%;position: fixed;top: 0;left: 0;z-index: 20;}
+		
+      /*手机*/
+      @media screen and (max-width: 768px){
+     .main{width:100%;}
+      }
+      /*平板*/
+      @media screen and (min-width: 768px){
+       .main{width:100%;}
+      }
+        /*中等屏幕*/
+      @media screen and (min-width: 992px){
+        .main{width:100%;}
+      }
+      /*大屏幕*/
+      @media screen and (min-width: 1200px){
+		.main{width:1200px;}
+      }
+      #headImg{height:40px;float: right;}
+      #fileInput{  float: right;width: 100%;  height: 40px;opacity: 0.0;background: black;cursor: pointer;margin-top: -40px;}
+	</style>
+	</style>
+	</head>
+	<body class="container-fluid">
+		<div class="commonHead">
+  			<include file="Common/commonHead1" />
+  		</div>
+		<div class="main">
+			<div class="rg-div">
+				<form class="form-horizontal" method="post" action="{:U('Home/PersonalCenter/editProfiles')}" enctype="multipart/form-data">
+					<div class="form-group"> 
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label">手机归属地:</label>
+						<div class="col-lg-10 col-md-10 col-xs-8">
+							<input type="hidden" name="acid" id="acid" value="" />
+							<select class="form-control" name="acnumber" id="acnumber">
+						    	<foreach name="code" item="v">
+						    		<option  class="opt" value="{$v['acnumber']}" acid="{$v['acid']}" >{$v['name']}</option>						    			
+						    	</foreach>
+						    </select>
+						</div>	
+					</div>
+					<div class="form-group"  style="margin-top: 10px;">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>电话:</label>
+						<div class="col-lg-10 col-md-10 col-xs-8">
+							<input type="text" class="form-control"  name="hu_phone" placeholder="电话" value="{$data['hu_phone']}">
+						</div>
+					</div>
+					<div class="form-group"  style="margin-top: 10px;">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>邮箱:</label>
+						<div class="col-lg-10 col-md-10 col-xs-8">
+							<input type="text" class="form-control"  name="hu_email" placeholder="邮箱" value="{$data['hu_email']}">
+						</div>
+					</div>
+					<div class="form-group"  style="margin-top: 10px;">
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>左右脚:</label>
+						<div class="col-lg-5 col-md-5 col-xs-4 control-label">
+						    <input type="radio" name="jiao" id="atleft" value="左脚" checked="checked">左脚
+						</div>
+						<div class="col-lg-5 col-md-5 col-xs-4 control-label">
+							<input type="radio" name="jiao" id="atright" value="右脚">右脚
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class=" col-md-12 col-xs-12">
+							<button type="submit" class="btn  btn-block  btn-info" id="btn-info">保存</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</body>
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){ 
+		changeCommonHead('修改信息');
+	});
+	//区号改变获取acid
+	$("#acnumber").change(function(){
+		var acid=$("#acnumber").find("option:selected").attr("acid");
+		$("input[name='acid']").val(acid);
+	});
+	function back(){
+    	window.location.href ="{:U('Home/Purchase/myProfile')}";
+		}
+	</script>
+</html>
