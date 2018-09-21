@@ -43,8 +43,14 @@ class IndexController extends HomeBaseController{
     public function checkAccount(){
         $CustomerID = trim(I('post.CustomerID'));
         $checkAccount = D('User')->where(array('CustomerID|wvCustomerID'=>$CustomerID))->find();
-        switch ($checkAccount) {
-            case null:
+        if($checkAccount){
+            $data = array(
+                'status'=>1,
+                'message'=>'账号已存在，直接登录'
+            );
+            $this->ajaxreturn($data);   
+        }else{
+            if(strlen($CustomerID) == 8){
                 //核对usa 账号是否正确存在
                 $usa    = new \Common\UsaApi\Usa;
                 $result = $usa->validateHpl($CustomerID);
@@ -64,12 +70,13 @@ class IndexController extends HomeBaseController{
                         $this->ajaxreturn($data);
                         break;
                 }
-            default:
+            }else{
                 $data = array(
-                    'status'=>1,
-                    'message'=>'账号已存在，直接登录'
+                    'status'=>0,
+                    'message'=>'输入账号有误'
                 );
                 $this->ajaxreturn($data);
+            } 
         }
     }
 
@@ -118,37 +125,41 @@ class IndexController extends HomeBaseController{
                         $this->error('账号或密码错误');
                     }
                 }else{
-                    //检查WV api用户信息
-                    $usa      = new \Common\UsaApi\Usa;
-                    $userinfo = $usa->validateHpl($tmpe['CustomerID']);
-                    //检查wv是否存在该账号 Y创建该账号  N登录失败
-                    switch ($userinfo['isActive']) {
-                        case true:
-                            //创建该新账号在本系统
-                            $map = array(
-                                'CustomerID'  =>$tmpe['CustomerID'],
-                                'PassWord'    =>md5($tmpe['PassWord']),
-                                'WvPass'      =>$tmpe['PassWord'],
-                                'LastName'    =>$userinfo['lastName'],
-                                'FirstName'   =>$userinfo['firstName'],
-                                'isActive'    =>$userinfo['isActive'],
-                            );
-                            $createUser = D('User')->add($map);
-                            if($createUser){
-                                $_SESSION['user']=array(
-                                    'id'       =>$createUser,
-                                    'username' =>$tmpe['CustomerID'],
-                                    'name_cn'  =>$userinfo['lastName'].$userinfo['firstName'],
-                                    'status'   =>1,
+                    if(strlen($tmpe['CustomerID']) == 8){
+                        //检查WV api用户信息
+                        $usa      = new \Common\UsaApi\Usa;
+                        $userinfo = $usa->validateHpl($tmpe['CustomerID']);
+                        //检查wv是否存在该账号 Y创建该账号  N登录失败
+                        switch ($userinfo['isActive']) {
+                            case true:
+                                //创建该新账号在本系统
+                                $map = array(
+                                    'CustomerID'  =>$tmpe['CustomerID'],
+                                    'PassWord'    =>md5($tmpe['PassWord']),
+                                    'WvPass'      =>$tmpe['PassWord'],
+                                    'LastName'    =>$userinfo['lastName'],
+                                    'FirstName'   =>$userinfo['firstName'],
+                                    'isActive'    =>$userinfo['isActive'],
                                 );
-                                $this->redirect('Home/Purchase/center');
-                            }else{
+                                $createUser = D('User')->add($map);
+                                if($createUser){
+                                    $_SESSION['user']=array(
+                                        'id'       =>$createUser,
+                                        'username' =>$tmpe['CustomerID'],
+                                        'name_cn'  =>$userinfo['lastName'].$userinfo['firstName'],
+                                        'status'   =>1,
+                                    );
+                                    $this->redirect('Home/Purchase/center');
+                                }else{
+                                    $this->error('账号或密码错误');
+                                }
+                                break;
+                            default:
                                 $this->error('账号或密码错误');
-                            }
-                            break;
-                        default:
-                            $this->error('账号或密码错误');
-                            break;
+                                break;
+                        }
+                    }else{
+                        $this->error('账号或密码错误');
                     }
                 }
             }else{
