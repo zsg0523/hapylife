@@ -412,26 +412,23 @@ class HapylifeController extends AdminBaseController{
 				$keys[] = $key;
 			}
 		}
-		if($data['gidArr']){
-			foreach($keys as $value){
-				unset($data['gidArr'][$value]);
-			}
-			foreach ($data['gidArr'] as $key => $value) {
-				$mape         = explode(',',$value);
-				$getCoupn    .= $mape[0].',';
-			}
-			$data['get_coupon'] = substr($getCoupn,0,-1);
-		}
 		if($data['gidnumArr']){
-			foreach($keys as $value){
-				unset($data['gidnumArr'][$value]);
+			foreach($data['gidnumArr'] as $key=>$value){
+				if($value <= 0){
+					unset($data['gidArr'][$key]);
+					unset($data['gidnumArr'][$key]);
+				}
 			}
-			foreach ($data['gidnumArr'] as $key => $value) {
-				$mape         = explode(',',$value);
-				$traversenum .= $mape[0].',';
-			}
-			$data['traverse_num'] = substr($traversenum,0,-1);
 		}
+		foreach($data['gidArr'] as $key=>$value){
+			$getCoupn .= $value.',';
+		}
+		foreach($data['gidnumArr'] as $key=>$value){
+			$traversenum .= $value.',';
+		}	
+		$data['get_coupon'] = substr($getCoupn,0,-1);
+		$data['traverse_num'] = substr($traversenum,0,-1);
+
 		if($data['ip_type']==5){
 			if(!$data['ip_sprice'] || !$data['ip_dt']){
 				$this->error('请填写DT折扣价和可折扣DT数量');
@@ -456,39 +453,32 @@ class HapylifeController extends AdminBaseController{
 			'ipid'=>$data['id']
 			);
 		$upload=post_upload();
-		foreach($data['gidnumArr'] as $key => $value){
-			if(empty($value)){
-				$keys[] = $key;
-			}
-		}
-		if($data['gidArr']){
-			foreach($keys as $value){
-				unset($data['gidArr'][$value]);
-			}
-			foreach ($data['gidArr'] as $key => $value) {
-				$mape         = explode(',',$value);
-				$getCoupn    .= $mape[0].',';
-			}
-			$data['get_coupon'] = substr($getCoupn,0,-1);
-		}
-		if($data['gidnumArr']){
-			foreach($keys as $value){
-				unset($data['gidnumArr'][$value]);
-			}
-			foreach ($data['gidnumArr'] as $key => $value) {
-				$mape         = explode(',',$value);
-				$traversenum .= $mape[0].',';
-			}
-			$data['traverse_num'] = substr($traversenum,0,-1);
-		}
 		if(isset($upload['name'])){
 			$data['ip_picture_zh']=C('WEB_URL').$upload['name'];
 		}
+		if($data['gidnumArr1']){
+			foreach($data['gidnumArr1'] as $key=>$value){
+				if($value <= 0){
+					unset($data['gidArr1'][$key]);
+					unset($data['gidnumArr1'][$key]);
+				}
+			}
+		}
+		foreach($data['gidArr1'] as $key=>$value){
+			$getCoupn .= $value.',';
+		}
+		foreach($data['gidnumArr1'] as $key=>$value){
+			$traversenum .= $value.',';
+		}	
+		$data['get_coupon'] = substr($getCoupn,0,-1);
+		$data['traverse_num'] = substr($traversenum,0,-1);
+		
 		if($data['ip_type']==5){
 			if(!$data['ip_sprice'] || !$data['ip_dt']){
 				$this->error('请填写DT折扣价和可折扣DT数量');
 			}
 		}
+		// p($data);die;
 		$result=D('Product')->editData($map,$data);
 		if($result){
 			redirect($_SERVER['HTTP_REFERER']);
@@ -1399,6 +1389,7 @@ class HapylifeController extends AdminBaseController{
 	public function add_sends(){
 		$data = I('post.');
 		$remove = explode('-',$data['username']);
+
 		if($data['psd'] == 146228){
 			// 物流信息通知
 			$spotemplate = 146228;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
@@ -1409,6 +1400,13 @@ class HapylifeController extends AdminBaseController{
 		if($data['psd'] == 146227){
 			// 续费信息通知
 			$spotemplate = 146227;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
+			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
+			$spoparams = array($remove[0],$data['endtime']);
+		}
+
+		if($data['psd'] == 196995){
+			// 续费信息通知
+			$spotemplate = 196995;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
 			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
 			$spoparams = array($remove[0],$data['endtime']);
 		}
@@ -1424,7 +1422,8 @@ class HapylifeController extends AdminBaseController{
                     'date'    =>time(),
                     'operator' => $_SESSION['user']['username'],
                     'addressee' => $remove[0],
-                    'customerid' => $remove[1]
+                    'customerid' => $remove[1],
+                    'product_name' => '月费购买通知消息'
                 );
                 $add = D('SmsLog')->add($mape);
                 if($add){
@@ -1443,6 +1442,24 @@ class HapylifeController extends AdminBaseController{
                     'product_name' => $data['productnams'],
                     'addressee' => $remove[0],
                     'customerid' => $remove[1]
+                );
+                $add = D('SmsLog')->add($mape);
+                if($add){
+					$this->success('发送成功',U('Admin/Hapylife/sends'));
+                }else{
+                	$this->error('发送失败',U('Admin/Hapylife/sends'));
+                }
+        	}
+        	if($data['psd'] == 196995){
+        		$mape  = array(
+                    'phone'   =>$data['phone'],
+                    'content'    =>'尊敬的'.$remove[0].'会员，您的免月费优惠期为'.$data['endtime'].'，请在优惠期结束前购买月费包。',
+                    'acnumber'=>$data['acnumber'],
+                    'date'    =>time(),
+                    'operator' => $_SESSION['user']['username'],
+                    'addressee' => $remove[0],
+                    'customerid' => $remove[1],
+                    'product_name' => '优惠月费通知消息'
                 );
                 $add = D('SmsLog')->add($mape);
                 if($add){
@@ -1591,7 +1608,7 @@ class HapylifeController extends AdminBaseController{
 				$son[$key]['num'] = count($val);
 			}
 		}
-
+		
 		$this->assign('data',$son);
 		$this->display();
 	}

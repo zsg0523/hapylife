@@ -42,7 +42,7 @@ class IndexController extends HomeBaseController{
      */
     public function checkAccount(){
         $CustomerID = trim(I('post.CustomerID'));
-        $checkAccount = D('User')->where(array('CustomerID'=>$CustomerID))->find();
+        $checkAccount = D('User')->where(array('CustomerID|wvCustomerID'=>$CustomerID))->find();
         switch ($checkAccount) {
             case null:
                 //核对usa 账号是否正确存在

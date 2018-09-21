@@ -598,12 +598,18 @@ class HapylifeApiController extends HomeBaseController{
         }
         if($address){
             $ia_name     = $address['ia_name'];    
-            $phone       = $address['ia_phone'];    
-            $shopaddress = $address['ia_province'].$address['ia_town'].$address['ia_region'].$address['ia_road'];    
+            $phone       = $address['ia_phone'];
+            $ia_province = $address['ia_province'];
+            $ia_town     = $address['ia_town'];
+            $ia_region   = $address['ia_region'];
+            $shopaddress = $address['ia_road'];    
         }else if($userinfo['shopaddress1']){
             $ia_name     = $userinfo['lastname'].$userinfo['firstname'];
             $phone       = $userinfo['phone'];
-            $shopaddress = $userinfo['shopprovince'].$userinfo['shopcity'].$userinfo['shoparea'].$userinfo['shopaddress1'];
+            $ia_province = $userinfo['shopprovince'];
+            $ia_town     = $userinfo['shopcity'];
+            $ia_region   = $userinfo['shoparea'];
+            $shopaddress = $userinfo['shopaddress1'];    
         }else{
             $order['status'] = 3;
             $order['msg']    = '请确保有个人资料详细地址或收货地址';
@@ -624,6 +630,12 @@ class HapylifeApiController extends HomeBaseController{
             'ia_name'=>$ia_name,
             //收货人电话
             'ia_phone'=>$phone,
+            // 省，州
+            'ia_province' => $ia_province,
+            // 市
+            'ia_city' => $ia_town,
+            // 区
+            'ia_area' => $ia_region,
             //收货地址
             'ia_address'=>$shopaddress,
             //订单总商品数量
