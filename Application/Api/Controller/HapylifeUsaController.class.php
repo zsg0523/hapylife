@@ -11,12 +11,12 @@ class HapylifeUsaController extends HomeBaseController{
 
 	public function _initialize(){
 		// production 生产环境配置
-		$this->key = "KDHE5011CVFO1KJEP1A0S";
-		$this->url = "https://signupapi.wvhservices.com";
+		// $this->key = "KDHE5011CVFO1KJEP1A0S";
+		// $this->url = "https://signupapi.wvhservices.com";
 
 		// qa 沙盒环境
-		// $this->key = "QACER3H5T6HGYDCCDAZM3";
-		// $this->url = "https://signupapi-qa.wvhservices.com";
+		$this->key = "QACER3H5T6HGYDCCDAZM3";
+		$this->url = "https://signupapi-qa.wvhservices.com";
 	}
 	
 	/**
@@ -135,6 +135,45 @@ class HapylifeUsaController extends HomeBaseController{
 		print_r($result);
 	}
 
+	/**
+	* Update Customer
+	* @param 
+	**/ 
+	public function updateCustomer(){
+		$map  = I('post.');
+		$key  = $this->key;
+		$url  = $this->url;
+		$data = array(
+			'happyLifeID'  =>$map['happyLifeID'],
+            'password'     =>$map['password'],
+            'sponsorID'    =>$map['sponsorID'],
+            'emailAddress' =>$map['emailAddress'],
+            'phone'        =>$map['phone'],
+            'placementPreference' => $map['placementpreference'],
+            'key'          =>$key
+		);
+		$data    = json_encode($data);
+		$sendUrl = $url."/api/Hpl/UpdateCustomer";
+		$result  = post_json_data($sendUrl,$data);
+		print_r($result);
+	}
+
+	/**
+	* Totals
+	**/ 
+	public function Totals(){
+		$map  = I('post.');
+		$key  = $this->key;
+		$url  = $this->url;
+		$data = array(
+			'happyLifeID'  =>$map['happyLifeID'],
+            'key'          =>$key
+		);
+		$data    = json_encode($data);
+		$sendUrl = $url."/api/Hpl/Totals?customerId=".$map['happyLifeID']."&key=".$key;
+		$result  = post_json_data($sendUrl,$data);
+		print_r($result);
+	}
 
 
 
