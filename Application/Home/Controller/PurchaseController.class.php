@@ -393,7 +393,7 @@ class PurchaseController extends HomeBaseController{
             $ia_town     = $address['ia_town'];
             $ia_region   = $address['ia_region'];
             $shopaddress = $address['ia_road'];    
-        }else if($userinfo['shopaddress1']){
+        }else{
             $ia_name     = $userinfo['lastname'].$userinfo['firstname'];
             $phone       = $userinfo['phone'];
             $ia_province = $userinfo['shopprovince'];
@@ -401,7 +401,9 @@ class PurchaseController extends HomeBaseController{
             $ia_region   = $userinfo['shoparea'];
             $shopaddress = $userinfo['shopaddress1'];    
         }
-        $ia_name  = $userinfo['lastname'].$userinfo['firstname'];
+        if(empty($ia_province) || empty($ia_town) || empty($ia_region) || empty($shopaddress)){
+            $this->error('请填写默认收货地址',U('Home/Purchase/addressList'));
+        }
         $order = array(
             //订单编号
             'ir_receiptnum' =>$order_num,
