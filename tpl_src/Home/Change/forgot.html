@@ -54,10 +54,10 @@
 
 	function checkAccount(){
 		var CustomerID=$('input[name="CustomerID"]').val();
-		if (CustomerID=='') {
+		if (CustomerID!='') {
            $.ajax({
 				type:"post",
-				url:"{:U('Home/Change/changePsd')}",
+				url:"{:U('Home/Change/checkAccount')}",
 				async:true, 
 				dataType: 'json',
 				data:{
@@ -65,11 +65,12 @@
 				},
 				success:function(ret){
     				if(ret.status==1){
-    					window.location.href ="{:U('Home/Change/resetPassword')}";
+    					console.log(ret);
+    					window.location.href ="{:U('Home/Change/resetPassword/customerid/"+ret.customerid+"/acnumber/"+ret.acnumber+"/phone/"+ret.phone+"')}";
     				}else if(ret.status==2){
     					alert('请输入"HPL"开头的账号!');
     				}else{
-    					alert('修改失败！！!');
+    					alert('账号不存在！！!');
     				}
 				},
 				error:function(){

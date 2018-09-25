@@ -149,7 +149,7 @@ class HapylifeUsaController extends HomeBaseController{
             'password'     =>$map['password'],
             'emailAddress' =>$map['emailAddress'],
             'phone'        =>$map['phone'],
-            'binaryplacementpreference' => $map['binaryplacementpreference'],
+            'placementpreference' => $map['placementpreference'],
 		);
 		$data    = json_encode($data);
 		$sendUrl = $url."/api/Hpl/UpdateCustomer?key=".$key;
