@@ -182,5 +182,10 @@ class ChangeController extends HomeBaseController{
             }
         }
     }
+
+
+    public function checkPhone(){
+        $this->display();
+    }
 }
 
