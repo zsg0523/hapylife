@@ -10,8 +10,6 @@ class ChangeController extends HomeBaseController{
     **/ 
     public function changePsd(){
         $iuid = $_SESSION['user']['id'];
-        // 原密码
-        $psd = md5(trim(I('post.password')));
         // 用户信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
         // 新密码
@@ -30,8 +28,16 @@ class ChangeController extends HomeBaseController{
                 $result = M('User')->where(array('iuid'=>$iuid))->save($new_psd);
                 if($result){
                     // 修改成功
-                    $sample['status'] = 1;
-                    $this->ajaxreturn($sample);
+                    // 发送给usa,更新usa数据
+                    $usa    = new \Common\UsaApi\Usa;
+                    $res = $usa->updateCustomer($userinfo['customerid'],I('post.passwords'));
+                    if($res){
+                        $sample['status'] = 1;
+                        $this->ajaxreturn($sample);
+                    }else{
+                        $sample['status'] = 0;
+                        $this->ajaxreturn($sample);
+                    }
                 }else{
                     // 修改失败
                     $sample['status'] = 0;
@@ -107,6 +113,73 @@ class ChangeController extends HomeBaseController{
                 $this->ajaxreturn($data);
             }
 
+        }
+    }
+
+    /**
+    * 修改wv用户信息
+    **/ 
+    public function updateCustomer(){
+        $iuid = $_SESSION['user']['id'];
+        $data = I('post.');
+        // p($data);die;
+        // 修改系统数据
+        $saveData = M('User')->where(array('iuid'=>$iuid))->save($data);
+        if($saveData){
+            //更新usa数据
+            $usa    = new \Common\UsaApi\Usa;
+            $result = $usa->updateCustomer($data['happyLifeID'],$data['password'],$data['Email'],$data['Phone'],$data['PlacementPreference']);
+            if($result){
+                $this->success('修改成功',U('Home/Purchase/myProfile'));
+            }else{
+                $this->error('修改失败',U('Home/Purchase/editProfile'));
+            }
+        }
+    }
+
+    /**
+    * 重置密码
+    **/ 
+    public function resetPsd(){
+        $iuid = $_SESSION['user']['id'];
+        // 用户信息
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
+        // 新密码
+        $new_psd['PassWord'] = md5(trim(I('post.passwords')));
+
+        $phoneNumber =I('post.phoneNumber');
+        $code        =I('post.code');
+        $acnumber    =I('post.acnumber');
+        $acid        =I('post.acid');
+        $data        =D('Smscode')->where(array('phone'=>$phoneNumber,'acnumber'=>$acnumber))->order('nsid desc')->find();
+        $time        =time()-strtotime($data['date']);
+        if($time>60){
+            $this->error('验证码失效,请重新发送');
+        }else{
+            if($data && $data['code']==$code){
+                $result = M('User')->where(array('iuid'=>$iuid))->save($new_psd);
+                if($result){
+                    // 修改成功
+                    // 发送给usa,更新usa数据
+                    $usa    = new \Common\UsaApi\Usa;
+                    $res = $usa->updateCustomer($userinfo['customerid'],I('post.passwords'));
+                    if($res){
+                        $sample['status'] = 1;
+                        $this->ajaxreturn($sample);
+                    }else{
+                        $sample['status'] = 0;
+                        $this->ajaxreturn($sample);
+                    }
+                }else{
+                    // 修改失败
+                    $sample['status'] = 0;
+                    $this->ajaxreturn($sample);
+                }
+            }else{
+                // 验证码错误
+                $sample['status'] = 2;
+                $this->ajaxreturn($sample);
+            }
         }
     }
 }

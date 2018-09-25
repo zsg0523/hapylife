@@ -13,12 +13,12 @@ class usa
 
 	public function __construct(){
 		// production 生产环境配置
-		$this->key = "KDHE5011CVFO1KJEP1A0S";
-		$this->url = "https://signupapi.wvhservices.com";
+		// $this->key = "KDHE5011CVFO1KJEP1A0S";
+		// $this->url = "https://signupapi.wvhservices.com";
 
 		// qa 沙盒环境
-		// $this->key = "QACER3H5T6HGYDCCDAZM3";
-		// $this->url = "https://signupapi-qa.wvhservices.com";
+		$this->key = "QACER3H5T6HGYDCCDAZM3";
+		$this->url = "https://signupapi-qa.wvhservices.com";
 	}
 
 	/**
@@ -77,6 +77,25 @@ class usa
 		return $result;
 	}
 
+	/**
+	* Update Customer
+	**/ 
+	public function updateCustomer($happyLifeID,$Password,$emailAddress,$phone,$placementPreference){
+		$key  = $this->key;
+		$url  = $this->url;
+		$data = array(
+			'happyLifeID'  =>$happyLifeID,
+			'Password' => $Password,
+            'emailAddress' =>$emailAddress,
+            'phone'        =>$phone,
+            'PlacementPreference' => $placementPreference,
+            'key'          =>$key
+		);
+		$data    = json_encode($data);
+		$sendUrl = $url."/api/Hpl/UpdateCustomer";
+		$result  = post_json_data($sendUrl,$data);
+		return $result;
+	}
 
 
 

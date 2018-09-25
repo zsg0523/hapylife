@@ -393,7 +393,7 @@ class PurchaseController extends HomeBaseController{
             $ia_town     = $address['ia_town'];
             $ia_region   = $address['ia_region'];
             $shopaddress = $address['ia_road'];    
-        }else if($userinfo['shopaddress1']){
+        }else{
             $ia_name     = $userinfo['lastname'].$userinfo['firstname'];
             $phone       = $userinfo['phone'];
             $ia_province = $userinfo['shopprovince'];
@@ -401,7 +401,9 @@ class PurchaseController extends HomeBaseController{
             $ia_region   = $userinfo['shoparea'];
             $shopaddress = $userinfo['shopaddress1'];    
         }
-        $ia_name  = $userinfo['lastname'].$userinfo['firstname'];
+        if(empty($ia_province) || empty($ia_town) || empty($ia_region) || empty($shopaddress)){
+            $this->error('请填写默认收货地址',U('Home/Purchase/addressList'));
+        }
         $order = array(
             //订单编号
             'ir_receiptnum' =>$order_num,
@@ -1687,4 +1689,27 @@ class PurchaseController extends HomeBaseController{
         $this->display();
     }
 
+    /**
+    * 修改信息(显示页面)
+    **/ 
+    public function editProfile(){
+        $iuid = $_SESSION['user']['id'];
+        $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
+        foreach ($mape as $key => $value) {
+            $code[$key]         = $value;
+            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
+                $code[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+            }else{
+                $code[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+            }
+        }
+
+        $data = M('User')->where(array('iuid'=>$iuid))->find();
+        $assign = array(
+                    'code' => $code,
+                    'data' => $data
+                );
+        $this->assign($assign);
+        $this->display();
+    }
 }

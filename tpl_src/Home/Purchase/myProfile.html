@@ -147,7 +147,13 @@
 						<span>推荐新人左右脚:</span>
 					</div>
 					<div class="col-md-10 col-xs-8">
-						<span>{$userinfo.placement}</span>
+						<if condition="$userinfo['placement'] eq 'BuildLeft'">
+							<span>左脚</span>
+						<elseif condition="$userinfo['placement'] eq 'BuildRight'" />
+							<span>右脚</span>
+						<elseif condition="empty($userinfo['placement']) eq true " />
+							<span>未设置</span>
+						</if>
 					</div>	
 				</div>
 				
