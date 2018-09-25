@@ -137,7 +137,8 @@ class HapylifeUsaController extends HomeBaseController{
 
 	/**
 	* Update Customer
-	* @param 
+	* @param customerId: id to validate
+	* @param key: your secret key
 	**/ 
 	public function updateCustomer(){
 		$map  = I('post.');
@@ -146,14 +147,12 @@ class HapylifeUsaController extends HomeBaseController{
 		$data = array(
 			'happyLifeID'  =>$map['happyLifeID'],
             'password'     =>$map['password'],
-            'sponsorID'    =>$map['sponsorID'],
             'emailAddress' =>$map['emailAddress'],
             'phone'        =>$map['phone'],
-            'placementPreference' => $map['placementpreference'],
-            'key'          =>$key
+            'placementpreference' => $map['placementpreference'],
 		);
 		$data    = json_encode($data);
-		$sendUrl = $url."/api/Hpl/UpdateCustomer";
+		$sendUrl = $url."/api/Hpl/UpdateCustomer?key=".$key;
 		$result  = post_json_data($sendUrl,$data);
 		print_r($result);
 	}

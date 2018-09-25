@@ -84,15 +84,14 @@ class usa
 		$key  = $this->key;
 		$url  = $this->url;
 		$data = array(
-			'happyLifeID'  =>$happyLifeID,
+			'HappyLifeID'  =>$happyLifeID,
 			'Password' => $Password,
-            'emailAddress' =>$emailAddress,
-            'phone'        =>$phone,
+            'EMailAddress' =>$emailAddress,
+            'Phone'        =>$phone,
             'PlacementPreference' => $placementPreference,
-            'key'          =>$key
 		);
 		$data    = json_encode($data);
-		$sendUrl = $url."/api/Hpl/UpdateCustomer";
+		$sendUrl = $url."/api/Hpl/UpdateCustomer?key=".$key;
 		$result  = post_json_data($sendUrl,$data);
 		return $result;
 	}

@@ -477,7 +477,7 @@ class PurchaseController extends HomeBaseController{
                     $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
                     break;
                 case '4':
-                    $this->redirect('Home/Pay/choosePay2',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
+                    $this->redirect('Home/Pay/choosePay1',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
                     break;
                 case '5':
                     if($isdt){
