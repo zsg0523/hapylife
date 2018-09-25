@@ -1689,4 +1689,27 @@ class PurchaseController extends HomeBaseController{
         $this->display();
     }
 
+    /**
+    * 修改信息(显示页面)
+    **/ 
+    public function editProfile(){
+        $iuid = $_SESSION['user']['id'];
+        $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
+        foreach ($mape as $key => $value) {
+            $code[$key]         = $value;
+            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
+                $code[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+            }else{
+                $code[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+            }
+        }
+
+        $data = M('User')->where(array('iuid'=>$iuid))->find();
+        $assign = array(
+                    'code' => $code,
+                    'data' => $data
+                );
+        $this->assign($assign);
+        $this->display();
+    }
 }
