@@ -569,7 +569,7 @@ class HapylifePayController extends HomeBaseController{
                     $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
                     if($upreceipt){
                         if($sub == 0){
-                            $updateReceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->setfield('paytime',time());
+                            $updateReceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->setfield('ir_paytime',time());
                             switch ($order['ir_ordertype']) {
 								case '3':
 									$addactivation     = D('Activation')->addAtivation($OrderDate,$receipt['riuid'],$receipt['ir_receiptnum']); 
