@@ -21,4 +21,22 @@ class SmscodeModel extends BaseModel{
         }
         return $rsp;
     }
+
+    /**
+    * 添加短信发送日志
+    **/ 
+    public function addLog($acnumber,$phone,$operator,$addressee,$product_name,$content,$customerid){
+        $contents = array(
+            'acnumber' => $acnumber,
+            'phone' => $phone,
+            'operator' => $operator,
+            'addressee' => $addressee,
+            'product_name' => $product_name,
+            'date' => time(),
+            'content' => $content,
+            'customerid' => $customerid
+        );
+        $logs = M('SmsLog')->add($contents);
+        return $logs;
+    }
 }

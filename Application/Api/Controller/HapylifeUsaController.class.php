@@ -174,6 +174,23 @@ class HapylifeUsaController extends HomeBaseController{
 		print_r($result);
 	}
 
+	/**
+	* Create Payment
+	**/ 
+	public function createPayment(){
+		$map  = I('post.');
+		$key  = $this->key;
+		$url  = $this->url;
+		$data = array(
+			'hapyLifeID'  	=>$map['hapyLifeID'],
+            'wvOrderID'   	=>$map['wvOrderID'],
+            'paymentDate ' 	=>$map['paymentDate']),
+		);
+		$sendUrl = $url."/api/Hpl/CreatePayment?key=".$key;
+		$result  = post_json_data($sendUrl,$data);
+		print_r($result);
+	}
+
 
 
 	

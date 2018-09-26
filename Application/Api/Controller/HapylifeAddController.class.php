@@ -22,7 +22,18 @@ class HapylifeAddController extends HomeBaseController{
         //开启事务
         M('wvBonus')->startTrans();
         $catch_result = true;
-        try {
+        //数据不为空
+        if(!isset($data['Messages'])){
+            $sample = array(
+                        'code'=> 400,
+                        'info'=>'false',
+                        'data'=>array(
+                            'message'=>'Bad Request'
+                        )
+                );
+            $this->ajaxreturn($sample);
+        }else{
+            try {
             //异常处理
             foreach($data['Messages'] as $key=>$value){
                 //添加bonus记录
@@ -62,6 +73,8 @@ class HapylifeAddController extends HomeBaseController{
                 );
             $this->ajaxreturn($sample);
         }
+        }
+        
     }
 
     /**
@@ -78,20 +91,50 @@ class HapylifeAddController extends HomeBaseController{
         $log     = addUsaLog($jsonStr);
         $data    = json_decode($jsonStr,true);
         //开启事务
-        M('wvBonus')->startTrans();
+        M('wvNotification')->startTrans();
         // p($data);die;
         $catch_result = true;
         try {
             //异常处理
-            foreach($data['Customers'] as $key=>$value){
+            foreach($data['Messages'] as $key=>$value){
                 //添加bonus记录
-                $value['Date']                    = $data['Date'];
-                $value['NotificationType']        = $data['NotificationType'];
-                $value['NofiticationDescription'] = $data['NofiticationDescription'];
-                $value['Customers']               = json_encode($value);
-                $res = M('wvNotification')->add($value);
+                $map['Date']                    = $data['Date'];
+                $map['NotificationType']        = $data['NotificationType'];
+                $map['NotificationDescription'] = $data['NotificationDescription'];
+                $map['Messages']                = json_encode($value);
+                $res = M('wvNotification')->add($map);
                 if(!$res){
                     E("错误信息");
+                }else{
+                    $userinfo = M('User')->where(array('customerid'=>$value['HplId']))->find();
+                    // 收信人名称
+                    $addressee = $userinfo['lastname'].$userinfo['firstname'];
+                    switch ($data['NotificationType']) {
+                        case '1':
+                            $time = date('Y-m-d H:i:s',strtotime($data['Date']));
+                            $endTime = date('Y-m-d H:i:s',strtotime($data['Date'])+5*24*3600);
+                            // 发送短信提示
+                            $templateId ='183054';
+                            $params     = array($time,$endTime);
+                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                            p($sms);die;
+                            if($sms['errmsg'] == 'OK'){
+                                $content = '您的月费将在'.$time.'到期，请在'.$endTime.'前完成续费，否则将无法登陆dreamtrip.com。';
+                                $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'续费通知',$content,$userinfo['customerid']);
+                                p($result);die;
+                            }
+                            break;
+                        case '2':
+                            // 发送短信提示
+                            $templateId ='183054';
+                            $params     = array($time,$endTime);
+                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                            if($sms['errmsg'] == 'OK'){
+                                $content = '恭喜您，您已成功推荐4名好友加入成为您的下线，现';
+                                $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'免月费通知',$content,$userinfo['customerid']);
+                            }
+                            break;
+                    }
                 }
             }
         } catch (\Exception $e) {
@@ -101,7 +144,7 @@ class HapylifeAddController extends HomeBaseController{
 
         if($catch_result === false){
             //事务回滚
-            M('wvBonus')->rollback();
+            M('wvNotification')->rollback();
             //添加失败
             $sample = array(
                         'code'=> 400,
@@ -113,7 +156,7 @@ class HapylifeAddController extends HomeBaseController{
             $this->ajaxreturn($sample);
         }else{
             //事务提交
-            M('wvBonus')->commit();
+            M('wvNotification')->commit();
             //添加成功
             $sample = array(
                         'code'=> 200,

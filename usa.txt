@@ -450,3 +450,209 @@
 2018-09-17 10:38:50********************
 2018-09-17 10:44:06********************
 2018-09-17 10:44:10********************
+2018-09-25 18:24:42**********{
+  "Messages":
+    [{"CustomerId":12345,
+      "HplId":"HPL00001",
+      "PeriodType":10,
+      "PeriodDesciption":"Week 32 2018",
+      "Bonuses":
+        [{"Description":"Direct Commission","Amount":40.00},{"Description":"Weekly Team Bonus","Amount":300.0},{"Description":"Personal Sales Bonus 2","Amount":200.0}]
+    },
+    {"CustomerId":12345,
+      "HplId":"HPL00002",
+      "PeriodType":10,
+      "PeriodDesciption":"Week 32 2018",
+      "Bonuses":
+        [{"Description":"Direct Commission","Amount":20.00},{"Description":"Weekly Team Bonus","Amount":400.0},{"Description":"Personal Sales Bonus 2","Amount":300.0}]
+    }]
+}**********
+2018-09-25 18:26:26**********{
+    "Date": "2018-08-04T00:00:00.000",
+    "NotificationType": 1,
+    "NofiticationDescription": "Payment reminder",
+    "Customers": [
+      {
+        "OrderId": 298096127,
+        "CustomerId": 71804283,
+        "HplId": "HPL00123495",
+        "CustomerName": "test test",
+        "OrderTypeId": 4,
+        "OrderType": "Recurring Order",
+        "OrderStatus": "CC Pending",
+        "OrderDate": "2018-08-20T15:20:00.000",
+        "Amount": 114.98
+      },
+      {
+        "OrderId": 8901234,
+        "CustomerId": 12334356,
+        "HplId": "HPL00005",
+        "CustomerName": "Test2",
+        "OrderTypeId": 5,
+        "OrderType": "Import",
+        "OrderStatus": "CC Pending",
+        "OrderDate": "2018-08-25T15:20:00",
+        "Amount": 200.00
+      }
+    ]
+}**********
+2018-09-25 18:27:02**********{
+	"Messages": [{
+		"OrderId": 298192637,
+		"CustomerId": 71718231,
+		"CustomerName": "yuping XUE",
+		"HplId": "HPL00000212",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-09-12T08:32:44Z",
+		"Amount": 114.9800
+	}],
+	"Date": "2018-09-14T02:37:02.5494516Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-09-25 18:28:58**********{
+	"Messages": [{
+		"OrderId": 298192637,
+		"CustomerId": 71718231,
+		"CustomerName": "yuping XUE",
+		"HplId": "HPL00000181",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-09-12T08:32:44Z",
+		"Amount": 114.9800
+	}],
+	"Date": "2018-09-14T02:37:02.5494516Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-09-25 18:29:14**********{
+	"Messages": [{
+		"OrderId": 298192637,
+		"CustomerId": 71718231,
+		"CustomerName": "yuping XUE",
+		"HplId": "HPL00000181",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-09-12T08:32:44Z",
+		"Amount": 114.9800
+	}],
+	"Date": "2018-09-14T02:37:02.5494516Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-09-25 18:29:30**********{
+	"Messages": [{
+		"OrderId": 298192637,
+		"CustomerId": 71718231,
+		"CustomerName": "yuping XUE",
+		"HplId": "HPL00000181",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-09-12T08:32:44Z",
+		"Amount": 114.9800
+	}],
+	"Date": "2018-09-14T02:37:02.5494516Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-09-25 18:30:21**********{
+	"Messages": [{
+		"OrderId": 298192637,
+		"CustomerId": 71718231,
+		"CustomerName": "yuping XUE",
+		"HplId": "HPL00000181",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-09-12T08:32:44Z",
+		"Amount": 114.9800
+	}],
+	"Date": "2018-09-14T02:37:02.5494516Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-09-25 18:30:38**********{
+	"Messages": [{
+		"OrderId": 298192637,
+		"CustomerId": 71718231,
+		"CustomerName": "yuping XUE",
+		"HplId": "HPL00000181",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-09-12T08:32:44Z",
+		"Amount": 114.9800
+	}],
+	"Date": "2018-09-14T02:37:02.5494516Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-09-25 18:31:12**********{
+	"Messages": [{
+		"OrderId": 298192637,
+		"CustomerId": 71718231,
+		"CustomerName": "yuping XUE",
+		"HplId": "HPL00000181",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-09-12T08:32:44Z",
+		"Amount": 114.9800
+	}],
+	"Date": "2018-09-14T02:37:02.5494516Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-09-25 18:31:26**********{
+	"Messages": [{
+		"OrderId": 298192637,
+		"CustomerId": 71718231,
+		"CustomerName": "yuping XUE",
+		"HplId": "HPL00000181",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-09-12T08:32:44Z",
+		"Amount": 114.9800
+	}],
+	"Date": "2018-09-14T02:37:02.5494516Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-09-25 18:31:34**********{
+	"Messages": [{
+		"OrderId": 298192637,
+		"CustomerId": 71718231,
+		"CustomerName": "yuping XUE",
+		"HplId": "HPL00000181",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-09-12T08:32:44Z",
+		"Amount": 114.9800
+	}],
+	"Date": "2018-09-14T02:37:02.5494516Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-09-26 10:52:15**********{
+	"Messages": [{
+		"OrderId": 298192637,
+		"CustomerId": 71718231,
+		"CustomerName": "yuping XUE",
+		"HplId": "HPL00000181",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-09-12T08:32:44Z",
+		"Amount": 114.9800
+	}],
+	"Date": "2018-09-14T02:37:02.5494516Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********

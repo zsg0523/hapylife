@@ -96,6 +96,23 @@ class usa
 		return $result;
 	}
 
+	/**
+	* Create Payment
+	**/ 
+	public function createPayment($happyLifeID,$wvOrderID,$paymentDate){
+		$key  = $this->key;
+		$url  = $this->url;
+		$data = array(
+			'HapyLifeID'  =>$happyLifeID,
+			'WVOrderID' => $wvOrderID,
+            'PaymentDate ' =>$paymentDate,
+		);
+		$data    = json_encode($data);
+		$sendUrl = $url."/api/Hpl/CreatePayment?key=".$key;
+		$result  = post_json_data($sendUrl,$data);
+		return $result;
+	}
+
 
 
 
