@@ -13,7 +13,10 @@ class ChangeController extends HomeBaseController{
         // 用户信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
         // 新密码
-        $new_psd['PassWord'] = md5(trim(I('post.passwords')));
+        $new_psd = array(
+            'PassWord' => md5(trim(I('post.passwords'))),
+            'WvPass' => trim(I('post.passwords')),
+        );
 
         $phoneNumber =I('post.phoneNumber');
         $code        =I('post.code');
@@ -170,8 +173,8 @@ class ChangeController extends HomeBaseController{
         $userinfo = M('User')->where(array('customerid'=>$customerid))->find();
 
         $new_array = array(
-                    'PassWord' => md5(trim(I('post.passwords'))),
-                    'WvPass' => trim(I('post.passwords'))
+            'PassWord' => md5(trim(I('post.passwords'))),
+            'WvPass' => trim(I('post.passwords'))
         );
 
         $phoneNumber =I('post.phoneNumber');
