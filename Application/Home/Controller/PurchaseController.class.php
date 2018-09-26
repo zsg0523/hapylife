@@ -663,7 +663,7 @@ class PurchaseController extends HomeBaseController{
                     $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
                     if($upreceipt){
                         if($sub == 0){
-                            $updateReceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->setfield('paytime',time());
+                            $updateReceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->setfield('ir_paytime',time());
                             if($order['ir_ordertype'] == 4){
                                 // 添加通用券
                                 $product = M('Receipt')
