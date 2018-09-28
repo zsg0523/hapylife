@@ -388,14 +388,22 @@ class PurchaseController extends HomeBaseController{
         // }
         if($address){
             $ia_name     = $address['ia_name'];    
-            $phone       = $address['ia_phone'];    
-            $shopaddress = $address['ia_province'].$address['ia_town'].$address['ia_region'].$address['ia_road'];    
-        }else if($userinfo['shopaddress1']){
+            $phone       = $address['ia_phone'];
+            $ia_province = $address['ia_province'];
+            $ia_town     = $address['ia_town'];
+            $ia_region   = $address['ia_region'];
+            $shopaddress = $address['ia_road'];    
+        }else{
             $ia_name     = $userinfo['lastname'].$userinfo['firstname'];
             $phone       = $userinfo['phone'];
-            $shopaddress = $userinfo['shopaddress1'];
+            $ia_province = $userinfo['shopprovince'];
+            $ia_town     = $userinfo['shopcity'];
+            $ia_region   = $userinfo['shoparea'];
+            $shopaddress = $userinfo['shopaddress1'];    
         }
-        $ia_name  = $userinfo['lastname'].$userinfo['firstname'];
+        if(empty($ia_province) || empty($ia_town) || empty($ia_region) || empty($shopaddress)){
+            $this->error('请填写默认收货地址',U('Home/Purchase/addressList'));
+        }
         $order = array(
             //订单编号
             'ir_receiptnum' =>$order_num,
@@ -411,6 +419,12 @@ class PurchaseController extends HomeBaseController{
             'ia_name'       =>$ia_name,
             //收货人电话
             'ia_phone'      =>$phone,
+            // 省，州
+            'ia_province' => $ia_province,
+            // 市
+            'ia_city' => $ia_town,
+            // 区
+            'ia_area' => $ia_region,
             //收货地址
             'ia_address'    =>$shopaddress,
             //订单总商品数量
@@ -463,7 +477,7 @@ class PurchaseController extends HomeBaseController{
                     $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
                     break;
                 case '4':
-                    $this->redirect('Home/Pay/choosePay2',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
+                    $this->redirect('Home/Pay/choosePay1',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
                     break;
                 case '5':
                     if($isdt){
@@ -649,7 +663,7 @@ class PurchaseController extends HomeBaseController{
                     $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
                     if($upreceipt){
                         if($sub == 0){
-                            $updateReceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->setfield('paytime',time());
+                            $updateReceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->setfield('ir_paytime',time());
                             if($order['ir_ordertype'] == 4){
                                 // 添加通用券
                                 $product = M('Receipt')
@@ -1438,63 +1452,67 @@ class PurchaseController extends HomeBaseController{
             $bank       = M('Bank')->where(array('iuid'=>$iuid,'isshow'=>1))->find();
 
             if($tohu_nickname === $userinfo['customerid']){
-                //提现
-                $iuid       = $userinfo['iuid'];
-                $unpoint    = $point;
-                $iu_point   = $userinfo['iu_point'];
-                $iu_unpoint = $userinfo['iu_unpoint'];
-                //更新用户积分
-                $point      = bcsub($iu_point,$unpoint,4);
-                $newunpoint = bcadd($iu_unpoint,$unpoint,4);
-                
-                if($point<0){
-                    $this->error('积分余额不足',U('Home/Purchase/myPoint'));
-                }
-                $map     = array(
-                            'iuid'      =>$userinfo['iuid'],
-                            'iu_point'  =>$point,
-                            'iu_unpoint'=>$newunpoint
-                        );
-                $feepoint =$unpoint*0.05;
-                $realpoint=bcsub($unpoint,$feepoint,4);
-                //生成提现订单
-                $pointNo = 'EP'.date('YmdHis').rand(10000, 99999);
-                //更新用户积分
-                $save   = M('User')->save($map);
-                if($save){
-                    $content = '单号:'.$pointNo.',提取积分:'.$unpoint.',剩余积分:'.$point;
-                    $tmp     = array(
-                        'iuid'           =>$userinfo['iuid'],
-                        'pointNo'        =>$pointNo,
-                        'hu_username'    =>$userinfo['lastname'].$userinfo['firstname'],
-                        'hu_nickname'    =>$userinfo['customerid'],
-                        'iu_bank'        =>$bank['bankname'],
-                        'iu_bankbranch'  =>$bank['bankbranch'],
-                        'iu_bankaccount' =>$bank['bankaccount'],
-                        'iu_bankprovince'=>$bank['bankprovince'],
-                        'iu_bankcity'    =>$bank['bankregion'],
-                        'iu_bankuser'    =>$bank['iu_name'],
-                        'getpoint'       =>$unpoint,
-                        'feepoint'       =>$feepoint,
-                        'realpoint'      =>$realpoint,
-                        'unpoint'        =>$newunpoint,
-                        'leftpoint'      =>$point,
-                        'date'           =>date('Y-m-d H:i:s'),
-                        'status'         =>0,
-                        'pointtype'      =>6,
-                        'whichApp'       =>$whichApp,
-                        'send'           =>$userinfo['customerid'],
-                        'received'       =>'系统冻结',
-                        'content'        =>$userinfo['customerid'].'在'.date('Y-m-d H:i:s').'时,提现冻结'.$unpoint.'EP到'.'系统冻结'.',剩EP余额'.$point
-                    );
-                    $addtmp = M('Getpoint')->add($tmp);
-                    //写入日志记录
-                    $add     = addLog($iuid,$content,$action=0,$type=1);
-                    if($add && $addtmp){
-                        $this->success('提现成功',U('Home/Purchase/myPoint'));
-                    }else{
-                        $this->error('提现失败',U('Home/Purchase/myPoint'));
+                if(!empty($bank)){
+                    //提现
+                    $iuid       = $userinfo['iuid'];
+                    $unpoint    = $point;
+                    $iu_point   = $userinfo['iu_point'];
+                    $iu_unpoint = $userinfo['iu_unpoint'];
+                    //更新用户积分
+                    $point      = bcsub($iu_point,$unpoint,4);
+                    $newunpoint = bcadd($iu_unpoint,$unpoint,4);
+                    
+                    if($point<0){
+                        $this->error('积分余额不足',U('Home/Purchase/myPoint'));
                     }
+                    $map     = array(
+                                'iuid'      =>$userinfo['iuid'],
+                                'iu_point'  =>$point,
+                                'iu_unpoint'=>$newunpoint
+                            );
+                    $feepoint =$unpoint*0.05;
+                    $realpoint=bcsub($unpoint,$feepoint,4);
+                    //生成提现订单
+                    $pointNo = 'EP'.date('YmdHis').rand(10000, 99999);
+                    //更新用户积分
+                    $save   = M('User')->save($map);
+                    if($save){
+                        $content = '单号:'.$pointNo.',提取积分:'.$unpoint.',剩余积分:'.$point;
+                        $tmp     = array(
+                            'iuid'           =>$userinfo['iuid'],
+                            'pointNo'        =>$pointNo,
+                            'hu_username'    =>$userinfo['lastname'].$userinfo['firstname'],
+                            'hu_nickname'    =>$userinfo['customerid'],
+                            'iu_bank'        =>$bank['bankname'],
+                            'iu_bankbranch'  =>$bank['bankbranch'],
+                            'iu_bankaccount' =>$bank['bankaccount'],
+                            'iu_bankprovince'=>$bank['bankprovince'],
+                            'iu_bankcity'    =>$bank['bankregion'],
+                            'iu_bankuser'    =>$bank['iu_name'],
+                            'getpoint'       =>$unpoint,
+                            'feepoint'       =>$feepoint,
+                            'realpoint'      =>$realpoint,
+                            'unpoint'        =>$newunpoint,
+                            'leftpoint'      =>$point,
+                            'date'           =>date('Y-m-d H:i:s'),
+                            'status'         =>0,
+                            'pointtype'      =>6,
+                            'whichApp'       =>$whichApp,
+                            'send'           =>$userinfo['customerid'],
+                            'received'       =>'系统冻结',
+                            'content'        =>$userinfo['customerid'].'在'.date('Y-m-d H:i:s').'时,提现冻结'.$unpoint.'EP到'.'系统冻结'.',剩EP余额'.$point
+                        );
+                        $addtmp = M('Getpoint')->add($tmp);
+                        //写入日志记录
+                        $add     = addLog($iuid,$content,$action=0,$type=1);
+                        if($add && $addtmp){
+                            $this->success('提现成功',U('Home/Purchase/myPoint'));
+                        }else{
+                            $this->error('提现失败',U('Home/Purchase/myPoint'));
+                        }
+                    }
+                }else{
+                   $this->error('请填写默认银行地址',U('Home/Purchase/myPoint')); 
                 }
             }else{
                 $leftpoint_user  = bcsub($userinfo['iu_point'],$point,4);
@@ -1671,4 +1689,27 @@ class PurchaseController extends HomeBaseController{
         $this->display();
     }
 
+    /**
+    * 修改信息(显示页面)
+    **/ 
+    public function editProfile(){
+        $iuid = $_SESSION['user']['id'];
+        $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
+        foreach ($mape as $key => $value) {
+            $code[$key]         = $value;
+            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
+                $code[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+            }else{
+                $code[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+            }
+        }
+
+        $data = M('User')->where(array('iuid'=>$iuid))->find();
+        $assign = array(
+                    'code' => $code,
+                    'data' => $data
+                );
+        $this->assign($assign);
+        $this->display();
+    }
 }

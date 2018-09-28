@@ -1,0 +1,88 @@
+<!DOCTYPE html>  
+<html lang="zh-cn">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">  
+    <title>修改密码</title>  
+    <link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="__PUBLIC_CSS__/common.css" />-->
+    <style type="text/css">
+    	html{background-color: #EEEEF0;}
+    	#body{background-color: #EEEEF0;}
+    	.main{width:100%;min-height:150px;margin:50px auto;background-color: #fff;padding-top: 10px;}	
+    	.commonHead{width:100%;position: fixed;top: 0;left: 0;z-index: 20;}
+    	.form-group{width: 100%;min-height: 50px;margin-top: 5px;display: block;}
+    	.tc{text-align: center;}
+    	.main>a{width: 96%;height: 40px;line-height: 40px; margin: auto;border-radius: 5px;display: block;margin-top: 10px;background: #2490ed;font-size: 15px;color: #fff;margin-left: 2%;}
+    	.getCode:hover{cursor: pointer;}
+		.btn-info{background-color: #439DFE;}
+		#basic-addon1{background-color: #439DFE;color:#fff;}
+    	
+    	@media screen and (min-width:1200px) {
+			.main{width: 1200px;}
+			
+		}
+    </style>
+</head>  
+<body id="body">  
+    <div class="commonHead">
+		<include file="Common/commonHead1" />
+	</div>
+    <div class="main">
+    	<h4 class="tc">请输入"HPL"开头的账号</h4>
+    	<div class="form-group"  style="margin-bottom: 0px;">
+			<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label">账号:</label>
+			<div class="col-lg-10 col-md-10 col-xs-8">
+				<input type="text" class="form-control" id="CustomerID"  name="CustomerID" placeholder="请输入账号"  />
+			</div>
+		</div>
+		
+        <a class="tc" onclick='checkAccount();'>下一步</a>                            
+        
+    </div>  
+    
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>  
+	<script type="text/javascript">
+		   
+	$(document).ready(function(){
+   		changeCommonHead('重置密码');
+	});
+	function back(){
+    	window.location.href ="{:U('Home/Index/login')}";
+	}
+
+	function checkAccount(){
+		var CustomerID=$('input[name="CustomerID"]').val();
+		if (CustomerID!='') {
+           $.ajax({
+				type:"post",
+				url:"{:U('Home/Change/checkAccount')}",
+				async:true, 
+				dataType: 'json',
+				data:{
+					CustomerID:CustomerID,
+				},
+				success:function(ret){
+    				if(ret.status==1){
+    					console.log(ret);
+    					window.location.href ="{:U('Home/Change/resetPassword/customerid/"+ret.customerid+"/acnumber/"+ret.acnumber+"/phone/"+ret.phone+"')}";
+    				}else if(ret.status==2){
+    					alert('请输入"HPL"开头的账号!');
+    				}else{
+    					alert('账号不存在！！!');
+    				}
+				},
+				error:function(){
+				}
+			});	
+		       
+				
+	
+		} else{
+			alert('请输入"HPL"开头的账号!');
+		}            
+	}
+	</script>  
+</body>  
+</html>  

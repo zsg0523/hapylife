@@ -13,13 +13,6 @@ class HapylifeAddController extends HomeBaseController{
      * @param  [type] $serial     [description]
      * @param  [type] $amount     [description]
      * @return [type]             [description]
-     * 
-        [
-    {"CustomerId":"HPL00003","Amount":"250.00","PeriodTypeId":"10","PeriodDescription":"Week 32 2018","BonusDescription":"Direct Commission"},
-    {"CustomerId":"HPL00003","Amount":"250.00","PeriodTypeId":"10","PeriodDescription":"Week 32 2018","BonusDescription":"Direct Commission"},            
-    {"CustomerId":"HPL00003","Amount":"250.00","PeriodTypeId":"10","PeriodDescription":"Week 32 2018","BonusDescription":"Direct Commission"},
-    {"CustomerId":"HPL00003","Amount":"250.00","PeriodTypeId":"10","PeriodDescription":"Week 32 2018","BonusDescription":"Direct Commission"}
-]
      */
     public function wvBonus(){
         $jsonStr = file_get_contents("php://input");
@@ -29,9 +22,20 @@ class HapylifeAddController extends HomeBaseController{
         //开启事务
         M('wvBonus')->startTrans();
         $catch_result = true;
-        try {
+        //数据不为空
+        if(!isset($data['Messages'])){
+            $sample = array(
+                        'code'=> 400,
+                        'info'=>'false',
+                        'data'=>array(
+                            'message'=>'Bad Request'
+                        )
+                );
+            $this->ajaxreturn($sample);
+        }else{
+            try {
             //异常处理
-            foreach($data as $key=>$value){
+            foreach($data['Messages'] as $key=>$value){
                 //添加bonus记录
                 $value['Bonuses'] = json_encode($value['Bonuses']);
                 $res = M('wvBonus')->add($value);
@@ -69,20 +73,17 @@ class HapylifeAddController extends HomeBaseController{
                 );
             $this->ajaxreturn($sample);
         }
+        }
+        
     }
 
     /**
-     * [wvNotificication description]
-     * @param  [type] $customerid [description]
-     * @param  [type] $date       [description]
-     * @param  [type] $content    [description]
-     * @return [type]             [description]
-     * [
-        {"Customers":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
-        {"Customers":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
-        {"Customers":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"},
-        {"Customers":["HPL00001","HPL00002"],"Date":"2018-08-04T00:00:00.000","NofiticationDescription":"请今天购买月费","NotificationType":"2"}
-        ]
+     * [wvNotification 推送通知]
+     * @param  [type] $Date                    [推送通知日期]
+     * @param  [type] $NotificationType        [通知类型 1paymentReminder 2Get4Qualification]
+     * @param  [type] $NofiticationDescription [通知类型描述]
+     * @param  [type] $Customers               [会员信息]
+     * @return [type]                          [description]
      */
     public function wvNotification(){
         $jsonStr = file_get_contents("php://input");
@@ -90,19 +91,50 @@ class HapylifeAddController extends HomeBaseController{
         $log     = addUsaLog($jsonStr);
         $data    = json_decode($jsonStr,true);
         //开启事务
-        M('wvBonus')->startTrans();
+        M('wvNotification')->startTrans();
+        // p($data);die;
         $catch_result = true;
         try {
             //异常处理
-            foreach($data['Customers'] as $key=>$value){
+            foreach($data['Messages'] as $key=>$value){
                 //添加bonus记录
-                $value['Date']                    = $data['Date'];
-                $value['NotificationType']        = $data['NotificationType'];
-                $value['NofiticationDescription'] = $data['NofiticationDescription'];
-                $value['Customers']               = json_encode($value);
-                $res = M('wvNotification')->add($value);
+                $map['Date']                    = $data['Date'];
+                $map['NotificationType']        = $data['NotificationType'];
+                $map['NotificationDescription'] = $data['NotificationDescription'];
+                $map['Messages']                = json_encode($value);
+                $res = M('wvNotification')->add($map);
                 if(!$res){
                     E("错误信息");
+                }else{
+                    $userinfo = M('User')->where(array('customerid'=>$value['HplId']))->find();
+                    // 收信人名称
+                    $addressee = $userinfo['lastname'].$userinfo['firstname'];
+                    switch ($data['NotificationType']) {
+                        case '1':
+                            $time = date('Y-m-d H:i:s',strtotime($data['Date']));
+                            $endTime = date('Y-m-d H:i:s',strtotime($data['Date'])+5*24*3600);
+                            // 发送短信提示
+                            $templateId ='183054';
+                            $params     = array($time,$endTime);
+                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                            p($sms);die;
+                            if($sms['errmsg'] == 'OK'){
+                                $content = '您的月费将在'.$time.'到期，请在'.$endTime.'前完成续费，否则将无法登陆dreamtrip.com。';
+                                $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'续费通知',$content,$userinfo['customerid']);
+                                p($result);die;
+                            }
+                            break;
+                        case '2':
+                            // 发送短信提示
+                            $templateId ='183054';
+                            $params     = array($time,$endTime);
+                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                            if($sms['errmsg'] == 'OK'){
+                                $content = '恭喜您，您已成功推荐4名好友加入成为您的下线，现';
+                                $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'免月费通知',$content,$userinfo['customerid']);
+                            }
+                            break;
+                    }
                 }
             }
         } catch (\Exception $e) {
@@ -112,7 +144,7 @@ class HapylifeAddController extends HomeBaseController{
 
         if($catch_result === false){
             //事务回滚
-            M('wvBonus')->rollback();
+            M('wvNotification')->rollback();
             //添加失败
             $sample = array(
                         'code'=> 400,
@@ -124,7 +156,7 @@ class HapylifeAddController extends HomeBaseController{
             $this->ajaxreturn($sample);
         }else{
             //事务提交
-            M('wvBonus')->commit();
+            M('wvNotification')->commit();
             //添加成功
             $sample = array(
                         'code'=> 200,
@@ -379,39 +411,6 @@ class HapylifeAddController extends HomeBaseController{
     }
 
 
-
-
-    public function addDt(){
-        $user = M('User')->select();
-        foreach ($user as $key => $value) {
-            if(strlen($value['customerid'])!=8){
-                $iu_dt= 180;
-                $bcsub= bcadd($value['iu_dt'],$iu_dt,2);
-                $save = M('User')->where(array('iuid'=>$value['iuid']))->setfield('iu_dt',$bcsub);
-                if($save){
-                    $dtNo = 'DT'.date('YmdHis').rand(10000, 99999);
-                    $tmp     = array(
-                        'iuid'           =>$value['iuid'],
-                        'pointNo'        =>$dtNo,
-                        'hu_username'    =>$value['lastname'].$value['firstname'],
-                        'hu_nickname'    =>$value['customerid'],
-                        'getdt'          =>$iu_dt,
-                        'leftdt'         =>$bcsub,
-                        'date'           =>date('Y-m-d H:i:s'),
-                        'status'         =>2,
-                        'dttype'         =>2,
-                        'content'        =>'在'.date('Y-m-d H:i:s').'时系统增加'.$iu_dt.'DT到'.'您的账户'.',剩DT余额'.$bcsub.',流水号为:'.$dtNo,
-                        'opename'        =>'系统',
-                        'send'           =>'系统',
-                        'received'       =>$value['customerid']
-                    );
-                    $add     = D('Getdt')->add($tmp);
-                    $num++;
-                }
-            }
-        }
-        p($num);die;
-    }
 
 
 

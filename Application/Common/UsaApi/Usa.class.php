@@ -54,7 +54,7 @@ class usa
 	/**
 	* CREATE CUSTOMER
 	**/
-	public function createCustomer($happyLifeID,$password,$sponsorID,$firstName_EN,$lastName_EN,$emailAddress,$phone,$products='RBS,DTP',$dob='2000-1-1')
+	public function createCustomer($happyLifeID,$password,$sponsorID,$firstName_EN,$lastName_EN,$emailAddress,$phone,$products,$dob='2000-1-1')
 	{
 		// ='RBS,DTP,SIGNUP4,SIGNUP5'
 		$key  = $this->key;
@@ -74,12 +74,44 @@ class usa
 		$data    = json_encode($data);
 		$sendUrl = $url."/api/Hpl/CreateCustomer";
 		$result  = post_json_data($sendUrl,$data);
-		$result = json_decode($result['result'],true);
-		$result['error']['happyLifeID'] = $map['happyLifeID'];
-		$result = json_encode($result);
 		return $result;
 	}
 
+	/**
+	* Update Customer
+	**/ 
+	public function updateCustomer($happyLifeID,$Password,$emailAddress,$phone,$placementPreference){
+		$key  = $this->key;
+		$url  = $this->url;
+		$data = array(
+			'HappyLifeID'  =>$happyLifeID,
+			'Password' => $Password,
+            'EMailAddress' =>$emailAddress,
+            'Phone'        =>$phone,
+            'PlacementPreference' => $placementPreference,
+		);
+		$data    = json_encode($data);
+		$sendUrl = $url."/api/Hpl/UpdateCustomer?key=".$key;
+		$result  = post_json_data($sendUrl,$data);
+		return $result;
+	}
+
+	/**
+	* Create Payment
+	**/ 
+	public function createPayment($happyLifeID,$wvOrderID,$paymentDate){
+		$key  = $this->key;
+		$url  = $this->url;
+		$data = array(
+			'HapyLifeID'  =>$happyLifeID,
+			'WVOrderID' => $wvOrderID,
+            'PaymentDate ' =>$paymentDate,
+		);
+		$data    = json_encode($data);
+		$sendUrl = $url."/api/Hpl/CreatePayment?key=".$key;
+		$result  = post_json_data($sendUrl,$data);
+		return $result;
+	}
 
 
 

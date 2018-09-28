@@ -56,6 +56,7 @@
 								<elseif condition="$v['ip_type'] eq 3"/>月费
 								<elseif condition="$v['ip_type'] eq 4"/>通用券	
 								<elseif condition="$v['ip_type'] eq 5"/>消DT	
+								<elseif condition="$v['ip_type'] eq 6"/>礼品
 								</if>
 							</td>
 							<td>{$v['ip_bh']}</td>
@@ -75,7 +76,7 @@
 							<td><a href="{:U('Admin/Hapylife/status_product',array('id'=>$v['ipid'],'is_pull'=>$v['is_pull']?0:1))}">{$v['is_pull']?上架:否}</a></td>
 							<td>{$v['ispullamount']?是:否}</td>
 							<td>
-								<a href="javascript:;" id="editid" productId="{$v['ipid']}" getcoupon = "{$v['get_coupon']}"  productName="{$v['ip_name_zh']}" productBh="{$v['ip_bh']}" productPrice="{$v['ip_price_rmb']}" productOne="{$v['ip_oneprice']}"  productDesc="{$v['ip_desc_zh']}" productPoint="{$v['ip_point']}" categoryId="{$v['id']}" iptype="{$v['ip_type']}" ispullamount="{$v['ispullamount']}" ipsprice="{$v['ip_sprice']}" ipdt="{$v['ip_dt']}" onclick="edit(this)">修改</a> |
+								<a href="javascript:;" id="editid" productId="{$v['ipid']}" getcoupon="{$v['get_coupon']}" productName="{$v['ip_name_zh']}" productBh="{$v['ip_bh']}" productPrice="{$v['ip_price_rmb']}" productOne="{$v['ip_oneprice']}" productDesc="{$v['ip_desc_zh']}" productPoint="{$v['ip_point']}" categoryId="{$v['id']}" iptype="{$v['ip_type']}" ispullamount="{$v['ispullamount']}" ipsprice="{$v['ip_sprice']}" ipdt="{$v['ip_dt']}" traverseNum ="{$v['traverse_num']}" onclick="edit(this)">修改</a> |
 								<a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Hapylife/delete_product',array('id'=>$v['ipid']))}'">删除</a>
 							</td>
 						</tr>
@@ -135,6 +136,7 @@
 	                                    <option value="3">月费</option>
 	                                    <option value="4">通用券</option>
 	                                    <option value="5">消DT</option>
+	                                    <option value="6">礼品</option>
 	                                </select>
                             	</td>
 							</tr>
@@ -316,7 +318,7 @@
 									<foreach name="CouponGroups['data']" item="v">
                                         <label style="width: 100%;">
                                             <span id="checkBoxGid[{$v['gid']}]">{$v['c_name']}</span>
-                                            <input type="checkbox" name="gidArr1[]" value="{$v['gid']},{$v['number']}" >
+                                            <input type="checkbox" name="gidArr1[]" value="{$v['gid']}" >
                                             <input type="number" name="nogidnumArr1[]" placeholder="请输入券数量"/>
                                         </label>
                                         &nbsp;
@@ -363,9 +365,11 @@
 		var ipsprice=$(obj).attr('ipsprice');
 		var ipdt=$(obj).attr('ipdt');
 		getcoupon='';
+		traverseNum='';
 
 		getcoupon=$(obj).attr('getcoupon');
-//		console.log(getcoupon);
+		traverseNum=$(obj).attr('traverseNum');
+		console.log(getcoupon+traverseNum);
 		$("input[name='id']").val(productId);
 		$("input[name='ip_name_zh']").val(productName);
 		$("input[name='ip_bh']").val(productBh);
@@ -412,6 +416,8 @@
 	}
 	$('#bjy-edit').on('show.bs.modal', function () {
         var gidArr = getcoupon.split(",");
+        var couponnum=traverseNum.split(",");
+        console.log(couponnum+gidArr);
         var checkboxgid=$("input[name='gidArr1[]']");
         var inputgidnum=$("input[name='nogidnumArr1[]']");
         for(var i=0;i<checkboxgid.length;i++){
@@ -425,7 +431,7 @@
                 if(gidArr[i]==gidvalue[0]){
                    	checkboxgid[j].checked='checked';
                    	checkboxgid[j].parentNode.lastChild.previousSibling.style.display='inline';
-                   	checkboxgid[j].parentNode.lastChild.previousSibling.value=gidvalue[1];
+                   	checkboxgid[j].parentNode.lastChild.previousSibling.value=couponnum[i];
                		checkboxgid[j].parentNode.lastChild.previousSibling.name='gidnumArr1[]';
 //                 	console.log(checkboxgid[j].parentNode.lastChild.previousSibling);
                 }

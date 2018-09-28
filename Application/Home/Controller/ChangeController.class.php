@@ -10,12 +10,13 @@ class ChangeController extends HomeBaseController{
     **/ 
     public function changePsd(){
         $iuid = $_SESSION['user']['id'];
-        // 原密码
-        $psd = md5(trim(I('post.password')));
         // 用户信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
         // 新密码
-        $new_psd['PassWord'] = md5(trim(I('post.passwords')));
+        $new_psd = array(
+            'PassWord' => md5(trim(I('post.passwords'))),
+            'WvPass' => trim(I('post.passwords')),
+        );
 
         $phoneNumber =I('post.phoneNumber');
         $code        =I('post.code');
@@ -30,8 +31,16 @@ class ChangeController extends HomeBaseController{
                 $result = M('User')->where(array('iuid'=>$iuid))->save($new_psd);
                 if($result){
                     // 修改成功
-                    $sample['status'] = 1;
-                    $this->ajaxreturn($sample);
+                    // 发送给usa,更新usa数据
+                    $usa    = new \Common\UsaApi\Usa;
+                    $res = $usa->updateCustomer($userinfo['customerid'],I('post.passwords'));
+                    if($res['code'] == 200){
+                        $sample['status'] = 1;
+                        $this->ajaxreturn($sample);
+                    }else{
+                        $sample['status'] = 0;
+                        $this->ajaxreturn($sample);
+                    }
                 }else{
                     // 修改失败
                     $sample['status'] = 0;
@@ -107,6 +116,99 @@ class ChangeController extends HomeBaseController{
                 $this->ajaxreturn($data);
             }
 
+        }
+    }
+
+    /**
+    * 修改wv用户信息
+    **/ 
+    public function updateCustomer(){
+        $iuid = $_SESSION['user']['id'];
+        $data = I('post.');
+        // p($data);die;
+        // 修改系统数据
+        $saveData = M('User')->where(array('iuid'=>$iuid))->save($data);
+        if($saveData){
+            //更新usa数据
+            $usa    = new \Common\UsaApi\Usa;
+            $result = $usa->updateCustomer($data['happyLifeID'],$data['password'],$data['Email'],$data['Phone'],$data['PlacementPreference']);
+            if($result['code'] == 200){
+                $this->success('修改成功',U('Home/Purchase/myProfile'));
+            }else{
+                $this->error('修改失败',U('Home/Purchase/editProfile'));
+            }
+        }
+    }
+
+    public function forgot(){
+        $this->display();
+    }
+
+    /**
+    * 判断账号是否HPL开头
+    **/ 
+    public function checkAccount(){
+        $CustomerID = strtoupper(I('post.CustomerID'));
+        if(substr($CustomerID,0,3) == 'HPL'){
+            $data = M('User')->where(array('customerid'=>$CustomerID))->find();
+            if($data){
+                $data['status'] = 1;
+                $this->ajaxreturn($data);
+            }else{
+                $data['status'] = 0;
+                $this->ajaxreturn($data);
+            }
+        }else{
+            $data['status'] = 2;
+            $this->ajaxreturn($data);
+        }
+    }
+
+    /**
+    * 忘记密码
+    **/ 
+    public function forgotPsd(){
+        $customerid = I('post.customerid');
+        // 用户信息
+        $userinfo = M('User')->where(array('customerid'=>$customerid))->find();
+
+        $new_array = array(
+            'PassWord' => md5(trim(I('post.passwords'))),
+            'WvPass' => trim(I('post.passwords'))
+        );
+
+        $phoneNumber =I('post.phoneNumber');
+        $code        =I('post.code');
+        $acnumber    =I('post.acnumber');
+        $data        =D('Smscode')->where(array('phone'=>$phoneNumber,'acnumber'=>$acnumber))->order('nsid desc')->find();
+        $time        =time()-strtotime($data['date']);
+        if($time>60){
+            $this->error('验证码失效,请重新发送');
+        }else{
+            if($data && $data['code']==$code){
+                $result = M('User')->where(array('customerid'=>$customerid))->save($new_array);
+                if($result){
+                    // 修改成功
+                    // 发送给usa,更新usa数据
+                    $usa    = new \Common\UsaApi\Usa;
+                    $res = $usa->updateCustomer($userinfo['customerid'],I('post.passwords'));
+                    if($res['code'] == 200){
+                        $sample['status'] = 1;
+                        $this->ajaxreturn($sample);
+                    }else{
+                        $sample['status'] = 0;
+                        $this->ajaxreturn($sample);
+                    }
+                }else{
+                    // 修改失败
+                    $sample['status'] = 0;
+                    $this->ajaxreturn($sample);
+                }
+            }else{
+                // 验证码错误
+                $sample['status'] = 2;
+                $this->ajaxreturn($sample);
+            }
         }
     }
 }

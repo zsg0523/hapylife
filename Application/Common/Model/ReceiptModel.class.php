@@ -105,7 +105,7 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-                $list[$key]['productno']   = $v['productno'];
+                $list[$key]['productno']   = $v['ip_bh'];
                 $list[$key]['productnams'] = $v['product_name'];
             }
             $list[$key]['productname'] = substr($productname,0,-1);
@@ -117,28 +117,28 @@ class ReceiptModel extends BaseModel{
             foreach ($son as $k => $v) {
                 switch ($v['ir_paytype']) {
                     case '1':
-                        $ir_paytype .= 'IPS'.' /';
-                        $receiptson .= $v['ips_trade_no'].' /';
+                        $ir_paytype .= 'IPS'.'<br/>';
+                        $receiptson .= $v['ips_trade_no'].'<br/>';
                         break;
                     case '2':
-                        $ir_paytype .= '积分'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '积分'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '3':
                         // $ir_paytype .= '积分'.'/';
-                        // $receiptson .= $v['pay_receiptnum'].' /';
+                        // $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '4':
-                        $ir_paytype .= '畅捷'.' /';
-                        $receiptson .= $v['inner_trade_no'].' /';
+                        $ir_paytype .= '畅捷'.'<br/>';
+                        $receiptson .= $v['inner_trade_no'].'<br/>';
                         break;
                     case '5':
-                        $ir_paytype .= '现金'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '现金'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                     case '6':
-                        $ir_paytype .= '接龙易'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '接龙易'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                 }
             }
@@ -205,7 +205,7 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
@@ -267,8 +267,6 @@ class ReceiptModel extends BaseModel{
                 ->limit($page->firstRow.','.$page->listRows)
                 ->select();         
         }
-        // 2018082917465476913/
-        // p($list);
         foreach ($list as $key => $value) {
             $ia_address = '';
             $mape[$key] = $value;
@@ -281,11 +279,10 @@ class ReceiptModel extends BaseModel{
                     ->join('hapylife_product on hapylife_receiptlist.ipid = hapylife_product.ipid')
                     ->where(array('ir_receiptnum'=>$value['ir_receiptnum']))
                     ->select();
-                    // p($arr);
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
@@ -295,7 +292,6 @@ class ReceiptModel extends BaseModel{
                         ->join('hapylife_activation AS a ON r.riuid = a.iuid')
                         ->where(array('r.ir_receiptnum'=>$value['ir_receiptnum']))
                         ->select();
-                        // p($time);
             foreach($time as $v){
                 // $times[$k] = $v['endtime'];
                 $mape[$key]['endtime'] = $v['endtime'];
@@ -303,7 +299,6 @@ class ReceiptModel extends BaseModel{
             // 获取会籍到期时间
             // $mape[$key]['endtime'] = $times[$k];
         }
-        // p($mape);
         $data=array(
             'data'=>$mape,
             'page'=>$page->show()
@@ -364,7 +359,7 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
@@ -441,7 +436,7 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
@@ -453,28 +448,28 @@ class ReceiptModel extends BaseModel{
             foreach ($son as $k => $v) {
                 switch ($v['ir_paytype']) {
                    case '1':
-                        $ir_paytype .= 'IPS'.' /';
-                        $receiptson .= $v['ips_trade_no'].' /';
+                        $ir_paytype .= 'IPS'.'<br/>';
+                        $receiptson .= $v['ips_trade_no'].'<br/>';
                         break;
                     case '2':
-                        $ir_paytype .= '积分'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '积分'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '3':
                         // $ir_paytype .= '积分'.'/';
-                        // $receiptson .= $v['pay_receiptnum'].' /';
+                        // $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '4':
-                        $ir_paytype .= '畅捷'.' /';
-                        $receiptson .= $v['inner_trade_no'].' /';
+                        $ir_paytype .= '畅捷'.'<br/>';
+                        $receiptson .= $v['inner_trade_no'].'<br/>';
                         break;
                     case '5':
-                        $ir_paytype .= '现金'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '现金'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                     case '6':
-                        $ir_paytype .= '接龙易'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '接龙易'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                 }
             }
@@ -536,7 +531,7 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
@@ -548,28 +543,28 @@ class ReceiptModel extends BaseModel{
             foreach ($son as $k => $v) {
                 switch ($v['ir_paytype']) {
                     case '1':
-                        $ir_paytype .= 'IPS'.' /';
-                        $receiptson .= $v['ips_trade_no'].' /';
+                        $ir_paytype .= 'IPS'.'<br/>';
+                        $receiptson .= $v['ips_trade_no'].'<br/>';
                         break;
                     case '2':
-                        $ir_paytype .= '积分'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '积分'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '3':
                         // $ir_paytype .= '积分'.'/';
-                        // $receiptson .= $v['pay_receiptnum'].' /';
+                        // $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '4':
-                        $ir_paytype .= '畅捷'.' /';
-                        $receiptson .= $v['inner_trade_no'].' /';
+                        $ir_paytype .= '畅捷'.'<br/>';
+                        $receiptson .= $v['inner_trade_no'].'<br/>';
                         break;
                     case '5':
-                        $ir_paytype .= '现金'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '现金'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                     case '6':
-                        $ir_paytype .= '接龙易'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '接龙易'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                 }
             }
@@ -662,7 +657,7 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
@@ -674,28 +669,28 @@ class ReceiptModel extends BaseModel{
             foreach ($son as $k => $v) {
                 switch ($v['ir_paytype']) {
                     case '1':
-                        $ir_paytype .= 'IPS'.' /';
-                        $receiptson .= $v['ips_trade_no'].' /';
+                        $ir_paytype .= 'IPS'.'<br/>';
+                        $receiptson .= $v['ips_trade_no'].'<br/>';
                         break;
                     case '2':
-                        $ir_paytype .= '积分'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '积分'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '3':
                         // $ir_paytype .= '积分'.'/';
-                        // $receiptson .= $v['pay_receiptnum'].' /';
+                        // $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '4':
-                        $ir_paytype .= '畅捷'.' /';
-                        $receiptson .= $v['inner_trade_no'].' /';
+                        $ir_paytype .= '畅捷'.'<br/>';
+                        $receiptson .= $v['inner_trade_no'].'<br/>';
                         break;
                     case '5':
-                        $ir_paytype .= '现金'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '现金'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                     case '6':
-                        $ir_paytype .= '接龙易'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '接龙易'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                 }
             }
@@ -745,6 +740,7 @@ class ReceiptModel extends BaseModel{
                 ->order('ir_paytime desc')
                 ->select();         
         }
+        // p($list);die;
         foreach ($list as $key => $value) {
             $ia_address = '';
             $mape[$key] = $value;
@@ -760,9 +756,10 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
             }
+            
             $mape[$key]['productname'] = substr($productname,0,-1);
             $son = D('Receiptson')
                  ->where(array('ir_receiptnum'=>$value['ir_receiptnum'],'status'=>2))
@@ -772,28 +769,28 @@ class ReceiptModel extends BaseModel{
             foreach ($son as $k => $v) {
                 switch ($v['ir_paytype']) {
                     case '1':
-                        $ir_paytype .= 'IPS'.' /';
-                        $receiptson .= $v['ips_trade_no'].' /';
+                        $ir_paytype .= 'IPS'.'<br/>';
+                        $receiptson .= $v['ips_trade_no'].'<br/>';
                         break;
                     case '2':
-                        $ir_paytype .= '积分'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '积分'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '3':
                         // $ir_paytype .= '积分'.'/';
-                        // $receiptson .= $v['pay_receiptnum'].' /';
+                        // $receiptson .= $v['pay_receiptnum'].'<br/>';
                         break;
                     case '4':
-                        $ir_paytype .= '畅捷'.' /';
-                        $receiptson .= $v['inner_trade_no'].' /';
+                        $ir_paytype .= '畅捷'.'<br/>';
+                        $receiptson .= $v['inner_trade_no'].'<br/>';
                         break;
                     case '5':
-                        $ir_paytype .= '现金'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '现金'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                     case '6':
-                        $ir_paytype .= '接龙易'.' /';
-                        $receiptson .= $v['pay_receiptnum'].' /';
+                        $ir_paytype .= '接龙易'.'<br/>';
+                        $receiptson .= $v['pay_receiptnum'].'<br/>';
                             break;
                 }
             }
@@ -813,6 +810,7 @@ class ReceiptModel extends BaseModel{
             // $mape[$key]['endtime'] = $times[$k];
 
         }
+        // p($mape);die;
         $data=array(
             'data'=>$mape,
             );
@@ -858,7 +856,7 @@ class ReceiptModel extends BaseModel{
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
-                $mape[$key]['productno']   = $v['productno'];
+                $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
@@ -917,84 +915,53 @@ class ReceiptModel extends BaseModel{
     * 送货单导出excel
     **/
     public function export_send_excel($data){
-        $title   = array('用户ID','订单号','订单状态','流水号','流水方式','产品信息','订单总价','订货人','收货人','收货地址','收货人电话','创建日期','创建时间','完成支付日期','完成支付时间','发货日期','送达日期');
+        $title   = array('创建日期','订单编号','会员账号','会员姓名','会员电话','团队标签','订单金额','订单备注','商品信息','商品编号','商品数量','支付日期','收货人姓名','收货电话','收货地址');
         foreach ($data as $k => $v) {
-            $content[$k]['rcustomerid']      = $v['rcustomerid'];
-            $content[$k]['ir_receiptnum']    = $v['ir_receiptnum'];
-            $content[$k]['receiptson']  = $v['receiptson'];
-            $content[$k]['paytype']  = $v['paytype'];
-            switch ($v['ir_status']) {
-                case '0':
-                    $content[$k]['ir_status'] = '待付款';
-                    break;
-                case '202':
-                    $content[$k]['ir_status'] = '未全额付款';
-                    break;
-                case '2':
-                    $content[$k]['ir_status'] = '已支付待发货';
-                    break;
-                case '3':
-                    $content[$k]['ir_status'] = '已发货待收货';
-                    break;
-                case '4':
-                    $content[$k]['ir_status'] = '已送达';
-                    break;
-                case '5':
-                    $content[$k]['ir_status'] = '已申请退货';
-                    break;
-                case '7':
-                    $content[$k]['ir_status'] = '待付款';
-                    break;
-                case '8':
-                    $content[$k]['ir_status'] = '已退货';
-                    break;
-            }
-            // 产品信息
-            $content[$k]['ir_desc']              = $v['ir_desc'];
-            $content[$k]['ir_price']             = $v['ir_price'];
-            //订货人
-            if(!$v['lastname'] && !$v['firstname']){
-                $content[$k]['ia_name']              = ' ';
-            }else{      
-                $content[$k]['ia_name']              = $v['lastname'].$v['firstname'];
-            }
-            //收货人
-            $content[$k]['ib_name']              = $v['ia_name'];
-            //收货详细地址
-            if(empty($v['ia_address'])){
-                $content[$k]['ia_address']       = $v['shopprovince'].$v['shopcity'].$v['shoparea'].$v['shopaddress1'];
-            }else{
-                $content[$k]['ia_address']       = $v['ia_address'];
-            }
-            //收货人电话
-            $content[$k]['ia_phone']             = $v['ia_phone'];
             // 创建日期
-            $content[$k]['ir_datetime']          = date('Y-m-d',$v['ir_date']);
-            // 创建时间
-            $content[$k]['ir_datetimes']         = date('H:i:s',$v['ir_date']);
-            if(empty($v['ir_paytime'])){
-                // 支付日期
-                $content[$k]['ir_paytime']       = '未完成';
-                // 支付时间 
-                $content[$k]['ir_paytimes']      = '未完成';
+            $content[$k]['ir_date']      = date('Y-m-d H:i:s',$v['ir_date']);
+            // 订单编号
+            $content[$k]['ir_receiptnum']    = $v['ir_receiptnum'];
+            // 会员账号
+            $content[$k]['rcustomerid']      = $v['rcustomerid'];
+            // 会员姓名
+            $content[$k]['username']      = $v['lastname'].$v['firstname'];
+            // 会员电话
+            if(empty($v['phone'])){
+                $content[$k]['phone']  = $v['ia_phone'];
             }else{
-                // 支付日期
-                $content[$k]['ir_paytime']           = date('Y-m-d',$v['ir_paytime']);
-                // 支付时间 
-                $content[$k]['ir_paytimes']          = date('H:i:s',$v['ir_paytime']);
+                $content[$k]['phone']  = $v['phone'];
             }
-
-            if(empty($v['send_time'])){
-                $content[$k]['send_time']        = '暂未发货';
-                $content[$k]['receive_time']     = '暂未发货';
-            }else{
-                $content[$k]['send_time']        = date('Y-m-d H:i:s',$v['send_time']);
-                if(empty($v['receive_time'])){
-                    $content[$k]['receive_time'] = '暂未收货';
-                }else{
-                    $content[$k]['receive_time'] = date('Y-m-d H:i:s',$v['receive_time']);
-                }
+            // 团队标签
+            $content[$k]['teamcode']  = 'ABC';
+            // 订单金额
+            $content[$k]['ir_price'] = $v['ir_price'];
+            // 订单备注
+            $content[$k]['ir_desc'] = $v['ir_desc']; 
+            // 商品信息
+            $content[$k]['productnams'] = $v['productnams'];
+            // 商品编号
+            $content[$k]['productno'] = $v['productno'];
+            // 商品数量
+            // $content[$k]['productname'] = $v['productname'];
+            switch ($v['ipid']) {
+                case '31':
+                    $content[$k]['productname'] = $v['productnams'].'*8瓶';
+                    break;
+                case '39':
+                    $content[$k]['productname'] = $v['productnams'].'*2瓶';
+                    break;
+                default:
+                    $content[$k]['productname'] = $v['productnams'].'*1套';
+                    break;
             }
+            // 支付日期
+            $content[$k]['ir_paytime'] = date('Y-m-d H:i:s',$v['ir_paytime']);
+            // 收货人姓名
+            $content[$k]['ia_name'] = $v['ia_name'];
+            // 收货电话
+            $content[$k]['ia_phone'] = $v['ia_phone'];
+            // 收货地址
+            $content[$k]['ia_address'] = $v['ia_province'].$v['ia_city'].$v['ia_area'].$v['ia_address'];
         }
         create_csv($content,$title);
         return;

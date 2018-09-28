@@ -82,6 +82,7 @@
 		.main,.title{width:1200px;}
         
       }
+      #idcardage{width: 100%;display: block;text-align: center;}
 	</style>
 	</style>
 	</head>
@@ -360,9 +361,11 @@
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>身份证号码:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
-							<input type="" class="form-control"   name="Idcard" placeholder="身份证号码" value="{$data['Idcard']}" onblur="judgeIdcard();">
+							<input type="" class="form-control"   name="Idcard" placeholder="身份证号码" value="{$data['Idcard']}">
 						</div>
-						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err" id="idcardage">{$error['Idcard']}</div>
+						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err" id="">{$error['Idcard']}</div>
+						<span id="idcardage"></span>
+						<input type="hidden" class="form-control"  name="Birthday" id="Birthday" placeholder="出生日期" value="{$data['Birthday']}">
 					</div>
 					
 					<div class="form-group" >
@@ -456,6 +459,8 @@
 					},
 				});
 			}
+		}else if($(this).attr('name')=='Idcard'){
+			judgeIdcard();
 		}else{
 			$(this).val($(this).val().replace(/[^a-zA-Z0-9\u4E00-\u9FA5]/g,''));
 		}	
@@ -513,13 +518,22 @@
 			if(idcard.length==18){	
 				var reg =/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(idcard);
 				if(reg){
-					var year=parseInt(idcard.substring(6,10));
+					var year=idcard.substring(6,10);
+					var month=idcard.substring(10,12);
+					var day=idcard.substring(12,14);
+					var birthday=year+'-'+month+'-'+day;
+					// console.log(birthday);
 					var myDate = new Date();
-					if((myDate.getFullYear()-year)>=22){
-						$("#idcardage").text("您的年龄为"+(myDate.getFullYear()-year)+"周岁！！");
+					if((myDate.getFullYear()-parseInt(year))>=22){
+						$("#Birthday").val(birthday);
+						$("#idcardage").text("您的出生日期为"+birthday+"。");
 						$("#idcardage").css('color','#3E8F3E');
+						judge=true;
 					}else{
 						judge=false;
+						$("#Birthday").val(birthday);
+						$("#idcardage").text("您的出生日期为"+birthday+"。");
+						$("#idcardage").css('color','#3E8F3E');
 						alert('您的年龄不足22周岁不能注册！');
 					}
 					

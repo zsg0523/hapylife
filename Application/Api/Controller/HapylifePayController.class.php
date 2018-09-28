@@ -569,25 +569,27 @@ class HapylifePayController extends HomeBaseController{
                     $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
                     if($upreceipt){
                         if($sub == 0){
-                            $updateReceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->setfield('paytime',time());
-                            if($order['ir_ordertype'] == 4){
-                                // 添加通用券
-                                $product = M('Receipt')
-                                                ->alias('r')
-                                                ->join('hapylife_product AS p ON r.ipid = p.ipid')
-                                                ->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))
-                                                ->find();
-                                $data = array(
-                                        'product' => $product,
-                                        'userinfo' => $userinfo,
-                                        'ir_receiptnum' => $order['ir_receiptnum']
-                                    );
-                                $data    = json_encode($data);
-                                $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/addCoupon";
-                                $result  = post_json_data($sendUrl,$data);
-                                // $back_msg = json_decode($result['result'],true);
-                            }else if($order['ir_ordertype'] == 3){
-                                $addactivation     = D('Activation')->addAtivation($OrderDate,$receipt['riuid'],$receipt['ir_receiptnum']); 
+                            $updateReceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->setfield('ir_paytime',time());
+                            switch ($order['ir_ordertype']) {
+								case '3':
+									$addactivation     = D('Activation')->addAtivation($OrderDate,$receipt['riuid'],$receipt['ir_receiptnum']); 
+                            		break;
+								case '4':
+									// 添加通用券
+	                                $product = M('Receipt')
+	                                                ->alias('r')
+	                                                ->join('hapylife_product AS p ON r.ipid = p.ipid')
+	                                                ->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))
+	                                                ->find();
+	                                $data = array(
+	                                        'product' => $product,
+	                                        'userinfo' => $userinfo,
+	                                        'ir_receiptnum' => $order['ir_receiptnum']
+	                                    );
+	                                $data    = json_encode($data);
+	                                $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/addCoupon";
+	                                $result  = post_json_data($sendUrl,$data);
+                            		break;
                             }
                             // 发送短信提示
                             $templateId ='178959';

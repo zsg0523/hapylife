@@ -42,9 +42,15 @@ class IndexController extends HomeBaseController{
      */
     public function checkAccount(){
         $CustomerID = trim(I('post.CustomerID'));
-        $checkAccount = D('User')->where(array('CustomerID'=>$CustomerID))->find();
-        switch ($checkAccount) {
-            case null:
+        $checkAccount = D('User')->where(array('CustomerID|wvCustomerID'=>$CustomerID))->find();
+        if($checkAccount){
+            $data = array(
+                'status'=>1,
+                'message'=>'账号已存在，直接登录'
+            );
+            $this->ajaxreturn($data);   
+        }else{
+            if(strlen($CustomerID) == 8){
                 //核对usa 账号是否正确存在
                 $usa    = new \Common\UsaApi\Usa;
                 $result = $usa->validateHpl($CustomerID);
@@ -64,12 +70,13 @@ class IndexController extends HomeBaseController{
                         $this->ajaxreturn($data);
                         break;
                 }
-            default:
+            }else{
                 $data = array(
-                    'status'=>1,
-                    'message'=>'账号已存在，直接登录'
+                    'status'=>0,
+                    'message'=>'输入账号有误'
                 );
                 $this->ajaxreturn($data);
+            } 
         }
     }
 
@@ -104,117 +111,64 @@ class IndexController extends HomeBaseController{
         }else{
             if(IS_POST){
                 $tmpe = I('post.');
-                if(strlen($tmpe['CustomerID'])==8){
-                    //检查WV api用户信息
-                    $usa      = new \Common\UsaApi\Usa;
-                    $userinfo = $usa->validateHpl($tmpe['CustomerID']);
-                    //检查wv是否存在该账号 Y创建该账号  N登录失败
-                    switch ($userinfo['isActive']) {
-                        case true:
-                        //检查系统是否存在该账号 Y无密码登录 N创建账号
-                        $checkAccount = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
-                            switch ($checkAccount) {
-                                case null:
-                                    //创建该新账号在本系统
-                                    $map      = array(
-                                            'CustomerID'  =>$tmpe['CustomerID'],
-                                            'PassWord'    =>md5($tmpe['PassWord']),
-                                            'WvPass'      =>$tmpe['PassWord'],
-                                            'LastName'    =>$userinfo['lastName'],
-                                            'FirstName'   =>$userinfo['firstName'],
-                                            'isActive'    =>$userinfo['isActive'],
-                                            'WvPass'      =>$tmpe['PassWord'],
-                                        );
-                                    $createUser = D('User')->add($map);
-                                    break;
-                                default:
-                                    //更新相关信息在本系统
-                                    $map      = array(
-                                            'PassWord'    =>md5($tmpe['PassWord']),
-                                            'WvPass'      =>$tmpe['PassWord'],
-                                            'LastName'    =>$userinfo['lastName'],
-                                            'FirstName'   =>$userinfo['firstName'],
-                                            'isActive'    =>$userinfo['isActive'],
-                                            'WvPass'      =>$tmpe['PassWord'],
-                                        );
-                                    $createUser = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->save($map);
-                                    break;
-                            }
-                            $data = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
-                            //登录后看不到产品
-                            $_SESSION['user']=array(
-                                    'id'       =>$data['iuid'],
-                                    'username' =>$data['customerid'],
-                                    'name_cn'  =>$data['lastname'].$data['firstname'],
-                                    'status'   =>2,
-                                );
-                            // p($_SESSION);die;
-                            $this->redirect('Home/Purchase/center');
-                            break;
-
-                        default:
-                            $this->error('账号格式错误');
-                            break;
+                $data = D('User')->where(array('CustomerID|wvCustomerID'=>$tmpe['CustomerID']))->find();
+                if($data){
+                    if($data['password']==md5($tmpe['PassWord'])){
+                        $_SESSION['user']=array(
+                            'id'       =>$data['iuid'],
+                            'username' =>$data['customerid'],
+                            'name_cn'  =>$data['lastname'].$data['firstname'],
+                            'status'   =>1,
+                        );
+                        $this->redirect('Home/Purchase/center');
+                    }else{
+                        $this->error('账号或密码错误');
                     }
                 }else{
-                    $where = array(
-                        'CustomerID'=>trim($tmpe['CustomerID']),
-                        'PassWord'  =>md5($tmpe['PassWord'])
-                    );
-                    $data = D('User')->where($where)->find();
-                    if (empty($data)) {
-                        $this->error('账号或密码错误');
-                    }else{
-                        if(substr($data['customerid'],0,3) == 'HPL'){
-                            $_SESSION['user']=array(
-                                                'id'       =>$data['iuid'],
-                                                'username' =>$data['customerid'],
-                                                'name_cn'  =>$data['lastname'].$data['firstname'],
-                                                'status'   =>1,
-                                            );
-                        }else{
-                            $_SESSION['user']=array(
-                                    'id'       =>$data['iuid'],
-                                    'username' =>$data['customerid'],
-                                    'name_cn'  =>$data['lastname'].$data['firstname'],
-                                    'status'   =>2,
+                    if(strlen($tmpe['CustomerID']) == 8){
+                        //检查WV api用户信息
+                        $usa      = new \Common\UsaApi\Usa;
+                        $userinfo = $usa->validateHpl($tmpe['CustomerID']);
+                        //检查wv是否存在该账号 Y创建该账号  N登录失败
+                        switch ($userinfo['isActive']) {
+                            case true:
+                                //创建该新账号在本系统
+                                $map = array(
+                                    'CustomerID'  =>$tmpe['CustomerID'],
+                                    'PassWord'    =>md5($tmpe['PassWord']),
+                                    'WvPass'      =>$tmpe['PassWord'],
+                                    'LastName'    =>$userinfo['lastName'],
+                                    'FirstName'   =>$userinfo['firstName'],
+                                    'isActive'    =>$userinfo['isActive'],
                                 );
-                        }
-                        $data = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
-                        $this->redirect('Home/Purchase/center');
-                        break;
-
-                    default:
-                        $this->error('账号格式错误');
-                        break;
-                }
-            }else{
-                $where = array(
-                    'CustomerID'=>trim($tmpe['CustomerID']),
-                    'PassWord'  =>md5($tmpe['PassWord'])
-                );
-                $data = D('User')->where($where)->find();
-                if (empty($data)) {
-                    $this->error('账号或密码错误');
-                }else{
-                    $_SESSION['user']=array(
-                                        'id'       =>$data['iuid'],
-                                        'username' =>$data['customerid'],
-                                        'name_cn'  =>$data['lastname'].$data['firstname'],
+                                $createUser = D('User')->add($map);
+                                if($createUser){
+                                    $_SESSION['user']=array(
+                                        'id'       =>$createUser,
+                                        'username' =>$tmpe['CustomerID'],
+                                        'name_cn'  =>$userinfo['lastName'].$userinfo['firstName'],
                                         'status'   =>1,
-                                        'address'  =>0,
-                                        'bank'     =>0,
                                     );
-                    $this->redirect('Home/Purchase/center');
+                                    $this->redirect('Home/Purchase/center');
+                                }else{
+                                    $this->error('账号或密码错误');
+                                }
+                                break;
+                            default:
+                                $this->error('账号或密码错误');
+                                break;
+                        }
+                    }else{
+                        $this->error('账号或密码错误');
+                    }
                 }
-            }
-        }else{
-            //检查是否已存在$_SESSION['user']['id']
-            $data=check_login();
-            if($data){
-                $this->redirect('Home/Purchase/center');
             }else{
-                $this->display('Login/login');
+                $data=check_login();
+                if($data){
+                    $this->redirect('Home/Purchase/center');
+                }else{
+                    $this->display('Login/login');
+                }
             }
         }
     }
