@@ -26,6 +26,7 @@ class HapylifeUsaController extends HomeBaseController{
 	**/
 	public function validateHpl(){
 		$map      = I('post.');
+		// p($map);die;
 		$key      = $this->key;
 		$url      = $this->url;
 		$data     = $url."/api/Hpl/Validate?customerId=".$map['CustomerID']."&"."key=".$key;
