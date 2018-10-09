@@ -146,10 +146,27 @@ class HapylifeUsaController extends HomeBaseController{
 		$url  = $this->url;
 		$data = array(
 			'happyLifeID'  =>$map['happyLifeID'],
-            'password'     =>$map['password'],
+			'password' => $map['password'],
             'emailAddress' =>$map['emailAddress'],
             'phone'        =>$map['phone'],
-            'placementpreference' => $map['placementpreference'],
+            'BinaryPlacementPreference' => $map['binaryplacementpreference'],
+		);
+		$data    = json_encode($data);
+		$sendUrl = $url."/api/Hpl/UpdateCustomer?key=".$key;
+		$result  = post_json_data($sendUrl,$data);
+		print_r($result);
+	}
+
+	/**
+	* Change PassWord
+	**/
+	public function changePassWord(){
+		$map  = I('post.');
+		$key  = $this->key;
+		$url  = $this->url;
+		$data = array(
+			'happyLifeID'  =>$map['happyLifeID'],
+			'password' => $map['password'],
 		);
 		$data    = json_encode($data);
 		$sendUrl = $url."/api/Hpl/UpdateCustomer?key=".$key;
@@ -166,7 +183,6 @@ class HapylifeUsaController extends HomeBaseController{
 		$url  = $this->url;
 		$data = array(
 			'happyLifeID'  =>$map['happyLifeID'],
-            'key'          =>$key
 		);
 		$data    = json_encode($data);
 		$sendUrl = $url."/api/Hpl/Totals?customerId=".$map['happyLifeID']."&key=".$key;
@@ -184,15 +200,54 @@ class HapylifeUsaController extends HomeBaseController{
 		$data = array(
 			'hapyLifeID'  	=>$map['hapyLifeID'],
             'wvOrderID'   	=>$map['wvOrderID'],
-            'paymentDate ' 	=>$map['paymentDate'],
+            'paymentDate' 	=>$map['paymentDate'],
 		);
+		$data    = json_encode($data);
 		$sendUrl = $url."/api/Hpl/CreatePayment?key=".$key;
 		$result  = post_json_data($sendUrl,$data);
 		print_r($result);
 	}
 
+	/**
+	* Search Member Message
+	**/ 
+	public function SearchMessage(){
+		$map  = I('post.');
+		$key  = $this->key;
+		$url  = $this->url;
+		$sendUrl = $url."/api/hpl/Validate?customerId=".$map['customerId']."&key=".$key;
+		$wv       = file_get_contents($sendUrl);
+		$userinfo = json_decode($wv,true);
+        $this->ajaxreturn($userinfo);
+	}
 
+	/**
+	* Placement verification
+	**/ 
+	public function placementVerification(){
+		$map  = I('post.');
+		$key  = $this->key;
+		$url  = $this->url;
+		$sendUrl = $url."/api/Hpl/Customer/".$map['HappyLifeID']."/PlacementPosition?key=".$key;
+		// p($sendUrl);die;
+		$wv       = file_get_contents($sendUrl);
+		$userinfo = json_decode($wv,true);
+		$this->ajaxreturn($userinfo);
+	}
 
+	/**
+	* get virtual CURRENCY (DT Points) balance
+	**/ 
+	public function DtPoint(){
+		$map  = I('post.');
+		$key  = $this->key;
+		$url  = $this->url;
+		$sendUrl = $url."/api/Hpl/Customer/".$map['HappyLifeID']."/VirtualCurrency?key=".$key;
+		// p($sendUrl);die;
+		$wv       = file_get_contents($sendUrl);
+		$userinfo = json_decode($wv,true);
+		$this->ajaxreturn($userinfo);
+	}
 	
 
 

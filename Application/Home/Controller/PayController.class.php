@@ -329,37 +329,45 @@ class PayController extends HomeBaseController{
                                         );
                                         //更新订单信息
                                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
-                                        $usa    = new \Common\UsaApi\Usa;
-                                        $products = 'RBS,DTP';
-                                        $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
-                                        if(!empty($result['result'])){
-                                            $log = addUsaLog($result['result']);
-                                            $maps = json_decode($result['result'],true);
-                                            $wv  = array(
-                                                'wvCustomerID' => $maps['wvCustomerID'],
-                                                'wvOrderID'    => $maps['wvOrderID'],
-                                                'Products'     => $products
-                                            );
-                                            $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
-                                            if($res){
-                                                $templateId ='164137';
-                                                $params     = array();
-                                                $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                                                if($sms['errmsg'] == 'OK'){
-                                                    $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();
-                                                    $contents = array(
-                                                        'acnumber' => $userinfo['acnumber'],
-                                                        'phone' => $userinfo['phone'],
-                                                        'operator' => '系统',
-                                                        'addressee' => $status['ia_name'],
-                                                        'product_name' => $receiptlist['product_name'],
-                                                        'date' => time(),
-                                                        'content' => '恭喜您注册成功，请注意查收邮件'
-                                                    );
-                                                    $logs = M('SmsLog')->add($contents);
+                                        $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
+                                        if($ir_status == 2){
+                                            $usa    = new \Common\UsaApi\Usa;
+                                            $products = 'RBS,DTP';
+                                            $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
+                                            if(!empty($result['result'])){
+                                                $log = addUsaLog($result['result']);
+                                                $maps = json_decode($result['result'],true);
+                                                $wv  = array(
+                                                    'wvCustomerID' => $maps['wvCustomerID'],
+                                                    'wvOrderID'    => $maps['wvOrderID'],
+                                                    'Products'     => $products
+                                                );
+                                                $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
+                                                if($res){
+                                                    $createPayment = $usa->createPayment($userinfo['customerid'],$maps['wvOrderID'],date('Y-m-d H:i',time()));
+                                                    $log = addUsaLog($createPayment['result']);
+                                                    $jsonStr = json_decode($createPayment['result'],true);
+                                                    if($jsonStr['paymentId']){
+                                                        $templateId ='164137';
+                                                        $params     = array();
+                                                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                                                        if($sms['errmsg'] == 'OK'){
+                                                            $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();
+                                                            $contents = array(
+                                                                'acnumber' => $userinfo['acnumber'],
+                                                                'phone' => $userinfo['phone'],
+                                                                'operator' => '系统',
+                                                                'addressee' => $status['ia_name'],
+                                                                'product_name' => $receiptlist['product_name'],
+                                                                'date' => time(),
+                                                                'content' => '恭喜您注册成功，请注意查收邮件'
+                                                            );
+                                                            $logs = M('SmsLog')->add($contents);
+                                                        }
+                                                    }
+                                                    // 支付完成
+                                                    $this->success('注册成功',U('Home/Register/new_regsuccess',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
                                                 }
-                                                // 支付完成
-                                                $this->success('注册成功',U('Home/Register/new_regsuccess',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
                                             }
                                         }
                                     }else if($ir_ordertype == 4){
@@ -404,9 +412,20 @@ class PayController extends HomeBaseController{
                                         $update    = D('User')->save($tmpe);
                                         $riuid     = $receipt['riuid'];
                                         $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$receipt['ir_receiptnum']);
-                                        // 支付完成
-                                        // $this->success('完成支付',U('Home/Purchase/center'));
-                                        $this->success('完成支付',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
+                                        $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
+                                        if($ir_status == 2){
+                                            $usa = new \Common\UsaApi\Usa;
+                                            $createPayment = $usa->createPayment($userinfo['customerid'],$receipt['ir_receiptnum'],date('Y-m-d H:i',time()));
+                                            $log = addUsaLog($createPayment['result']);
+                                            $jsonStr = json_decode($createPayment['result'],true);
+                                            // p($jsonStr);die;
+                                            if($jsonStr['paymentId']){
+                                                $showProduct = M('User')->where(array('iuid'=>$receipt['riuid']))->setfield('showProduct',0);
+                                                // 支付完成
+                                                // $this->success('完成支付',U('Home/Purchase/center'));
+                                                $this->success('完成支付',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
+                                            }
+                                        }
                                     }
                                 }
                             }

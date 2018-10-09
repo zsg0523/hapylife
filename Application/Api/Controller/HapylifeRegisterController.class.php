@@ -473,6 +473,7 @@ class HapylifeRegisterController extends HomeBaseController{
                 'AccountType' => $userinfo['accounttype'],
                 'teamCode' => $userinfo['teamcode'],
                 'htid' => $htid,
+                'Birthday' => $userinfo['birthday']
             );
             $addResult = M('User')->add($array); 
             $user = M('User')->where(array('iuid'=>$addResult))->find();
@@ -488,7 +489,7 @@ class HapylifeRegisterController extends HomeBaseController{
                             'phone' => $userinfo['phone'],
                             'operator' => '系统',
                             'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                            'product_name' => '',
+                            'product_name' => '新会员注册',
                             'date' => time(),
                             'content' => '恭喜您注册成功。',
                             'customerid' => $user['customerid']
@@ -632,23 +633,28 @@ class HapylifeRegisterController extends HomeBaseController{
                     );
                     $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
                     if($res){
-                        // 发送短信提示
-                        $templateId ='183054';
-                        $params     = array();
-                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                        if($sms['errmsg'] == 'OK'){
-                            $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$order_num))->find();
-                            $contents = array(
-                                        'acnumber' => $userinfo['acnumber'],
-                                        'phone' => $userinfo['phone'],
-                                        'operator' => '系统',
-                                        'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                                        'product_name' => $receiptlist['product_name'],
-                                        'date' => time(),
-                                        'content' => '恭喜您注册成功。',
-                                        'customerid' => $userinfo['customerid']
-                            );
-                            $logs = M('SmsLog')->add($contents);
+                        $createPayment = $usa->createPayment($userinfo['customerid'],$maps['wvOrderID'],date('Y-m-d H:i',time()));
+                        $log = addUsaLog($createPayment['result']);
+                        $jsonStr = json_decode($createPayment['result'],true);
+                        if($jsonStr['paymentId']){
+                            // 发送短信提示
+                            $templateId ='207291';
+                            $params     = array($userinfo['customerid'],$maps['wvCustomerID']);
+                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                            if($sms['errmsg'] == 'OK'){
+                                $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$order_num))->find();
+                                $contents = array(
+                                            'acnumber' => $userinfo['acnumber'],
+                                            'phone' => $userinfo['phone'],
+                                            'operator' => '系统',
+                                            'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                            'product_name' => $receiptlist['product_name'],
+                                            'date' => time(),
+                                            'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfo['customerid'].'以及 DreamTrips 会员号码是'.$maps['wvCustomerID'].'，同时注意查收Rovia邮件。',
+                                            'customerid' => $userinfo['customerid']
+                                );
+                                $logs = M('SmsLog')->add($contents);
+                            }
                         }
                         $sample['status'] = 1;
                         $this->ajaxreturn($sample);

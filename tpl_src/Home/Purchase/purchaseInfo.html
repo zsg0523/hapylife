@@ -119,7 +119,11 @@
 					</if>
 				</div>
 				<div class="link">
-					<a href="{:U('Home/Purchase/order',array('ipid'=>$data['ipid']))}">去支付</a>
+          <if condition="$status eq 2">
+					 <a href="{:U('Home/Purchase/order',array('ipid'=>$data['ipid']))}">去支付</a>
+          <elseif condition="$status eq 1" />
+            <a href="{:U('Home/Purchase/myOrder')}">去支付</a>
+          </if>
 				</div>
 				
 			</div>		

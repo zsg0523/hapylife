@@ -90,9 +90,9 @@ class HapylifeAddController extends HomeBaseController{
         //写入服务器日志文件
         $log     = addUsaLog($jsonStr);
         $data    = json_decode($jsonStr,true);
+        // p($data);die;
         //开启事务
         M('wvNotification')->startTrans();
-        // p($data);die;
         $catch_result = true;
         try {
             //异常处理
@@ -111,27 +111,153 @@ class HapylifeAddController extends HomeBaseController{
                     $addressee = $userinfo['lastname'].$userinfo['firstname'];
                     switch ($data['NotificationType']) {
                         case '1':
-                            $time = date('Y-m-d H:i:s',strtotime($data['Date']));
-                            $endTime = date('Y-m-d H:i:s',strtotime($data['Date'])+5*24*3600);
-                            // 发送短信提示
-                            $templateId ='183054';
-                            $params     = array($time,$endTime);
-                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                            p($sms);die;
-                            if($sms['errmsg'] == 'OK'){
-                                $content = '您的月费将在'.$time.'到期，请在'.$endTime.'前完成续费，否则将无法登陆dreamtrip.com。';
-                                $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'续费通知',$content,$userinfo['customerid']);
-                                p($result);die;
+                            switch ($value['OrderTypeId']) {
+                                case '4':
+                                    // 加5天模板
+                                    $time = date('Y-m',strtotime($data['Date']));
+                                    $endTime = date('Y-m-d',strtotime($data['Date'])+5*24*3600);
+                                    // 发送短信提示
+                                    $templateId ='203217';
+                                    $network = 'www.dreamtrips.com';
+                                    $params     = array($time,$endTime,$network);
+                                    $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                                    if($sms['errmsg'] == 'OK'){
+                                        $content = '这是'.$time.'续费通知，请在'.$endTime.'前完成缴费，避免无法登录'.$network;
+                                        $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'续费通知',$content,$userinfo['customerid']);
+                                        if($result){
+                                            $status = M('wvNotification')->where(array('id'=>$res))->setfield('status','1');
+                                        }
+                                    }
+                                    break;
+                                case '5':
+                                    // 不加5天模板
+                                    $time = date('Y-m-d H:i:s',strtotime($data['Date']));
+                                    // 发送短信提示
+                                    $templateId ='183054';
+                                    // $params     = array($time,$endTime);
+                                    $params     = array();
+                                    $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                                    if($sms['errmsg'] == 'OK'){
+                                        $content = '您的月费将在'.$time.'到期，请在'.$time.'前完成续费。';
+                                        $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'续费通知',$content,$userinfo['customerid']);
+                                        if($result){
+                                            $status = M('wvNotification')->where(array('id'=>$res))->setfield('status','1');
+                                        }
+                                    }
+                                    break;
                             }
+                            // 收到usa推送后，给会员生成订单
+                            // 设置时区
+                            date_default_timezone_set('PRC');
+                            //商品信息
+                            $product = M('Product')->where(array('ipid'=>39))->find();
+                            //用户信息
+                            $userinfo= M('User')->where(array('customerid'=>$value['HplId']))->find();
+                            $order_num = $value['OrderId'];
+                            switch ($product['ip_type']){
+                                case '1':
+                                    $con = '首购单';
+                                    break;
+                                case '2':
+                                    $con = '升级单';
+                                    break;
+                                case '3':
+                                    $con = '月费单';
+                                    break;
+                                case '4':
+                                    $con = '通用券'.$product['ip_name_zh'];
+                                    break;
+                                case '5':
+                                    $con = 'DT商店'.$product['ip_name_zh'];
+                                    break;
+                            }
+
+                            $order = array(
+                                //订单编号
+                                'ir_receiptnum' =>$order_num,
+                                //订单创建日期
+                                'ir_date'       =>strtotime($value['OrderDate']),
+                                //订单的状态(0待生成订单，1待支付订单，202未全额,2已付款订单)
+                                'ir_status'     =>0,
+                                //下单用户id==
+                                'riuid'          =>$userinfo['iuid'],
+                                //下单用户
+                                'rCustomerID'    =>$userinfo['customerid'],
+                                //收货人
+                                'ia_name'       =>$userinfo['lastname'].$userinfo['firstname'],
+                                //收货人电话
+                                'ia_phone'      =>$userinfo['phone'],
+                                // 省，州
+                                'ia_province' => $userinfo['shopprovince'],
+                                // 市
+                                'ia_city' => $userinfo['shopcity'],
+                                // 区
+                                'ia_area' => $userinfo['shoparea'],
+                                //收货地址
+                                'ia_address'    =>$userinfo['shopaddress1'],
+                                //订单总商品数量
+                                'ir_productnum' =>1,
+                                //订单总金额
+                                'ir_price'      =>$product['ip_price_rmb'],
+                                'ir_unpaid'     =>$product['ip_price_rmb'],
+                                //订单总积分
+                                'ir_point'      =>$product['ip_point'],
+                                'ir_unpoint'    =>$product['ip_point'],
+                                //订单备注
+                                'ir_desc'       =>$con,
+                                //订单类型
+                                'ir_ordertype'  => $product['ip_type'],
+                                //产品id
+                                'ipid'          => $product['ipid']
+                            );
+                            $receipt = M('Receipt')->add($order);
+                            if($receipt){
+                                $map = array(
+                                    'ir_receiptnum'     =>  $order_num,
+                                    'ipid'              =>  $product['ipid'],
+                                    'product_num'       =>  1,
+                                    'product_point'     =>  $product['ip_point'],
+                                    'product_price'     =>  $product['ip_price_rmb'],
+                                    'product_name'      =>  $product['ip_name_zh'],
+                                    'product_picture'   =>  $product['ip_picture_zh']
+                                );
+                                $addReceiptlist = M('Receiptlist')->add($map);
+                            }
+                             //生成日志记录
+                            $content = '您的'.$con.'订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
+                            // echo 2;
+                            $log = array(
+                                'iuid'      =>$userinfo['iuid'],
+                                'content'   =>$content,
+                                'action'    =>1,
+                                'type'      =>2,
+                                'date'      =>date('Y-m-d H:i:s')          
+                            );
+                            $addlog = M('Log')->add($log);
+                            if($addlog){
+                                // 设置显示正常月费包
+                                $showProduct = M('User')->where(array('customerid'=>$value['HplId']))->setfield('showProduct',1);
+                            }
+    
+
+
                             break;
                         case '2':
                             // 发送短信提示
-                            $templateId ='183054';
-                            $params     = array($time,$endTime);
+                            $templateId ='203231';
+                            $time = date('Y-m-d H:i:s',strtotime($data['Date']));
+                            $params     = array($time);
                             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                             if($sms['errmsg'] == 'OK'){
-                                $content = '恭喜您，您已成功推荐4名好友加入成为您的下线，现';
+                                $content = '恭喜您，当月成功推荐4名新会员，可享有月费优惠，请在'.$time.'前完成缴费';
                                 $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'免月费通知',$content,$userinfo['customerid']);
+                                if($result){
+                                    $status = M('wvNotification')->where(array('id'=>$res))->setfield('status','1');
+                                    if($status){
+                                        // 设置显示优惠月费包
+                                        $showProduct = M('User')->where(array('customerid'=>$value['HplId']))->setfield('showProduct',2);
+                                    }
+                                }
                             }
                             break;
                     }

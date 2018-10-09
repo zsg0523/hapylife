@@ -178,6 +178,9 @@ class HapylifeCouponController extends HomeBaseController{
 		$rCustomerID = $receipt_msg['rcustomerid'];
 		$ia_name = $receipt_msg['ia_name'];
 		$ia_phone = $receipt_msg['ia_phone'];
+		$ia_province = $receipt_msg['ia_province'];
+		$ia_city = $receipt_msg['ia_city'];
+		$ia_area = $receipt_msg['ia_area'];
 		$ia_address = $receipt_msg['ia_address'];
 		$order_num = 'CP'.date('YmdHis').rand(10000, 99999);
 		$con = $coupon['c_name'].$coupon['coupon_code'];
@@ -196,6 +199,12 @@ class HapylifeCouponController extends HomeBaseController{
             'ia_name'=>$ia_name,
             //收货人电话
             'ia_phone'=>$ia_phone,
+            // 省
+            'ia_province' => $ia_province,
+            // 市
+            'ia_city' => $ia_city,
+            // 区
+            'ia_area' => $ia_area,
             //收货地址
             'ia_address'=>$ia_address,
             //订单总商品数量

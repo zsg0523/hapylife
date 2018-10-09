@@ -61,8 +61,13 @@ class PurchaseController extends HomeBaseController{
         $type  = trim($find['distributortype']);
         $mtype = trim($find['customertype']);
         $status= $find['status'];
+        $showProduct = $find['showproduct'];
+        // 定义数组 
+        $proArr = array();
+        $an_pro = array();
+        $third_pro = array();
         //判断用户等级 show--1、可点击 2、不可点击
-        // p($type);die;
+        // p($showProduct);die;
         switch (strlen($find['customerid'])) {
             case '8':
                 //核对usa 账号是否正确存在
@@ -70,37 +75,45 @@ class PurchaseController extends HomeBaseController{
                 $result = $usa->validateHpl($find['customerid']);
                 switch ($result['isActive']) {
                     case true:
-                        $products = M('Product')->where(array('ip_type'=>4,'is_pull'=>1))->select();
+                        $product = M('Product')->where(array('ip_type'=>4,'is_pull'=>1))->select();
                         break;
                     default:
-                        $products = array();
+                        $product = array();
                         break;
                 }
                 break;
             default:
+                switch($showProduct){
+                    case '1':
+                        $third_pro = M('Product')->where(array('ipid'=>39))->select();
+                        break;
+                    case '2':
+                        $third_pro = M('Product')->where(array('ipid'=>46))->select();
+                        break;
+                }
                 $tmpe  = array(
                     'ip_grade' =>$type,
                     'is_pull'  =>1
                 );
                 $proArr  = D('Product')->where($tmpe)->order('is_sort desc')->select();
                 $an_pro  = M('Product')->where(array('ip_type'=>4,'is_pull'=>1))->select();
-                $product = array_merge($proArr,$an_pro);
-                foreach ($product as $key => $value) {
-                    $products[$key]         = $value; 
-                    $products[$key]['show'] = 1; 
-                }
+                $product = array_merge($proArr,$an_pro,$third_pro);
+                // foreach ($product as $key => $value) {
+                //     $products[$key]         = $value; 
+                //     $products[$key]['show'] = 1; 
+                // }
                 break;
         }  
-
+        // p($product);die;    
         $array   = array('HPL00000181','HPL00123539');//显示测试产品账号
         $arrayTo = array('61338465','64694832','65745561','HPL00123556','61751610','61624356','61695777','68068002');//显示真实产品账号
         if(in_array($find['customerid'],$array)){
             $an_pro = M('Product')->where(array('ip_type'=>4,'is_pull'=>0))->select();
-            $product = array_merge($products,$an_pro);
-            foreach ($product as $key => $value) {
-                $data[$key]         = $value; 
-                $data[$key]['show'] = 1; 
-            }
+            $product = array_merge($proArr,$an_pro,$third_pro);
+            // foreach ($product as $key => $value) {
+            //     $data[$key]         = $value; 
+            //     $data[$key]['show'] = 1; 
+            // }
 
         // }else if(in_array($find['customerid'],$arrayTo)){
         //     $an_pro = M('Product')->where(array('ipid'=>48,'is_pull'=>0))->select();
@@ -109,10 +122,9 @@ class PurchaseController extends HomeBaseController{
         //         $data[$key]         = $value; 
         //         $data[$key]['show'] = 1; 
         //     }
-        }else{
-            $data = $products;
         }
-        $this->assign('product',$data);
+        // p($data);die;
+        $this->assign('product',$product);
         $this->display();
     }
     /**
@@ -285,7 +297,8 @@ class PurchaseController extends HomeBaseController{
         //订单号
         $order_num  = I('get.ir_receiptnum');
         $result = M('receipt')->where(array('ir_receiptnum'=>$order_num))->delete();
-        if($result){
+        $res = M('Receiptlist')->where(array('ir_receiptnum'=>$order_num))->delete();
+        if($result && $res){
             redirect($_SERVER['HTTP_REFERER']);
         }else{
             $this->error('删除失败');
@@ -321,12 +334,21 @@ class PurchaseController extends HomeBaseController{
     * 购买详情
     **/
     public function purchaseInfo(){
+        $iuid = $_SESSION['user']['id'];
+        $showProduct = M('User')->where(array('iuid'=>$iuid))->getfield('showProduct');
+        if($showProduct){
+            $status = 1;
+        }else{
+            $status = 2;
+        }
+
         $ipid = I('get.ipid');
         // p($ipid);die;
         $data = M('Product')
               ->where(array('ipid'=>$ipid))
               ->find();
         $this->assign('data',$data);
+        $this->assign('status',$status);
         $this->display();
     }
 
@@ -683,22 +705,32 @@ class PurchaseController extends HomeBaseController{
                             }else if($order['ir_ordertype'] == 3){
                                 $addactivation     = D('Activation')->addAtivation($OrderDate,$receipt['riuid'],$receipt['ir_receiptnum']); 
                             }
-                            // 发送短信提示
-                            $templateId ='178959';
-                            $params     = array($receipt['ir_receiptnum'],$product_name);
-                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                            if($sms['errmsg'] == 'OK'){
-                                $contents = array(
-                                    'acnumber' => $userinfo['acnumber'],
-                                    'phone' => $userinfo['phone'],
-                                    'operator' => '系统',
-                                    'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                                    'product_name' => $product_name,
-                                    'date' => time(),
-                                    'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
-                                    'customerid' => $userinfo['customerid']
-                                );
-                                $logs = M('SmsLog')->add($contents);
+                            $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
+                            if($ir_status == 2){
+                                $usa = new \Common\UsaApi\Usa;
+                                $createPayment = $usa->createPayment($userinfo['customerid'],$receipt['ir_receiptnum'],date('Y-m-d H:i',time()));
+                                $log = addUsaLog($createPayment['result']);
+                                $jsonStr = json_decode($createPayment['result'],true);
+                                // p($jsonStr);die;
+                                if($jsonStr['paymentId']){
+                                    // 发送短信提示
+                                    $templateId ='178959';
+                                    $params     = array($receipt['ir_receiptnum'],$product_name);
+                                    $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                                    if($sms['errmsg'] == 'OK'){
+                                        $contents = array(
+                                            'acnumber' => $userinfo['acnumber'],
+                                            'phone' => $userinfo['phone'],
+                                            'operator' => '系统',
+                                            'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                            'product_name' => $product_name,
+                                            'date' => time(),
+                                            'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
+                                            'customerid' => $userinfo['customerid']
+                                        );
+                                        $logs = M('SmsLog')->add($contents);
+                                    }
+                                }
                             }
                         }else{
                             // 共总支付
@@ -961,13 +993,14 @@ class PurchaseController extends HomeBaseController{
                                     'ir_paytime' =>$ir_paytime,
                                 );                   
                                 $tmpeArr['password'] = $userinfo['wvpass'];
-                                $status['ia_name']   = $userinfo['shopaddress1'];
+                                $status['ia_name']   = $userinfo['lastname'].$userinfo['firstname'];
                             }
                             //更新订单信息
                             $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+                            $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
                             if($upreceipt){ 
                                 $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$order['ir_receiptnum']);
-                                if($tmpeArr['password']){
+                                if($ir_status == 2){
                                     $usa    = new \Common\UsaApi\Usa;
                                     $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],'RBS,DTP');
                                     if(!empty($result['result'])){
