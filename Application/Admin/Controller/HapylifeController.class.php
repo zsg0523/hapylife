@@ -678,7 +678,7 @@ class HapylifeController extends AdminBaseController{
         		if($save){
         			if($unpoint == 0 && $unpoint==0){
                         // 发送短信提示
-                        $templateId ='178959';
+                        $templateId ='209011';
                         $params     = array($receiptnum,$receipt['ir_desc']);
                         $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                         if($sms['errmsg'] == 'OK'){
@@ -716,7 +716,7 @@ class HapylifeController extends AdminBaseController{
                         // 共总支付
                         $total = bcsub($receipt['ir_unpaid'],$unpaind,2);
                         // 发送短信提示
-                        $templateId ='178957';
+                        $templateId ='209014';
                         $params     = array($receiptnum,$receipt['ir_price'],$total,$unpaind);
                         $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                         if($sms['errmsg'] == 'OK'){
@@ -907,7 +907,7 @@ class HapylifeController extends AdminBaseController{
 	 		$receiptlist_result = M('receiptlist')->add($receiptlist);
 	 		if($receipt_result && $receiptson_result && $receiptlist_result){
 	 			// 发送短信提示
-                $templateId ='183580';
+                $templateId ='209001';
                 $params     = array($product['ip_name_zh']);
                 $sms        = D('Smscode')->sms($value[G],$value[H],$params,$templateId);
                 if($sms['errmsg'] == 'OK'){
@@ -1326,8 +1326,8 @@ class HapylifeController extends AdminBaseController{
 		
 		if(!empty($issend)){
 			// 发送续费短信
-			$spotemplate = 146228;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
-			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
+			$spotemplate = 209017;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
+			$sposmsSign  = "安永中国"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
 			$spoparams = array($remove[0],$data['productnams']);
 		}
 
@@ -1393,38 +1393,38 @@ class HapylifeController extends AdminBaseController{
 		$data = I('post.');
 		$remove = explode('-',$data['username']);
 
-		if($data['psd'] == 146228){
+		if($data['psd'] == 209017){
 			// 物流信息通知
-			$spotemplate = 146228;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
-			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
+			$spotemplate = 209017;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
+			$sposmsSign  = "安永中国"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
 			$spoparams = array($remove[0],$data['productnams']);
 		}
 
-		if($data['psd'] == 146227){
+		if($data['psd'] == 209019){
 			// 续费信息通知
-			$spotemplate = 146227;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
-			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
+			$spotemplate = 209019;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
+			$sposmsSign  = "安永中国"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
 			$spoparams = array($remove[0],$data['endtime']);
 		}
 
-		if($data['psd'] == 196995){
+		if($data['psd'] == 209098){
 			// 优惠月费到期通知
-			$spotemplate = 196995;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
-			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
+			$spotemplate = 209098;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
+			$sposmsSign  = "安永中国"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
 			$spoparams = array($remove[0],$data['endtime']);
 		}
 
-		if($data['psd'] == 204558){
+		if($data['psd'] == 208996){
 			// 套餐收费短信
-			$spotemplate = 204558;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
-			$sposmsSign  = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
+			$spotemplate = 208996;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
+			$sposmsSign  = "安永中国"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
 			$spoparams = array($remove[0],$data['productnams']);
 		}
 
         $sponsorSms    = D('Smscode')->sms($data['acnumber'],$data['phone'],$spoparams,$spotemplate);
         
         if($sponsorSms['errmsg']=='OK'){
-        	if($data['psd'] == 146227){
+        	if($data['psd'] == 209019){
 				$mape  = array(
                     'phone'   =>$data['phone'],
                     'content'    =>'亲爱的会员'.$remove[0].'，这是系统提醒消息，请在'.$data['endtime'].'之前购买月费包。',
@@ -1436,7 +1436,7 @@ class HapylifeController extends AdminBaseController{
                     'product_name' => '月费购买通知消息'
                 );
         	}
-    		if($data['psd'] == 146228){
+    		if($data['psd'] == 209017){
         		$mape  = array(
                     'phone'   =>$data['phone'],
                     'content'    =>'亲爱的会员'.$remove[0].'，您购买的'.$data['productnams'].'物流信息出现问题，我们会有电话通知您，请留意接听。',
@@ -1448,7 +1448,7 @@ class HapylifeController extends AdminBaseController{
                     'customerid' => $remove[1]
                 );
         	}
-        	if($data['psd'] == 196995){
+        	if($data['psd'] == 209098){
         		$mape  = array(
                     'phone'   =>$data['phone'],
                     'content'    =>'尊敬的'.$remove[0].'会员，您的免月费优惠期为'.$data['endtime'].'，请在优惠期结束前购买月费包。',
@@ -1460,7 +1460,7 @@ class HapylifeController extends AdminBaseController{
                     'product_name' => '优惠月费通知消息'
                 );
         	}
-        	if($data['psd'] == 204558){
+        	if($data['psd'] == 208996){
         		$mape  = array(
                     'phone'   =>$data['phone'],
                     'content'    =>'尊敬的'.$remove[0].'会员，今天是优惠'.$data['productnams'].'套餐的最后支付时间，请务必在今天晚上11:59前成功支付尾款，谢谢！',

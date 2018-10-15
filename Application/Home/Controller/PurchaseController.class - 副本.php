@@ -153,19 +153,10 @@ class PurchaseController extends HomeBaseController{
         $ip_dt   = I('get.ip_dt');
         $ipid    = I('get.ipid');
         $data    = M('User')->where(array('iuid'=>$iuid))->find();
-        // 获取用户在美国的dtp
-        $usa = new \Common\UsaApi\Usa;
-        $result = $usa->dtPoint($data['customerid']);
-        foreach($result['softCashCategories'] as $key=>$value){
-            if($value['categoryType'] == 'DreamTripPoints'){
-                $data['iu_dt'] = $value['balance'];
-            }
-        }
         $bcsub   = bcsub($data['iu_dt'],$ip_dt,2);
         $data['bc_dt'] =$bcsub;
         $data['ipid']  =$ipid;
         $data['ip_dt'] =$ip_dt;
-        // p($data);die;
         if($data){
         	$this->assign('data',$data);
         	$this->display();
@@ -498,21 +489,10 @@ class PurchaseController extends HomeBaseController{
                     break;
                 case '5':
                     if($isdt){
-                        $usa    = new \Common\UsaApi\Usa;
-                        $result = $usa->dtPoint($userinfo['customerid']);
-                        foreach($result['softCashCategories'] as $key=>$value){
-                            if($value['categoryType'] == 'DreamTripPoints'){
-                                $userinfo['iu_dt'] = $value['balance'];
-                            }
-                        }
-                        // p($userinfo);die;
                         $bcsub = bcsub($userinfo['iu_dt'],$product['ip_dt'],2);
                         if($bcsub>=0){
-                            // $saveDt= M('User')->where(array('CustomerId'=>$userinfo['customerid']))->setfield('iu_dt',$bcsub);
-                            $usa    = new \Common\UsaApi\Usa;
-                            $result = $usa->redeemVirtual($userinfo['customerid'],$product['ip_dt'],'DreamTripPoints',$product['ip_name_zh']);
-                            $jsonStr = json_decode($result['result'],true);
-                            if($jsonStr['message']){
+                            $saveDt= M('User')->where(array('CustomerId'=>$userinfo['customerid']))->setfield('iu_dt',$bcsub);
+                            if($saveDt){
                                 $dtNo = 'DT'.date('YmdHis').rand(10000, 99999);
                                 $mape            = array(
                                     'ir_receiptnum'   =>$order_num,

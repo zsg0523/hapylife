@@ -965,6 +965,8 @@ class HapylifeApiController extends HomeBaseController{
         $an_pro = array();
         $third_pro = array();
         $type  = trim($find['distributortype']);
+        $array   = array('HPL00000181','HPL00123539');//显示测试产品账号
+        $arrayTo = array('61338465','64694832','65745561','HPL00123556','61751610','61624356','61695777','68068002');//显示真实产品账号
         switch (strlen($find['customerid'])) {
             case '8':
                 //核对usa 账号是否正确存在
@@ -972,10 +974,10 @@ class HapylifeApiController extends HomeBaseController{
                 $result = $usa->validateHpl($find['customerid']);
                 switch ($result['isActive']) {
                     case true:
-                        $product = M('Product')->where(array('ip_type'=>4,'is_pull'=>1))->select();
+                        $products = M('Product')->where(array('ip_type'=>4,'is_pull'=>1))->select();
                         break;
                     default:
-                        $product = array();
+                        $products = array();
                         break;
                 }
                 break;
@@ -993,31 +995,19 @@ class HapylifeApiController extends HomeBaseController{
                     'is_pull'  =>1
                 );
                 $proArr  = D('Product')->where($tmpe)->order('is_sort desc')->select();
-                $an_pro  = M('Product')->where(array('ip_type'=>4,'is_pull'=>1))->select();
                 $product = array_merge($proArr,$an_pro,$third_pro);
-                // foreach ($product as $key => $value) {
-                //     $products[$key]         = $value; 
-                //     $products[$key]['show'] = 1; 
-                // }
+                if(in_array($find['customerid'],$array)){
+                    $an_pro = M('Product')->where(array('ip_type'=>4,'is_pull'=>0))->select();
+                }else{
+                    $an_pro  = M('Product')->where(array('ip_type'=>4,'is_pull'=>1))->select();
+                }
+                $product = array_merge($proArr,$an_pro,$third_pro);
+                foreach ($product as $key => $value) {
+                    $products[$key]         = $value; 
+                    $products[$key]['show'] = 1; 
+                }
                 break;
         }  
-        $array   = array('HPL00000181','HPL00123539');//显示测试产品账号
-        $arrayTo = array('61338465','64694832','65745561','HPL00123556','61751610','61624356','61695777','68068002');//显示真实产品账号
-        if(in_array($find['customerid'],$array)){
-            $an_pro = M('Product')->where(array('ip_type'=>4,'is_pull'=>0))->select();
-            $product = array_merge($proArr,$an_pro,$third_pro);
-            // foreach ($product as $key => $value) {
-            //     $data['grade'][$key]         = $value; 
-            //     $data['grade'][$key]['show'] = 1; 
-            // }
-        // }else if(in_array($find['customerid'],$arrayTo)){
-        //     $an_pro = M('Product')->where(array('ipid'=>48,'is_pull'=>0))->select();
-        //     $product = array_merge($products,$an_pro);
-        //     foreach ($product as $key => $value) {
-        //         $data[$key]         = $value; 
-        //         $data[$key]['show'] = 1; 
-        //     }
-        }
         $data['grade'] = $product;
         if($data){
             $this->ajaxreturn($data);

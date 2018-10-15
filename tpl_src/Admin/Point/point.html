@@ -48,12 +48,14 @@
 						<th>余额明細</th>
 						<th>现在可用</th>
 						<th>现在冻结</th>
+						<th>操作</th>
+						<th>操作</th>
 					</tr>
 					<foreach name="data" item="v">
 						<tr>
-							<td width="200px">{$v['hu_nickname']}</td>
-							<td width="200px">{$v['hu_username']}</td>
-							<td>{$v['hu_username_en']}</td>
+							<td width="200px">{$v['customerid']}</td>
+							<td width="200px">{$v['lastname']}{$v['firstname']}</td>
+							<td>{$v['enlastname']}{$v['enfirstname']}</td>
 							<td>{$v['teamcode']}</td>
 							<td>{$v['open']}</td>
 							<td align="right">{$v['realpoint9']?$v['realpoint9']:0}</td>
@@ -66,10 +68,16 @@
 							<td align="right">{$v['end']}</td>
 							<td align="right">{$v['deviation']}</td>
 							<td align="center">
-								<a href="{:U('Admin/Point/surplus',array('hu_nickname'=>$v['hu_nickname'],'iuid'=>$v['iuid']))}">查看余额明細</a> 
+								<a href="{:U('Admin/Point/surplus',array('hu_nickname'=>$v['customerid'],'iuid'=>$v['iuid']))}">查看余额明細</a> 
 							</td>
 							<td align="right">{$v['iu_point']?$v['iu_point']:0}</td>
 							<td align="right">{$v['iu_unpoint']?$v['iu_unpoint']:0}</td>
+							<td align="center">
+								<a href="javascript:;" nickname="{$v['customerid']}" type="2" onclick="addpoint(this)">系统增加积分</a>
+							</td>						
+							<td align="center">
+								<a href="javascript:;" nickname="{$v['customerid']}" type="1" onclick="redpoint(this)">系统减少积分</a>
+							</td>
 						</tr>
 					</foreach>
 				</table>

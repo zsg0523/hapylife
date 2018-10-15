@@ -43,8 +43,8 @@ class HapylifeRegisterController extends HomeBaseController{
             // 短信模板ID，需要在短信应用中申请$templateId
             // 签名
             if($acnumber==86){
-                $templateId = 127203;  // NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
-                $smsSign = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
+                $templateId = 209020;  // NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
+                $smsSign = "安永中国"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
             }else if($acnumber==886 || $acnumber==852 || $acnumber==853){
                 $templateId = 127206;  // NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请      
                 $smsSign = "eggcarton";
@@ -289,26 +289,24 @@ class HapylifeRegisterController extends HomeBaseController{
     public function checkName(){
         $customerid = strtoupper(trim(I('post.EnrollerID')));
         if($customerid){
-            if(substr($customerid,0,3) == 'HPL'){
-                $data = M('User')->where(array('CustomerID'=>$customerid))->find();
-                if(!empty($data)){
+            if(strlen($customerid)==8){
+                $usa = new \Common\UsaApi\Usa;
+                $map = $usa->validateHpl($customerid);
+                if(empty($map['errors'])){
+                    $data['lastname'] = $map['lastName'];
+                    $data['firstname'] = $map['firstName'];
                     $this->ajaxreturn($data);     
                 }else{
                     $data['status'] = 0;
                     $this->ajaxreturn($data);           
                 }
             }else{
-                $key      = "QACER3H5T6HGYDCCDAZM3";
-                $url      = "https://signupapi.wvhservices.com/api/Hpl/Validate?customerId=".$customerid."&"."key=".$key;
-                $wv       = file_get_contents($url);
-                $data = json_decode($wv,true);
-                if(!empty($data)){
-                    $data['lastname'] = $data['lastName'];
-                    $data['firstname'] = $data['firstName'];
-                    $this->ajaxreturn($data);     
+                $data = M('User')->where(array('CustomerID'=>$customerid))->find();
+                if($data){
+                    $this->ajaxreturn($data);
                 }else{
                     $data['status'] = 0;
-                    $this->ajaxreturn($data);           
+                    $this->ajaxreturn($data); 
                 }
             }
         }else{
@@ -480,7 +478,7 @@ class HapylifeRegisterController extends HomeBaseController{
         }
         if($addResult){
             // 发送短信提示
-            $templateId ='183054';
+            $templateId ='209009';
             $params     = array();
             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
             if($sms['errmsg'] == 'OK'){
@@ -621,7 +619,7 @@ class HapylifeRegisterController extends HomeBaseController{
                     $products = 'RBS,DTP,SIGNUP5';
                 }
                 $usa    = new \Common\UsaApi\Usa;
-                $result = $usa->createCustomer($userinfo['customerid'],$userinfo['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
+                $result = $usa->createCustomer($userinfo['customerid'],$userinfo['wvpass'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
                 if(!empty($result['result'])){
                     $log = addUsaLog($result['result']);
                     $maps = json_decode($result['result'],true);
@@ -638,7 +636,7 @@ class HapylifeRegisterController extends HomeBaseController{
                         $jsonStr = json_decode($createPayment['result'],true);
                         if($jsonStr['paymentId']){
                             // 发送短信提示
-                            $templateId ='207291';
+                            $templateId ='208995';
                             $params     = array($userinfo['customerid'],$maps['wvCustomerID']);
                             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                             if($sms['errmsg'] == 'OK'){

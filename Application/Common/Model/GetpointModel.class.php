@@ -269,25 +269,7 @@ class GetpointModel extends BaseModel{
     	create_csv($content,$title,$filename);
 		return;
     }
-	/**
-	*快钱excel
-	**/
-	public function kq_excel($data){
-		$filename='快钱'.date('YmdHis',time()).time();
-		$title   = array('城市','银行名称','开户行名称','收款方姓名','收款方银行账号','金额','备注','商家订单号');
-		foreach ($data as $k => $v) {
-			$content[$k]['iu_bankcity']    = $v['iu_bankcity'];
-			$content[$k]['iu_bank']        = $v['iu_bank'];
-			$content[$k]['iu_bankbranch']  = $v['iu_bankbranch'];
-			$content[$k]['iu_bankuser']    = $v['hu_username'];
-			$content[$k]['iu_bankaccount'] = $v['iu_bankaccount'];
-			$content[$k]['realpoint']      = $v['realpoint']*100;
-			$content[$k]['date']           = date('Y-m-d',strtotime($v['date']));
-			$content[$k]['number']         ='';
-		}
-    	create_csv($content,$title,$filename);
-		return;
-    }
+	
 	/**
 	* 获取所有成功操作积分--每月总额
 	**/
@@ -1012,143 +994,7 @@ class GetpointModel extends BaseModel{
     	create_csv($content,$title,$filename);
 		return;
     }
-	//封装curl的调用接口，post请求方式
-	function doCurlPostRequest($url,$requestString,$timeout=5){
-	    $con = curl_init((string)$url);
-	    curl_setopt($con,CURLOPT_HEADER,false);
-	    curl_setopt($con,CURLOPT_POSTFIELDS, http_build_query($requestString));
-	    curl_setopt($con,CURLOPT_POST,true);
-	    curl_setopt($con,CURLOPT_RETURNTRANSFER,true);
-	    curl_setopt($con,CURLOPT_TIMEOUT,$timeout);
-	    $return = curl_exec($con);
-	    return $return;
-	}
-	/**
-     * 将json字符串转化成php数组
-     * @param  $json_str
-     * @return $json_arr
-     */
-    public function json_to_array($json_str){
-        if(is_null(json_decode($json_str))){
-            $json_str = $json_str;
-        }else{
-            $json_str = json_decode($json_str);
-        }
-        $json_arr=array();
-
-        foreach($json_str as $k=>$w){
-            if(is_object($w)){               
-                $json_arr[$k]= $this->json_to_array($w); //判断类型是不是object
-            }else if(is_array($w)){
-                $json_arr[$k]= $this->json_to_array($w);
-            }else{
-                $json_arr[$k]= $w;
-            }
-        }
-        return $json_arr;
-    }
-	/**
-	* 写入日志文件
-	* PHP_EOL 换行常量，windows \r\n; max \r; liunx \n;
-	* FILE_APPEND 在文件末尾追加数据
-	**/
-	function logTest($data){
-	    $log = date('Y-m-d H:i:s').$data.'PHP_EOL';
-	    $add  = file_put_contents('./log.txt', $log,FILE_APPEND);
-	    return;
-	} 
-	 /**
-     * [launch 模拟post发起请求类]
-     * @param  [type] $url     [请求地址]
-     * @param  [type] $data_po [请求数组]
-     * @return [type] result   [请求URL返回参数]
-     */
-    function launch($url,$data_po){
-        $query = http_build_query($data_po); //转换数组aa&&bb
-
-        $options['http'] = array(
-             'timeout'=>60,
-             'method' => 'POST',
-             'header' => 'Content-type:application/x-www-form-urlencoded',
-             'content' => $query
-            );
-
-        $context = stream_context_create($options);
-        $result = file_get_contents($url, false, $context);
-        p($result);die;
-        return $result;
-    }
-    /**
-     * 获取分页数据
-     * Nlc或Iobs综合消费
-     */
-    public function getPage($model,$word,$starttime,$endtime,$ir_status,$ir_paytype,$ir_area,$order='',$limit=50,$field=''){
-        $count=$model
-            ->alias('r')
-            ->join('hapylife_user u on r.iuid = u.iuid ')
-            ->where(
-            	array(
-            		'u.hu_nickname|u.hu_username|ir_receiptnum|ir_360_orderId|ir_360_orderNo|teamCode'=>array('like','%'.$word.'%'),
-            		'create_time'=>array(array('egt',$starttime),array('elt',$endtime)),
-            		'ir_status'=>array('in',$ir_status),
-            		'ir_paytype'=>array('in',$ir_paytype),
-            		'ir_area'=>$ir_area
-            		)
-            	)
-            ->count();
-        // p($count);die;
-        $page=new_page($count,$limit);
-        // 获取分页数据
-        if (empty($field)) {
-            $list=$model
-            	->alias('r')
-            	->join('hapylife_user u on r.iuid = u.iuid ')
-                ->where(array('u.hu_nickname|u.hu_username|ir_receiptnum|ir_360_orderId|ir_360_orderNo|teamCode'=>array('like','%'.$word.'%'),'create_time'=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'ir_paytype'=>array('in',$ir_paytype),'ir_area'=>$ir_area))
-                ->order($order)
-                ->limit($page->firstRow.','.$page->listRows)
-                ->select();
-        }else{
-            $list=$model
-            	->alias('r')
-            	->join('hapylife_user u on r.iuid = u.iuid ')
-                ->field($field)
-                ->where(array('u.hu_nickname|u.hu_username|ir_receiptnum|ir_360_orderId|ir_360_orderNo|teamCode'=>array('like','%'.$word.'%'),'create_time'=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'ir_paytype'=>array('in',$ir_paytype),'ir_area'=>$ir_area))
-                ->order($order)
-                ->limit($page->firstRow.','.$page->listRows)
-                ->select();         
-        }
-        // p($mape);die;
-        $data=array(
-            'data'=>$list,
-            'page'=>$page->show()
-            );
-        return $data;
-    }
-    /**
-     * 获取分页数据
-     * Nlc或Iobs综合消费数据等待导出excel
-     */
-    public function getPage_excel($model,$word,$starttime,$endtime,$ir_status,$ir_paytype,$ir_area,$order=''){
-        // 获取分页数据
-        if (empty($field)) {
-            $list=$model
-            	->alias('r')
-            	->join('hapylife_user u on r.iuid = u.iuid ')
-                ->where(array('u.hu_nickname|u.hu_username|ir_receiptnum|ir_360_orderId|ir_360_orderNo|teamCode'=>array('like','%'.$word.'%'),'create_time'=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'ir_paytype'=>array('in',$ir_paytype),'ir_area'=>$ir_area))
-                ->order($order)
-                ->select();
-        }else{
-            $list=$model
-            	->alias('r')
-            	->join('hapylife_user u on r.iuid = u.iuid ')
-                ->field($field)
-                ->where(array('u.hu_nickname|u.hu_username|ir_receiptnum|ir_360_orderId|ir_360_orderNo|teamCode'=>array('like','%'.$word.'%'),'create_time'=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'ir_paytype'=>array('in',$ir_paytype),'ir_area'=>$ir_area))
-                ->order($order)
-                ->select();         
-        }
-        // p($mape);die;
-        return $list;
-    }
+    
     /**
     *积分余额表
     **/
@@ -1156,54 +1002,46 @@ class GetpointModel extends BaseModel{
 		if(empty($word)){
 			$count=$model
 				->order($order)
-				->alias('iu')
-				->join('left join __HRAC_USERS__ hu ON iu.iuid=hu.iuid')
 				->count();
 		}else{
 			$count=$model
 				->order($order)
-				->alias('iu')
-				->join('left join __HRAC_USERS__ hu ON iu.iuid=hu.iuid')
-				->where(array('hu_nickname|hu_username|iu_upid|hu.hu_hpname|teamCode'=>array('like','%'.$word.'%')))
+				->where(array('customerid|lastname|firstname|enrollerid|teamCode'=>array('like','%'.$word.'%')))
 				->count();
 		}
 		$page=new_page($count,$limit);
 		if(empty($word)){
 			$list=$model
 				->order($order)
-				->alias('iu')
-				->join('left join __HRAC_USERS__ hu ON iu.iuid=hu.iuid')
 			    ->limit($page->firstRow.','.$page->listRows)
 				->select();
 		}else{
 			$list=$model
 				->order($order)
-				->alias('iu')
-				->join('left join __HRAC_USERS__ hu ON iu.iuid=hu.iuid')
-				->where(array('hu_nickname|hu_username|iu_upid|hu.hu_hpname|teamCode'=>array('like','%'.$word.'%')))
+				->where(array('customerid|lastname|firstname|enrollerid|teamCode'=>array('like','%'.$word.'%')))
 			    ->limit($page->firstRow.','.$page->listRows)
 				->select();
 		}
 		foreach ($list as $key => $value) {
 			$data[$key]=$value;
 			if($starttime){
-				$data[$key]['openpoint'] = D('IbosGetpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('elt',$starttime))))->order('date desc')->select();
+				$data[$key]['openpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('elt',$starttime))))->order('date desc')->select();
 				if($data[$key]['openpoint']){
 					$data[$key]['open'] = $data[$key]['openpoint'][0]['leftpoint'];
 				}else{
 					$data[$key]['open'] = 0;
 				}
 				if($endtime){
-					$data[$key]['allpoint'] = D('IbosGetpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('egt',$starttime),array('elt',$endtime))))->order('date desc')->select();
+					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('egt',$starttime),array('elt',$endtime))))->order('date desc')->select();
 				}else{
-					$data[$key]['allpoint'] = D('IbosGetpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('egt',$starttime))))->order('date desc')->select();
+					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('egt',$starttime))))->order('date desc')->select();
 				}
 			}else{
 				$data[$key]['open'] = 0;
 				if($endtime){
-					$data[$key]['allpoint'] = D('IbosGetpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('elt',$endtime))))->order('date desc')->select();
+					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('elt',$endtime))))->order('date desc')->select();
 				}else{
-					$data[$key]['allpoint'] = D('IbosGetpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2')))->order('date desc')->select();
+					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2')))->order('date desc')->select();
 				}
 			}
 			if($data[$key]['allpoint']){
@@ -1263,37 +1101,33 @@ class GetpointModel extends BaseModel{
 		if(empty($word)){
 			$list=$model
 				->order($order)
-				->alias('iu')
-				->join('left join __HRAC_USERS__ hu ON iu.iuid=hu.iuid')
 				->select();
 		}else{
 			$list=$model
 				->order($order)
-				->alias('iu')
-				->join('left join __HRAC_USERS__ hu ON iu.iuid=hu.iuid')
-				->where(array('hu_nickname|hu_username|iu_upid|hu.hu_hpname|teamCode'=>array('like','%'.$word.'%')))
+				->where(array('customerid|lastname|firstname|enrollerid|teamCode'=>array('like','%'.$word.'%')))
 				->select();
 		}
 		foreach ($list as $key => $value) {
 			$data[$key]=$value;
 			if($starttime){
-				$data[$key]['openpoint'] = D('IbosGetpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('elt',$starttime))))->order('date desc')->select();
+				$data[$key]['openpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('elt',$starttime))))->order('date desc')->select();
 				if($data[$key]['openpoint']){
 					$data[$key]['open'] = $data[$key]['openpoint'][0]['leftpoint'];
 				}else{
 					$data[$key]['open'] = 0;
 				}
 				if($endtime){
-					$data[$key]['allpoint'] = D('IbosGetpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('egt',$starttime),array('elt',$endtime))))->order('date desc')->select();
+					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('egt',$starttime),array('elt',$endtime))))->order('date desc')->select();
 				}else{
-					$data[$key]['allpoint'] = D('IbosGetpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('egt',$starttime))))->order('date desc')->select();
+					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('egt',$starttime))))->order('date desc')->select();
 				}
 			}else{
 				$data[$key]['open'] = 0;
 				if($endtime){
-					$data[$key]['allpoint'] = D('IbosGetpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('elt',$endtime))))->order('date desc')->select();
+					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('elt',$endtime))))->order('date desc')->select();
 				}else{
-					$data[$key]['allpoint'] = D('IbosGetpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2')))->order('date desc')->select();
+					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2')))->order('date desc')->select();
 				}
 			}
 			if($data[$key]['allpoint']){
@@ -1339,55 +1173,7 @@ class GetpointModel extends BaseModel{
 		}     
 		return $userDate;
 	}
-	/**
-	*nlc消费excel
-	**/
-	public function nlcSynthe_excel($data){
-		$filename=date('YmdHis',time()).time();
-		$point = 0;
-		$price = 0;
-		$title   = array('订单编号','360订单ID','3602订单编号','会员','姓名','团队标签','金额(RMB)','EP积分','支付类型','创建时间','支付时间');
-		foreach ($data as $k => $v) {
-			$content[$k]['ir_receiptnum']  = $v['ir_receiptnum'];
-			$content[$k]['ir_360_orderid'] = $v['ir_360_orderid'];
-			$content[$k]['ir_360_orderno'] = $v['ir_360_orderno'];
-			$content[$k]['hu_nickname']    = $v['hu_nickname'];
-			$content[$k]['hu_username']    = $v['hu_username'];
-			$content[$k]['teamcode']       = $v['teamcode'];
-			$content[$k]['ir_price']       = $v['ir_price'];
-			$content[$k]['ir_point']       = $v['ir_point'];
-			$price  = bcadd($price,$v['ir_price'],4);
-			$point  = sprintf("%.4f",$price/100);;
-			switch ($v['ir_paytype']) {
-				case '1':
-					$content[$k]['ir_paytype'] = '微信支付';
-					break;
-				case '2':
-					$content[$k]['ir_paytype'] = 'EP积分支付';
-					break;
-				case '3':
-					$content[$k]['ir_paytype'] = '单据转账';
-					break;
-				case '4':
-					$content[$k]['ir_paytype'] = '快钱支付';
-					break;
-			}
-			$content[$k]['create_time']     = date('Y-m-d H:i:s',$v['create_time']);
-			$content[$k]['update_time']     = date('Y-m-d H:i:s',$v['update_time']);
-		}
-		$content[count($data)+1]['ir_receiptnum']  = '总额:';
-		$content[count($data)+1]['ir_360_orderid'] = '';
-		$content[count($data)+1]['ir_360_orderno'] = '';
-		$content[count($data)+1]['hu_nickname']    = '';
-		$content[count($data)+1]['hu_username']    = '';
-		$content[count($data)+1]['teamcode']       = '';
-		$content[count($data)+1]['ir_price']       = $price;
-		$content[count($data)+1]['ir_point']       = $point;
-		$content[count($data)+1]['create_time']    = '';
-		$content[count($data)+1]['update_time']    = '';
-    	create_csv($content,$title,$filename);
-		return;
-    }
+	
 	/**
 	*余额excel
 	**/
@@ -1418,56 +1204,5 @@ class GetpointModel extends BaseModel{
     	create_csv($content,$title,$filename);
 		return;
     }
-
-
-    /**
-    * 全部电子钱包流水查询
-    * @param memeberNo 会员账号，不填默认全部会员
-    * @param ewalletType 1奖金 2报单币
-    * @param auditTimeStart/auditTimeEnd 起始时间/结束时间;格式 Y-m-d H:i:s
-    * @param currentPage 当前页码
-    **/
-    public function getAllWalletdetail($memberNo,$ewalletType,$auditTimeStart,$auditTimeEnd,$currentPage,$pageSize){
-        $remark         = 'API消费';
-        $pageModel      = array(
-                            "currentPage"  =>$currentPage,
-                            "pageSize"     =>$pageSize
-                        );
-        $pageModel      = json_encode($pageModel);
-        $ibos360_result = ibos360_getAllWalletdetail($memberNo,$ewalletType,$remark,$auditTimeStart,$auditTimeEnd,$pageModel);
-       	return $ibos360_result;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }             

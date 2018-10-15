@@ -11,11 +11,25 @@ class DtpointController extends AdminBaseController{
     public function index(){
         //账户昵称搜索
         $word = I('get.word');
-        $assign=D('User')->getDtPoint(D('User'),$word,"iuid",$limit=50);
+        $excel     = I('get.excel');
+        $assign = D('User')->getDtPoint(D('User'),$word,"iuid",$limit=50);
         // P($assign);
-        $this->assign($assign);
-        $this->assign('word',$word);
-        $this->display();
+        $array = '测,试,测试,测试测试,test,测试点,testtest';
+        if($excel == 'excel'){
+            $data = D('User')->getDtPoints(D('User'),$word,"iuid",$array);
+            foreach($data['data'] as $key=>$value){
+                if(strlen($value['hu_nickname']) != 8){
+                    if($value['distributortype'] == 'Platinum'){
+                        $message[] = $value;
+                    }
+                }
+            }
+            $export_excel = D('User')->export_excelDt($message);
+        }else{
+            $this->assign($assign);
+            $this->assign('word',$word);
+            $this->display();
+        }
     }
 
     /**

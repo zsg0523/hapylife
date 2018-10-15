@@ -24,6 +24,7 @@ class RegisterController extends HomeBaseController{
         $this->display();
     }
     public function new_register(){
+        header("Content-type: text/html; charset=gb2312"); 
         $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
         foreach ($mape as $key => $value) {
             $dat[$key]         = $value;
@@ -49,9 +50,9 @@ class RegisterController extends HomeBaseController{
         }else{
             vendor('SmsSing.SmsSingleSender');
             // 短信应用SDK AppID
-            $appid = 1400096409; // 1400开头
+            $appid = 1400149268; // 1400开头
             // 短信应用SDK AppKey
-            $appkey = "fc1c7e21ab36fef1865b0a3110709c51";
+            $appkey = "010151f33eaec872109b1b507c820bce";
             // 需要发送短信的手机号码
             $phoneNumber = I('post.phoneNumber');
             //手机区号
@@ -59,8 +60,8 @@ class RegisterController extends HomeBaseController{
             // 短信模板ID，需要在短信应用中申请$templateId
             // 签名
             if($acnumber==86){
-                $templateId = 127203;  // NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
-                $smsSign = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
+                $templateId = 209020;  // NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
+                $smsSign = "安永中国"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
             }else if($acnumber==886 || $acnumber==852 || $acnumber==853){
                 $templateId = 127206;  // NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请      
                 $smsSign = "eggcarton";
@@ -368,6 +369,7 @@ class RegisterController extends HomeBaseController{
     }
     // 普通用户注册
     public function register(){
+        header("Content-type: text/html; charset=gb2312"); 
         $cu_id = I('get.cu_id');
         $hu_nickname = I('get.hu_nickname');
         $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
@@ -565,7 +567,7 @@ class RegisterController extends HomeBaseController{
         }
         if($addResult){
             // 发送短信提示
-            $templateId ='183054';
+            $templateId ='209009';
             $params     = array();
             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
             if($sms['errmsg'] == 'OK'){
@@ -693,7 +695,7 @@ class RegisterController extends HomeBaseController{
                             $log = addUsaLog($createPayment['result']);
                             $jsonStr = json_decode($createPayment['result'],true);
                             if($jsonStr['paymentId']){
-                                $templateId ='207291';
+                                $templateId ='208995';
                                 $params     = array($user['customerid'],$maps['wvCustomerID']);
                                 $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                 if($sms['errmsg'] == 'OK'){
@@ -718,10 +720,10 @@ class RegisterController extends HomeBaseController{
         }
 
         $assign = array(
-                        'data' => $user,
-                        'iuid' => $user['iuid'],
-                        'cu_id' => $cu_id,
-                        );
+            'data' => $user,
+            'iuid' => $user['iuid'],
+            'cu_id' => $cu_id,
+        );
         $this->assign($assign);
         $this->display();
     }
@@ -823,7 +825,7 @@ class RegisterController extends HomeBaseController{
                     $products = 'RBS,DTP,SIGNUP5';
                 }
                 $usa    = new \Common\UsaApi\Usa;
-                $result = $usa->createCustomer($userinfo['customerid'],$userinfo['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
+                $result = $usa->createCustomer($userinfo['customerid'],$userinfo['wvpass'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
                 if(!empty($result['result'])){
                     $log = addUsaLog($result['result']);
                     $maps = json_decode($result['result'],true);
@@ -840,7 +842,7 @@ class RegisterController extends HomeBaseController{
                         $jsonStr = json_decode($createPayment['result'],true);
                         if($jsonStr['paymentId']){
                             // 发送短信提示
-                            $templateId ='207291';
+                            $templateId ='208995';
                             $params     = array($userinfo['customerid'],$maps['wvCustomerID']);
                             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                             if($sms['errmsg'] == 'OK'){

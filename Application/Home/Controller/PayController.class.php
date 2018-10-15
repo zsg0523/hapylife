@@ -174,7 +174,7 @@ class PayController extends HomeBaseController{
                                 $change_receipts = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($maps);
                                 if($change_receipts){
                                     // 发送短信提示
-                                    $templateId ='178957';
+                                    $templateId ='209014';
                                     $params     = array($receipt['ir_receiptnum'],$receiptson['ir_price'],$total,$ir_unpaid);
                                     $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                     if($sms['errmsg'] == 'OK'){
@@ -214,7 +214,7 @@ class PayController extends HomeBaseController{
                                 $change_receipt = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($maps);
                                 if($change_receipt){
                                     // 发送短信提示
-                                    $templateId ='178959';
+                                    $templateId ='209011';
                                     $params     = array($receipt['ir_receiptnum'],$product_name);
                                     $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                     if($sms['errmsg'] == 'OK'){
@@ -348,8 +348,8 @@ class PayController extends HomeBaseController{
                                                     $log = addUsaLog($createPayment['result']);
                                                     $jsonStr = json_decode($createPayment['result'],true);
                                                     if($jsonStr['paymentId']){
-                                                        $templateId ='164137';
-                                                        $params     = array();
+                                                        $templateId ='208995';
+                                                        $params     = array($userinfo['customerid'],$maps['wvCustomerID']);
                                                         $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                                         if($sms['errmsg'] == 'OK'){
                                                             $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();
@@ -360,7 +360,8 @@ class PayController extends HomeBaseController{
                                                                 'addressee' => $status['ia_name'],
                                                                 'product_name' => $receiptlist['product_name'],
                                                                 'date' => time(),
-                                                                'content' => '恭喜您注册成功，请注意查收邮件'
+                                                                'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfo['customerid'].'以及 DreamTrips 会员号码是'.$maps['wvCustomerID'].'，同时注意查收Rovia邮件。',
+                                                                'customerid' => $userinfo['customerid']
                                                             );
                                                             $logs = M('SmsLog')->add($contents);
                                                         }
@@ -472,11 +473,37 @@ class PayController extends HomeBaseController{
     /**
     *检查用户DT是否足够支付
     **/
+//     public function getUserDt(){
+//         $iuid    = $_SESSION['user']['id'];
+// //         $iuid    = I('post.iuid');
+//         $ip_dt   = I('post.ip_dt');
+//         $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
+//         $bcsub   = bcsub($userinfo['iu_dt'],$ip_dt,2);
+//         $data['iu_dt'] =$userinfo['iu_dt'];
+//         $data['bc_dt'] =$bcsub;
+//         if($bcsub>=0){
+//             $data['status']=1;
+//             $data['msg']   ='DT充足';
+//             $this->ajaxreturn($data);
+//         }else{
+//             $data['status']=0;
+//             $data['msg']   ='DT不足';
+//             $this->ajaxreturn($data);
+//         }
+//     }
     public function getUserDt(){
         $iuid    = $_SESSION['user']['id'];
 //         $iuid    = I('post.iuid');
         $ip_dt   = I('post.ip_dt');
         $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
+        // 获取用户在美国的dtp
+        $usa = new \Common\UsaApi\Usa;
+        $result = $usa->dtPoint($userinfo['customerid']);
+        foreach($result['softCashCategories'] as $key=>$value){
+            if($value['categoryType'] == 'DreamTripPoints'){
+                $userinfo['iu_dt'] = $value['balance'];
+            }
+        }
         $bcsub   = bcsub($userinfo['iu_dt'],$ip_dt,2);
         $data['iu_dt'] =$userinfo['iu_dt'];
         $data['bc_dt'] =$bcsub;

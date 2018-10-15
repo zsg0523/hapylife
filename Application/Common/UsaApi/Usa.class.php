@@ -128,6 +128,39 @@ class usa
 		return $result;
 	}
 
+	/**
+	* get virtual CURRENCY (DT Points) balance
+	**/ 
+	public function dtPoint($hapyLifeID){
+		$map  = I('post.');
+		$key  = $this->key;
+		$url  = $this->url;
+		$sendUrl = $url."/api/Hpl/Customer/".$hapyLifeID."/VirtualCurrency?key=".$key;
+		// p($sendUrl);die;
+		$wv       = file_get_contents($sendUrl);
+		$userinfo = json_decode($wv,true);
+		return $userinfo;
+	}
+
+	/**
+	* redeem virtual CURRENCY (DT Points and training dollors)
+	**/ 
+	public function redeemVirtual($hapyLifeID,$amount,$category,$comment){
+		$map  = I('post.');
+		$key  = $this->key;
+		$url  = $this->url;
+		$data = array(
+			'hapyLifeID'  	=>$hapyLifeID,
+            'amount'   		=>$amount,
+            'category' 		=>$category,
+            'comment' 		=>$comment,
+		);
+		$data    = json_encode($data);
+		$sendUrl = $url."/api/Hpl/Customer/".$hapyLifeID.'/VirtualCurrency?key='.$key;
+		$result  = post_json_data($sendUrl,$data);
+		return $result;
+	}
+
 
 
 

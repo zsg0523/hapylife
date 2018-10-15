@@ -381,8 +381,8 @@ class HapylifePayController extends HomeBaseController{
 				                                                $jsonStr = json_decode($createPayment['result'],true);
 				                                                if($jsonStr['paymentId']){
 					                                                // 发送短信提示
-					                                                $templateId ='164137';
-					                                                $params     = array();
+					                                                $templateId ='208995';
+					                                                $params     = array($userinfo['customerid'],$maps['wvCustomerID']);
 					                                                $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
 					                                                if($sms['errmsg'] == 'OK'){
 					                                                    $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();
@@ -393,8 +393,8 @@ class HapylifePayController extends HomeBaseController{
 					                                                                'addressee' => $status['ia_name'],
 					                                                                'product_name' => $receiptlist['product_name'],
 					                                                                'date' => time(),
-					                                                                'content' => '恭喜您注册成功，请注意查收邮件',
-					                                                                'customerid' => $CustomerID
+					                                                                'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfo['customerid'].'以及 DreamTrips 会员号码是'.$maps['wvCustomerID'].'，同时注意查收Rovia邮件。',
+                                            										'customerid' => $userinfo['customerid']
 					                                                    );
 					                                                    $logs = M('SmsLog')->add($contents);
 					                                                }
@@ -619,7 +619,7 @@ class HapylifePayController extends HomeBaseController{
                             // p($jsonStr);die;
                             if($jsonStr['paymentId']){
 	                            // 发送短信提示
-	                            $templateId ='178959';
+	                            $templateId ='209011';
 	                            $params     = array($receipt['ir_receiptnum'],$product_name);
 	                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
 	                            if($sms['errmsg'] == 'OK'){
@@ -640,7 +640,7 @@ class HapylifePayController extends HomeBaseController{
                             // 共总支付
                             $total = bcsub($order['ir_unpaid'],$sub,2);
                             // 发送短信提示
-                            $templateId ='178957';
+                            $templateId ='209014';
                             $params     = array($receipt['ir_receiptnum'],$receipt['ir_price'],$total,$sub);
                             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                             if($sms['errmsg'] == 'OK'){
@@ -861,22 +861,27 @@ class HapylifePayController extends HomeBaseController{
                                                 );
                                         $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                                         if($res){
-                                            $templateId ='178952';
-                                            $params     = array($CustomerID);
-                                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                                            if($sms['errmsg'] == 'OK'){
-                                                $contents = array(
-                                                            'acnumber' => $userinfo['acnumber'],
-                                                            'phone' => $userinfo['phone'],
-                                                            'operator' => '系统',
-                                                            'addressee' => $userinfo['shopaddress1'],
-                                                            'product_name' => $receiptlist['product_name'],
-                                                            'date' => time(),
-                                                            'content' => '恭喜您创建成功，您的会员号码是'.$CustomerID.'，同时注意查收Rovia邮件。',
-                                                            'customerid' => $CustomerID
-                                                );
-                                                $logs = M('SmsLog')->add($contents);
-                                            }
+                                        	$createPayment = $usa->createPayment($userinfo['customerid'],$maps['wvOrderID'],date('Y-m-d H:i',time()));
+					                        $log = addUsaLog($createPayment['result']);
+					                        $jsonStr = json_decode($createPayment['result'],true);
+					                        if($jsonStr['paymentId']){
+	                                            $templateId ='208995';
+	                                            $params     = array($userinfo['customerid'],$maps['wvCustomerID']);
+	                                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+	                                            if($sms['errmsg'] == 'OK'){
+	                                                $contents = array(
+	                                                            'acnumber' => $userinfo['acnumber'],
+	                                                            'phone' => $userinfo['phone'],
+	                                                            'operator' => '系统',
+	                                                            'addressee' => $userinfo['shopaddress1'],
+	                                                            'product_name' => $receiptlist['product_name'],
+	                                                            'date' => time(),
+	                                                            'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfo['customerid'].'以及 DreamTrips 会员号码是'.$maps['wvCustomerID'].'，同时注意查收Rovia邮件。',
+                                            					'customerid' => $userinfo['customerid']
+	                                                );
+	                                                $logs = M('SmsLog')->add($contents);
+	                                            }
+					                        }
                                         }
                                     }    
                                 }
@@ -939,7 +944,7 @@ class HapylifePayController extends HomeBaseController{
                         // 总共已经支付金额
                         $total = bcsub($receipt['ir_price'],$sub,2);
                         // 发送短信提示
-                        $templateId ='178957';
+                        $templateId ='209014';
                         $params     = array($receipt['ir_receiptnum'],$receiptson['ir_price'],$total,$sub);
                         $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                         if($sms['errmsg'] == 'OK'){

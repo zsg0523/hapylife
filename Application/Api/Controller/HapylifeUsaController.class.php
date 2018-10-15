@@ -239,7 +239,7 @@ class HapylifeUsaController extends HomeBaseController{
 	/**
 	* get virtual CURRENCY (DT Points) balance
 	**/ 
-	public function DtPoint(){
+	public function dtPoint(){
 		$map  = I('post.');
 		$key  = $this->key;
 		$url  = $this->url;
@@ -247,7 +247,28 @@ class HapylifeUsaController extends HomeBaseController{
 		// p($sendUrl);die;
 		$wv       = file_get_contents($sendUrl);
 		$userinfo = json_decode($wv,true);
-		$this->ajaxreturn($userinfo);
+		print_r($userinfo);
+	}
+
+	/**
+	* redeem virtual CURRENCY (DT Points and training dollors)
+	**/ 
+	public function redeemVirtual(){
+		$map  = I('post.');
+		$key  = $this->key;
+		$url  = $this->url;
+		$data = array(
+			'hapyLifeID'  	=>$map['hapyLifeID'],
+            'amount'   		=>$map['amount'],
+            'category' 		=>$map['category'],
+            'comment' 		=>$map['comment'],
+		);
+		$data    = json_encode($data);
+		$sendUrl = $url."/api/Hpl/Customer/".$map['hapyLifeID'].'/VirtualCurrency?key='.$key;
+		$result  = post_json_data($sendUrl,$data);
+		$jsonStr = json_decode($result['result'],true);
+		print_r($result);
+		p($jsonStr);
 	}
 	
 
