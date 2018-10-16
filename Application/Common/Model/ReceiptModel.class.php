@@ -95,7 +95,7 @@ class ReceiptModel extends BaseModel{
                 );
                 $data    = json_encode($data);
                 $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/codeGetCouponInfo";
-                // $sendUrl = "http://192.168.33.10/data/testnulife/index.php/Api/Couponapi/codeGetCouponInfo";
+                // $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/codeGetCouponInfo";
                 $result  = post_json_data($sendUrl,$data);
                 $back_message = json_decode($result['result'],true);
                 $list[$key]['operator'] = $back_message['operator'];
@@ -207,6 +207,7 @@ class ReceiptModel extends BaseModel{
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
                 $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
+                $mape[$key]['ip_type'] = $v['ip_type'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
 
@@ -284,6 +285,7 @@ class ReceiptModel extends BaseModel{
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
                 $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
+                $mape[$key]['ip_type'] = $v['ip_type'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
 
@@ -361,6 +363,7 @@ class ReceiptModel extends BaseModel{
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
                 $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
+                $mape[$key]['ip_type'] = $v['ip_type'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
 
@@ -438,6 +441,7 @@ class ReceiptModel extends BaseModel{
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
                 $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
+                $mape[$key]['ip_type'] = $v['ip_type'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
             $son = D('Receiptson')
@@ -520,19 +524,33 @@ class ReceiptModel extends BaseModel{
             $ia_address = '';
             $mape[$key] = $value;
             $address    = explode(' ',$value['ia_address']);
-            foreach ($address as $k => $v) {
-                $ia_address.= $v;
-            }
             $mape[$key]['ia_address'] = $ia_address;
             $arr = D('Receiptlist')
                     ->join('hapylife_product on hapylife_receiptlist.ipid = hapylife_product.ipid')
                     ->where(array('ir_receiptnum'=>$value['ir_receiptnum']))
                     ->select();
+            if($value['coucode']){
+                $data = array(
+                    'coupon_code' => $value['coucode'],
+                );
+                $data    = json_encode($data);
+                // $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/codeGetCouponInfo";
+                $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/codeGetCouponInfo";
+                $result  = post_json_data($sendUrl,$data);
+                $back_message = json_decode($result['result'],true);
+                $mape[$key]['operator'] = $back_message['operator'];
+            }else{
+                $mape[$key]['operator'] = '';
+            }
+            foreach ($address as $k => $v) {
+                $ia_address.= $v;
+            }
             $productname = '';
             foreach ($arr as $k => $v) {
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
                 $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
+                $mape[$key]['ip_type'] = $v['ip_type'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
             $son = D('Receiptson')
@@ -659,6 +677,7 @@ class ReceiptModel extends BaseModel{
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
                 $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
+                $mape[$key]['ip_type'] = $v['ip_type'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
             $son = D('Receiptson')
@@ -758,6 +777,7 @@ class ReceiptModel extends BaseModel{
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
                 $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
+                $mape[$key]['ip_type'] = $v['ip_type'];
             }
             
             $mape[$key]['productname'] = substr($productname,0,-1);
@@ -858,6 +878,7 @@ class ReceiptModel extends BaseModel{
                 $productname .= $v['product_name'].'(*'.$v['product_num'].'),';
                 $mape[$key]['productno']   = $v['ip_bh'];
                 $mape[$key]['productnams'] = $v['product_name'];
+                $mape[$key]['ip_type'] = $v['ip_type'];
             }
             $mape[$key]['productname'] = substr($productname,0,-1);
             $son = D('Receiptson')
@@ -918,7 +939,7 @@ class ReceiptModel extends BaseModel{
         $title   = array('创建日期','订单编号','会员账号','会员姓名','会员电话','团队标签','订单金额','订单备注','商品信息','商品编号','商品数量','支付日期','收货人姓名','收货电话','收货地址');
         foreach ($data as $k => $v) {
             // 创建日期
-            $content[$k]['ir_date']      = date('Y-m-d H:i:s',$v['ir_date']);
+            $content[$k]['ir_date']      = date('Y-m-d',$v['ir_date']).'/'.date('H:i:s',$v['ir_date']);
             // 订单编号
             $content[$k]['ir_receiptnum']    = $v['ir_receiptnum'];
             // 会员账号
@@ -943,19 +964,22 @@ class ReceiptModel extends BaseModel{
             $content[$k]['productno'] = $v['productno'];
             // 商品数量
             // $content[$k]['productname'] = $v['productname'];
-            switch ($v['ipid']) {
-                case '31':
+            switch ($v['ip_type']) {
+                case '1':
                     $content[$k]['productname'] = $v['productnams'].'*8瓶';
                     break;
-                case '39':
+                case '3':
                     $content[$k]['productname'] = $v['productnams'].'*2瓶';
                     break;
+                case '6':
+                    $content[$k]['productname'] = $v['productnams'].'*4瓶';
+                    break;
                 default:
-                    $content[$k]['productname'] = $v['productnams'].'*1套';
+                    $content[$k]['productname'] = $v['productnams'].'*1瓶';
                     break;
             }
             // 支付日期
-            $content[$k]['ir_paytime'] = date('Y-m-d H:i:s',$v['ir_paytime']);
+            $content[$k]['ir_paytime'] = date('Y-m-d',$v['ir_paytime']).'/'.date('H:i:s',$v['ir_paytime']);
             // 收货人姓名
             $content[$k]['ia_name'] = $v['ia_name'];
             // 收货电话
@@ -966,8 +990,5 @@ class ReceiptModel extends BaseModel{
         create_csv($content,$title);
         return;
     }
-
-
-    
 
 }

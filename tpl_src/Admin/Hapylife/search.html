@@ -21,6 +21,7 @@
 				    			<option <?php if($status == 0)echo "selected";?>  value="0">所有</option>
 				    			<option <?php if($status == 203)echo "selected";?>  value="203">未全额支付</option>
 				    			<option <?php if($status == 3)echo "selected";?>  value="3">已支付</option>
+				    			<option <?php if($status == 405)echo "selected";?>  value="405">已隐藏</option>
 				    		</select>
 				    		<select name="timeType">
 				    			<option <?php if($timeType == 'ir_date')echo "selected";?> value="ir_date" >创建时间</option>
@@ -33,6 +34,9 @@
 	                        <input class='btn btn-sm' type="submit" name='excel' value="excel" />
 	                	</form>
 				    </li>
+				    <li>&nbsp;</li>
+				    <li><a href="{:U('Admin/Hapylife/editStatus',array('onekey'=>'yes'))}">一键隐藏未全额支付订单</a></li>
+				    <!-- <li><a href="{:U('Admin/Hapylife/editStatus',array('onekey'=>'no'))}">一键显示未全额支付订单</a></li> -->
 	            </ul>
 		</div>
             <div class="tab-content">
@@ -56,6 +60,7 @@
                         <th >创建日期</th>
                         <th >发货日期</th>
                         <th >送达日期</th>
+                        <th >是否显示</th>
 					</tr>
 					<foreach name="data" item="v">
 						<tr>
@@ -77,6 +82,7 @@
 								<if condition="$v['ir_status'] eq 2">已支付
                                 <elseif condition="$v['ir_status'] eq 202"/>未全额支付
                                 <elseif condition="$v['ir_status'] eq 0"/>未支付
+                                <elseif condition="$v['ir_status'] eq 404"/>已隐藏
                             	</if>
 							</td>
 							<td>{$v['ia_name']}</td>
@@ -93,6 +99,21 @@
 								<if condition="$v['receive_time'] eq 0">
 								<else/>{:date('Y-m-d H:i:s',$v['receive_time'])}
 								</if>
+							</td>
+							<td>
+								<if condition="$v['ir_status'] eq 202">
+									<a href="{:U('Admin/Hapylife/editStatus',array('ir_status'=>404,'irid'=>$v['irid'],'status'=>I('get.status')))}">
+								<elseif condition="$v['ir_unpaid'] eq $v['ir_price']" />
+									<a href="{:U('Admin/Hapylife/editStatus',array('ir_status'=>0,'irid'=>$v['irid'],'status'=>I('get.status')))}">
+								<else />
+									<a href="{:U('Admin/Hapylife/editStatus',array('ir_status'=>202,'irid'=>$v['irid'],'status'=>I('get.status')))}">
+								</if>
+									<if condition="$v['ir_status'] eq 202">
+										隐藏
+									<else />
+										显示
+									</if>
+								</a> 
 							</td>
 						</tr>
 					</foreach>

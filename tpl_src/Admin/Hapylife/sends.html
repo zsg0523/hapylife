@@ -100,9 +100,10 @@
 								<td>
 									<select class="input-medium" name="psd" id="psd">
 										<option class="input-medium" value="0">请选择模板</option>
-								    	<option class="input-medium" value="146227">续费信息通知</option>	
-								    	<option class="input-medium" value="146228">物流信息通知</option>	
-								    	<option class="input-medium" value="196995">优惠月费到期通知</option>	
+								    	<option class="input-medium" value="209019">续费信息通知</option>	
+								    	<option class="input-medium" value="209017">物流信息通知</option>	
+								    	<option class="input-medium" value="209098">优惠月费到期通知</option>	
+								    	<option class="input-medium" value="208996">套餐收费通知</option>	
 								    </select>
 								</td>
 							</tr>
@@ -138,19 +139,24 @@
 	        $sms = $("<tr><th width='15%'>模板内容：</th><td>亲爱的会员{1}，您购买的{2}物流信息出现问题，我们会有电话通知您，请留意接听。</td></tr><tr><th width='15%'>{1}：</th><td><input class='input-medium' type='text' name='username' placeholder='姓名-会员账号' style='text-transform:uppercase;'></td></tr><tr><th width='15%'>{2}：</th><td><input class='input-medium' type='text' name='productnams' placeholder='产品名称'></td></tr>");
 	        $sms1 = $("<tr><th width='15%'>模板内容：</th><td>亲爱的会员{1}，这是系统提醒消息，请在{2}之前购买月费包。</td></tr><tr><th width='15%'>{1}:</th><td><input class='input-medium' type='text' name='username' placeholder='姓名-会员账号' style='text-transform:uppercase;'></td></tr><tr><th width='15%'>{2}：</th><td><input type='text' class='Wdate WdateSearch' style='height:28px' name='endtime' onFocus=\"WdatePicker({dateFmt:'yyyy-MM-dd'})\" autocomplete='off' placeholder='会籍到期日期'/></td></tr>");
 	        $sms2 = $("<tr><th width='15%'>模板内容：</th><td>尊敬的{1}会员，您的免月费优惠期为{2}，请在优惠期结束前购买月费包。</td></tr><tr><th width='15%'>{1}:</th><td><input class='input-medium' type='text' name='username' placeholder='姓名-会员账号' style='text-transform:uppercase;'>例如：王某-HPLxxxx</td></tr><tr><th width='15%'>{2}：</th><td><input type='text' class='Wdate WdateSearch' style='height:28px' name='endtime' onFocus=\"WdatePicker({dateFmt:'yyyy-MM-dd'})\" autocomplete='off' placeholder='优惠结束日期'/></td></tr>");
+	        $sms3 = $("<tr><th width='15%'>模板内容：</th><td>尊敬的{1}会员，今天是优惠{2}套餐的最后支付时间，请务必在今天晚上11:59前成功支付尾款，谢谢！</td></tr><tr><th width='15%'>{1}:</th><td><input class='input-medium' type='text' name='username' placeholder='姓名-会员账号' style='text-transform:uppercase;'>例如：王某-HPLxxxx</td></tr><tr><th width='15%'>{2}：</th><td><input class='input-medium' type='text' name='productnams' placeholder='产品名称'></td></tr>");
 	        $send = $("<tr><th></th><td><input class='btn btn-success' type='submit' value='发送'></td></tr>");
-        	if(value1 == 146228){
+        	if(value1 == 209017){
         		$(this).parents('tr').nextAll().remove();
         		$('#table #tr').after($send);
         		$('#table #tr').after($sms);
-        	}else if(value1 == 146227){
+        	}else if(value1 == 209019){
         		$(this).parents('tr').nextAll().remove();
         		$('#table #tr').after($send);
         		$('#table #tr').after($sms1);
-        	}else if(value1 == 196995){
+        	}else if(value1 == 209098){
         		$(this).parents('tr').nextAll().remove();
         		$('#table #tr').after($send);
         		$('#table #tr').after($sms2);
+        	}else if(value1 == 208996){
+        		$(this).parents('tr').nextAll().remove();
+        		$('#table #tr').after($send);
+        		$('#table #tr').after($sms3);
         	}else if(value1 == 0){
         		$(this).parents('tr').nextAll().remove();
         		$('#table #tr').after($send);

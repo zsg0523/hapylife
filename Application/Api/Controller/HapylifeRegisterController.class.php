@@ -33,9 +33,9 @@ class HapylifeRegisterController extends HomeBaseController{
         }else{
             vendor('SmsSing.SmsSingleSender');
             // 短信应用SDK AppID
-            $appid = 1400096409; // 1400开头
+            $appid = 1400149268; // 1400开头
             // 短信应用SDK AppKey
-            $appkey = "fc1c7e21ab36fef1865b0a3110709c51";
+            $appkey = "010151f33eaec872109b1b507c820bce";
             // 需要发送短信的手机号码
             $phoneNumber = I('post.phoneNumber');
             //手机区号
@@ -43,8 +43,8 @@ class HapylifeRegisterController extends HomeBaseController{
             // 短信模板ID，需要在短信应用中申请$templateId
             // 签名
             if($acnumber==86){
-                $templateId = 127203;  // NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
-                $smsSign = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
+                $templateId = 209020;  // NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
+                $smsSign = "安永中国"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
             }else if($acnumber==886 || $acnumber==852 || $acnumber==853){
                 $templateId = 127206;  // NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请      
                 $smsSign = "eggcarton";
@@ -289,26 +289,24 @@ class HapylifeRegisterController extends HomeBaseController{
     public function checkName(){
         $customerid = strtoupper(trim(I('post.EnrollerID')));
         if($customerid){
-            if(substr($customerid,0,3) == 'HPL'){
-                $data = M('User')->where(array('CustomerID'=>$customerid))->find();
-                if(!empty($data)){
+            if(strlen($customerid)==8){
+                $usa = new \Common\UsaApi\Usa;
+                $map = $usa->validateHpl($customerid);
+                if(empty($map['errors'])){
+                    $data['lastname'] = $map['lastName'];
+                    $data['firstname'] = $map['firstName'];
                     $this->ajaxreturn($data);     
                 }else{
                     $data['status'] = 0;
                     $this->ajaxreturn($data);           
                 }
             }else{
-                $key      = "QACER3H5T6HGYDCCDAZM3";
-                $url      = "https://signupapi.wvhservices.com/api/Hpl/Validate?customerId=".$customerid."&"."key=".$key;
-                $wv       = file_get_contents($url);
-                $data = json_decode($wv,true);
-                if(!empty($data)){
-                    $data['lastname'] = $data['lastName'];
-                    $data['firstname'] = $data['firstName'];
-                    $this->ajaxreturn($data);     
+                $data = M('User')->where(array('CustomerID'=>$customerid))->find();
+                if($data){
+                    $this->ajaxreturn($data);
                 }else{
                     $data['status'] = 0;
-                    $this->ajaxreturn($data);           
+                    $this->ajaxreturn($data); 
                 }
             }
         }else{
@@ -473,13 +471,14 @@ class HapylifeRegisterController extends HomeBaseController{
                 'AccountType' => $userinfo['accounttype'],
                 'teamCode' => $userinfo['teamcode'],
                 'htid' => $htid,
+                'Birthday' => $userinfo['birthday']
             );
             $addResult = M('User')->add($array); 
             $user = M('User')->where(array('iuid'=>$addResult))->find();
         }
         if($addResult){
             // 发送短信提示
-            $templateId ='183054';
+            $templateId ='209009';
             $params     = array();
             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
             if($sms['errmsg'] == 'OK'){
@@ -488,7 +487,7 @@ class HapylifeRegisterController extends HomeBaseController{
                             'phone' => $userinfo['phone'],
                             'operator' => '系统',
                             'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                            'product_name' => '',
+                            'product_name' => '新会员注册',
                             'date' => time(),
                             'content' => '恭喜您注册成功。',
                             'customerid' => $user['customerid']
@@ -620,7 +619,7 @@ class HapylifeRegisterController extends HomeBaseController{
                     $products = 'RBS,DTP,SIGNUP5';
                 }
                 $usa    = new \Common\UsaApi\Usa;
-                $result = $usa->createCustomer($userinfo['customerid'],$userinfo['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
+                $result = $usa->createCustomer($userinfo['customerid'],$userinfo['wvpass'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
                 if(!empty($result['result'])){
                     $log = addUsaLog($result['result']);
                     $maps = json_decode($result['result'],true);
@@ -632,23 +631,28 @@ class HapylifeRegisterController extends HomeBaseController{
                     );
                     $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
                     if($res){
-                        // 发送短信提示
-                        $templateId ='183054';
-                        $params     = array();
-                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                        if($sms['errmsg'] == 'OK'){
-                            $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$order_num))->find();
-                            $contents = array(
-                                        'acnumber' => $userinfo['acnumber'],
-                                        'phone' => $userinfo['phone'],
-                                        'operator' => '系统',
-                                        'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                                        'product_name' => $receiptlist['product_name'],
-                                        'date' => time(),
-                                        'content' => '恭喜您注册成功。',
-                                        'customerid' => $userinfo['customerid']
-                            );
-                            $logs = M('SmsLog')->add($contents);
+                        $createPayment = $usa->createPayment($userinfo['customerid'],$maps['wvOrderID'],date('Y-m-d H:i',time()));
+                        $log = addUsaLog($createPayment['result']);
+                        $jsonStr = json_decode($createPayment['result'],true);
+                        if($jsonStr['paymentId']){
+                            // 发送短信提示
+                            $templateId ='208995';
+                            $params     = array($userinfo['customerid'],$maps['wvCustomerID']);
+                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                            if($sms['errmsg'] == 'OK'){
+                                $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$order_num))->find();
+                                $contents = array(
+                                            'acnumber' => $userinfo['acnumber'],
+                                            'phone' => $userinfo['phone'],
+                                            'operator' => '系统',
+                                            'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                            'product_name' => $receiptlist['product_name'],
+                                            'date' => time(),
+                                            'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfo['customerid'].'以及 DreamTrips 会员号码是'.$maps['wvCustomerID'].'，同时注意查收Rovia邮件。',
+                                            'customerid' => $userinfo['customerid']
+                                );
+                                $logs = M('SmsLog')->add($contents);
+                            }
                         }
                         $sample['status'] = 1;
                         $this->ajaxreturn($sample);

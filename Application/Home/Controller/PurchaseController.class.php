@@ -61,8 +61,15 @@ class PurchaseController extends HomeBaseController{
         $type  = trim($find['distributortype']);
         $mtype = trim($find['customertype']);
         $status= $find['status'];
+        $showProduct = $find['showproduct'];
+        // 定义数组 
+        $proArr = array();
+        $an_pro = array();
+        $third_pro = array();
         //判断用户等级 show--1、可点击 2、不可点击
-        // p($type);die;
+        $array   = array('HPL00000181','HPL00123539');//显示测试产品账号
+        $arrayTo = array('61338465','64694832','65745561','HPL00123556','61751610','61624356','61695777','68068002');//显示真实产品账号
+        // p($showProduct);die;
         switch (strlen($find['customerid'])) {
             case '8':
                 //核对usa 账号是否正确存在
@@ -78,41 +85,32 @@ class PurchaseController extends HomeBaseController{
                 }
                 break;
             default:
+                switch($showProduct){
+                    case '1':
+                        $third_pro = M('Product')->where(array('ipid'=>39))->select();
+                        break;
+                    case '2':
+                        $third_pro = M('Product')->where(array('ipid'=>46))->select();
+                        break;
+                }
                 $tmpe  = array(
                     'ip_grade' =>$type,
                     'is_pull'  =>1
                 );
                 $proArr  = D('Product')->where($tmpe)->order('is_sort desc')->select();
-                $an_pro  = M('Product')->where(array('ip_type'=>4,'is_pull'=>1))->select();
-                $product = array_merge($proArr,$an_pro);
+                if(in_array($find['customerid'],$array)){
+                    $an_pro = M('Product')->where(array('ip_type'=>4,'is_pull'=>0))->select();
+                }else{
+                    $an_pro  = M('Product')->where(array('ip_type'=>4,'is_pull'=>1))->select();
+                }
+                $product = array_merge($proArr,$an_pro,$third_pro);
                 foreach ($product as $key => $value) {
                     $products[$key]         = $value; 
                     $products[$key]['show'] = 1; 
                 }
                 break;
-        }  
-
-        $array   = array('HPL00000181','HPL00123539');//显示测试产品账号
-        $arrayTo = array('61338465','64694832','65745561','HPL00123556','61751610','61624356','61695777','68068002');//显示真实产品账号
-        if(in_array($find['customerid'],$array)){
-            $an_pro = M('Product')->where(array('ip_type'=>4,'is_pull'=>0))->select();
-            $product = array_merge($products,$an_pro);
-            foreach ($product as $key => $value) {
-                $data[$key]         = $value; 
-                $data[$key]['show'] = 1; 
-            }
-
-        // }else if(in_array($find['customerid'],$arrayTo)){
-        //     $an_pro = M('Product')->where(array('ipid'=>48,'is_pull'=>0))->select();
-        //     $product = array_merge($products,$an_pro);
-        //     foreach ($product as $key => $value) {
-        //         $data[$key]         = $value; 
-        //         $data[$key]['show'] = 1; 
-        //     }
-        }else{
-            $data = $products;
         }
-        $this->assign('product',$data);
+        $this->assign('product',$products);
         $this->display();
     }
     /**
@@ -155,10 +153,19 @@ class PurchaseController extends HomeBaseController{
         $ip_dt   = I('get.ip_dt');
         $ipid    = I('get.ipid');
         $data    = M('User')->where(array('iuid'=>$iuid))->find();
+        // 获取用户在美国的dtp
+        $usa = new \Common\UsaApi\Usa;
+        $result = $usa->dtPoint($data['customerid']);
+        foreach($result['softCashCategories'] as $key=>$value){
+            if($value['categoryType'] == 'DreamTripPoints'){
+                $data['iu_dt'] = $value['balance'];
+            }
+        }
         $bcsub   = bcsub($data['iu_dt'],$ip_dt,2);
         $data['bc_dt'] =$bcsub;
         $data['ipid']  =$ipid;
         $data['ip_dt'] =$ip_dt;
+        // p($data);die;
         if($data){
         	$this->assign('data',$data);
         	$this->display();
@@ -273,7 +280,7 @@ class PurchaseController extends HomeBaseController{
                 ->find();
         $data['receiptson'] = D('Receiptson')->where(array('status'=>2,'ir_receiptnum'=>$ir_receiptnum))->select();
         $this->assign('data',$data);
-//      p($data);
+        // p($data);
         $this->display();
     }
 
@@ -285,7 +292,8 @@ class PurchaseController extends HomeBaseController{
         //订单号
         $order_num  = I('get.ir_receiptnum');
         $result = M('receipt')->where(array('ir_receiptnum'=>$order_num))->delete();
-        if($result){
+        $res = M('Receiptlist')->where(array('ir_receiptnum'=>$order_num))->delete();
+        if($result && $res){
             redirect($_SERVER['HTTP_REFERER']);
         }else{
             $this->error('删除失败');
@@ -321,12 +329,21 @@ class PurchaseController extends HomeBaseController{
     * 购买详情
     **/
     public function purchaseInfo(){
+        $iuid = $_SESSION['user']['id'];
+        $showProduct = M('User')->where(array('iuid'=>$iuid))->getfield('showProduct');
+        if($showProduct){
+            $status = 1;
+        }else{
+            $status = 2;
+        }
+
         $ipid = I('get.ipid');
         // p($ipid);die;
         $data = M('Product')
               ->where(array('ipid'=>$ipid))
               ->find();
         $this->assign('data',$data);
+        $this->assign('status',$status);
         $this->display();
     }
 
@@ -481,10 +498,21 @@ class PurchaseController extends HomeBaseController{
                     break;
                 case '5':
                     if($isdt){
+                        $usa    = new \Common\UsaApi\Usa;
+                        $result = $usa->dtPoint($userinfo['customerid']);
+                        foreach($result['softCashCategories'] as $key=>$value){
+                            if($value['categoryType'] == 'DreamTripPoints'){
+                                $userinfo['iu_dt'] = $value['balance'];
+                            }
+                        }
+                        // p($userinfo);die;
                         $bcsub = bcsub($userinfo['iu_dt'],$product['ip_dt'],2);
                         if($bcsub>=0){
-                            $saveDt= M('User')->where(array('CustomerId'=>$userinfo['customerid']))->setfield('iu_dt',$bcsub);
-                            if($saveDt){
+                            // $saveDt= M('User')->where(array('CustomerId'=>$userinfo['customerid']))->setfield('iu_dt',$bcsub);
+                            $usa    = new \Common\UsaApi\Usa;
+                            $result = $usa->redeemVirtual($userinfo['customerid'],$product['ip_dt'],'DreamTripPoints',$product['ip_name_zh']);
+                            $jsonStr = json_decode($result['result'],true);
+                            if($jsonStr['message']){
                                 $dtNo = 'DT'.date('YmdHis').rand(10000, 99999);
                                 $mape            = array(
                                     'ir_receiptnum'   =>$order_num,
@@ -663,7 +691,7 @@ class PurchaseController extends HomeBaseController{
                     $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
                     if($upreceipt){
                         if($sub == 0){
-                            $updateReceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->setfield('paytime',time());
+                            $updateReceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->setfield('ir_paytime',time());
                             if($order['ir_ordertype'] == 4){
                                 // 添加通用券
                                 $product = M('Receipt')
@@ -683,28 +711,38 @@ class PurchaseController extends HomeBaseController{
                             }else if($order['ir_ordertype'] == 3){
                                 $addactivation     = D('Activation')->addAtivation($OrderDate,$receipt['riuid'],$receipt['ir_receiptnum']); 
                             }
-                            // 发送短信提示
-                            $templateId ='178959';
-                            $params     = array($receipt['ir_receiptnum'],$product_name);
-                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                            if($sms['errmsg'] == 'OK'){
-                                $contents = array(
-                                    'acnumber' => $userinfo['acnumber'],
-                                    'phone' => $userinfo['phone'],
-                                    'operator' => '系统',
-                                    'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                                    'product_name' => $product_name,
-                                    'date' => time(),
-                                    'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
-                                    'customerid' => $userinfo['customerid']
-                                );
-                                $logs = M('SmsLog')->add($contents);
+                            $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
+                            if($ir_status == 2){
+                                $usa = new \Common\UsaApi\Usa;
+                                $createPayment = $usa->createPayment($userinfo['customerid'],$receipt['ir_receiptnum'],date('Y-m-d H:i',time()));
+                                $log = addUsaLog($createPayment['result']);
+                                $jsonStr = json_decode($createPayment['result'],true);
+                                // p($jsonStr);die;
+                                if($jsonStr['paymentId']){
+                                    // 发送短信提示
+                                    $templateId ='209011';
+                                    $params     = array($receipt['ir_receiptnum'],$product_name);
+                                    $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                                    if($sms['errmsg'] == 'OK'){
+                                        $contents = array(
+                                            'acnumber' => $userinfo['acnumber'],
+                                            'phone' => $userinfo['phone'],
+                                            'operator' => '系统',
+                                            'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                            'product_name' => $product_name,
+                                            'date' => time(),
+                                            'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
+                                            'customerid' => $userinfo['customerid']
+                                        );
+                                        $logs = M('SmsLog')->add($contents);
+                                    }
+                                }
                             }
                         }else{
                             // 共总支付
                             $total = bcsub($order['ir_unpaid'],$sub,2);
                             // 发送短信提示
-                            $templateId ='178957';
+                            $templateId ='209014';
                             $params     = array($receipt['ir_receiptnum'],$receipt['ir_price'],$total,$sub);
                             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                             if($sms['errmsg'] == 'OK'){
@@ -961,13 +999,14 @@ class PurchaseController extends HomeBaseController{
                                     'ir_paytime' =>$ir_paytime,
                                 );                   
                                 $tmpeArr['password'] = $userinfo['wvpass'];
-                                $status['ia_name']   = $userinfo['shopaddress1'];
+                                $status['ia_name']   = $userinfo['lastname'].$userinfo['firstname'];
                             }
                             //更新订单信息
                             $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+                            $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
                             if($upreceipt){ 
                                 $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$order['ir_receiptnum']);
-                                if($tmpeArr['password']){
+                                if($ir_status == 2){
                                     $usa    = new \Common\UsaApi\Usa;
                                     $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],'RBS,DTP');
                                     if(!empty($result['result'])){
@@ -980,21 +1019,26 @@ class PurchaseController extends HomeBaseController{
                                                 );
                                         $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                                         if($res){
-                                            $templateId ='178952';
-                                            $params     = array($CustomerID);
-                                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                                            if($sms['errmsg'] == 'OK'){
-                                                $contents = array(
-                                                            'acnumber' => $userinfo['acnumber'],
-                                                            'phone' => $userinfo['phone'],
-                                                            'operator' => '系统',
-                                                            'addressee' => $userinfo['shopaddress1'],
-                                                            'product_name' => $receiptlist['product_name'],
-                                                            'date' => time(),
-                                                            'content' => '恭喜您创建成功，您的会员号码是'.$CustomerID.'，同时注意查收Rovia邮件。',
-                                                            'customerid' => $CustomerID
-                                                );
-                                                $logs = M('SmsLog')->add($contents);
+                                            $createPayment = $usa->createPayment($userinfo['customerid'],$maps['wvOrderID'],date('Y-m-d H:i',time()));
+                                            $log = addUsaLog($createPayment['result']);
+                                            $jsonStr = json_decode($createPayment['result'],true);
+                                            if($jsonStr['paymentId']){
+                                                $templateId ='208995';
+                                                $params     = array($userinfo['customerid'],$maps['wvCustomerID']);
+                                                $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                                                if($sms['errmsg'] == 'OK'){
+                                                    $contents = array(
+                                                                'acnumber' => $userinfo['acnumber'],
+                                                                'phone' => $userinfo['phone'],
+                                                                'operator' => '系统',
+                                                                'addressee' => $userinfo['shopaddress1'],
+                                                                'product_name' => $receiptlist['product_name'],
+                                                                'date' => time(),
+                                                                'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfo['customerid'].'以及 DreamTrips 会员号码是'.$maps['wvCustomerID'].'，同时注意查收Rovia邮件。',
+                                                                'customerid' => $userinfo['customerid']
+                                                    );
+                                                    $logs = M('SmsLog')->add($contents);
+                                                }
                                             }
                                         }
                                     }    
@@ -1058,7 +1102,7 @@ class PurchaseController extends HomeBaseController{
                         // 总共已经支付金额
                         $total = bcsub($receipt['ir_price'],$sub,2);
                         // 发送短信提示
-                        $templateId ='178957';
+                        $templateId ='209014';
                         $params     = array($receipt['ir_receiptnum'],$receiptson['ir_price'],$total,$sub);
                         $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                         if($sms['errmsg'] == 'OK'){
@@ -1354,21 +1398,6 @@ class PurchaseController extends HomeBaseController{
                     'data' => $data,
                 );
         $this->assign($assign);
-        $this->display();
-    }
-
-// ***********获取验证码*************
-    public function changePassword(){
-        $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
-        foreach ($mape as $key => $value) {
-            $data[$key]         = $value;
-            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
-                $data[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
-            }else{
-                $data[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
-            }
-        }
-        $this->assign('data',$data);
         $this->display();
     }
 

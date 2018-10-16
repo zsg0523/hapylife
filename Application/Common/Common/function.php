@@ -2869,3 +2869,19 @@ function createCode($url,$qrcodeName){
     $writer->writeFile($url,$qrcodeName);
 }
 
+//进行分页
+function pages($arr,$p,$pageSize){
+    $count = count($arr);
+    $Page = new \Org\Nx\Page($count,$pageSize);
+    $start=($p- 1) *$pageSize;
+    $length= $pageSize;
+    $cut_qa=  array_slice($arr, $start, $length, true);
+    $page = $Page->show();
+    
+    $res=array(
+        'data'=>$cut_qa,
+        'page'=>$page,
+    );
+    return $res;
+}
+

@@ -26,6 +26,7 @@ class HapylifeUsaController extends HomeBaseController{
 	**/
 	public function validateHpl(){
 		$map      = I('post.');
+		// p($map);die;
 		$key      = $this->key;
 		$url      = $this->url;
 		$data     = $url."/api/Hpl/Validate?customerId=".$map['CustomerID']."&"."key=".$key;
@@ -146,10 +147,27 @@ class HapylifeUsaController extends HomeBaseController{
 		$url  = $this->url;
 		$data = array(
 			'happyLifeID'  =>$map['happyLifeID'],
-            'password'     =>$map['password'],
+			'password' => $map['password'],
             'emailAddress' =>$map['emailAddress'],
             'phone'        =>$map['phone'],
-            'placementpreference' => $map['placementpreference'],
+            'BinaryPlacementPreference' => $map['binaryplacementpreference'],
+		);
+		$data    = json_encode($data);
+		$sendUrl = $url."/api/Hpl/UpdateCustomer?key=".$key;
+		$result  = post_json_data($sendUrl,$data);
+		print_r($result);
+	}
+
+	/**
+	* Change PassWord
+	**/
+	public function changePassWord(){
+		$map  = I('post.');
+		$key  = $this->key;
+		$url  = $this->url;
+		$data = array(
+			'happyLifeID'  =>$map['happyLifeID'],
+			'password' => $map['password'],
 		);
 		$data    = json_encode($data);
 		$sendUrl = $url."/api/Hpl/UpdateCustomer?key=".$key;
@@ -166,7 +184,6 @@ class HapylifeUsaController extends HomeBaseController{
 		$url  = $this->url;
 		$data = array(
 			'happyLifeID'  =>$map['happyLifeID'],
-            'key'          =>$key
 		);
 		$data    = json_encode($data);
 		$sendUrl = $url."/api/Hpl/Totals?customerId=".$map['happyLifeID']."&key=".$key;
@@ -174,8 +191,85 @@ class HapylifeUsaController extends HomeBaseController{
 		print_r($result);
 	}
 
+	/**
+	* Create Payment
+	**/ 
+	public function createPayment(){
+		$map  = I('post.');
+		$key  = $this->key;
+		$url  = $this->url;
+		$data = array(
+			'hapyLifeID'  	=>$map['hapyLifeID'],
+            'wvOrderID'   	=>$map['wvOrderID'],
+            'paymentDate' 	=>$map['paymentDate'],
+		);
+		$data    = json_encode($data);
+		$sendUrl = $url."/api/Hpl/CreatePayment?key=".$key;
+		$result  = post_json_data($sendUrl,$data);
+		print_r($result);
+	}
 
+	/**
+	* Search Member Message
+	**/ 
+	public function SearchMessage(){
+		$map  = I('post.');
+		$key  = $this->key;
+		$url  = $this->url;
+		$sendUrl = $url."/api/hpl/Validate?customerId=".$map['customerId']."&key=".$key;
+		$wv       = file_get_contents($sendUrl);
+		$userinfo = json_decode($wv,true);
+        $this->ajaxreturn($userinfo);
+	}
 
+	/**
+	* Placement verification
+	**/ 
+	public function placementVerification(){
+		$map  = I('post.');
+		$key  = $this->key;
+		$url  = $this->url;
+		$sendUrl = $url."/api/Hpl/Customer/".$map['HappyLifeID']."/PlacementPosition?key=".$key;
+		// p($sendUrl);die;
+		$wv       = file_get_contents($sendUrl);
+		$userinfo = json_decode($wv,true);
+		$this->ajaxreturn($userinfo);
+	}
+
+	/**
+	* get virtual CURRENCY (DT Points) balance
+	**/ 
+	public function dtPoint(){
+		$map  = I('post.');
+		$key  = $this->key;
+		$url  = $this->url;
+		$sendUrl = $url."/api/Hpl/Customer/".$map['HappyLifeID']."/VirtualCurrency?key=".$key;
+		// p($sendUrl);die;
+		$wv       = file_get_contents($sendUrl);
+		$userinfo = json_decode($wv,true);
+		print_r($userinfo);
+	}
+
+	/**
+	* redeem virtual CURRENCY (DT Points and training dollors)
+	**/ 
+	public function redeemVirtual(){
+		$map  = I('post.');
+		$key  = $this->key;
+		$url  = $this->url;
+		$data = array(
+			'hapyLifeID'  	=>$map['hapyLifeID'],
+            'amount'   		=>$map['amount'],
+            'category' 		=>$map['category'],
+            'comment' 		=>$map['comment'],
+		);
+		$data    = json_encode($data);
+		$sendUrl = $url."/api/Hpl/Customer/".$map['hapyLifeID'].'/VirtualCurrency?key='.$key;
+		$result  = post_json_data($sendUrl,$data);
+		$jsonStr = json_decode($result['result'],true);
+		print_r($result);
+		p($jsonStr);
+	}
 	
 
 
