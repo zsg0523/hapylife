@@ -120,40 +120,47 @@ class HapylifeAddController extends HomeBaseController{
                                     $templateId ='208999';
                                     $network = 'www.dreamtrips.com';
                                     $params     = array($time,$endTime,$network);
-                                    $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                                    $sms        = D('Smscode')->sms('86',$userinfo['phone'],$params,$templateId);
                                     $content = '这是'.$time.'续费通知，请在'.$endTime.'前完成缴费，避免无法登录'.$network;
                                     if($sms['result'] == 0){
-                                        $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'续费通知',$content,$userinfo['customerid']);
+                                        $result = D('Smscode')->addLog('86',$userinfo['phone'],'系统',$addressee,'续费通知',$content,$userinfo['customerid']);
                                     }else{
-                                        $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,$sms['errmsg'],$content,$userinfo['customerid']);
+                                        $result = D('Smscode')->addLog('86',$userinfo['phone'],'系统',$addressee,$sms['errmsg'],$content,$userinfo['customerid']);
                                     }
                                     if($result){
                                         $status = M('wvNotification')->where(array('id'=>$res))->setfield('status','1');
                                     }
+                                    //商品信息
+                                    $product = M('Product')->where(array('ipid'=>39))->find();
+                                    // 设置显示正常月费包
+                                    $showProduct = M('User')->where(array('customerid'=>$value['HplId']))->setfield('showProduct',1);
                                     break;
                                 case '5':
                                     // 不加5天模板
                                     $time = date('Y-m-d H:i:s',strtotime($data['Date']));
                                     // 发送短信提示
-                                    $templateId ='183054';
-                                    // $params     = array($time,$endTime);
-                                    $params     = array();
-                                    $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                                    if($sms['errmsg'] == 'OK'){
-                                        $content = '您的月费将在'.$time.'到期，请在'.$time.'前完成续费。';
-                                        $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'续费通知',$content,$userinfo['customerid']);
-                                        if($result){
-                                            $status = M('wvNotification')->where(array('id'=>$res))->setfield('status','1');
-                                        }
+                                    $templateId ='211391';
+                                    $params     = array($time);
+                                    $sms        = D('Smscode')->sms('86',$userinfo['phone'],$params,$templateId);
+                                    $content = '恭喜您，当月成功推荐4名新会员，可享有月费优惠，请在'.$time.'前完成缴费';
+                                    if($sms['result'] == 0){
+                                        $result = D('Smscode')->addLog('86',$userinfo['phone'],'系统',$addressee,'月费到期通知',$content,$userinfo['customerid']);
+                                    }else{
+                                        $result = D('Smscode')->addLog('86',$userinfo['phone'],'系统',$addressee,$sms['errmsg'],$content,$userinfo['customerid']);
                                     }
+                                    if($result){
+                                        $status = M('wvNotification')->where(array('id'=>$res))->setfield('status','1');
+                                    }
+                                    //商品信息
+                                    $product = M('Product')->where(array('ipid'=>46))->find();
+                                    // 设置显示优惠月费包
+                                    $showProduct = M('User')->where(array('customerid'=>$value['HplId']))->setfield('showProduct',2);
                                     break;
                             }
 
                             // 收到usa推送后，给会员生成订单
                             // 设置时区
                             date_default_timezone_set('PRC');
-                            //商品信息
-                            $product = M('Product')->where(array('ipid'=>39))->find();
                             //用户信息
                             $userinfo= M('User')->where(array('customerid'=>$value['HplId']))->find();
 
@@ -239,10 +246,10 @@ class HapylifeAddController extends HomeBaseController{
                                 'date'      =>date('Y-m-d H:i:s')          
                             );
                             $addlog = M('Log')->add($log);
-                            if($addlog){
-                                // 设置显示正常月费包
-                                $showProduct = M('User')->where(array('customerid'=>$value['HplId']))->setfield('showProduct',1);
-                            }
+                            // if($addlog){
+                            //     // 设置显示正常月费包
+                            //     $showProduct = M('User')->where(array('customerid'=>$value['HplId']))->setfield('showProduct',1);
+                            // }
     
 
                             break;
@@ -251,10 +258,10 @@ class HapylifeAddController extends HomeBaseController{
                         //     $templateId ='208997';
                         //     $time = date('Y-m-d H:i:s',strtotime($data['Date']));
                         //     $params     = array($time);
-                        //     $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                        //     $sms        = D('Smscode')->sms('86',$userinfo['phone'],$params,$templateId);
                         //     if($sms['errmsg'] == 'OK'){
                         //         $content = '恭喜您，当月成功推荐4名新会员，可享有月费优惠，请在'.$time.'前完成缴费';
-                        //         $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'免月费通知',$content,$userinfo['customerid']);
+                        //         $result = D('Smscode')->addLog('86',$userinfo['phone'],'系统',$addressee,'免月费通知',$content,$userinfo['customerid']);
                         //         if($result){
                         //             $status = M('wvNotification')->where(array('id'=>$res))->setfield('status','1');
                         //             if($status){

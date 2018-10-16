@@ -2850,3 +2850,346 @@
 	"NotificationType": 1,
 	"NotificationDescription": "Payment reminder"
 }**********
+2018-10-15 11:11:38**********{
+	"Messages": [{
+		"OrderId": 299222912,
+		"CustomerId": 71875899,
+		"CustomerName": "JINDUO WANG",
+		"HplId": "HPL00123629",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-10-10T03:30:23Z",
+		"Amount": 114.9800
+	},
+	{
+		"OrderId": 299222915,
+		"CustomerId": 71876502,
+		"CustomerName": "Yawen Liu",
+		"HplId": "HPL00123610",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-10-10T03:30:23Z",
+		"Amount": 114.9800
+	},
+	{
+		"OrderId": 298101023,
+		"CustomerId": 71875899,
+		"CustomerName": "JINDUO WANG",
+		"HplId": "HPL00123629",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-10-10T08:12:59Z",
+		"Amount": 0.0000
+	},
+	{
+		"OrderId": 298131281,
+		"CustomerId": 71876502,
+		"CustomerName": "Yawen Liu",
+		"HplId": "HPL00123610",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-10-10T15:15:16Z",
+		"Amount": 0.0000
+	}],
+	"Date": "2018-10-12T01:00:05.162807Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-10-15 11:11:49**********{
+	"Messages": [{
+		"OrderId": 299222912,
+		"CustomerId": 71875899,
+		"CustomerName": "JINDUO WANG",
+		"HplId": "HPL00123629",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-10-10T03:30:23Z",
+		"Amount": 114.9800
+	},
+	{
+		"OrderId": 299222915,
+		"CustomerId": 71876502,
+		"CustomerName": "Yawen Liu",
+		"HplId": "HPL00123610",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-10-10T03:30:23Z",
+		"Amount": 114.9800
+	},
+	{
+		"OrderId": 298101023,
+		"CustomerId": 71875899,
+		"CustomerName": "JINDUO WANG",
+		"HplId": "HPL00123629",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-10-10T08:12:59Z",
+		"Amount": 0.0000
+	},
+	{
+		"OrderId": 298131281,
+		"CustomerId": 71876502,
+		"CustomerName": "Yawen Liu",
+		"HplId": "HPL00123610",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-10-10T15:15:16Z",
+		"Amount": 0.0000
+	}],
+	"Date": "2018-10-12T01:00:05.162807Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-10-15 11:12:43**********{
+	"Messages": [{
+		"OrderId": 299222912,
+		"CustomerId": 71875899,
+		"CustomerName": "JINDUO WANG",
+		"HplId": "HPL00123629",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-10-10T03:30:23Z",
+		"Amount": 114.9800
+	},
+	{
+		"OrderId": 299222915,
+		"CustomerId": 71876502,
+		"CustomerName": "Yawen Liu",
+		"HplId": "HPL00123610",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-10-10T03:30:23Z",
+		"Amount": 114.9800
+	},
+	{
+		"OrderId": 298101023,
+		"CustomerId": 71875899,
+		"CustomerName": "JINDUO WANG",
+		"HplId": "HPL00123629",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-10-10T08:12:59Z",
+		"Amount": 0.0000
+	},
+	{
+		"OrderId": 298131281,
+		"CustomerId": 71876502,
+		"CustomerName": "Yawen Liu",
+		"HplId": "HPL00123610",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-10-10T15:15:16Z",
+		"Amount": 0.0000
+	}],
+	"Date": "2018-10-12T01:00:05.162807Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-10-15 11:14:13**********{
+	"Messages": [{
+		"OrderId": 299222912,
+		"CustomerId": 71875899,
+		"CustomerName": "JINDUO WANG",
+		"HplId": "HPL00123629",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-10-10T03:30:23Z",
+		"Amount": 114.9800
+	},
+	{
+		"OrderId": 299222915,
+		"CustomerId": 71876502,
+		"CustomerName": "Yawen Liu",
+		"HplId": "HPL00123610",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-10-10T03:30:23Z",
+		"Amount": 114.9800
+	},
+	{
+		"OrderId": 298101023,
+		"CustomerId": 71875899,
+		"CustomerName": "JINDUO WANG",
+		"HplId": "HPL00123629",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-10-10T08:12:59Z",
+		"Amount": 0.0000
+	},
+	{
+		"OrderId": 298131281,
+		"CustomerId": 71876502,
+		"CustomerName": "Yawen Liu",
+		"HplId": "HPL00123610",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-10-10T15:15:16Z",
+		"Amount": 0.0000
+	}],
+	"Date": "2018-10-12T01:00:05.162807Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-10-15 11:29:19**********{
+	"Messages": [{
+		"OrderId": 299222912,
+		"CustomerId": 71875899,
+		"CustomerName": "JINDUO WANG",
+		"HplId": "HPL00123629",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-10-10T03:30:23Z",
+		"Amount": 114.9800
+	},
+	{
+		"OrderId": 299222915,
+		"CustomerId": 71876502,
+		"CustomerName": "Yawen Liu",
+		"HplId": "HPL00123610",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-10-10T03:30:23Z",
+		"Amount": 114.9800
+	},
+	{
+		"OrderId": 298101023,
+		"CustomerId": 71875899,
+		"CustomerName": "JINDUO WANG",
+		"HplId": "HPL00123629",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-10-10T08:12:59Z",
+		"Amount": 0.0000
+	},
+	{
+		"OrderId": 298131281,
+		"CustomerId": 71876502,
+		"CustomerName": "Yawen Liu",
+		"HplId": "HPL00123610",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-10-10T15:15:16Z",
+		"Amount": 0.0000
+	}],
+	"Date": "2018-10-12T01:00:05.162807Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-10-16 10:09:53**********{
+	"Messages": [{
+		"OrderId": 299222912,
+		"CustomerId": 71875899,
+		"CustomerName": "JINDUO WANG",
+		"HplId": "HPL00123629",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-10-10T03:30:23Z",
+		"Amount": 114.9800
+	},
+	{
+		"OrderId": 299222915,
+		"CustomerId": 71876502,
+		"CustomerName": "Yawen Liu",
+		"HplId": "HPL00123610",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-10-10T03:30:23Z",
+		"Amount": 114.9800
+	},
+	{
+		"OrderId": 298101023,
+		"CustomerId": 71875899,
+		"CustomerName": "JINDUO WANG",
+		"HplId": "HPL00123629",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-10-10T08:12:59Z",
+		"Amount": 0.0000
+	},
+	{
+		"OrderId": 298131281,
+		"CustomerId": 71876502,
+		"CustomerName": "Yawen Liu",
+		"HplId": "HPL00123610",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-10-10T15:15:16Z",
+		"Amount": 0.0000
+	}],
+	"Date": "2018-10-12T01:00:05.162807Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-10-16 10:14:04**********{
+	"Messages": [{
+		"OrderId": 299222912,
+		"CustomerId": 71875899,
+		"CustomerName": "JINDUO WANG",
+		"HplId": "HPL00123629",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-10-10T03:30:23Z",
+		"Amount": 114.9800
+	},
+	{
+		"OrderId": 299222915,
+		"CustomerId": 71876502,
+		"CustomerName": "Yawen Liu",
+		"HplId": "HPL00123610",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-10-10T03:30:23Z",
+		"Amount": 114.9800
+	},
+	{
+		"OrderId": 298101023,
+		"CustomerId": 71875899,
+		"CustomerName": "JINDUO WANG",
+		"HplId": "HPL00123629",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-10-10T08:12:59Z",
+		"Amount": 0.0000
+	},
+	{
+		"OrderId": 298131281,
+		"CustomerId": 71876502,
+		"CustomerName": "Yawen Liu",
+		"HplId": "HPL00123610",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-10-10T15:15:16Z",
+		"Amount": 0.0000
+	}],
+	"Date": "2018-10-12T01:00:05.162807Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********

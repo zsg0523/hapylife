@@ -874,6 +874,14 @@ class RegisterController extends HomeBaseController{
         }
     }
 
+    /**
+    * 所在省市区
+    **/ 
+    public function ShArea(){
+        $pid = I('post.pid');
+        $data = D('ShArea')->ShArea($pid);
+        $this->assign('data',$data);
+    }
 
 
 }

@@ -33,9 +33,9 @@ class HapylifeRegisterController extends HomeBaseController{
         }else{
             vendor('SmsSing.SmsSingleSender');
             // 短信应用SDK AppID
-            $appid = 1400096409; // 1400开头
+            $appid = 1400149268; // 1400开头
             // 短信应用SDK AppKey
-            $appkey = "fc1c7e21ab36fef1865b0a3110709c51";
+            $appkey = "010151f33eaec872109b1b507c820bce";
             // 需要发送短信的手机号码
             $phoneNumber = I('post.phoneNumber');
             //手机区号

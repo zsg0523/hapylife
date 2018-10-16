@@ -939,7 +939,7 @@ class ReceiptModel extends BaseModel{
         $title   = array('创建日期','订单编号','会员账号','会员姓名','会员电话','团队标签','订单金额','订单备注','商品信息','商品编号','商品数量','支付日期','收货人姓名','收货电话','收货地址');
         foreach ($data as $k => $v) {
             // 创建日期
-            $content[$k]['ir_date']      = date('Y-m-d H:i:s',$v['ir_date']);
+            $content[$k]['ir_date']      = date('Y-m-d',$v['ir_date']).'/'.date('H:i:s',$v['ir_date']);
             // 订单编号
             $content[$k]['ir_receiptnum']    = $v['ir_receiptnum'];
             // 会员账号
@@ -979,7 +979,7 @@ class ReceiptModel extends BaseModel{
                     break;
             }
             // 支付日期
-            $content[$k]['ir_paytime'] = date('Y-m-d H:i:s',$v['ir_paytime']);
+            $content[$k]['ir_paytime'] = date('Y-m-d',$v['ir_paytime']).'/'.date('H:i:s',$v['ir_paytime']);
             // 收货人姓名
             $content[$k]['ia_name'] = $v['ia_name'];
             // 收货电话

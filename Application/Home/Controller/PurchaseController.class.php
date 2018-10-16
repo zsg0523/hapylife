@@ -280,7 +280,7 @@ class PurchaseController extends HomeBaseController{
                 ->find();
         $data['receiptson'] = D('Receiptson')->where(array('status'=>2,'ir_receiptnum'=>$ir_receiptnum))->select();
         $this->assign('data',$data);
-//      p($data);
+        // p($data);
         $this->display();
     }
 
