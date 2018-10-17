@@ -878,9 +878,30 @@ class RegisterController extends HomeBaseController{
     * 所在省市区
     **/ 
     public function ShArea(){
-        $pid = I('post.pid');
-        $data = D('ShArea')->ShArea($pid);
-        $this->assign('data',$data);
+        $data = M('ShArea')->where(array('pid'=>0))->select();
+        // p($data);
+        foreach($data as $key=>$value){
+           $province['86'][$value['id']] = $value['name'];
+        }
+        foreach($province['86'] as $key=>$value){
+            $city[$key] = M('ShArea')->where(array('pid'=>$key))->select();    
+        }
+        foreach($city as $key => $value) {
+            foreach ($value as $k => $v) {
+                $province[$key][$v['id']] = $v['name'];
+            }
+        }
+        foreach($city as $key=>$value){
+            foreach ($value as $k => $v) {
+                $area[$v['id']] = M('ShArea')->where(array('pid'=>$v['id']))->select(); 
+            }   
+        }
+        foreach($area as $key => $value) {
+            foreach ($value as $k => $v) {
+                $province[$key][$v['id']] = $v['name'];
+            }
+        }
+        $this->ajaxreturn($province);
     }
 
 
