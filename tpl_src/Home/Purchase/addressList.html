@@ -142,39 +142,46 @@
 				      <div class="modal-body daimabiji-container">
 									<form action="{:U('Home/Purchase/addressEdit')}" method="post">
 										<input type="hidden" name="iaid">
-									  <div class="form-group">
-									    <label for=""><sup style="color: red;">*</sup>收货人:</label>
-									    <input name="ia_name" type="text" class="form-control" id=""  placeholder="收货人姓名">
-									  </div>
-									  <div class="form-group">
-									    <label for=""><sup style="color: red;">*</sup>联系电话:</label>
-									    <input name="ia_phone" type="tel" class="form-control" id=""  placeholder="联系电话">
-									  </div>
-									  <div class="form-group">
-										    <label for=""><sup style="color: red;">*</sup>所在省:</label>
-										    <!--<input name="ia_province" type="text" class="form-control"  placeholder="所在省" >-->
-										    <input name="ia_province" type="text" class="form-control"  placeholder="所在省"     >
+									  	<div class="form-group">
+									    	<label for=""><sup style="color: red;">*</sup>收货人:</label>
+									    	<input name="ia_name" type="text" class="form-control" id=""  placeholder="收货人姓名">
+									  	</div>
+									  	<div class="form-group">
+									    	<label for=""><sup style="color: red;">*</sup>联系电话:</label>
+									    	<input name="ia_phone" type="tel" class="form-control" id=""  placeholder="联系电话">
+									  	</div>
+									  	<div id="distpicker1">
+									  		<div class="form-group">
+											    <label for=""><sup style="color: red;">*</sup>所在省:</label>
+											    <!-- <input name="ia_province" type="text" class="form-control"  placeholder="所在省"> -->
+											    <select name="ia_province" class="form-control">
+											    	
+											    </select>										   	
 
-										   	
-										  </div>
-										  <div class="form-group">
-										    <label for=""><sup style="color: red;">*</sup>所在市:</label>
-										    <!--<input name="ia_town" type="text" class="form-control"  placeholder="所在市">-->
-										    <input name="ia_town" type="text" class="form-control"  placeholder="所在市"    >
-										  </div>
-										  <div class="form-group">
-										    <label for=""><sup style="color: red;">*</sup>所在区/县:</label>
-										    <!--<input name="ia_region" type="text" class="form-control"  placeholder="所在区/县">-->
-										    <input name="ia_region" type="text" class="form-control"  placeholder="所在区/县"    >	
-										    
-										  </div>
-										  <div class="form-group">
-										    <label for=""><sup style="color: red;">*</sup>详细地址:</label>
-										    <!--<input name="ia_road" type="text" class="form-control"  placeholder="详细地址">-->
-										    <input name="ia_road" type="text" class="form-control"  placeholder="详细地址"    >	
-										  </div>
-									  <div class="form-group">
-										  <button type="submit" class="btn btn-info" id="save">保存</button>
+											</div>
+											<div class="form-group">
+											    <label for=""><sup style="color: red;">*</sup>所在市:</label>
+											    <!--<input name="ia_town" type="text" class="form-control" placeholder="所在市">-->
+											    <select name="ia_town" class="form-control">
+											    	
+											    </select>
+											    
+											</div>
+											<div class="form-group">
+											    <label for=""><sup style="color: red;">*</sup>所在区/县:</label>
+											    <!--<input name="ia_region" type="text" class="form-control"  placeholder="所在区/县">-->
+										    	<select name="ia_region" class="form-control">
+										    		
+										    	</select>
+											</div>
+										</div>
+									  	<div class="form-group">
+									    	<label for=""><sup style="color: red;">*</sup>详细地址:</label>
+									    	<!--<input name="ia_road" type="text" class="form-control"  placeholder="详细地址">-->
+									    	<input name="ia_road" type="text" class="form-control"  placeholder="详细地址"    >	
+									  	</div>
+									  	<div class="form-group">
+										  	<button type="submit" class="btn btn-info" id="save">保存</button>
 										</div>
 									</form>
 				      </div>
@@ -205,22 +212,32 @@
 										    <label for=""><sup style="color: red;">*</sup>联系电话:</label>
 										    <input name="ia_phone" type="tel" class="form-control"  placeholder="联系电话">
 										  </div>
-										  <div class="form-group">
-										    <label for=""><sup style="color: red;">*</sup>所在省:</label>
-										    <!--<input name="ia_province" type="text" class="form-control"  placeholder="所在省">-->
-										    <input name="ia_province" type="text" class="form-control"  placeholder="所在省"    >										   	
+										  <div data-toggle="distpicker">
+										  		<div class="form-group">
+												    <label for=""><sup style="color: red;">*</sup>所在省:</label>
+												    <!-- <input name="ia_province" type="text" class="form-control"  placeholder="所在省"> -->
+												    <select name="ia_province" class="form-control">
+												    	
+												    </select>										   	
 
+												</div>
+												<div class="form-group">
+												    <label for=""><sup style="color: red;">*</sup>所在市:</label>
+												    <!--<input name="ia_town" type="text" class="form-control" placeholder="所在市">-->
+												    <select name="ia_town" class="form-control">
+												    	
+												    </select>
+												    
+												</div>
+												<div class="form-group">
+												    <label for=""><sup style="color: red;">*</sup>所在区/县:</label>
+												    <!--<input name="ia_region" type="text" class="form-control"  placeholder="所在区/县">-->
+											    	<select name="ia_region" class="form-control">
+											    		
+											    	</select>
+												</div>
 										  </div>
-										  <div class="form-group">
-										    <label for=""><sup style="color: red;">*</sup>所在市:</label>
-										    <!--<input name="ia_town" type="text" class="form-control" placeholder="所在市">-->
-										    <input name="ia_town" type="text" class="form-control" placeholder="所在市"    >
-										  </div>
-										  <div class="form-group">
-										    <label for=""><sup style="color: red;">*</sup>所在区/县:</label>
-										    <!--<input name="ia_region" type="text" class="form-control"  placeholder="所在区/县">-->
-										    	<input name="ia_region" type="text" class="form-control"  placeholder="所在区/县"    >
-										  </div>
+										  
 										  <div class="form-group">
 										    <label for=""><sup style="color: red;">*</sup>详细地址:</label>
 										    <!--<input name="ia_road" type="text" class="form-control"  placeholder="详细地址">-->
@@ -236,9 +253,13 @@
 					</div>
   		</div>
 
-		<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
     <script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>
+    <script src="__PUBLIC_BOOTSTRAP__/js/distpicker.data.js"></script>
+	<script src="__PUBLIC_BOOTSTRAP__/js/distpicker.js"></script>
+	<!-- <script src="__PUBLIC_BOOTSTRAP__/js/main.js"></script> -->
     <script type="text/javascript">
+   
 
 		$(document).ready(function(){			
 	   		changeCommonHead('地址管理');
@@ -267,10 +288,16 @@
 		  	$("input[name='iaid']").val(iaid);
 		  	$("input[name='ia_name']").val(name);
 		  	$("input[name='ia_phone']").val(phone);
-		  	$("input[name='ia_province']").val(province);
-		  	$("input[name='ia_town']").val(town);
-		  	$("input[name='ia_region']").val(region);
+		  	// $("input[name='ia_province']").val(province);
+		  	// $("input[name='ia_town']").val(town);
+		  	// $("input[name='ia_region']").val(region);
 		  	$("input[name='ia_road']").val(road);
+
+	  	 	$('#distpicker1').distpicker({
+		    	province: province,
+		    	city: town,
+		    	district: region
+		  	});
 		});
 		$('#myModal3').on('shown.bs.modal', function (event) {
 //		$('#myInput').focus()
