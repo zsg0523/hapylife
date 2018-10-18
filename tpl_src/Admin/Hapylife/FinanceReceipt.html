@@ -25,8 +25,8 @@
 			    			<option <?php if($status == 4)echo "selected";?>  value="4">已发货</option>
 			    		</select>
 			    		<select name="timeType">
-			    			<option <?php if($timeType == 'ir_date')echo "selected";?> value="ir_date" >创建时间</option>
 			    			<option <?php if($timeType == 'ir_paytime')echo "selected";?> value="ir_paytime">支付时间</option>
+			    			<option <?php if($timeType == 'ir_date')echo "selected";?> value="ir_date" >创建时间</option>
 			    		</select>
 			    		<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
 				    	<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
@@ -55,6 +55,7 @@
                         <th >流水方式</th>
                         <th >订单状态</th>
                         <th >创建日期</th>
+                        <th >支付日期</th>
                         <th >查看明细</th>
                         <if condition="$session['user']['username'] eq mary || $session['user']['username'] eq admin2">
                         	<else />
@@ -84,6 +85,11 @@
                                 </if>
 							</td>
 							<td>{:date('Y-m-d H:i:s',$v['ir_date'])}</td>
+							<td>
+								<if condition="$v['ir_paytime'] eq 0">
+								<else/>{:date('Y-m-d H:i:s',$v['ir_paytime'])}
+								</if>
+							</td>
 							<td><a href="{:U('Admin/Hapylife/FinanceReceiptSon',array('ir_receiptnum'=>$v['ir_receiptnum']))}">查看明细</td>
 							<if condition="$_SESSION['user']['username'] eq mary || $_SESSION['user']['username'] eq admin2">
 							<else />

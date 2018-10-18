@@ -29,55 +29,60 @@ class ChangeController extends HomeBaseController{
         $iuid = $_SESSION['user']['id'];
         // 用户信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
-        // 新密码
-        $new_array = array(
-            'PassWord' => md5(trim(I('post.passwords'))),
-            'WvPass' => trim(I('post.passwords')),
-        );
-        $phoneNumber =I('post.phoneNumber');
-        $code        =I('post.code');
-        $acnumber    =I('post.acnumber');
-        $data        =D('Smscode')->where(array('phone'=>$phoneNumber,'acnumber'=>$acnumber))->order('nsid desc')->find();
-        $time        =time()-strtotime($data['date']);
-        if($time>60){
-            $this->error('验证码失效,请重新发送');
-        }else{
-            if($new_array['PassWord'] != $userinfo['password'] || $new_array['WvPass'] != $userinfo['wvpass']){
-                if($data && $data['code']==$code){
-                    // 修改用户信息
-                    $result = M('User')->where(array('iuid'=>$iuid))->save($new_array);
-                    if($result){
-                        // 发送给usa,更新usa数据
-                        $usa    = new \Common\UsaApi\Usa;
-                        $res = $usa->changePassWord($userinfo['customerid'],I('post.passwords'));
-                        if($res['code'] == 200){
-                            $sample['status'] = 1;
-                            $this->ajaxreturn($sample);
+        if(IS_POST){
+            // 新密码
+            $new_array = array(
+                'PassWord' => md5(trim(I('post.passwords'))),
+                'WvPass' => trim(I('post.passwords')),
+            );
+            $phoneNumber =I('post.phoneNumber');
+            $code        =I('post.code');
+            $acnumber    =I('post.acnumber');
+            $data        =D('Smscode')->where(array('phone'=>$phoneNumber,'acnumber'=>$acnumber))->order('nsid desc')->find();
+            $time        =time()-strtotime($data['date']);
+            if($time>60){
+                $this->error('验证码失效,请重新发送');
+            }else{
+                if($new_array['PassWord'] != $userinfo['password'] || $new_array['WvPass'] != $userinfo['wvpass']){
+                    if($data && $data['code']==$code){
+                        // 修改用户信息
+                        $result = M('User')->where(array('iuid'=>$iuid))->save($new_array);
+                        if($result){
+                            // 发送给usa,更新usa数据
+                            $usa    = new \Common\UsaApi\Usa;
+                            $res = $usa->changePassWord($userinfo['customerid'],I('post.passwords'));
+                            if($res['code'] == 200){
+                                $sample['status'] = 1;
+                                $this->ajaxreturn($sample);
+                            }else{
+                                $sample['status'] = 0;
+                                $this->ajaxreturn($sample);
+                            }
                         }else{
+                            // 修改失败
                             $sample['status'] = 0;
                             $this->ajaxreturn($sample);
                         }
                     }else{
-                        // 修改失败
-                        $sample['status'] = 0;
+                        // 验证码错误
+                        $sample['status'] = 2;
                         $this->ajaxreturn($sample);
                     }
                 }else{
-                    // 验证码错误
-                    $sample['status'] = 2;
-                    $this->ajaxreturn($sample);
-                }
-            }else{
-                // 发送给usa,更新usa数据
-                $res = $usa->changePassWord($userinfo['customerid'],I('post.passwords'));
-                if($res['code'] == 200){
-                    $sample['status'] = 1;
-                    $this->ajaxreturn($sample);
-                }else{
-                    $sample['status'] = 0;
-                    $this->ajaxreturn($sample);
+                    // 发送给usa,更新usa数据
+                    $res = $usa->changePassWord($userinfo['customerid'],I('post.passwords'));
+                    if($res['code'] == 200){
+                        $sample['status'] = 1;
+                        $this->ajaxreturn($sample);
+                    }else{
+                        $sample['status'] = 0;
+                        $this->ajaxreturn($sample);
+                    }
                 }
             }
+        }else{
+            $this->assign();
+            $this->display();
         }
     }
 

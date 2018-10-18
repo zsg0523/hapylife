@@ -19,43 +19,90 @@
 					<a href="#home" data-toggle="tab">奖金报表列表</a>
 			    </li>
 			    <li>
+			    	<form action="{:U('Admin/Hapylife/wvbonus')}" method="get">
+			    		
+			    		<select name="status">
+			    			<option <?php if($status == 0)echo "selected";?> value="0">未发放</option>
+			    			<option <?php if($status == 1)echo "selected";?> value="1" >已发放</option>
+		    			</select>
+                        <input class='btn btn-sm' type="submit" name='excel' value="excel" />
+                	</form>
+			    </li>
+			    <li>
+			    	&nbsp;
+			    </li>
+			    <li>
 					<a href="javascript:;" data-toggle="tab" onclick="parities(this)" Parities="{$parities}">修改当前汇率</a>
 			    </li>
             </ul>
 		</div>
             <div class="tab-content">
-				<table class="table table-striped table-bordered table-hover table-condensed">
-					<tr>
-						<th >CustomerId</th>
-						<th >HplId</th>
-						<th >PeriodId</th>
-						<th >PeriodDescription</th>
-                        <th >BonusDescription</th>
-                        <th >USD Amount</th>
-                        <th >ExchangeRate</th>
-                        <th >EP</th>
-                        <th >BonusStatus</th>
-					</tr>
-					<foreach name="data" item="v">
-						<tr>
-							<td>{$v.customerid}</td>
-							<td>{$v.hplid}</td>
-							<td>{$v.periodid}</td>
-							<td>{$v.perioddescription}</td>
-							<td>{$v.bonuses.0.BonusDescription}</td>
-							<td>{$v.bonuses.0.Amount}</td>
-							<td>{$parities}</td>
-							<td>{$v.ep}</td>
-							<td>
-								<if condition="$v.bonusstatus eq 0">
-									<a href="{:U('Admin/Hapylife/addBonus',array('customerid'=>$v['hplid'],'amount'=>$v['bonuses'][0]['Amount']))}">发放奖金</a>
-								<else />
-									已发放
-								</if>
-							</td>
+            	<form action="{:U('Admin/Hapylife/wvbonus')}" method="get">
+					<table class="table table-striped table-bordered table-hover table-condensed">
+						<tr class="wvbonus-tr">
+							<th><input type="text" name='customerid' placeholder="customerid" value="{$customerid}" /></th>
+							<th><input type="text" name='hplid' placeholder="hplid" value="{$hplid}" /></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th>
+								<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px; width: 49%;" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off" placeholder="starttime" />
+				    			<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px; width: 49%; float: right;" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off" placeholder="endtime" />
+							</th>
+							<th></th>
+							<th>
+								<select name="status">
+					    			<option <?php if($status == 0)echo "selected";?> value="-1">所有</option>
+					    			<option <?php if($status == 0)echo "selected";?> value="0">未发放</option>
+					    			<option <?php if($status == 1)echo "selected";?> value="1" >已发放</option>
+				    			</select>
+							</th>
+							<th><input class='btn btn-sm' type="submit" value="筛选" /></th>
+							
 						</tr>
-					</foreach>
-				</table>
+						<tr>
+							<th >CustomerId</th>
+							<th >HplId</th>
+							<th >PeriodId</th>
+							<th >PeriodDescription</th>
+	                        <th >BonusDescription</th>
+	                        <th >USD Amount</th>
+	                        <th >ExchangeRate</th>
+	                        <th >EP</th>
+	                        <th >BonusPaymentTime</th>
+	                        <th >Operator</th>
+	                        <th >BonusStatus</th>
+						</tr>
+						<foreach name="data" item="v">
+							<tr>
+								<td>{$v.customerid}</td>
+								<td>{$v.hplid}</td>
+								<td>{$v.periodid}</td>
+								<td>{$v.perioddescription}</td>
+								<td>{$v.bonuses.0.BonusDescription}</td>
+								<td>{$v.bonuses.0.Amount}</td>
+								<td>{$parities}</td>
+								<td>{$v.ep}</td>
+								<if condition="empty($v['bonuspaymenttime']) neq true">
+									<td>{:date('Y-m-d H:i:s',$v['bonuspaymenttime'])}</td>
+								<else />
+									<td></td>
+								</if>
+								<td>{$v['operator']}</td>
+								<td>
+									<if condition="$v.bonusstatus eq 0">
+										<a href="javascript:if(confirm('确定发放？'))location='{:U('Admin/Hapylife/addBonus',array('id'=>$v['id'],'customerid'=>$v['hplid'],'amount'=>$v['bonuses'][0]['Amount']))}'">发放奖金</a>
+									<else />
+										已发放
+									</if>
+								</td>
+							</tr>
+						</foreach>
+					</table>
+            	</form>
 				<div class='page'>
 					{$page}
 				</div>

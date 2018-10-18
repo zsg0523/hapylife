@@ -24,8 +24,8 @@
 				    			<option <?php if($status == 5)echo "selected";?>  value="5">已完成</option>
 				    		</select>
 				    		<select name="timeType">
-				    			<option <?php if($timeType == 'ir_date')echo "selected";?> value="ir_date" >创建时间</option>
 				    			<option <?php if($timeType == 'ir_paytime')echo "selected";?> value="ir_paytime">支付时间</option>
+				    			<option <?php if($timeType == 'ir_date')echo "selected";?> value="ir_date" >创建时间</option>
 			    			</select>
 				    		<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
 				    		<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
@@ -58,7 +58,7 @@
                         <th >收货地址</th>
                         <th >查看明细</th>
                         <th >创建日期</th>
-                        <!-- <th >支付日期</th> -->
+                        <th >支付日期</th>
                         <th >发货日期</th>
                         <th >送达日期</th>
                         <th >确认发货</th>
@@ -109,11 +109,11 @@
 							</td> -->
 							<td><a href="{:U('Admin/Hapylife/sendReportSon',array('ir_receiptnum'=>$v['ir_receiptnum']))}">查看明细</a></td>
 							<td>{:date('Y-m-d h:i:s',$v['ir_date'])}</td>
-							<!-- <td>
+							<td>
 								<if condition="$v['ir_paytime'] eq 0">
 								<else/>{:date('Y-m-d H:i:s',$v['ir_paytime'])}
 								</if>
-							</td> -->
+							</td>
 							<td>
 								<if condition="$v['send_time'] eq 0">
 								<else/>{:date('Y-m-d H:i:s',$v['send_time'])}

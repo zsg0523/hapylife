@@ -80,13 +80,12 @@ class usa
 	/**
 	* Update Customer
 	**/ 
-	public function updateCustomer($happyLifeID,$emailAddress,$phone,$placementPreference){
+	public function updateCustomer($happyLifeID,$emailAddress,$placementPreference){
 		$key  = $this->key;
 		$url  = $this->url;
 		$data = array(
 			'HappyLifeID'  =>$happyLifeID,
             'EMailAddress' =>$emailAddress,
-            'Phone'        =>$phone,
             'BinaryPlacementPreference' => $placementPreference,
 		);
 		$data    = json_encode($data);
@@ -104,6 +103,22 @@ class usa
 		$data = array(
 			'HappyLifeID'  =>$happyLifeID,
 			'Password' => $Password,
+		);
+		$data    = json_encode($data);
+		$sendUrl = $url."/api/Hpl/UpdateCustomer?key=".$key;
+		$result  = post_json_data($sendUrl,$data);
+		return $result;
+	}
+
+	/**
+	* Change Phone
+	**/ 
+	public function updateCustomer($happyLifeID,$phone){
+		$key  = $this->key;
+		$url  = $this->url;
+		$data = array(
+			'HappyLifeID'  =>$happyLifeID,
+            'Phone'        =>$phone,
 		);
 		$data    = json_encode($data);
 		$sendUrl = $url."/api/Hpl/UpdateCustomer?key=".$key;

@@ -559,7 +559,7 @@ class HapylifeController extends AdminBaseController{
 		}else{
 			$status = (string)$order_status;
 		}
-		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
+		$timeType  = I('get.timeType')?I('get.timeType'):'ir_paytime';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
 		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$starttime,$endtime,$status,$order='ir_date desc',$timeType);
@@ -598,7 +598,7 @@ class HapylifeController extends AdminBaseController{
 			$status = (string)$order_status;
 		}
 		$test      ='测试,测,试,测试点,test,testtest,测试测试,新建测试,测试地,测试点,测试账号';
-		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
+		$timeType  = I('get.timeType')?I('get.timeType'):'ir_paytime';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
 		$assign    = D('Receipt')->FinanceGetPage(D('Receipt'),$word,$starttime,$endtime,$status,$test,$timeType,$order='ir_date desc');
@@ -1159,7 +1159,7 @@ class HapylifeController extends AdminBaseController{
 		}
 		$excel     = I('get.excel');
 		$word      = trim(I('get.word',''));
-		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
+		$timeType  = I('get.timeType')?I('get.timeType'):'ir_paytime';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
 		$assign    = D('Receipt')->getSendPage(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime asc');
@@ -1200,7 +1200,7 @@ class HapylifeController extends AdminBaseController{
 		}
 		$excel     = I('get.excel');
 		$word      = trim(I('get.word',''));
-		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
+		$timeType  = I('get.timeType')?I('get.timeType'):'ir_paytime';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
 		$array  = '测,测试,test,试,试点,testtest';
@@ -1497,7 +1497,7 @@ class HapylifeController extends AdminBaseController{
 		}
 		$excel     = I('get.excel');
 		$word      = trim(I('get.word',''));
-		$timeType  = I('get.timeType')?I('get.timeType'):'ir_date';
+		$timeType  = I('get.timeType')?I('get.timeType'):'ir_paytime';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
 		$array  = '测试,测,试,测试点,test,testtest,测试测试,新建测试,测试地,测试点,测试账号';
@@ -1561,20 +1561,45 @@ class HapylifeController extends AdminBaseController{
 	* 奖金报表
 	**/ 
 	public function wvbonus(){
+		$status = I('get.status',-1);
+		$customerid = trim(I('get.customerid',''));
+		$hplid = I('get.hplid','');
+		$excel = I('get.excel');
+		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):'';
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:'';
+		p($starttime);
+		p($endtime);
+		if($status == -1){
+			$status = array(0,1);
+		}else{
+			$status = I('get.status');
+		}
+
 		$data = M('WvBonusParities')->select();
-		$word      = trim(I('get.word',''));
-		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
-		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
-		
-		$assign    = D('WvBonus')->getSendPage(D('WvBonus'),$word,$starttime,$endtime,$order='');
+		$assign    = D('WvBonus')->getSendPage(D('WvBonus'),$customerid,$hplid,$starttime,$endtime,$status,$order='id');
+
 		foreach($assign['data'] as $key=>$value){
 			$assign['data'][$key]['bonuses'] = json_decode($value['bonuses'],true);
 			$assign['data'][$key]['ep'] = bcdiv(bcmul($assign['data'][$key]['bonuses'][0]['Amount'],$data[0]['parities'],2),100,2);
 		}
-
-		$this->assign($assign);
-		$this->assign('parities',$data[0]['parities']);
-		$this->display();
+		if($excel == 'excel'){
+			$message = D('WvBonus')->getAll(D('WvBonus'),$status);
+			foreach($message['data'] as $key=>$value){
+				$message['data'][$key]['bonuses'] = json_decode($value['bonuses'],true);
+				$message['data'][$key]['ep'] = bcdiv(bcmul($message['data'][$key]['bonuses'][0]['Amount'],$data[0]['parities'],2),100,2);
+				$message['data'][$key]['parities'] = $data[0]['parities'];
+			}
+			$export_excel = D('WvBonus')->export_excel($message['data']);
+		}else{
+			$this->assign($assign);
+			$this->assign('status',$status);
+			$this->assign('customerid',$customerid);
+			$this->assign('hplid',$hplid);
+			$this->assign('starttime',I('get.starttime'));
+			$this->assign('endtime',I('get.endtime'));
+			$this->assign('parities',$data[0]['parities']);
+			$this->display();
+		}
 	}
 
 	/**
@@ -1582,12 +1607,19 @@ class HapylifeController extends AdminBaseController{
 	**/ 
 	public function addBonus(){
 		$data = M('WvBonusParities')->select();
+		$id = I('get.id');
 		$customerid = I('get.customerid');
 		$amount = bcdiv(bcmul(I('get.amount'),$data[0]['parities'],2),100,2);
 		$userinfo = M('User')->where(array('customerid'=>$customerid))->find();
-		$result = M('User')->where(array('customerid'=>$customerid))->setfield('iu_point',$amount);
+		$iu_point = bcadd($userinfo['iu_point'],$amount,2);
+		$result = M('User')->where(array('customerid'=>$customerid))->setfield('iu_point',$iu_point);
 		if($result){
-			$saveStatus = M('WvBonus')->where(array('HplId'=>$customerid))->setfield('BonusStatus',1);
+			$saveMsg = array(
+				'BonusStatus' => 1,
+				'BonusPaymentTime' => time(),
+				'Operator' => $_SESSION['user']['username']
+			);
+			$saveStatus = M('WvBonus')->where(array('id'=>$id))->save($saveMsg);
 			$content = $_SESSION['user']['username'].'在'.date('Y-m-d H:i:s').',给'.$customerid.'发放了'.$amount.'EP';
 			$log = array(
 				'customerid' => $customerid,

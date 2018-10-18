@@ -24,8 +24,8 @@
 				    			<option <?php if($status == 5)echo "selected";?>  value="5">已完成</option>
 				    		</select>
 				    		<select name="timeType">
-				    			<option <?php if($timeType == 'ir_date')echo "selected";?> value="ir_date" >创建时间</option>
 				    			<option <?php if($timeType == 'ir_paytime')echo "selected";?> value="ir_paytime">支付时间</option>
+				    			<option <?php if($timeType == 'ir_date')echo "selected";?> value="ir_date" >创建时间</option>
 			    			</select>
 				    		<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
 				    		<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
