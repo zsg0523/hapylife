@@ -1741,4 +1741,25 @@ class PurchaseController extends HomeBaseController{
         $this->assign($assign);
         $this->display();
     }
+
+    /**
+    * 修改密码
+    **/ 
+    public function checkPhone(){
+        $iuid = $_SESSION['user']['id'];
+        // 用户信息
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
+        $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
+        foreach ($mape as $key => $value) {
+            $data[$key]         = $value;
+            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
+                $data[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
+            }else{
+                $data[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
+            }
+        }
+        $this->assign('data',$data);
+        $this->assign('userinfo',$userinfo);
+        $this->display();
+    }
 }

@@ -113,7 +113,7 @@ class usa
 	/**
 	* Change Phone
 	**/ 
-	public function updateCustomer($happyLifeID,$phone){
+	public function changePhone($happyLifeID,$phone){
 		$key  = $this->key;
 		$url  = $this->url;
 		$data = array(

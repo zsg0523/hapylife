@@ -1565,10 +1565,8 @@ class HapylifeController extends AdminBaseController{
 		$customerid = trim(I('get.customerid',''));
 		$hplid = I('get.hplid','');
 		$excel = I('get.excel');
-		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):'';
-		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:'';
-		p($starttime);
-		p($endtime);
+		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:0;
 		if($status == -1){
 			$status = array(0,1);
 		}else{
@@ -1583,7 +1581,7 @@ class HapylifeController extends AdminBaseController{
 			$assign['data'][$key]['ep'] = bcdiv(bcmul($assign['data'][$key]['bonuses'][0]['Amount'],$data[0]['parities'],2),100,2);
 		}
 		if($excel == 'excel'){
-			$message = D('WvBonus')->getAll(D('WvBonus'),$status);
+			$message = D('WvBonus')->getAll(D('WvBonus'),$customerid,$hplid,$starttime,$endtime,$status,$order='id');
 			foreach($message['data'] as $key=>$value){
 				$message['data'][$key]['bonuses'] = json_decode($value['bonuses'],true);
 				$message['data'][$key]['ep'] = bcdiv(bcmul($message['data'][$key]['bonuses'][0]['Amount'],$data[0]['parities'],2),100,2);
@@ -1611,24 +1609,53 @@ class HapylifeController extends AdminBaseController{
 		$customerid = I('get.customerid');
 		$amount = bcdiv(bcmul(I('get.amount'),$data[0]['parities'],2),100,2);
 		$userinfo = M('User')->where(array('customerid'=>$customerid))->find();
+		// p($userinfo);die;
 		$iu_point = bcadd($userinfo['iu_point'],$amount,2);
 		$result = M('User')->where(array('customerid'=>$customerid))->setfield('iu_point',$iu_point);
 		if($result){
-			$saveMsg = array(
-				'BonusStatus' => 1,
-				'BonusPaymentTime' => time(),
-				'Operator' => $_SESSION['user']['username']
+			$array = array(
+				'pointNo' => date('YmdHis').rand(100000, 999999),
+				'iuid' => $userinfo['iuid'],
+				'hu_username' => $userinfo['lastname'].$userinfo['firstname'],
+				'hu_nickname' => $userinfo['customerid'],
+				'send' => $_SESSION['user']['username'],
+				'received' => $customerid,
+				'opename' => $_SESSION['user']['username'],
+				'getpoint' => $amount,
+				'pointtype' => 9,
+				'iu_bank' => $userinfo['bankname'],
+				'iu_bankbranch' => $userinfo['subname'],
+				'iu_bankaccount' => $userinfo['bankaccount'],
+				'iu_bankuser' => $userinfo['lastname'].$userinfo['firstname'],
+				'iu_bankprovince' => $userinfo['bankprovince'],
+				'iu_bankcity' => $userinfo['bankcity'],
+				'date' => date('Y-m-d H:i:s',time()),
+				'handletime' => date('Y-m-d H:i:s',time()),
+				'status' => 2,
+				'whichApp' => 5,
 			);
-			$saveStatus = M('WvBonus')->where(array('id'=>$id))->save($saveMsg);
-			$content = $_SESSION['user']['username'].'在'.date('Y-m-d H:i:s').',给'.$customerid.'发放了'.$amount.'EP';
-			$log = array(
-				'customerid' => $customerid,
-				'operator' => $_SESSION['user']['username'],
-				'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-				'date' => time(),
-				'content' => $content,
-			);
-			$log_result = M('WvBonusLog')->add($log);
+			$array['feepoint'] = 0;
+			$array['realpoint'] = bcsub($amount,$array['feepoint'],2);
+			$array['leftpoint'] = bcadd($userinfo['iu_point'],$array['realpoint'],2);
+			$array['content'] = '系统在'.date('Y-m-d H:i:s',time()).'时，发放奖金到'.$userinfo['customerid'].'，剩EP余额'.$array['leftpoint'];
+			$addGetPoint = M('Getpoint')->add($array);
+			if($addGetPoint){
+				$saveMsg = array(
+					'BonusStatus' => 1,
+					'BonusPaymentTime' => time(),
+					'Operator' => $_SESSION['user']['username']
+				);
+				$saveStatus = M('WvBonus')->where(array('id'=>$id))->save($saveMsg);
+				$content = $_SESSION['user']['username'].'在'.date('Y-m-d H:i:s').',给'.$customerid.'发放了'.$amount.'EP';
+				$log = array(
+					'customerid' => $customerid,
+					'operator' => $_SESSION['user']['username'],
+					'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+					'date' => time(),
+					'content' => $content,
+				);
+				$log_result = M('WvBonusLog')->add($log);
+			}
 		}
 		if($log_result){
 			$this->success('发放成功',U('Admin/Hapylife/wvbonus'));

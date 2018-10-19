@@ -90,7 +90,6 @@
 					<div class="form-group"> 
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label">手机归属地:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
-							<input type="hidden" name="acid" id="acid" value="{$data['acid']}" />
 							<select class="form-control" name="acnumber" id="acnumber">
 								<option value="0" acid="0">请选择</option>
 						    	<foreach name="code" item="v">
@@ -115,17 +114,17 @@
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>左右脚:</label>
 						<if condition="$data['placement'] eq 'BuildRight'">
 							<div class="col-lg-5 col-md-5 col-xs-4 control-label">
-							    <input type="radio" name="Placement" id="atleft" value="BuildLeft">左脚
+							    <input type="radio" name="Placement" id="atleft" value="BuildLeft">自动
 							</div>
 							<div class="col-lg-5 col-md-5 col-xs-4 control-label">
-								<input type="radio" name="Placement" id="atright" value="BuildRight" checked="checked">右脚
+								<input type="radio" name="Placement" id="atright" value="BuildRight" checked="checked">手动
 							</div>
 						<else />
 							<div class="col-lg-5 col-md-5 col-xs-4 control-label">
-							    <input type="radio" name="Placement" id="atleft" value="BuildLeft" checked="checked">左脚
+							    <input type="radio" name="Placement" id="atleft" value="BuildLeft" checked="checked">自动
 							</div>
 							<div class="col-lg-5 col-md-5 col-xs-4 control-label">
-								<input type="radio" name="Placement" id="atright" value="BuildRight">右脚
+								<input type="radio" name="Placement" id="atright" value="BuildRight">手动
 							</div>
 						</if>
 					</div>
@@ -144,16 +143,11 @@
 	$(document).ready(function(){ 
 		changeCommonHead('修改信息');
 	});
-	//区号改变获取acid
-	$("#acnumber").click(function(){
-		var acid=$("#acnumber").find("option:selected").attr("acid");
-		$("input[name='acid']").val(acid);
-	});
 	function back(){
     	window.location.href ="{:U('Home/Purchase/myProfile')}";
 	}
 	function judgeForm(){
-		if($('#acid').val()==0){
+		if($('#acnumber').val()==0){
 			alert('请选择手机区号。');
 
 		}else{

@@ -15,21 +15,58 @@ class WvbonusModel extends BaseModel{
      * @return array            分页数据
      */
     public function getSendPage($model,$customerid,$hplid,$starttime,$endtime,$status,$order='',$limit=50,$field=''){
-        $count=$model
-            ->count();
+        if(empty($field)){
+            if($starttime && empty($endtime)){
+                $count=$model
+                        ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonuspaymenttime'=>array(array('egt',$starttime)),'bonusstatus'=>array('in',$status)))
+                        ->count();
+            }else if($starttime && $endtime){
+                $count=$model
+                        ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonuspaymenttime'=>array(array('egt',$starttime),array('elt',$endtime)),'bonusstatus'=>array('in',$status)))
+                        ->count();
+            }else{
+                $count=$model
+                        ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonusstatus'=>array('in',$status)))
+                        ->count();
+            }
+        }else{
+            if($starttime && empty($endtime)){
+                $count=$model
+                        ->field($field)
+                        ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonuspaymenttime'=>array(array('egt',$starttime)),'bonusstatus'=>array('in',$status)))
+                        ->count();
+            }else if($starttime && $endtime){
+                $count=$model
+                        ->field($field)
+                        ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonuspaymenttime'=>array(array('egt',$starttime),array('elt',$endtime)),'bonusstatus'=>array('in',$status)))
+                        ->count();
+            }else{
+                $count=$model
+                        ->field($field)
+                        ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonusstatus'=>array('in',$status)))
+                        ->count();
+            }
+        }
         $page=new_page($count,$limit);
+        
         // 获取分页数据
         if (empty($field)) {
             if($starttime && empty($endtime)){
                 $list=$model
+                ->order($order)
+                ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonuspaymenttime'=>array(array('egt',$starttime)),'bonusstatus'=>array('in',$status)))
+                ->limit($page->firstRow.','.$page->listRows)
+                ->select();
+            }else if($starttime && $endtime){
+                $list=$model
                     ->order($order)
-                    ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonuspaymenttime'=>array(array('egt',$starttime)),'bonusstatus'=>array('IN',$status)))
+                    ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonuspaymenttime'=>array(array('egt',$starttime),array('elt',$endtime)),'bonusstatus'=>array('in',$status)))
                     ->limit($page->firstRow.','.$page->listRows)
                     ->select();
             }else{
                 $list=$model
                     ->order($order)
-                    ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonuspaymenttime'=>array(array('egt',$starttime),array('elt',$endtime)),'bonusstatus'=>array('IN',$status)))
+                    ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonusstatus'=>array('in',$status)))
                     ->limit($page->firstRow.','.$page->listRows)
                     ->select();
             }
@@ -38,14 +75,21 @@ class WvbonusModel extends BaseModel{
                 $list=$model
                     ->field($field)
                     ->order($order)
-                    ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonuspaymenttime'=>array(array('egt',$starttime)),'bonusstatus'=>array('IN',$status)))
+                    ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonuspaymenttime'=>array(array('egt',$starttime)),'bonusstatus'=>array('in',$status)))
+                    ->limit($page->firstRow.','.$page->listRows)
+                    ->select();
+            }else if($starttime && $endtime){
+                $list=$model
+                    ->field($field)
+                    ->order($order)
+                    ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonuspaymenttime'=>array(array('egt',$starttime),array('elt',$endtime)),'bonusstatus'=>array('in',$status)))
                     ->limit($page->firstRow.','.$page->listRows)
                     ->select();
             }else{
                 $list=$model
                     ->field($field)
                     ->order($order)
-                    ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonuspaymenttime'=>array(array('egt',$starttime),array('elt',$endtime)),'bonusstatus'=>array('IN',$status)))
+                    ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonusstatus'=>array('in',$status)))
                     ->limit($page->firstRow.','.$page->listRows)
                     ->select();
             }
@@ -64,19 +108,45 @@ class WvbonusModel extends BaseModel{
      * @param  subject  $status  发放状态
      * @return array             分页数据
      */
-    public function getAll($model,$status){
+    public function getAll($model,$customerid,$hplid,$starttime,$endtime,$status,$order=''){
         // 获取分页数据
         if (empty($field)) {
-            $list=$model
+            if($starttime && empty($endtime)){
+                $list=$model
                 ->order($order)
-                ->where(array('BonusStatus'=>$status))
+                ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonuspaymenttime'=>array(array('egt',$starttime)),'bonusstatus'=>array('in',$status)))
                 ->select();
+            }else if($starttime && $endtime){
+                $list=$model
+                    ->order($order)
+                    ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonuspaymenttime'=>array(array('egt',$starttime),array('elt',$endtime)),'bonusstatus'=>array('in',$status)))
+                    ->select();
+            }else{
+                $list=$model
+                    ->order($order)
+                    ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonusstatus'=>array('in',$status)))
+                    ->select();
+            }
         }else{
-            $list=$model
-                ->field($field)
-                ->order($order)
-                ->where(array('BonusStatus'=>$status))
-                ->select();         
+            if($starttime && empty($endtime)){
+                $list=$model
+                    ->field($field)
+                    ->order($order)
+                    ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonuspaymenttime'=>array(array('egt',$starttime)),'bonusstatus'=>array('in',$status)))
+                    ->select();
+            }else if($starttime && $endtime){
+                $list=$model
+                    ->field($field)
+                    ->order($order)
+                    ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonuspaymenttime'=>array(array('egt',$starttime),array('elt',$endtime)),'bonusstatus'=>array('in',$status)))
+                    ->select();
+            }else{
+                $list=$model
+                    ->field($field)
+                    ->order($order)
+                    ->where(array('customerid'=>array('like','%'.$customerid.'%'),'hplid'=>array('like','%'.$hplid.'%'),'bonusstatus'=>array('in',$status)))
+                    ->select();
+            }
         }
         
         $data=array(

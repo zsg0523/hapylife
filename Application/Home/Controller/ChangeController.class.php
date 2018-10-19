@@ -9,6 +9,9 @@ class ChangeController extends HomeBaseController{
     *   获取验证码
     **/ 
     public function changePassword(){
+        $iuid = $_SESSION['user']['id'];
+        // 用户信息
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
         $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
         foreach ($mape as $key => $value) {
             $data[$key]         = $value;
@@ -19,6 +22,7 @@ class ChangeController extends HomeBaseController{
             }
         }
         $this->assign('data',$data);
+        $this->assign('userinfo',$userinfo);
         $this->display();
     }
 
@@ -29,60 +33,55 @@ class ChangeController extends HomeBaseController{
         $iuid = $_SESSION['user']['id'];
         // 用户信息
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
-        if(IS_POST){
-            // 新密码
-            $new_array = array(
-                'PassWord' => md5(trim(I('post.passwords'))),
-                'WvPass' => trim(I('post.passwords')),
-            );
-            $phoneNumber =I('post.phoneNumber');
-            $code        =I('post.code');
-            $acnumber    =I('post.acnumber');
-            $data        =D('Smscode')->where(array('phone'=>$phoneNumber,'acnumber'=>$acnumber))->order('nsid desc')->find();
-            $time        =time()-strtotime($data['date']);
-            if($time>60){
-                $this->error('验证码失效,请重新发送');
-            }else{
-                if($new_array['PassWord'] != $userinfo['password'] || $new_array['WvPass'] != $userinfo['wvpass']){
-                    if($data && $data['code']==$code){
-                        // 修改用户信息
-                        $result = M('User')->where(array('iuid'=>$iuid))->save($new_array);
-                        if($result){
-                            // 发送给usa,更新usa数据
-                            $usa    = new \Common\UsaApi\Usa;
-                            $res = $usa->changePassWord($userinfo['customerid'],I('post.passwords'));
-                            if($res['code'] == 200){
-                                $sample['status'] = 1;
-                                $this->ajaxreturn($sample);
-                            }else{
-                                $sample['status'] = 0;
-                                $this->ajaxreturn($sample);
-                            }
+        // 新密码
+        $new_array = array(
+            'PassWord' => md5(trim(I('post.passwords'))),
+            'WvPass' => trim(I('post.passwords')),
+        );
+        $phoneNumber =I('post.phoneNumber');
+        $code        =I('post.code');
+        $acnumber    =I('post.acnumber');
+        $data        =D('Smscode')->where(array('phone'=>$phoneNumber,'acnumber'=>$acnumber))->order('nsid desc')->find();
+        $time        =time()-strtotime($data['date']);
+        $usa    = new \Common\UsaApi\Usa;
+        if($time>60){
+            $this->error('验证码失效,请重新发送');
+        }else{
+            if($new_array['PassWord'] != $userinfo['password'] || $new_array['WvPass'] != $userinfo['wvpass']){
+                if($data && $data['code']==$code){
+                    // 修改用户信息
+                    $result = M('User')->where(array('iuid'=>$iuid))->save($new_array);
+                    if($result){
+                        // 发送给usa,更新usa数据
+                        $res = $usa->changePassWord($userinfo['customerid'],I('post.passwords'));
+                        if($res['code'] == 200){
+                            $sample['status'] = 1;
+                            $this->ajaxreturn($sample);
                         }else{
-                            // 修改失败
                             $sample['status'] = 0;
                             $this->ajaxreturn($sample);
                         }
                     }else{
-                        // 验证码错误
-                        $sample['status'] = 2;
-                        $this->ajaxreturn($sample);
-                    }
-                }else{
-                    // 发送给usa,更新usa数据
-                    $res = $usa->changePassWord($userinfo['customerid'],I('post.passwords'));
-                    if($res['code'] == 200){
-                        $sample['status'] = 1;
-                        $this->ajaxreturn($sample);
-                    }else{
+                        // 修改失败
                         $sample['status'] = 0;
                         $this->ajaxreturn($sample);
                     }
+                }else{
+                    // 验证码错误
+                    $sample['status'] = 2;
+                    $this->ajaxreturn($sample);
+                }
+            }else{
+                // 发送给usa,更新usa数据
+                $res = $usa->changePassWord($userinfo['customerid'],I('post.passwords'));
+                if($res['code'] == 200){
+                    $sample['status'] = 1;
+                    $this->ajaxreturn($sample);
+                }else{
+                    $sample['status'] = 0;
+                    $this->ajaxreturn($sample);
                 }
             }
-        }else{
-            $this->assign();
-            $this->display();
         }
     }
 
@@ -155,7 +154,6 @@ class ChangeController extends HomeBaseController{
     * 修改wv用户信息
     **/ 
     public function updateCustomer(){
-        $iuid = $_SESSION['user']['id'];
         $data = I('post.');
         // p($data);die;
         $signPhone = M('User')->getField('phone',true);
@@ -163,12 +161,12 @@ class ChangeController extends HomeBaseController{
             $this->error('该手机号码已被注册，请重新填写！',U('Home/Purchase/editProfile'));
         }else{
             // 修改系统数据
-            $saveData = M('User')->where(array('iuid'=>$iuid))->save($data);
+            $saveData = M('User')->where(array('customerid'=>$data['happyLifeID']))->save($data);
         }
         if($saveData){
             //更新usa数据
             $usa    = new \Common\UsaApi\Usa;
-            $result = $usa->updateCustomer($data['happyLifeID'],$data['Email'],$data['Phone'],$data['PlacementPreference']);
+            $result = $usa->updateCustomer($data['happyLifeID'],$data['Email'],$data['Phone'],$data['Placement']);
             if($result['code'] == 200){
                 $this->success('修改成功',U('Home/Purchase/myProfile'));
             }else{
@@ -219,6 +217,7 @@ class ChangeController extends HomeBaseController{
         $acnumber    =I('post.acnumber');
         $data        =D('Smscode')->where(array('phone'=>$phoneNumber,'acnumber'=>$acnumber))->order('nsid desc')->find();
         $time        =time()-strtotime($data['date']);
+        $usa    = new \Common\UsaApi\Usa;
         if($time>60){
             $this->error('验证码失效,请重新发送');
         }else{
@@ -228,7 +227,6 @@ class ChangeController extends HomeBaseController{
                     $result = M('User')->where(array('customerid'=>$customerid))->save($new_array);
                     if($result){
                         // 发送给usa,更新usa数据
-                        $usa    = new \Common\UsaApi\Usa;
                         $res = $usa->changePassWord($userinfo['customerid'],I('post.passwords'));
                         if($res['code'] == 200){
                             $sample['status'] = 1;
@@ -259,6 +257,69 @@ class ChangeController extends HomeBaseController{
                 }
             }
         }
+    }
+
+    /**
+    * 检验验证码是否正确
+    **/ 
+    public function checkCode(){
+        $phoneNumber =I('post.phoneNumber');
+        $code        =I('post.code');
+        $acnumber    =I('post.acnumber');
+        $data        =D('Smscode')->where(array('phone'=>$phoneNumber,'acnumber'=>$acnumber))->order('nsid desc')->find();
+        $time        =time()-strtotime($data['date']);
+        if($time>60){
+            $sample = array(
+                'status' => 404,
+                'msg' => '验证码失效'
+            );
+            $this->ajaxreturn($sample);
+        }else{
+            if($data && $data['code']==$code){
+                $sample = array(
+                    'status' => 1,
+                    'msg' => '验证码正确'
+                );
+                $this->ajaxreturn($sample);
+            }else{
+                $sample = array(
+                    'status' => 0,
+                    'msg' => '验证码错误'
+                );
+                $this->ajaxreturn($sample);
+            }
+        }
+    }
+
+    public function addGetpoin(){
+        $iuid = I('post.iuid');
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
+        $array = array(
+                'pointNo' => date('YmdHis',I('post.time')).rand(100000, 999999),
+                'iuid' => $userinfo['iuid'],
+                'hu_username' => $userinfo['lastname'].$userinfo['firstname'],
+                'hu_nickname' => $userinfo['customerid'],
+                'send' => 'cato',
+                'received' => $userinfo['customerid'],
+                'opename' => 'cato',
+                'getpoint' => I('post.amount'),
+                'pointtype' => 9,
+                'iu_bank' => $userinfo['bankname'],
+                'iu_bankbranch' => $userinfo['subname'],
+                'iu_bankaccount' => $userinfo['bankaccount'],
+                'iu_bankuser' => $userinfo['lastname'].$userinfo['firstname'],
+                'iu_bankprovince' => $userinfo['bankprovince'],
+                'iu_bankcity' => $userinfo['bankcity'],
+                'date' => date('Y-m-d H:i:s',I('post.time')),
+                'handletime' => date('Y-m-d H:i:s',I('post.time')),
+                'status' => 2,
+                'whichApp' => 5,
+            );
+        $array['feepoint'] = 0;
+        $array['realpoint'] = bcsub(I('post.amount'),$array['feepoint'],2);
+        $array['leftpoint'] = $userinfo['iu_point'];
+        $array['content'] = '系统在'.date('Y-m-d H:i:s',I('post.time')).'时，发放奖金到'.$userinfo['customerid'].'，剩EP余额'.$array['leftpoint'];
+        $addGetPoint = M('Getpoint')->add($array);
     }
 }
 

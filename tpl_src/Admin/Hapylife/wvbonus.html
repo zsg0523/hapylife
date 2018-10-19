@@ -19,19 +19,6 @@
 					<a href="#home" data-toggle="tab">奖金报表列表</a>
 			    </li>
 			    <li>
-			    	<form action="{:U('Admin/Hapylife/wvbonus')}" method="get">
-			    		
-			    		<select name="status">
-			    			<option <?php if($status == 0)echo "selected";?> value="0">未发放</option>
-			    			<option <?php if($status == 1)echo "selected";?> value="1" >已发放</option>
-		    			</select>
-                        <input class='btn btn-sm' type="submit" name='excel' value="excel" />
-                	</form>
-			    </li>
-			    <li>
-			    	&nbsp;
-			    </li>
-			    <li>
 					<a href="javascript:;" data-toggle="tab" onclick="parities(this)" Parities="{$parities}">修改当前汇率</a>
 			    </li>
             </ul>
@@ -101,6 +88,13 @@
 								</td>
 							</tr>
 						</foreach>
+					</table>
+					<table>
+						<tr>
+							<td>
+								<input name="excel" type="submit" class="btn" value="excel">
+							</td>
+						</tr>
 					</table>
             	</form>
 				<div class='page'>
