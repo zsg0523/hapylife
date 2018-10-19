@@ -212,7 +212,7 @@
 										    <label for=""><sup style="color: red;">*</sup>联系电话:</label>
 										    <input name="ia_phone" type="tel" class="form-control"  placeholder="联系电话">
 										  </div>
-										  <div data-toggle="distpicker">
+										  <div  id="distpicker2">
 										  		<div class="form-group">
 												    <label for=""><sup style="color: red;">*</sup>所在省:</label>
 												    <!-- <input name="ia_province" type="text" class="form-control"  placeholder="所在省"> -->
@@ -276,7 +276,7 @@
     });
     
 		$('#myModal2').on('show.bs.modal', function (event) {
-		  var button=$(event.relatedTarget);
+		  	var button=$(event.relatedTarget);
  			var iaid=button.data('iaid');
  			var name=button.data('name');
  			var phone=button.data('phone');
@@ -292,11 +292,13 @@
 		  	// $("input[name='ia_town']").val(town);
 		  	// $("input[name='ia_region']").val(region);
 		  	$("input[name='ia_road']").val(road);
-
+		  	console.log(province+town+region);
+		  	$('#distpicker1').distpicker('destroy');
 	  	 	$('#distpicker1').distpicker({
+	  	 		placeholder: false,
 		    	province: province,
 		    	city: town,
-		    	district: region
+		    	district:region
 		  	});
 		});
 		$('#myModal3').on('shown.bs.modal', function (event) {
@@ -308,10 +310,10 @@
 		$('#myModal1').on('shown.bs.modal', function (event) {
 		  	$("input[name='ia_name']").val('');
 		  	$("input[name='ia_phone']").val('');
-		  	$("input[name='ia_province']").val('');
-		  	$("input[name='ia_town']").val('');
-		  	$("input[name='ia_region']").val('');
 		  	$("input[name='ia_road']").val('');
+		  	$("#distpicker2").distpicker({
+			  	placeholder: false,
+			});
 		});
 
     </script>
