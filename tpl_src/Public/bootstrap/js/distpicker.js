@@ -243,6 +243,6 @@
   };
 
   $(function () {
-    $('[data-toggle="distpicker"]').distpicker();
+      $('[data-toggle="distpicker"]').distpicker();
   });
 });
