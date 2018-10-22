@@ -156,7 +156,7 @@ class WvbonusModel extends BaseModel{
     }
 
     public function export_excel($data){
-        $title   = array('CustomerId','HplId','PeriodId','PeriodDescription','BonusDescription','USD Amount','ExchangeRate','EP','BonusPaymentTime','Operator','BonusStatus');
+        $title   = array('CustomerId','HplId','PeriodId','PeriodDescription','BonusDescription','USD Amount','ExchangeRate','EP','BonusPaymentTime','Operator','BonusStatus','TotalAmount');
         foreach ($data as $k => $v) {
             $content[$k]['customerid']           = $v['customerid'];
             $content[$k]['hplid']                = $v['hplid'];
@@ -177,7 +177,19 @@ class WvbonusModel extends BaseModel{
             }else{
                 $content[$k]['bonusstatus']      = '已发放';
             }
+            $total = bcadd($total,$v['ep'],2); 
         }
+        $content[count($data)+1]['customerid']  = 'TOTAL:';
+        $content[count($data)+1]['hplid'] = '';
+        $content[count($data)+1]['periodid']    = '';
+        $content[count($data)+1]['perioddescription']    = '';
+        $content[count($data)+1]['bonusdescription']       = '';
+        $content[count($data)+1]['usdamount']       = '';
+        $content[count($data)+1]['exchangerate']       = '';
+        $content[count($data)+1]['ep']    = $total;
+        $content[count($data)+1]['bonuspaymenttime']    = '';
+        $content[count($data)+1]['operator']    = '';
+        $content[count($data)+1]['bonusstatus']    = '';
         create_csv($content,$title,date('YmdHis',time()));
         return;
     }
