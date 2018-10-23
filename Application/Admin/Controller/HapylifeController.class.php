@@ -1622,7 +1622,7 @@ class HapylifeController extends AdminBaseController{
 				'received' => $customerid,
 				'opename' => $_SESSION['user']['username'],
 				'getpoint' => $amount,
-				'pointtype' => 9,
+				'pointtype' => 3,
 				'iu_bank' => $userinfo['bankname'],
 				'iu_bankbranch' => $userinfo['subname'],
 				'iu_bankaccount' => $userinfo['bankaccount'],
@@ -1655,9 +1655,19 @@ class HapylifeController extends AdminBaseController{
 					'content' => $content,
 				);
 				$log_result = M('WvBonusLog')->add($log);
+				if($log_result){
+					$templateId ='213374';
+		            $params     = array($customerid,$array['realpoint'],$array['leftpoint']);
+		            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+		            if($sms['errmsg'] == 'OK'){
+		            	$addressee = $userinfo['lastname'].$userinfo['firstname'];
+		                $contents = '尊敬的'.$customerid.'会员，您已成功收到EP'.$array['realpoint'].'，当前EP余额是'.$array['leftpoint'].'，请登录Hapylife查询。';
+		            	$addlog = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'积分通知',time(),$contents,$customerid);
+		            }
+				}
 			}
 		}
-		if($log_result){
+		if($addlog){
 			$this->success('发放成功',U('Admin/Hapylife/wvbonus'));
 		}else{
 			$this->error('发放失败',U('Admin/Hapylife/wvbonus'));

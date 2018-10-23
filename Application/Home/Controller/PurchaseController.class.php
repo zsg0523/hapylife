@@ -692,50 +692,49 @@ class PurchaseController extends HomeBaseController{
                     if($upreceipt){
                         if($sub == 0){
                             $updateReceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->setfield('ir_paytime',time());
-                            if($order['ir_ordertype'] == 4){
-                                // 添加通用券
-                                $product = M('Receipt')
-                                                ->alias('r')
-                                                ->join('hapylife_product AS p ON r.ipid = p.ipid')
-                                                ->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))
-                                                ->find();
-                                $data = array(
-                                        'product' => $product,
-                                        'userinfo' => $userinfo,
-                                        'ir_receiptnum' => $order['ir_receiptnum']
-                                    );
-                                $data    = json_encode($data);
-                                $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/addCoupon";
-                                $result  = post_json_data($sendUrl,$data);
-                                // $back_msg = json_decode($result['result'],true);
-                            }else if($order['ir_ordertype'] == 3){
-                                $addactivation     = D('Activation')->addAtivation($OrderDate,$receipt['riuid'],$receipt['ir_receiptnum']); 
-                            }
-                            $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
-                            if($ir_status == 2){
-                                $usa = new \Common\UsaApi\Usa;
-                                $createPayment = $usa->createPayment($userinfo['customerid'],$receipt['ir_receiptnum'],date('Y-m-d H:i',time()));
-                                $log = addUsaLog($createPayment['result']);
-                                $jsonStr = json_decode($createPayment['result'],true);
-                                // p($jsonStr);die;
-                                if($jsonStr['paymentId']){
-                                    // 发送短信提示
-                                    $templateId ='209011';
-                                    $params     = array($receipt['ir_receiptnum'],$product_name);
-                                    $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                                    if($sms['errmsg'] == 'OK'){
-                                        $contents = array(
-                                            'acnumber' => $userinfo['acnumber'],
-                                            'phone' => $userinfo['phone'],
-                                            'operator' => '系统',
-                                            'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                                            'product_name' => $product_name,
-                                            'date' => time(),
-                                            'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
-                                            'customerid' => $userinfo['customerid']
+                            switch ($order['ir_ordertype']) {
+                                case '3':
+                                    $addactivation     = D('Activation')->addAtivation($OrderDate,$receipt['riuid'],$receipt['ir_receiptnum']); 
+                                    break;
+                                case '4':
+                                    // 添加通用券
+                                    $product = M('Receipt')
+                                                    ->alias('r')
+                                                    ->join('hapylife_product AS p ON r.ipid = p.ipid')
+                                                    ->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))
+                                                    ->find();
+                                    $data = array(
+                                            'product' => $product,
+                                            'userinfo' => $userinfo,
+                                            'ir_receiptnum' => $order['ir_receiptnum']
                                         );
-                                        $logs = M('SmsLog')->add($contents);
-                                    }
+                                    $data    = json_encode($data);
+                                    $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/addCoupon";
+                                    $result  = post_json_data($sendUrl,$data);
+                                    break;
+                            }
+                            $usa = new \Common\UsaApi\Usa;
+                            $createPayment = $usa->createPayment($userinfo['customerid'],$receipt['ir_receiptnum'],date('Y-m-d H:i',time()));
+                            $log = addUsaLog($createPayment['result']);
+                            $jsonStr = json_decode($createPayment['result'],true);
+                            // p($jsonStr);die;
+                            if($jsonStr['paymentId']){
+                                // 发送短信提示
+                                $templateId ='209011';
+                                $params     = array($receipt['ir_receiptnum'],$product_name);
+                                $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                                if($sms['errmsg'] == 'OK'){
+                                    $contents = array(
+                                        'acnumber' => $userinfo['acnumber'],
+                                        'phone' => $userinfo['phone'],
+                                        'operator' => '系统',
+                                        'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                        'product_name' => $product_name,
+                                        'date' => time(),
+                                        'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
+                                        'customerid' => $userinfo['customerid']
+                                    );
+                                    $logs = M('SmsLog')->add($contents);
                                 }
                             }
                         }else{
@@ -1735,9 +1734,18 @@ class PurchaseController extends HomeBaseController{
 
         $data = M('User')->where(array('iuid'=>$iuid))->find();
         $assign = array(
-                    'code' => $code,
-                    'data' => $data
-                );
+            'code' => $code,
+            'data' => $data
+        );
+
+        $usa    = new \Common\UsaApi\Usa;
+        $result = $usa->placement($data['customerid']);
+        if($result['errors']){
+            $assign['success'] = 0;
+        }else{
+            $assign['success'] = 200;
+        }
+        // p($assign);die;
         $this->assign($assign);
         $this->display();
     }

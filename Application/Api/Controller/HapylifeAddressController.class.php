@@ -265,4 +265,18 @@ class HapylifeAddressController extends HomeBaseController{
         }
     }
 
+    /**
+    * 获取地址
+    **/ 
+    public function shArea(){
+        $id = I('post.id');
+        $data = D('ShArea')->ShArea($id);
+        if($data){
+            $this->ajaxreturn($data);    
+        }else{
+            $data['status'] = 0;
+            $data['msg']    = '暂无数据';
+            $this->ajaxreturn($data);
+        }
+    }
 }

@@ -29,11 +29,11 @@
 		<include file="Common/commonHead1" />
 	</div>
     <div class="main">
-    	<h4 class="tc">请输入"HPL"开头的账号或电话号码</h4>
+    	<h4 class="tc">请输入"HPL"开头的账号</h4>
     	<div class="form-group"  style="margin-bottom: 0px;">
-			<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label">账号/电话号码:</label>
+			<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label">账号:</label>
 			<div class="col-lg-10 col-md-10 col-xs-8">
-				<input type="text" class="form-control" id="CustomerID"  name="CustomerID" placeholder="请输入账号/电话号码"  />
+				<input type="text" class="form-control" id="CustomerID"  name="CustomerID" placeholder="请输入账号"  />
 			</div>
 		</div>
 		
@@ -68,7 +68,7 @@
     					console.log(ret);
     					window.location.href ="{:U('Home/Change/resetPassword/customerid/"+ret.customerid+"/acnumber/"+ret.acnumber+"/phone/"+ret.phone+"')}";
     				}else if(ret.status==2){
-    					alert('请输入"HPL"开头的账号或电话号码!');
+    					alert('请输入"HPL"开头的账号!');
     				}else{
     					alert('账号不存在！！!');
     				}
@@ -79,7 +79,7 @@
 			}); 	
 	
 		} else{
-			alert('请输入"HPL"开头的账号或电话号码!');
+			alert('请输入"HPL"开头的账号!');
 		}            
 	}
 	</script>  

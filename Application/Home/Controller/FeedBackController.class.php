@@ -1,10 +1,10 @@
 <?php
 namespace Home\Controller;
-use Common\Controller\HomeBaseController;
+use Common\Controller\LoginBaseController;
 /**
 * hapylife food控制器
 **/
-class FeedBackController extends HomeBaseController{
+class FeedBackController extends LoginBaseController{
     /**
 	* 用户反馈
 	* 1ibos 2nlc  3hrac 4elpa 5hapylife 

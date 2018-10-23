@@ -1025,23 +1025,23 @@ class GetpointModel extends BaseModel{
 		foreach ($list as $key => $value) {
 			$data[$key]=$value;
 			if($starttime){
-				$data[$key]['openpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('elt',$starttime))))->order('date desc')->select();
+				$data[$key]['openpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['customerid'],'status'=>array('in','0,1,2'),'date'=>array(array('elt',$starttime))))->order('date desc')->select();
 				if($data[$key]['openpoint']){
 					$data[$key]['open'] = $data[$key]['openpoint'][0]['leftpoint'];
 				}else{
 					$data[$key]['open'] = 0;
 				}
 				if($endtime){
-					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('egt',$starttime),array('elt',$endtime))))->order('date desc')->select();
+					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['customerid'],'status'=>array('in','0,1,2'),'date'=>array(array('egt',$starttime),array('elt',$endtime))))->order('date desc')->select();
 				}else{
-					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('egt',$starttime))))->order('date desc')->select();
+					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['customerid'],'status'=>array('in','0,1,2'),'date'=>array(array('egt',$starttime))))->order('date desc')->select();
 				}
 			}else{
 				$data[$key]['open'] = 0;
 				if($endtime){
-					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('elt',$endtime))))->order('date desc')->select();
+					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['customerid'],'status'=>array('in','0,1,2'),'date'=>array(array('elt',$endtime))))->order('date desc')->select();
 				}else{
-					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2')))->order('date desc')->select();
+					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['customerid'],'status'=>array('in','0,1,2')))->order('date desc')->select();
 				}
 			}
 			if($data[$key]['allpoint']){
@@ -1097,37 +1097,41 @@ class GetpointModel extends BaseModel{
 	/**
     *积分余额表excel数据
     **/
-    public function getPoint_excel($model,$word,$starttime,$endtime,$order=''){
+    public function getPoint_excel($model,$word,$starttime,$endtime,$array,$order=''){
 		if(empty($word)){
 			$list=$model
 				->order($order)
+				->where(array('iu_point'=>array('NEQ',0)))
+				->where(array('lastname|firstname|enlastname|enfirstname'=>array('NOT IN',$array)))
 				->select();
 		}else{
 			$list=$model
 				->order($order)
 				->where(array('customerid|lastname|firstname|enrollerid|teamCode'=>array('like','%'.$word.'%')))
+				->where(array('lastname|firstname|enlastname|enfirstname'=>array('NOT IN',$array)))
+				->where(array('iu_point'=>array('NEQ',0)))
 				->select();
 		}
 		foreach ($list as $key => $value) {
 			$data[$key]=$value;
 			if($starttime){
-				$data[$key]['openpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('elt',$starttime))))->order('date desc')->select();
+				$data[$key]['openpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['customerid'],'status'=>array('in','0,1,2'),'date'=>array(array('elt',$starttime))))->order('date desc')->select();
 				if($data[$key]['openpoint']){
 					$data[$key]['open'] = $data[$key]['openpoint'][0]['leftpoint'];
 				}else{
 					$data[$key]['open'] = 0;
 				}
 				if($endtime){
-					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('egt',$starttime),array('elt',$endtime))))->order('date desc')->select();
+					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['customerid'],'status'=>array('in','0,1,2'),'date'=>array(array('egt',$starttime),array('elt',$endtime))))->order('date desc')->select();
 				}else{
-					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('egt',$starttime))))->order('date desc')->select();
+					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['customerid'],'status'=>array('in','0,1,2'),'date'=>array(array('egt',$starttime))))->order('date desc')->select();
 				}
 			}else{
 				$data[$key]['open'] = 0;
 				if($endtime){
-					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2'),'date'=>array(array('elt',$endtime))))->order('date desc')->select();
+					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['customerid'],'status'=>array('in','0,1,2'),'date'=>array(array('elt',$endtime))))->order('date desc')->select();
 				}else{
-					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['hu_nickname'],'status'=>array('in','0,1,2')))->order('date desc')->select();
+					$data[$key]['allpoint'] = D('Getpoint')->where(array('hu_nickname'=>$value['customerid'],'status'=>array('in','0,1,2')))->order('date desc')->select();
 				}
 			}
 			if($data[$key]['allpoint']){
@@ -1183,9 +1187,9 @@ class GetpointModel extends BaseModel{
 		$price = 0;
 		$title   = array('账号','中文姓名','英文姓名','团队标签','Open','现在可用','现在冻结','共提现','共消费','共转入','共转出','增加奖金','系统增加','系统减少','End','余额偏差值');
 		foreach ($data as $k => $v) {
-			$content[$k]['hu_nickname']    = $v['hu_nickname'];
-			$content[$k]['hu_username']    = $v['hu_username'];
-			$content[$k]['hu_username_en'] = $v['hu_username_en'];
+			$content[$k]['hu_nickname']    = $v['customerid'];
+			$content[$k]['hu_username']    = $v['lastname'].$v['firstname'];
+			$content[$k]['hu_username_en'] = $v['enlastname'].$v['enfirstname'];
 			$content[$k]['teamcode']       = $v['teamcode'];
 			$content[$k]['open']           = $v['open'];
 			$content[$k]['teamcode']       = $v['teamcode'];

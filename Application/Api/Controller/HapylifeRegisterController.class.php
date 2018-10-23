@@ -631,13 +631,13 @@ class HapylifeRegisterController extends HomeBaseController{
                     );
                     $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
                     if($res){
-                        $createPayment = $usa->createPayment($userinfo['customerid'],$maps['wvOrderID'],date('Y-m-d H:i',time()));
+                        $createPayment = $usa->createPayment($userinfo['customerid'],$wv['wvOrderID'],date('Y-m-d H:i',time()));
                         $log = addUsaLog($createPayment['result']);
                         $jsonStr = json_decode($createPayment['result'],true);
                         if($jsonStr['paymentId']){
                             // 发送短信提示
                             $templateId ='208995';
-                            $params     = array($userinfo['customerid'],$maps['wvCustomerID']);
+                            $params     = array($userinfo['customerid'],$wv['wvCustomerID']);
                             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                             if($sms['errmsg'] == 'OK'){
                                 $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$order_num))->find();
@@ -648,7 +648,7 @@ class HapylifeRegisterController extends HomeBaseController{
                                             'addressee' => $userinfo['lastname'].$userinfo['firstname'],
                                             'product_name' => $receiptlist['product_name'],
                                             'date' => time(),
-                                            'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfo['customerid'].'以及 DreamTrips 会员号码是'.$maps['wvCustomerID'].'，同时注意查收Rovia邮件。',
+                                            'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfo['customerid'].'以及 DreamTrips 会员号码是'.$wv['wvCustomerID'].'，同时注意查收Rovia邮件。',
                                             'customerid' => $userinfo['customerid']
                                 );
                                 $logs = M('SmsLog')->add($contents);
