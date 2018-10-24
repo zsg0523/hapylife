@@ -196,10 +196,12 @@ class PointController extends AdminBaseController{
     public function index(){
         //账户昵称搜索
         $word = I('get.word');
+        $data = M('WvBonusParities')->select();
         $assign=D('User')->getAllPoint(D('User'),$word,"iuid",$limit=50);
         // P($assign);
         $this->assign($assign);
         $this->assign('word',$word);
+        $this->assign('serviceCharge',$data[1]['parities']);
         $this->display();
     }
 
@@ -641,8 +643,9 @@ class PointController extends AdminBaseController{
         $word = I('get.word');
         $assign=D('Getpoint')->getPoint(D('User'),$word,$starttime,$endtime,"iuid",$limit=50);
         // p($assign);die;
+        $array = '测试,测,试,测试点,test,testtest,测试测试,新建测试,测试地,测试点,测试账号';
         if($excel == 'excel'){
-            $data=D('Getpoint')->getPoint_excel(D('User'),$word,$starttime,$endtime,"iuid");
+            $data=D('Getpoint')->getPoint_excel(D('User'),$word,$starttime,$endtime,$array,"iuid");
             $export_excel = D('Getpoint')->point_excel($data);
         }else{
             $this->assign($assign);

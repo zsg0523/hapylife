@@ -33,11 +33,11 @@
     	<div class="form-group"  style="margin-bottom: 0px;">
 			<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label">号码:</label>
 			<div class="col-lg-10 col-md-10 col-xs-8">
-				<input type="text" class="form-control" id="CustomerID"  name="CustomerID" placeholder="请输入号码"  />
+				<input type="text" class="form-control" id="Phone"  name="Phone" placeholder="请输入号码"  />
 			</div>
 		</div>
 		
-        <a class="tc" onclick='checkAccount();'>下一步</a>                            
+        <a class="tc" onclick='checkPhone();'>下一步</a>                            
         
     </div>  
     
@@ -52,23 +52,21 @@
     	window.location.href ="{:U('Home/Index/login')}";
 	}
 
-	function checkAccount(){
-		var CustomerID=$('input[name="CustomerID"]').val();
-		if (CustomerID!='') {
+	function checkPhone(){
+		var Phone=$('input[name="Phone"]').val();
+		if (Phone!='') {
            $.ajax({
 				type:"post",
-				url:"{:U('Home/Change/checkAccount')}",
+				url:"{:U('Home/Change/checkByPhone')}",
 				async:true, 
 				dataType: 'json',
 				data:{
-					CustomerID:CustomerID,
+					number:Phone,
 				},
 				success:function(ret){
     				if(ret.status==1){
     					console.log(ret);
-    					window.location.href ="{:U('Home/Change/smsAccount/customerid/"+ret.customerid+"/acnumber/"+ret.acnumber+"/phone/"+ret.phone+"')}";
-    				}else if(ret.status==2){
-    					alert('请输入电话号码!');
+    					window.location.href ="{:U('Home/Change/smsAccount/acnumber/"+ret[0].acnumber+"/phone/"+ret[0].phone+"')}";
     				}else{
     					alert('账号不存在！！!');
     				}

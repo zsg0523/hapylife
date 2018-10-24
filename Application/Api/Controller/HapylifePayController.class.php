@@ -380,6 +380,7 @@ class HapylifePayController extends HomeBaseController{
 				                                            	$log = addUsaLog($createPayment['result']);
 				                                                $jsonStr = json_decode($createPayment['result'],true);
 				                                                if($jsonStr['paymentId']){
+				                                                	$showProduct = M('User')->where(array('iuid'=>$receipt['riuid']))->setfield('showProduct',0);
 					                                                // 发送短信提示
 					                                                $templateId ='208995';
 					                                                $params     = array($userinfo['customerid'],$maps['wvCustomerID']);
@@ -693,6 +694,7 @@ class HapylifePayController extends HomeBaseController{
         $cjPayStatus = M('Receiptson')->where(array('pay_receiptnum'=>$map['outer_trade_no']))->save($map);
         //验签
         $return = rsaVerify($map);
+        $usa    = new \Common\UsaApi\Usa;
         //更改订单状态
         if($return == "true" && $map['trade_status'] == 'TRADE_SUCCESS'){
             $whereSon= array(
@@ -849,7 +851,6 @@ class HapylifePayController extends HomeBaseController{
                             if($upreceipt){ 
                                 $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$order['ir_receiptnum']);
                                 if($tmpeArr['password']){
-                                    $usa    = new \Common\UsaApi\Usa;
                                     $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],'RBS,DTP');
                                     if(!empty($result['result'])){
                                         $log = addUsaLog($result['result']);

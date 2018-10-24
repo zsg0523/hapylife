@@ -147,7 +147,6 @@ class usa
 	* get virtual CURRENCY (DT Points) balance
 	**/ 
 	public function dtPoint($hapyLifeID){
-		$map  = I('post.');
 		$key  = $this->key;
 		$url  = $this->url;
 		$sendUrl = $url."/api/Hpl/Customer/".$hapyLifeID."/VirtualCurrency?key=".$key;
@@ -161,7 +160,6 @@ class usa
 	* redeem virtual CURRENCY (DT Points and training dollors)
 	**/ 
 	public function redeemVirtual($hapyLifeID,$amount,$category,$comment){
-		$map  = I('post.');
 		$key  = $this->key;
 		$url  = $this->url;
 		$data = array(
@@ -174,6 +172,21 @@ class usa
 		$sendUrl = $url."/api/Hpl/Customer/".$hapyLifeID.'/VirtualCurrency?key='.$key;
 		$result  = post_json_data($sendUrl,$data);
 		return $result;
+	}
+
+	/**
+	* PLACEMENT VERIFICATION
+	* @param customerId: id to validate
+	* @param key: your secret key
+	* HPL00000254
+	**/
+	public function placement($CustomerID){
+		$key      = $this->key;
+		$url      = $this->url;
+		$data     = $url."/api/hpl/customer/".$CustomerID."/placementposition?key=".$key;
+		$wv       = file_get_contents($data);
+		$userinfo = json_decode($wv,true);
+        return $userinfo;
 	}
 
 

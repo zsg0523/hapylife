@@ -739,7 +739,7 @@ class RegisterController extends HomeBaseController{
                 );
         $data    = json_encode($data);
         $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/use_coupon";
-        // $sendUrl = "http://localhost/nulife/index.php/Api/Couponapi/use_coupon";
+        // $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/use_coupon";
         $results  = post_json_data($sendUrl,$data);
         $back_result = json_decode($results['result'],true);
         if($back_result['status']){

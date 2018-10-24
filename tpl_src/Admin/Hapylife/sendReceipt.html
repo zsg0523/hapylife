@@ -152,7 +152,7 @@
 								<td>已发送</td>
 							<else />
 								<td>
-									<a href="javascript:;" onclick="send(this)" irId="{$v['irid']}" Productnams="{$v['productnams']}" userName="{$v['lastname']}{$v['firstname']}" isSend="{$v['is_send']}" iaPhone="{$v['ia_phone']}">发送短信</a>
+									<a href="javascript:;" onclick="send(this)" irId="{$v['irid']}" Productnams="{$v['productnams']}" userName="{$v['lastname']}{$v['firstname']}" isSend="{$v['is_send']}" iaPhone="{$v['ia_phone']}" customerID="{$v['customerid']}">发送短信</a>
 								</td>
 							</if>
 							<!-- <if condition="$v['is_sends'] eq 2">
@@ -321,10 +321,11 @@
 		var irId =$(obj).attr('irId');
 		var Productnams =$(obj).attr('Productnams');
 		var userName =$(obj).attr('userName');
+		var customerID =$(obj).attr('customerID');
 		var isSend =$(obj).attr('isSend');
 		var iaPhone =$(obj).attr('iaPhone');
 		$("input[name='irid']").val(irId);
-		$("input[name='username']").val(userName);
+		$("input[name='username']").val(userName+'-'+customerID);
 		$("input[name='productnams']").val(Productnams);
 		$("input[name='is_send']").val(isSend);
 		$("input[name='phone']").val(iaPhone);

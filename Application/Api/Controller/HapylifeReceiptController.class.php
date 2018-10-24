@@ -73,6 +73,9 @@ class HapylifeReceiptController extends HomeBaseController{
 		}
 		if($receiptson){
 			$this->ajaxreturn($receiptson);
+		}else{
+			$data['status'] = 0;
+			$this->ajaxreturn($data);
 		}
 	}
 }

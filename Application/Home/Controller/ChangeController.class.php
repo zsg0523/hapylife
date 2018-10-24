@@ -43,9 +43,11 @@ class ChangeController extends HomeBaseController{
         $acnumber    =I('post.acnumber');
         $data        =D('Smscode')->where(array('phone'=>$phoneNumber,'acnumber'=>$acnumber))->order('nsid desc')->find();
         $time        =time()-strtotime($data['date']);
-        $usa    = new \Common\UsaApi\Usa;
+        $usa         = new \Common\UsaApi\Usa;
         if($time>60){
-            $this->error('验证码失效,请重新发送');
+            // 验证码失效
+            $sample['status'] = 3;
+            $this->ajaxreturn($sample);
         }else{
             if($new_array['PassWord'] != $userinfo['password'] || $new_array['WvPass'] != $userinfo['wvpass']){
                 if($data && $data['code']==$code){
@@ -217,9 +219,11 @@ class ChangeController extends HomeBaseController{
         $acnumber    =I('post.acnumber');
         $data        =D('Smscode')->where(array('phone'=>$phoneNumber,'acnumber'=>$acnumber))->order('nsid desc')->find();
         $time        =time()-strtotime($data['date']);
-        $usa    = new \Common\UsaApi\Usa;
+        $usa         = new \Common\UsaApi\Usa;
         if($time>60){
-            $this->error('验证码失效,请重新发送');
+            // 验证码失效
+            $sample['status'] = 3;
+            $this->ajaxreturn($sample);
         }else{
             if($new_array['PassWord'] != $userinfo['password'] || $new_array['WvPass'] != $userinfo['wvpass']){
                 if($data && $data['code']==$code){
@@ -291,35 +295,85 @@ class ChangeController extends HomeBaseController{
         }
     }
 
-    public function addGetpoin(){
-        $iuid = I('post.iuid');
-        $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
-        $array = array(
-                'pointNo' => date('YmdHis',I('post.time')).rand(100000, 999999),
-                'iuid' => $userinfo['iuid'],
-                'hu_username' => $userinfo['lastname'].$userinfo['firstname'],
-                'hu_nickname' => $userinfo['customerid'],
-                'send' => 'cato',
-                'received' => $userinfo['customerid'],
-                'opename' => 'cato',
-                'getpoint' => I('post.amount'),
-                'pointtype' => 9,
-                'iu_bank' => $userinfo['bankname'],
-                'iu_bankbranch' => $userinfo['subname'],
-                'iu_bankaccount' => $userinfo['bankaccount'],
-                'iu_bankuser' => $userinfo['lastname'].$userinfo['firstname'],
-                'iu_bankprovince' => $userinfo['bankprovince'],
-                'iu_bankcity' => $userinfo['bankcity'],
-                'date' => date('Y-m-d H:i:s',I('post.time')),
-                'handletime' => date('Y-m-d H:i:s',I('post.time')),
-                'status' => 2,
-                'whichApp' => 5,
+    /**
+    * 通过手机号码查询用户信息
+    **/ 
+    public function checkByPhone(){
+        $phoneNumber = I('post.number');
+        $data = M('User')->where(array('Phone'=>$phoneNumber))->select();
+        if($data){
+            $data['status'] = 1;
+            $this->ajaxreturn($data);
+        }else{
+            $data = array(
+                'msg' => '号码不存在账号',
+                'status' => 0
             );
-        $array['feepoint'] = 0;
-        $array['realpoint'] = bcsub(I('post.amount'),$array['feepoint'],2);
-        $array['leftpoint'] = $userinfo['iu_point'];
-        $array['content'] = '系统在'.date('Y-m-d H:i:s',I('post.time')).'时，发放奖金到'.$userinfo['customerid'].'，剩EP余额'.$array['leftpoint'];
-        $addGetPoint = M('Getpoint')->add($array);
+            $this->ajaxreturn($data);
+        }
     }
+
+    /**
+    * 检验验证码是否正确
+    * 同时发送短信
+    **/ 
+    public function smscount(){
+        $phoneNumber =I('post.phoneNumber');
+        $code        =I('post.code');
+        $acnumber    =I('post.acnumber');
+        $data        =D('Smscode')->where(array('phone'=>$phoneNumber,'acnumber'=>$acnumber))->order('nsid desc')->find();
+        $userinfo    =M('User')->where(array('Phone'=>$phoneNumber))->select();
+        foreach($userinfo as $key=>$value){
+            $id1 .= $value['customerid'].'、';
+            if($value['wvcustomerid']){
+                $id2 .= $value['wvcustomerid'].'、';
+            }else{
+                $id2 .= '暂无、';
+            }
+        }
+        $wvcustomerid = substr($id1,0,-3);
+        $customerid = substr($id2,0,-3);
+
+        $time        =time()-strtotime($data['date']);
+        if($time>60){
+            $sample = array(
+                'status' => 404,
+                'msg' => '验证码失效'
+            );
+            $this->ajaxreturn($sample);
+        }else{
+            if($data && $data['code']==$code){
+                $templateId ='213691';
+                $params     = array($wvcustomerid,$customerid);
+                $sms        = D('Smscode')->sms($acnumber,$phoneNumber,$params,$templateId);
+                if($sms['errmsg'] == 'OK'){
+                    $addressee = $userinfo['lastname'].$userinfo['firstname'];
+                    $contents = '您的Hapylife账号为：'.$wvcustomerid.'，DreamtripsID：'.$customerid.'。';
+                    $addlog = D('Smscode')->addLog($acnumber,$phoneNumber,'系统',$addressee,'忘记账号',time(),$contents,$customerid);
+                }
+                if($addlog){
+                    $sample = array(
+                        'status' => 1,
+                        'msg' => '发送成功'
+                    );
+                    $this->ajaxreturn($sample);
+
+                }else{
+                    $sample = array(
+                        'status' => 0,
+                        'msg' => '发送失败'
+                    );
+                    $this->ajaxreturn($sample);
+                }
+            }else{
+                $sample = array(
+                    'status' => 202,
+                    'msg' => '验证码错误'
+                );
+                $this->ajaxreturn($sample);
+            }
+        }
+    }
+
 }
 
