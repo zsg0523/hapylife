@@ -133,15 +133,15 @@
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err" id="judgePassword2">{$error['ConfirmPassWord']}</div>
 					</div>
 					<div class="form-group" onclick="hiden(this);">
-						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>推荐人姓名:</label>
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>推荐人:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
 							<input type="hidden" name="teamCode" value="">
-							<input type="text" class="form-control" name="EnrollerNameCn" disabled="disabled"  placeholder="推荐人姓名" value="{$Think.session.user.name_cn}">
+							<input type="text" class="form-control" name="EnrollerNameCn" disabled="disabled"  placeholder="推荐人" value="{$Think.session.user.name_cn}">
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnrollerID']}</div>
 					</div>
 					<div class="form-group" onclick="hiden(this);">
-						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>推荐人ID:</label>
+						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>推荐ID:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
 							<input type="text" class="form-control"   name="EnrollerID" placeholder="HPL开头或纯数字号码" value="{$Think.session.user.username}"/>
 						</div>
@@ -270,10 +270,10 @@
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopAddress1']}</div>
 					</div>
 					<hr />
-					<div class="form-group">
+<!-- 					<div class="form-group">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label">银行信息</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
-							<!--<input type="" class="form-control" id="" name="" placeholder="">-->
+							
 						</div>
 					</div>
 					
@@ -320,7 +320,7 @@
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['SubName']}</div>
 					</div>
-					<hr />
+					<hr /> -->
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>身份证号码:</label>
 						<div class="col-lg-10  col-md-10 col-xs-8">
@@ -411,7 +411,7 @@
 	//				console.log(12123);
 	//				console.log(data);
 					if(data.status == 0){
-						$("input[name='EnrollerNameCn']").val("请输入正确的推荐人ID！");
+						$("input[name='EnrollerNameCn']").val("请输入正确的推荐人=ID！");
 					}else{
 						$("input[name='EnrollerNameCn']").val(data.lastname+data.firstname);
 						$("input[name='teamCode']").val(data.teamcode);

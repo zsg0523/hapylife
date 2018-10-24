@@ -86,9 +86,10 @@
 			var point=parseFloat( $("input[name='iu_point']").attr("data-point"));
 			var usepoint=parseFloat($("input[name='iu_point']").val());
 			// var point=$("input[name='iu_point']").attr("data-point");
+      console.log(usepoint);
     	if($("input[name='CustomerID']").val()==""){
     		alert('请输入转入账号！');
-			}else if(usepoint==""){
+			}else if(($("input[name='iu_point']").val())==""){
     		alert('请输入转出积分！');
 			}else if(usepoint>point){
     		alert('您的积分不足!');
@@ -119,7 +120,7 @@
             if(data.status == 1){
               hu_nicknameCN.innerText=data.lastname+data.firstname;          
             }else{
-              alert("请输入正确的推荐人ID！");
+              alert("请输入正确的ID！");
               hu_nicknameCN.innerText="名称";          
             }
           },
