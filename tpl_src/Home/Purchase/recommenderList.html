@@ -58,8 +58,8 @@
   			<div class="main">
           <foreach name="data" item="v">
     				<ul class="recommender">
-    					<li>&nbsp;推荐人ID:<span>{$v['customerid']}&nbsp;</span></li>
-    					<li>&nbsp;推荐人名字:<span>{$v['lastname']}{$v['firstname']}&nbsp;</span></li>
+    					<li>&nbsp;推荐ID:<span>{$v['customerid']}&nbsp;</span></li>
+    					<li>&nbsp;推荐人:<span>{$v['lastname']}{$v['firstname']}&nbsp;</span></li>
     					<li>&nbsp;会员状态:<span>{$v['distributortype']}&nbsp;</span></li>
               <if condition="empty($v['orderdate']) eq true">
     					 <li>&nbsp;推荐日期:<span>无&nbsp;</span></li>
@@ -70,7 +70,7 @@
           </foreach>
   				
   				<div style="height:50px;width: 100%;"></div>
-  				<button type="button"  id="addRec" onclick='window.location.href="{:U('Home/Register/new_register')}";'>新代理注册</button>
+  				<button type="button"  id="addRec" onclick='window.location.href="{:U('Home/Register/new_register')}";'>新会员注册</button>
   			</div>
   			
   		</div>
