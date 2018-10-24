@@ -1720,4 +1720,26 @@ class HapylifeApiController extends HomeBaseController{
         }
     }
 
+    /**
+    * 检测会员是否符合资格
+    **/ 
+    public function qualification(){
+        $customerid = I('post.customerid');
+        $usa    = new \Common\UsaApi\Usa;
+        $result = $usa->placement($customerid);
+        if($result['errors']){
+            $assign = array(
+                'status' => 0,
+                'msg' => '不符合资格'
+            );
+            $this->ajaxreturn($assign);
+        }else{
+            $assign = array(
+                'status' => 1,
+                'msg' => '符合资格'
+            );
+            $this->ajaxreturn($assign);
+        }
+    }
+
 }
