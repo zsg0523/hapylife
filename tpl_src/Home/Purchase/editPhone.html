@@ -104,35 +104,6 @@
 							<input type="text" class="form-control"  name="Phone" placeholder="电话" value="{$data['phone']}">
 						</div>
 					</div>
-					<div class="form-group"  style="margin-top: 10px;">
-						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>邮箱:</label>
-						<div class="col-lg-10 col-md-10 col-xs-8">
-							<input type="text" class="form-control"  name="Email" placeholder="邮箱" value="{$data['email']}">
-						</div>
-					</div>
-					<if condition="empty($success) neq true ">
-						<div class="form-group"  style="margin-top: 10px;">
-							<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>左右脚:</label>
-							<if condition="$data['placement'] eq 'BuildLeft'">
-								<div class="col-lg-5 col-md-5 col-xs-4 control-label">
-								    <input type="radio" name="Placement" id="atleft" value="BuildLeft" checked="checked">自动
-								</div>
-								<div class="col-lg-5 col-md-5 col-xs-4 control-label">
-									<input type="radio" name="Placement" id="atright" value="BuildRight">手动
-								</div>
-							<else />
-								<div class="col-lg-5 col-md-5 col-xs-4 control-label">
-								    <input type="radio" name="Placement" id="atleft" value="BuildLeft">自动
-								</div>
-								<div class="col-lg-5 col-md-5 col-xs-4 control-label">
-									<input type="radio" name="Placement" id="atright" value="BuildRight" checked="checked">手动
-								</div>
-							</if>
-						</div>
-					<else />
-						<h4 style="width: 100%;color: red;text-align: center;">您还未介绍新会员达到三人以上,</h4>
-						<h4 style="width: 100%;color: red;text-align: center;">修改新会员位置功能暂未开放！</h4>
-					</if>
 					<input type="hidden" name="happyLifeID" value="{$data['customerid']}">
 					<div class="form-group">
 						<div class=" col-md-12 col-xs-12">
@@ -146,7 +117,7 @@
 	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function(){ 
-		changeCommonHead('修改信息');
+		changeCommonHead('修改手机号');
 	});
 	function back(){
     	window.location.href ="{:U('Home/Purchase/myProfile')}";
@@ -154,7 +125,6 @@
 	function judgeForm(){
 		if($('#acnumber').val()==0){
 			alert('请选择手机区号。');
-
 		}else{
 			$('#former').submit();
 		}
