@@ -106,15 +106,16 @@
 								</div>
 							</if>
 						</div>
+						<input type="hidden" name="happyLifeID" value="{$data['customerid']}">
+						<div class="form-group">
+							<div class=" col-md-12 col-xs-12">
+								<button type="button" class="btn  btn-block  btn-info" id="btn-info" onclick="judgeForm();">确定</button>
+							</div>
+						</div>
 					<else />
 						<h4 style="width: 100%;color: red;text-align: center;">若要开放功能,需先符合需求。</h4>
 					</if>
-					<input type="hidden" name="happyLifeID" value="{$data['customerid']}">
-					<div class="form-group">
-						<div class=" col-md-12 col-xs-12">
-							<button type="button" class="btn  btn-block  btn-info" id="btn-info" onclick="judgeForm();">确定</button>
-						</div>
-					</div>
+					
 				</form>
 			</div>
 		</div>
