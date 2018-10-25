@@ -78,14 +78,28 @@ class usa
 	}
 
 	/**
-	* Update Customer
+	* Change email
 	**/ 
-	public function updateCustomer($happyLifeID,$emailAddress,$placementPreference){
+	public function ChangeEmail($happyLifeID,$emailAddress){
 		$key  = $this->key;
 		$url  = $this->url;
 		$data = array(
 			'HappyLifeID'  =>$happyLifeID,
             'EMailAddress' =>$emailAddress,
+		);
+		$data    = json_encode($data);
+		$sendUrl = $url."/api/Hpl/UpdateCustomer?key=".$key;
+		$result  = post_json_data($sendUrl,$data);
+		return $result;
+	}
+	/**
+	* Change placement
+	**/ 
+	public function ChangePlacement($happyLifeID,$placementPreference){
+		$key  = $this->key;
+		$url  = $this->url;
+		$data = array(
+			'HappyLifeID'  =>$happyLifeID,
             'BinaryPlacementPreference' => $placementPreference,
 		);
 		$data    = json_encode($data);
@@ -93,7 +107,6 @@ class usa
 		$result  = post_json_data($sendUrl,$data);
 		return $result;
 	}
-
 	/**
 	* Change PassWord
 	**/

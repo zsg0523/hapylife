@@ -153,9 +153,9 @@ class ChangeController extends HomeBaseController{
     }
 
     /**
-    * 修改wv用户信息
+    * 修改wv用户信息--手机
     **/ 
-    public function updateCustomer(){
+    public function updatePhone(){
         $data = I('post.');
         // p($data);die;
         $signPhone = M('User')->getField('phone',true);
@@ -163,18 +163,39 @@ class ChangeController extends HomeBaseController{
             $this->error('该手机号码已被注册，请重新填写！',U('Home/Purchase/editProfile'));
         }else{
             // 修改系统数据
-            $saveData = M('User')->where(array('customerid'=>$data['happyLifeID']))->save($data);
+            $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->save($data);
         }
         if($saveData){
             //更新usa数据
             $usa    = new \Common\UsaApi\Usa;
-            $result = $usa->updateCustomer($data['happyLifeID'],$data['Email'],$data['Phone'],$data['Placement']);
+            $result = $usa->changePhone($data['happyLifeID'],$data['Phone']);
             if($result['code'] == 200){
                 $this->success('修改成功',U('Home/Purchase/myProfile'));
             }else{
                 $this->error('修改失败',U('Home/Purchase/editProfile'));
             }
         }
+    }
+
+    /**
+    * 修改wv用户信息--左右脚
+    **/ 
+    public function updatePlacement(){
+        $data = I('post.');
+        $userinfo = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->find();
+        if($userinfo['placement'] != $data['Placement']){
+            // 修改系统数据
+            $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->save($data);
+        }
+        //更新usa数据
+        $usa    = new \Common\UsaApi\Usa;
+        $result = $usa->ChangePlacement($data['happyLifeID'],$data['Placement']);
+        if($result['code'] == 200){
+            $this->success('修改成功',U('Home/Purchase/myProfile'));
+        }else{
+            $this->error('修改失败',U('Home/Purchase/editProfile'));
+        }
+        
     }
 
     public function forgot(){

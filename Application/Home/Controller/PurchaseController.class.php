@@ -154,13 +154,13 @@ class PurchaseController extends HomeBaseController{
         $ipid    = I('get.ipid');
         $data    = M('User')->where(array('iuid'=>$iuid))->find();
         // 获取用户在美国的dtp
-        $usa = new \Common\UsaApi\Usa;
-        $result = $usa->dtPoint($data['customerid']);
-        foreach($result['softCashCategories'] as $key=>$value){
-            if($value['categoryType'] == 'DreamTripPoints'){
-                $data['iu_dt'] = $value['balance'];
-            }
-        }
+        // $usa = new \Common\UsaApi\Usa;
+        // $result = $usa->dtPoint($data['customerid']);
+        // foreach($result['softCashCategories'] as $key=>$value){
+        //     if($value['categoryType'] == 'DreamTripPoints'){
+        //         $data['iu_dt'] = $value['balance'];
+        //     }
+        // }
         $bcsub   = bcsub($data['iu_dt'],$ip_dt,2);
         $data['bc_dt'] =$bcsub;
         $data['ipid']  =$ipid;
@@ -1720,7 +1720,7 @@ class PurchaseController extends HomeBaseController{
     /**
     * 修改信息(显示页面)
     **/ 
-    public function editProfile(){
+    public function editPhone(){
         $iuid = $_SESSION['user']['id'];
         $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
         foreach ($mape as $key => $value) {
@@ -1749,6 +1749,42 @@ class PurchaseController extends HomeBaseController{
         $this->assign($assign);
         $this->display();
     }
+
+    /**
+    * 修改信息(显示页面)
+    **/ 
+    public function editPlacement(){
+        $iuid = $_SESSION['user']['id'];
+        $data = M('User')->where(array('iuid'=>$iuid))->find();
+        $assign = array(
+            'data' => $data
+        );
+
+        $usa    = new \Common\UsaApi\Usa;
+        $result = $usa->placement($data['customerid']);
+        if($result['errors']){
+            $assign['success'] = 0;
+        }else{
+            $assign['success'] = 200;
+        }
+        // p($assign);die;
+        $this->assign($assign);
+        $this->display();
+    }
+
+    /**
+    * 修改信息(显示页面)
+    **/ 
+    public function editEmail(){
+        $iuid = $_SESSION['user']['id'];
+        $data = M('User')->where(array('iuid'=>$iuid))->find();
+        $assign = array(
+            'data' => $data
+        );
+        $this->assign($assign);
+        $this->display();
+    }
+
 
     /**
     * 修改密码
