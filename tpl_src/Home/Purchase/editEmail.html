@@ -4,7 +4,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
 		<meta http-equiv="X-UA-Compatible" content="IE=9" />
-		<title>修改个人资料</title>		
+		<title>修改邮箱</title>		
 
 	<!--<link rel="stylesheet" href="css/bootstrap.min.css" />-->
 		<link href="__PUBLIC_BOOTSTRAP__/css/bootstrap.css" rel="stylesheet">
@@ -86,22 +86,22 @@
   		</div>
 		<div class="main">
 			<div class="rg-div">
-				<form class="form-horizontal" id="former" method="post" action="{:U('Home/Change/updateCustomer')}"  >
+				<div class="form-horizontal" id="former">
 					
 					<div class="form-group"  style="margin-top: 10px;">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>邮箱:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
-							<input type="text" class="form-control"  name="Email" placeholder="邮箱" value="{$data['email']}">
+							<input type="text" class="form-control"  name="Email" placeholder="邮箱" disabled="disabled" value="{$data['email']}">
 						</div>
 					</div>
 					
-					<input type="hidden" name="happyLifeID" value="{$data['customerid']}">
+					<input type="text" name="happyLifeID" value="{$data['customerid']}">
 					<div class="form-group">
 						<div class=" col-md-12 col-xs-12">
 							<button type="button" class="btn  btn-block  btn-info" id="btn-info" onclick="judgeForm();">确定</button>
 						</div>
 					</div>
-				</form>
+				</div>
 			</div>
 		</div>
 	</body>
@@ -114,12 +114,32 @@
     	window.location.href ="{:U('Home/Purchase/myProfile')}";
 	}
 	function judgeForm(){
-		if($('#acnumber').val()==0){
-			alert('请选择手机区号。');
-
-		}else{
-			$('#former').submit();
-		}
+		var email=$("input[name='Email']").val();
+		var happyLifeID=$("input[name='happyLifeID']").val();
+		alert(email);
+		alert(happyLifeID);
+		$.ajax({
+				type:"post",
+				url:"http://localhost/hapylife/index.php/Home/Email/checkMail",
+				async:false,
+				dataType:'json',
+				data:{
+					email:email,
+					happyLifeID:happyLifeID
+				},
+				success:function(ret){
+					if(ret.status==1){	
+						alert('我们已经把邮件发送给您,请通过邮件修改新邮箱。');
+						window.location.href="{:U('Home/Purchase/myProfile')}";
+					}else if(ret.status==2){
+						alert('用户不存在！');
+					}else{
+						alert('邮件发送失败！');
+					}
+					
+				}
+			});
+		
 	}
 	</script>
 </html>
