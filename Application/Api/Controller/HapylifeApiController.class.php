@@ -1742,4 +1742,49 @@ class HapylifeApiController extends HomeBaseController{
         }
     }
 
+    /**
+    * 查询会员获取系统编码
+    **/ 
+    public function getNumber(){
+        $data = I('post.');
+        $usa = new \Common\UsaApi\Usa;
+        $map = $usa->activities($data['customerid']);
+        if($map){
+            $week = $map['weekly'];
+            $monthly = $map['monthly'];
+            if($week){
+                // 拆分数据
+                $explode = explode(' ',$week['description']);
+                $explode1 = explode(' ',$week['paidRank']);
+                $explode2 = explode(' ',$week['titleRank']);
+                $paidRank = substr($explode1[0],0,1).substr($explode1[1],0,1);
+                $titleRank = substr($explode2[0],0,1).substr($explode2[1],0,1);
+                // 组合数据
+                $SerialNumber_W = $explode[1].'-'.$week['personalActive'].'-'.$week['newBinaryUnlimitedLevelsLeft'].'-'.$week['newBinaryUnlimitedLevelsRight'].'-'.$week['activeLeftLegWithAutoPlacement'].'-'.$week['activeRightLegWithAutoPlacement'].'-'.$week['leftLegTotal'].'-'.$week['rightLegTotal'].'-'.$paidRank.'-'.$titleRank.'-'.$week['volumeLeft'].'-'.$week['volumeRight'];
+            }
+            if($monthly){
+                // 拆分数据
+                $description = date('mY',strtotime($monthly['description']));
+                $explode1 = explode(' ',$monthly['paidRank']);
+                $explode2 = explode(' ',$monthly['titleRank']);
+                $paidRank = substr($explode1[0],0,1).substr($explode1[1],0,1);
+                $titleRank = substr($explode2[0],0,1).substr($explode2[1],0,1);
+                // 组合数据
+                $SerialNumber_M = $description.'-'.$monthly['personalActive'].'-'.$monthly['newBinaryUnlimitedLevelsLeft'].'-'.$monthly['newBinaryUnlimitedLevelsRight'].'-'.$monthly['activeLeftLegWithAutoPlacement'].'-'.$monthly['activeRightLegWithAutoPlacement'].'-'.$monthly['leftLegTotal'].'-'.$monthly['rightLegTotal'].'-'.$paidRank.'-'.$titleRank.'-'.$monthly['volumeLeft'].'-'.$monthly['volumeRight'];
+            }
+        }
+        if($SerialNumber_W && $SerialNumber_M){
+            $sample = array(
+                'status' => 1,
+                'SerialNumber_W' => $SerialNumber_W,
+                'SerialNumber_M' => $SerialNumber_M
+            );
+            $this->ajaxreturn($sample);
+        }else{
+            $sample = array(
+                'status' => 0,
+            );
+            $this->ajaxreturn($sample);
+        }
+    }
 }

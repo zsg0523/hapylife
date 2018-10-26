@@ -536,6 +536,7 @@ class HapylifeRegisterController extends HomeBaseController{
         // $sendUrl = "http://localhost/nulife/index.php/Api/Couponapi/use_coupon";
         $results  = post_json_data($sendUrl,$data);
         $back_result = json_decode($results['result'],true);
+        $usa    = new \Common\UsaApi\Usa;        
         if($back_result['status']){
             $ipid = $back_result['ipid'];
             //商品信息
@@ -618,7 +619,6 @@ class HapylifeRegisterController extends HomeBaseController{
                 }else{
                     $products = 'RBS,DTP,SIGNUP5';
                 }
-                $usa    = new \Common\UsaApi\Usa;
                 $result = $usa->createCustomer($userinfo['customerid'],$userinfo['wvpass'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
                 if(!empty($result['result'])){
                     $log = addUsaLog($result['result']);

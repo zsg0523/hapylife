@@ -2890,7 +2890,7 @@ function sendMail($to,$title,$content){
     Vendor('PHPMailer.PHPMailerAutoload');
     $mail = new PHPMailer();                //实例化
     $mail->IsSMTP();                        //启用SMTP
-    $mail->Port = '465'; 
+    $mail->Port = '587'; 
     $mail->SMTPSecure = 'ssl'; 
     $mail->Host = C('MAIL_HOST');           //smtp服务器名称
     $mail->SMTPAuth = C('MAIL_SMTPAUTH');   //启用smtp认证

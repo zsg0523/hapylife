@@ -13,12 +13,12 @@ class usa
 
 	public function __construct(){
 		// production 生产环境配置
-		// $this->key = "KDHE5011CVFO1KJEP1A0S";
-		// $this->url = "https://signupapi.wvhservices.com";
+		$this->key = "KDHE5011CVFO1KJEP1A0S";
+		$this->url = "https://signupapi.wvhservices.com";
 
 		// qa 沙盒环境
-		$this->key = "QACER3H5T6HGYDCCDAZM3";
-		$this->url = "https://signupapi-qa.wvhservices.com";
+		// $this->key = "QACER3H5T6HGYDCCDAZM3";
+		// $this->url = "https://signupapi-qa.wvhservices.com";
 	}
 
 	/**
@@ -50,6 +50,22 @@ class usa
 		$result = json_decode($wv,true);
 		return $result;
 	}
+
+	/**
+	* REPORT
+	* @param customerId: id to validate
+	* @param key: your secret key
+	* HPL00000254
+	**/
+	public function activities($CustomerID){
+		$key      = $this->key;
+		$url      = $this->url;
+		$data     = $url."/api/hpl/customer/".$CustomerID."/lineageactivity?key=".$key;
+		$wv       = file_get_contents($data);
+		$userinfo = json_decode($wv,true);
+        return $userinfo;
+	}
+
 
 	/**
 	* CREATE CUSTOMER

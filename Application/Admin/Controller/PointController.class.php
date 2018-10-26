@@ -197,11 +197,12 @@ class PointController extends AdminBaseController{
         //账户昵称搜索
         $word = I('get.word');
         $data = M('WvBonusParities')->select();
+        $serviceCharge = $data[1]['parities'].'%';
         $assign=D('User')->getAllPoint(D('User'),$word,"iuid",$limit=50);
         // P($assign);
         $this->assign($assign);
         $this->assign('word',$word);
-        $this->assign('serviceCharge',$data[1]['parities']);
+        $this->assign('serviceCharge',$serviceCharge);
         $this->display();
     }
 

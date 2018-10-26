@@ -307,21 +307,36 @@ class PurchaseController extends HomeBaseController{
     public function myProfile(){
         $iuid = $_SESSION['user']['id'];
         $data = D('User')->where(array('iuid'=>$iuid))->find();
-        $right= D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Right'))->select();
-        $left = D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Left'))->select();
-        //right右脚、left左脚
-        if($right){
-            $data['right'] = count($right);
-        }else{
-            $data['right'] = 0;
+        $usa = new \Common\UsaApi\Usa;
+        $map = $usa->activities($data['customerid']);
+        if($map){
+            $week = $map['weekly'];
+            $monthly = $map['monthly'];
+            if($week){
+                // 拆分数据
+                $explode = explode(' ',$week['description']);
+                $explode1 = explode(' ',$week['paidRank']);
+                $explode2 = explode(' ',$week['titleRank']);
+                $paidRank = substr($explode1[0],0,1).substr($explode1[1],0,1);
+                $titleRank = substr($explode2[0],0,1).substr($explode2[1],0,1);
+                // 组合数据
+                $SerialNumber_W = $explode[1].'-'.$week['personalActive'].'-'.$week['newBinaryUnlimitedLevelsLeft'].'-'.$week['newBinaryUnlimitedLevelsRight'].'-'.$week['activeLeftLegWithAutoPlacement'].'-'.$week['activeRightLegWithAutoPlacement'].'-'.$week['leftLegTotal'].'-'.$week['rightLegTotal'].'-'.$paidRank.'-'.$titleRank.'-'.$week['volumeLeft'].'-'.$week['volumeRight'];
+            }
+            if($monthly){
+                // 拆分数据
+                $description = date('mY',strtotime($monthly['description']));
+                $explode1 = explode(' ',$monthly['paidRank']);
+                $explode2 = explode(' ',$monthly['titleRank']);
+                $paidRank = substr($explode1[0],0,1).substr($explode1[1],0,1);
+                $titleRank = substr($explode2[0],0,1).substr($explode2[1],0,1);
+                // 组合数据
+                $SerialNumber_M = $description.'-'.$monthly['personalActive'].'-'.$monthly['newBinaryUnlimitedLevelsLeft'].'-'.$monthly['newBinaryUnlimitedLevelsRight'].'-'.$monthly['activeLeftLegWithAutoPlacement'].'-'.$monthly['activeRightLegWithAutoPlacement'].'-'.$monthly['leftLegTotal'].'-'.$monthly['rightLegTotal'].'-'.$paidRank.'-'.$titleRank.'-'.$monthly['volumeLeft'].'-'.$monthly['volumeRight'];
+            }
         }
-        if($left){
-            $data['left'] = count($left);
-        }else{
-            $data['left'] = 0;
-        }
-        // p($data);die;
+
         $this->assign('userinfo',$data);
+        $this->assign('SerialNumber_W',$SerialNumber_W);
+        $this->assign('SerialNumber_M',$SerialNumber_M);
         $this->display();
     }
 
@@ -713,28 +728,31 @@ class PurchaseController extends HomeBaseController{
                                     $result  = post_json_data($sendUrl,$data);
                                     break;
                             }
-                            $usa = new \Common\UsaApi\Usa;
-                            $createPayment = $usa->createPayment($userinfo['customerid'],$receipt['ir_receiptnum'],date('Y-m-d H:i',time()));
-                            $log = addUsaLog($createPayment['result']);
-                            $jsonStr = json_decode($createPayment['result'],true);
-                            // p($jsonStr);die;
-                            if($jsonStr['paymentId']){
-                                // 发送短信提示
-                                $templateId ='209011';
-                                $params     = array($receipt['ir_receiptnum'],$product_name);
-                                $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                                if($sms['errmsg'] == 'OK'){
-                                    $contents = array(
-                                        'acnumber' => $userinfo['acnumber'],
-                                        'phone' => $userinfo['phone'],
-                                        'operator' => '系统',
-                                        'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                                        'product_name' => $product_name,
-                                        'date' => time(),
-                                        'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
-                                        'customerid' => $userinfo['customerid']
-                                    );
-                                    $logs = M('SmsLog')->add($contents);
+                            $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
+                            if($ir_status == 2){
+                                $usa = new \Common\UsaApi\Usa;
+                                $createPayment = $usa->createPayment($userinfo['customerid'],$receipt['ir_receiptnum'],date('Y-m-d H:i',time()));
+                                $log = addUsaLog($createPayment['result']);
+                                $jsonStr = json_decode($createPayment['result'],true);
+                                // p($jsonStr);die;
+                                if($jsonStr['paymentId']){
+                                    // 发送短信提示
+                                    $templateId ='209011';
+                                    $params     = array($receipt['ir_receiptnum'],$product_name);
+                                    $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                                    if($sms['errmsg'] == 'OK'){
+                                        $contents = array(
+                                            'acnumber' => $userinfo['acnumber'],
+                                            'phone' => $userinfo['phone'],
+                                            'operator' => '系统',
+                                            'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                            'product_name' => $product_name,
+                                            'date' => time(),
+                                            'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
+                                            'customerid' => $userinfo['customerid']
+                                        );
+                                        $logs = M('SmsLog')->add($contents);
+                                    }
                                 }
                             }
                         }else{
@@ -1478,7 +1496,8 @@ class PurchaseController extends HomeBaseController{
             $touserinfo = M('User')->where(array('CustomerID'=>$tohu_nickname))->find();
             //如果是转账，调取默认的银行账户信息
             $bank       = M('Bank')->where(array('iuid'=>$iuid,'isshow'=>1))->find();
-
+            // 获取手续费
+            $change = M('WvBonusParities')->where(array('pid'=>2))->getfield('parities');
             if($tohu_nickname === $userinfo['customerid']){
                 if(!empty($bank)){
                     //提现
@@ -1498,7 +1517,11 @@ class PurchaseController extends HomeBaseController{
                                 'iu_point'  =>$point,
                                 'iu_unpoint'=>$newunpoint
                             );
-                    $feepoint =$unpoint*0.05;
+                    if($change == 0){
+                        $feepoint =$unpoint;
+                    }else{
+                        $feepoint = bcmul($unpoint,bcdiv($change,100,2),2);
+                    }
                     $realpoint=bcsub($unpoint,$feepoint,4);
                     //生成提现订单
                     $pointNo = 'EP'.date('YmdHis').rand(10000, 99999);
@@ -1738,13 +1761,6 @@ class PurchaseController extends HomeBaseController{
             'data' => $data
         );
 
-        $usa    = new \Common\UsaApi\Usa;
-        $result = $usa->placement($data['customerid']);
-        if($result['errors']){
-            $assign['success'] = 0;
-        }else{
-            $assign['success'] = 200;
-        }
         // p($assign);die;
         $this->assign($assign);
         $this->display();

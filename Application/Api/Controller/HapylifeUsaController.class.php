@@ -176,22 +176,6 @@ class HapylifeUsaController extends HomeBaseController{
 	}
 
 	/**
-	* Totals
-	**/ 
-	public function Totals(){
-		$map  = I('post.');
-		$key  = $this->key;
-		$url  = $this->url;
-		$data = array(
-			'happyLifeID'  =>$map['happyLifeID'],
-		);
-		$data    = json_encode($data);
-		$sendUrl = $url."/api/Hpl/Totals?customerId=".$map['happyLifeID']."&key=".$key;
-		$result  = post_json_data($sendUrl,$data);
-		print_r($result);
-	}
-
-	/**
 	* Create Payment
 	* @param paymentDate:yyyy-MM-dd HH:mm
 	**/ 
