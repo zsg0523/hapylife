@@ -160,7 +160,7 @@ class ChangeController extends HomeBaseController{
         // p($data);die;
         $signPhone = M('User')->getField('phone',true);
         if(in_array($data['Phone'],$signPhone)){
-            $this->error('该手机号码已被注册，请重新填写！',U('Home/Purchase/editProfile'));
+            $this->error('该手机号码已被注册，请重新填写！',U('Home/Purchase/editPhone'));
         }else{
             // 修改系统数据
             $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->save($data);
@@ -172,7 +172,7 @@ class ChangeController extends HomeBaseController{
             if($result['code'] == 200){
                 $this->success('修改成功',U('Home/Purchase/myProfile'));
             }else{
-                $this->error('修改失败',U('Home/Purchase/editProfile'));
+                $this->error('修改失败',U('Home/Purchase/editPhone'));
             }
         }
     }
@@ -193,7 +193,7 @@ class ChangeController extends HomeBaseController{
         if($result['code'] == 200){
             $this->success('修改成功',U('Home/Purchase/myProfile'));
         }else{
-            $this->error('修改失败',U('Home/Purchase/editProfile'));
+            $this->error('修改失败',U('Home/Purchase/editPlacement'));
         }
         
     }
@@ -393,6 +393,30 @@ class ChangeController extends HomeBaseController{
                 );
                 $this->ajaxreturn($sample);
             }
+        }
+    }
+
+    /**
+    * 修改邮箱
+    **/ 
+    public function updateEmail(){
+        $email  = I('post.Email');
+        $happyLifeID    = I('post.happyLifeID');
+        $userinfo = M('User')->where(array('CustomerID'=>$happyLifeID))->find();
+        if($userinfo){
+            if($userinfo['email'] != $email){
+                $save = M('User')->where(array('CustomerID'=>$happyLifeID))->setfield('Email',$email);
+            }
+            //更新usa数据
+            $usa    = new \Common\UsaApi\Usa;
+            $result = $usa->ChangeEmail($happyLifeID,$email);
+            if($result['code'] == 200){
+                $this->success('修改成功',U('Home/Purchase/myProfile'));
+            }else{
+                $this->error('修改失败',U('Home/Purchase/editNewEmail'));
+            }
+        }else{
+            $this->error('用户不存在',U('Home/Purchase/editNewEmail'));
         }
     }
 

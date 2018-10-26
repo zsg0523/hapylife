@@ -1679,16 +1679,33 @@ class HapylifeController extends AdminBaseController{
 	**/ 
 	public function editParities(){
 		$parities = I('post.parities');
-		$data = M('WvBonusParities')->select();
-		if($parities != $data[0]['parities']){
-			$result = M('WvBonusParities')->where(array('pid'=>1))->setfield('parities',$parities);
-			if($result){
-				$this->redirect('Admin/Hapylife/wvbonus');
+		$change = I('post.change');
+		if($change){
+			$data = M('WvBonusParities')->select();
+			if($change != $data[1]['parities']){
+				$result = M('WvBonusParities')->where(array('pid'=>2))->setfield('parities',$change);
+				if($result){
+					$this->redirect('Admin/Point/index');
+				}else{
+					$this->error('修改失败',U('Admin/Point/index'));
+				}
 			}else{
-				$this->error('修改失败',U('Admin/Hapylife/wvbonus'));
+				$this->redirect('Admin/Point/index');
 			}
-		}else{
-			$this->redirect('Admin/Hapylife/wvbonus');
+		}
+
+		if($parities){
+			$data = M('WvBonusParities')->select();
+			if($parities != $data[0]['parities']){
+				$result = M('WvBonusParities')->where(array('pid'=>1))->setfield('parities',$parities);
+				if($result){
+					$this->redirect('Admin/Hapylife/wvbonus');
+				}else{
+					$this->error('修改失败',U('Admin/Hapylife/wvbonus'));
+				}
+			}else{
+				$this->redirect('Admin/Hapylife/wvbonus');
+			}
 		}
 	}
 

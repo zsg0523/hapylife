@@ -24,12 +24,20 @@
                         <input class='btn btn-sm' type="submit" value="筛选" />
                 	</form>
 				</li>
-				<li>&nbsp;</li>
+				<!-- <li>&nbsp;</li>
 				<li>
 					<a href="javascript:;" data-toggle="tab" onclick="parities(this)" Parities="{$serviceCharge}">修改当前手续费</a>
-			    </li>
+			    </li> -->
             </ul>
             <div class="tab-content">
+            	<table class="table table-striped table-bordered table-hover table-condensed">
+            		<th>当前手续费</th>
+            		<th>操作</th>
+            		<tr>
+            			<td>{$serviceCharge}</td>
+            			<td><a href="javascript:;" data-toggle="tab" onclick="parities(this)" Parities="{$serviceCharge}">修改当前手续费</a></td>
+            		</tr>
+            	</table>
 				<table class="table table-striped table-bordered table-hover table-condensed">
 					<tr>
 						<th>账号</th>
@@ -217,7 +225,7 @@
 							<tr>
 								<th width="12%">手续费：</th>
 								<td>
-									<input class="input-medium" type="text" name="parities">
+									<input class="input-medium" type="text" name="change">
 								</td>
 							</tr>
 							<tr>
@@ -257,7 +265,7 @@
 	// 修改当前手续费
 	function parities(obj){
 		var Parities =$(obj).attr('Parities');
-		$("input[name='parities']").val(Parities);
+		$("input[name='change']").val(Parities);
 		$('#bjy-adds').modal('show');
 	}
 	</script>

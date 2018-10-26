@@ -613,28 +613,31 @@ class HapylifePayController extends HomeBaseController{
 	                                $result  = post_json_data($sendUrl,$data);
                             		break;
                             }
-                            $usa = new \Common\UsaApi\Usa;
-                            $createPayment = $usa->createPayment($userinfo['customerid'],$receipt['ir_receiptnum'],date('Y-m-d H:i',time()));
-                            $log = addUsaLog($createPayment['result']);
-                            $jsonStr = json_decode($createPayment['result'],true);
-                            // p($jsonStr);die;
-                            if($jsonStr['paymentId']){
-	                            // 发送短信提示
-	                            $templateId ='209011';
-	                            $params     = array($receipt['ir_receiptnum'],$product_name);
-	                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-	                            if($sms['errmsg'] == 'OK'){
-	                                $contents = array(
-	                                    'acnumber' => $userinfo['acnumber'],
-	                                    'phone' => $userinfo['phone'],
-	                                    'operator' => '系统',
-	                                    'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-	                                    'product_name' => $product_name,
-	                                    'date' => time(),
-	                                    'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
-	                                    'customerid' => $userinfo['customerid']
-	                                );
-	                                $logs = M('SmsLog')->add($contents);
+                            $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
+                            if($ir_status == 2){
+	                            $usa = new \Common\UsaApi\Usa;
+	                            $createPayment = $usa->createPayment($userinfo['customerid'],$receipt['ir_receiptnum'],date('Y-m-d H:i',time()));
+	                            $log = addUsaLog($createPayment['result']);
+	                            $jsonStr = json_decode($createPayment['result'],true);
+	                            // p($jsonStr);die;
+	                            if($jsonStr['paymentId']){
+		                            // 发送短信提示
+		                            $templateId ='209011';
+		                            $params     = array($receipt['ir_receiptnum'],$product_name);
+		                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+		                            if($sms['errmsg'] == 'OK'){
+		                                $contents = array(
+		                                    'acnumber' => $userinfo['acnumber'],
+		                                    'phone' => $userinfo['phone'],
+		                                    'operator' => '系统',
+		                                    'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+		                                    'product_name' => $product_name,
+		                                    'date' => time(),
+		                                    'content' => '订单编号：'.$receipt['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
+		                                    'customerid' => $userinfo['customerid']
+		                                );
+		                                $logs = M('SmsLog')->add($contents);
+		                            }
 	                            }
                             }
                         }else{
@@ -850,7 +853,8 @@ class HapylifePayController extends HomeBaseController{
                             $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
                             if($upreceipt){ 
                                 $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$order['ir_receiptnum']);
-                                if($tmpeArr['password']){
+                                $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
+                                if($ir_status == 2){
                                     $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],'RBS,DTP');
                                     if(!empty($result['result'])){
                                         $log = addUsaLog($result['result']);

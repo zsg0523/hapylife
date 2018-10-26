@@ -193,7 +193,8 @@ class HapylifePointController extends HomeBaseController{
             $touserinfo = M('User')->where(array('CustomerID'=>$tohu_nickname))->find();
             //如果是转账，调取默认的银行账户信息
             $bank       = M('Bank')->where(array('iuid'=>$iuid,'isshow'=>1))->find();
-
+            // 获取手续费
+            $change = M('WvBonusParities')->where(array('pid'=>2))->getfield('parities');
             if($tohu_nickname === $userinfo['customerid']){
                 if(!empty($bank)){
                     //提现
@@ -216,7 +217,11 @@ class HapylifePointController extends HomeBaseController{
                                 'iu_point'  =>$point,
                                 'iu_unpoint'=>$newunpoint
                             );
-                    $feepoint =$unpoint*0.05;
+                    if($change == 0){
+                        $feepoint =$unpoint;
+                    }else{
+                        $feepoint = bcmul($unpoint,bcdiv($change,100,2),2);
+                    }
                     $realpoint=bcsub($unpoint,$feepoint,4);
                     //生成提现订单
                     $pointNo = 'EP'.date('YmdHis').rand(10000, 99999);

@@ -372,4 +372,71 @@ class HapylifeChangeController extends HomeBaseController{
             }
         }
     }
+
+    /**
+    * 修改wv用户信息--手机
+    **/ 
+    public function updatePhone(){
+        $data = I('post.');
+        // p($data);die;
+        $signPhone = M('User')->getField('phone',true);
+        if(in_array($data['Phone'],$signPhone)){
+            $sample = array(
+                'status' => 202,
+                'msg' => '该手机号码已被注册，请重新填写！'
+            );
+            $this->ajaxreturn($sample);
+        }else{
+            // 修改系统数据
+            $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->save($data);
+        }
+        if($saveData){
+            //更新usa数据
+            $usa    = new \Common\UsaApi\Usa;
+            $result = $usa->changePhone($data['happyLifeID'],$data['Phone']);
+            if($result['code'] == 200){
+                $sample = array(
+                    'status' => 1,
+                    'msg' => '修改成功'
+                );
+                $this->ajaxreturn($sample);
+            }else{
+                $sample = array(
+                    'status' => 0,
+                    'msg' => '修改失败'
+                );
+                $this->ajaxreturn($sample);
+            }
+        }
+    }
+
+    /**
+    * 修改wv用户信息--左右脚
+    **/ 
+    public function updatePlacement(){
+        $data = I('post.');
+        $userinfo = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->find();
+        if($userinfo['placement'] != $data['Placement']){
+            // 修改系统数据
+            $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->save($data);
+        }
+        //更新usa数据
+        $usa    = new \Common\UsaApi\Usa;
+        $result = $usa->ChangePlacement($data['happyLifeID'],$data['Placement']);
+        if($result['code'] == 200){
+            $sample = array(
+                'status' => 1,
+                'msg' => '修改成功'
+            );
+            $this->ajaxreturn($sample);
+        }else{
+            $sample = array(
+                'status' => 0,
+                'msg' => '修改失败'
+            );
+            $this->ajaxreturn($sample);
+        }
+        
+    }
+
 }

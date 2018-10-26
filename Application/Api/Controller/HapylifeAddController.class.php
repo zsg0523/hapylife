@@ -403,22 +403,22 @@ class HapylifeAddController extends HomeBaseController{
             switch ($value['OrderTypeId']) {
                 case '4':
                     // 加5天模板
-                    // $time = date('Y-m',strtotime($value['Date']));
-                    // $endTime = date('Y-m-d',strtotime($value['Date'])+2*24*3600);
-                    // // 发送短信提示
-                    // $templateId ='208999';
-                    // $network = 'www.dreamtrips.com';
-                    // $params     = array($time,$endTime,$network);
-                    // $sms        = D('Smscode')->sms(86,$userinfo['phone'],$params,$templateId);
-                    // $content = '这是'.$time.'续费通知，请在'.$endTime.'前完成缴费，避免无法登录'.$network;
-                    // if($sms['result'] == 0){
-                    //     $result = D('Smscode')->addLog(86,$userinfo['phone'],'系统',$addressee,'续费通知',$content,$userinfo['customerid']);
-                    // }else{
-                    //     $result = D('Smscode')->addLog(86,$userinfo['phone'],'系统',$addressee,$sms['errmsg'],$content,$userinfo['customerid']);
-                    // }
-                    // if($result){
-                    //     $status = M('wvNotification')->where(array('id'=>$key))->setfield('status','1');
-                    // }
+                    $time = date('Y-m',strtotime($value['Date']));
+                    $endTime = date('Y-m-d',strtotime($value['Date'])+2*24*3600);
+                    // 发送短信提示
+                    $templateId ='208999';
+                    $network = 'www.dreamtrips.com';
+                    $params     = array($time,$endTime,$network);
+                    $sms        = D('Smscode')->sms(86,$userinfo['phone'],$params,$templateId);
+                    $content = '这是'.$time.'续费通知，请在'.$endTime.'前完成缴费，避免无法登录'.$network;
+                    if($sms['result'] == 0){
+                        $result = D('Smscode')->addLog(86,$userinfo['phone'],'系统',$addressee,'续费通知',$content,$userinfo['customerid']);
+                    }else{
+                        $result = D('Smscode')->addLog(86,$userinfo['phone'],'系统',$addressee,$sms['errmsg'],$content,$userinfo['customerid']);
+                    }
+                    if($result){
+                        $status = M('wvNotification')->where(array('id'=>$key))->setfield('status','1');
+                    }
                     //商品信息
                     $product = M('Product')->where(array('ipid'=>39))->find();
                     // 设置显示正常月费包
@@ -547,10 +547,11 @@ class HapylifeAddController extends HomeBaseController{
                     $int = implode(',',array_intersect($allStatus,$ir_status));
                     if(in_array($int,$allStatus)){
                         $usa    = new \Common\UsaApi\Usa;
-                        $createPayment = $usa->createPayment($value['CustomerId'],$value['OrderId'],date('Y-m',strtotime($value['Date'])));
+                        $createPayment = $usa->createPayment($value['CustomerId'],$value['OrderId'],date('Y-m-d H:i',strtotime($value['Date'])));
                         $log = addUsaLog($createPayment['result']);
                         $jsonStr = json_decode($createPayment['result'],true);
                         if($jsonStr['paymentId']){
+                            $status = M('wvNotification')->where(array('id'=>$key))->setfield('status','1');
                             $addlog = 1;
                         }else{
                             $status = M('wvNotification')->where(array('id'=>$key))->setfield('status','3');
