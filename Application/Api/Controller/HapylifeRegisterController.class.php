@@ -262,7 +262,8 @@ class HapylifeRegisterController extends HomeBaseController{
             'content'   =>$content,
             'action'    =>0,
             'type'      =>2,
-            'date'      =>date('Y-m-d H:i:s')          
+            'create_time'   =>time(),
+            'create_month'   =>date('Y-m'),
         );
         $addlog = M('Log')->add($log);
         if($addlog){

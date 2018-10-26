@@ -684,7 +684,8 @@ class HapylifeApiController extends HomeBaseController{
                     'content'   =>$content,
                     'action'    =>0,
                     'type'      =>2,
-                    'date'      =>date('Y-m-d H:i:s')          
+                    'create_time' => time(),          
+                    'create_month' => date('Y-m')          
                 );
                 $addlog = M('Log')->add($log);
                 if($addlog){
@@ -1514,7 +1515,8 @@ class HapylifeApiController extends HomeBaseController{
                 'content'   =>$content,
                 'action'    =>0,
                 'type'      =>2,
-                'date'      =>date('Y-m-d H:i:s')          
+                'create_time' => time(),         
+                'create_month' => date('Y-m')   
             );
             $addlog = M('Log')->add($log);
             foreach ($info as $key => $value) {
@@ -1654,7 +1656,8 @@ class HapylifeApiController extends HomeBaseController{
             //写入日志记录
             $map = array(
                 'content'=>'<result>1</result><redirecturl>http://success.html</redirecturl>',
-                'date'   =>date('Y-m-d H:i:s'),
+                'create_time'=>time(),
+                'create_month'=>date('Y-m'),
                 'billno' =>$_GET['orderId'],
                 'amount' =>$_GET['orderAmount'],
                 'action' =>1,

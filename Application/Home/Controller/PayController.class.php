@@ -315,15 +315,15 @@ class PayController extends HomeBaseController{
                                         $update     = M('User')->add($tmpe);       
                                         $riuid      = $update;
                                         $OrderDate  = date("Y-m-d",strtotime("-1 month",time()));
-                                        $userinfo= M('User')->where(array('CustomerID'=>$CustomerID))->find();
+                                        $userinfos= M('User')->where(array('CustomerID'=>$CustomerID))->find();
                                         $status  = array(
                                             'ir_status'  =>$maps['ir_status'],
                                             'rCustomerID'=>$CustomerID,
-                                            'riuid'      =>$userinfo['iuid'],
-                                            'ia_name'    =>$userinfo['lastname'].$userinfo['firstname'],
-                                            'ia_name_en' =>$userinfo['enlastname'].$userinfo['enfirstname'],
-                                            'ia_phone'   =>$userinfo['phone'],
-                                            'ia_address' =>$userinfo['shopaddress1'],
+                                            'riuid'      =>$userinfos['iuid'],
+                                            'ia_name'    =>$userinfos['lastname'].$userinfos['firstname'],
+                                            'ia_name_en' =>$userinfos['enlastname'].$userinfos['enfirstname'],
+                                            'ia_phone'   =>$userinfos['phone'],
+                                            'ia_address' =>$userinfos['shopaddress1'],
                                             'ir_unpaid'  =>$maps['ir_unpaid'],
                                             'ir_unpoint' =>$maps['ir_unpoint']
                                         );
@@ -333,7 +333,7 @@ class PayController extends HomeBaseController{
                                         if($ir_status == 2){
                                             $usa    = new \Common\UsaApi\Usa;
                                             $products = 'RBS,DTP';
-                                            $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
+                                            $result = $usa->createCustomer($userinfos['customerid'],$tmpeArr['password'],$userinfos['enrollerid'],$userinfos['enfirstname'],$userinfos['enlastname'],$userinfos['email'],$userinfos['phone'],$products);
                                             if(!empty($result['result'])){
                                                 $log = addUsaLog($result['result']);
                                                 $maps = json_decode($result['result'],true);
@@ -342,26 +342,26 @@ class PayController extends HomeBaseController{
                                                     'wvOrderID'    => $maps['wvOrderID'],
                                                     'Products'     => $products
                                                 );
-                                                $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
+                                                $res = M('User')->where(array('iuid'=>$userinfos['iuid']))->save($wv);
                                                 if($res){
-                                                    $createPayment = $usa->createPayment($userinfo['customerid'],$maps['wvOrderID'],date('Y-m-d H:i',time()));
+                                                    $createPayment = $usa->createPayment($userinfos['customerid'],$maps['wvOrderID'],date('Y-m-d H:i',time()));
                                                     $log = addUsaLog($createPayment['result']);
                                                     $jsonStr = json_decode($createPayment['result'],true);
                                                     if($jsonStr['paymentId']){
                                                         $templateId ='208995';
-                                                        $params     = array($userinfo['customerid'],$maps['wvCustomerID']);
-                                                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                                                        $params     = array($userinfos['customerid'],$maps['wvCustomerID']);
+                                                        $sms        = D('Smscode')->sms($userinfos['acnumber'],$userinfos['phone'],$params,$templateId);
                                                         if($sms['errmsg'] == 'OK'){
                                                             $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();
                                                             $contents = array(
-                                                                'acnumber' => $userinfo['acnumber'],
-                                                                'phone' => $userinfo['phone'],
+                                                                'acnumber' => $userinfos['acnumber'],
+                                                                'phone' => $userinfos['phone'],
                                                                 'operator' => '系统',
                                                                 'addressee' => $status['ia_name'],
                                                                 'product_name' => $receiptlist['product_name'],
                                                                 'date' => time(),
-                                                                'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfo['customerid'].'以及 DreamTrips 会员号码是'.$maps['wvCustomerID'].'，同时注意查收Rovia邮件。',
-                                                                'customerid' => $userinfo['customerid']
+                                                                'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfos['customerid'].'以及 DreamTrips 会员号码是'.$maps['wvCustomerID'].'，同时注意查收Rovia邮件。',
+                                                                'customerid' => $userinfos['customerid']
                                                             );
                                                             $logs = M('SmsLog')->add($contents);
                                                         }

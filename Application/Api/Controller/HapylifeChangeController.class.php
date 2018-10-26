@@ -435,8 +435,43 @@ class HapylifeChangeController extends HomeBaseController{
                 'msg' => '修改失败'
             );
             $this->ajaxreturn($sample);
+        }   
+    }
+
+    /**
+    * 修改邮箱
+    **/ 
+    public function updateEmail(){
+        $email  = I('post.Email');
+        $happyLifeID    = I('post.happyLifeID');
+        $userinfo = M('User')->where(array('CustomerID'=>$happyLifeID))->find();
+        if($userinfo){
+            if($userinfo['email'] != $email){
+                $save = M('User')->where(array('CustomerID'=>$happyLifeID))->setfield('Email',$email);
+            }
+            //更新usa数据
+            $usa    = new \Common\UsaApi\Usa;
+            $result = $usa->ChangeEmail($happyLifeID,$email);
+            if($result['code'] == 200){
+                $data = array(
+                    'status' => 1,
+                    'msg' => '修改成功'
+                );
+                $this->ajaxreturn($data);
+            }else{
+                $data = array(
+                    'status' => 0,
+                    'msg' => '修改失败'
+                );
+                $this->ajaxreturn($data);
+            }
+        }else{
+            $data = array(
+                'status' => 202,
+                'msg' => '用户不存在'
+            );
+            $this->ajaxreturn($data);
         }
-        
     }
 
 }

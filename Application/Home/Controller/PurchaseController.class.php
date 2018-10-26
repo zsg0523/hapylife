@@ -492,11 +492,12 @@ class PurchaseController extends HomeBaseController{
         $content = '您的'.$con.'订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
         // echo 2;
         $log = array(
-            'iuid' =>$iuid,
+            'iuid'      =>$iuid,
             'content'   =>$content,
             'action'    =>1,
             'type'      =>2,
-            'date'      =>date('Y-m-d H:i:s')          
+            'create_time' => time(),
+            'create_month' => date('Y-m'), 
         );
         $addlog = M('Log')->add($log);
         // 设置session时间
@@ -1822,4 +1823,29 @@ class PurchaseController extends HomeBaseController{
         $this->assign('userinfo',$userinfo);
         $this->display();
     }
+
+    /**
+    * 修改邮箱
+    **/ 
+    public function updateEmail(){
+        $email  = I('post.Email');
+        $happyLifeID    = I('post.happyLifeID');
+        $userinfo = M('User')->where(array('CustomerID'=>$happyLifeID))->find();
+        if($userinfo){
+            if($userinfo['email'] != $email){
+                $save = M('User')->where(array('CustomerID'=>$happyLifeID))->setfield('Email',$email);
+            }
+            //更新usa数据
+            $usa    = new \Common\UsaApi\Usa;
+            $result = $usa->ChangeEmail($happyLifeID,$email);
+            if($result['code'] == 200){
+                $this->success('修改成功',U('Home/Purchase/myProfile'));
+            }else{
+                $this->error('修改失败',U('Home/Purchase/editNewEmail'));
+            }
+        }else{
+            $this->error('用户不存在',U('Home/Purchase/editNewEmail'));
+        }
+    }
+
 }
