@@ -13,12 +13,12 @@ class usa
 
 	public function __construct(){
 		// production 生产环境配置
-		$this->key = "KDHE5011CVFO1KJEP1A0S";
-		$this->url = "https://signupapi.wvhservices.com";
+		// $this->key = "KDHE5011CVFO1KJEP1A0S";
+		// $this->url = "https://signupapi.wvhservices.com";
 
 		// qa 沙盒环境
-		// $this->key = "QACER3H5T6HGYDCCDAZM3";
-		// $this->url = "https://signupapi-qa.wvhservices.com";
+		$this->key = "QACER3H5T6HGYDCCDAZM3";
+		$this->url = "https://signupapi-qa.wvhservices.com";
 	}
 
 	/**
@@ -70,7 +70,7 @@ class usa
 	/**
 	* CREATE CUSTOMER
 	**/
-	public function createCustomer($happyLifeID,$password,$sponsorID,$firstName_EN,$lastName_EN,$emailAddress,$phone,$products,$dob='2000-1-1')
+	public function createCustomer($happyLifeID,$password,$sponsorID,$firstName_EN,$lastName_EN,$emailAddress,$phone,$products,$dob='2000-1-1',$ipAddress='string')
 	{
 		// ='RBS,DTP,SIGNUP4,SIGNUP5'
 		$key  = $this->key;
@@ -83,8 +83,9 @@ class usa
             'lastName_EN'  =>$lastName_EN,
             'emailAddress' =>$emailAddress,
             'phone'        =>$phone,
-            'products'     =>explode(',',$products),
+            'productId'    =>$products,
             'dob'          =>$dob,
+            'ipAddress'	   =>$ipAddress,
             'key'          =>$key
 		);
 		$data    = json_encode($data);

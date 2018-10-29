@@ -7721,3 +7721,12 @@
 }**********
 2018-10-24 15:13:58**********{"errors":[{"parameter":"PaymentDate","message":"Invalid format","code":1002}]}**********
 2018-10-24 15:13:59**********{"errors":[{"parameter":"PaymentDate","message":"Invalid format","code":1002}]}**********
+2018-10-29 11:25:22**********{"errors":[{"parameter":"WVOrderID","message":"Invalid format","code":1002}]}**********
+2018-10-29 11:43:33**********{"errors":[{"parameter":"WVOrderID","message":"Invalid format","code":1002}]}**********
+2018-10-29 11:45:01**********{"errors":[{"parameter":"WVOrderID","message":"Invalid format","code":1002}]}**********
+2018-10-29 12:03:44**********{"errors":[{"parameter":"WVOrderID","message":"Invalid format","code":1002}]}**********
+2018-10-29 12:05:58**********{"errors":[{"parameter":"WVOrderID","message":"Invalid format","code":1002}]}**********
+2018-10-29 12:10:34**********{"errors":[{"parameter":"HappyLifeID","message":"The HPLID used already exists","code":1004}]}**********
+2018-10-29 12:10:35**********{"errors":[{"parameter":"WVOrderID","message":"Invalid format","code":1002}]}**********
+2018-10-29 12:12:07**********{"errors":[{"parameter":"SponsorID","message":"The id does not exist","code":1003}]}**********
+2018-10-29 12:12:08**********{"errors":[{"parameter":"WVOrderID","message":"Invalid format","code":1002}]}**********

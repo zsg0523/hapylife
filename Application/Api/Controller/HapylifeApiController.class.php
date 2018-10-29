@@ -492,6 +492,9 @@ class HapylifeApiController extends HomeBaseController{
                 ->where($map)
                 ->order('addtime desc')
                 ->select();
+        foreach($data as $key=>$value){
+            $data[$key]['addtime'] = date('Y-m-d',strtotime($value['addtime'])); 
+        }
         if($data){
             $this->ajaxreturn($data);
         }else{
@@ -1752,35 +1755,60 @@ class HapylifeApiController extends HomeBaseController{
         $data = I('post.');
         $usa = new \Common\UsaApi\Usa;
         $map = $usa->activities($data['customerid']);
-        if($map){
-            $week = $map['weekly'];
+        if(!$map['errors']){
+            $weekly = $map['weekly'];
             $monthly = $map['monthly'];
-            if($week){
+            if($weekly){
                 // 拆分数据
-                $explode = explode(' ',$week['description']);
-                $explode1 = explode(' ',$week['paidRank']);
-                $explode2 = explode(' ',$week['titleRank']);
+                $explode1 = explode(' ',$weekly['paidRank']);
+                $explode2 = explode(' ',$weekly['titleRank']);
                 $paidRank = substr($explode1[0],0,1).substr($explode1[1],0,1);
                 $titleRank = substr($explode2[0],0,1).substr($explode2[1],0,1);
                 // 组合数据
-                $SerialNumber_W = $explode[1].'-'.$week['personalActive'].'-'.$week['newBinaryUnlimitedLevelsLeft'].'-'.$week['newBinaryUnlimitedLevelsRight'].'-'.$week['activeLeftLegWithAutoPlacement'].'-'.$week['activeRightLegWithAutoPlacement'].'-'.$week['leftLegTotal'].'-'.$week['rightLegTotal'].'-'.$paidRank.'-'.$titleRank.'-'.$week['volumeLeft'].'-'.$week['volumeRight'];
+                switch ($weekly['personalActive']) {
+                    case '0':
+                        $weekly['personalActive'] = '未启动';
+                        break;
+                    case '1':
+                        $weekly['personalActive'] = '启动';
+                        break;
+                }
+                $Serial_W = array(
+                    'date' => $weekly['description'],
+                    'result' => $weekly['personalActive'].'-'.$paidRank.'-'.$titleRank,
+                    'number' => $weekly['newBinaryUnlimitedLevelsLeft'].'.'.$weekly['activeLeftLegWithAutoPlacement'].'.'.$weekly['leftLegTotal'].'.'.$weekly['volumeLeft'].'-'.$weekly['newBinaryUnlimitedLevelsRight'].'.'.$weekly['activeRightLegWithAutoPlacement'].'.'.$weekly['rightLegTotal'].'.'.$weekly['volumeRight']
+                );
             }
             if($monthly){
                 // 拆分数据
-                $description = date('mY',strtotime($monthly['description']));
                 $explode1 = explode(' ',$monthly['paidRank']);
                 $explode2 = explode(' ',$monthly['titleRank']);
                 $paidRank = substr($explode1[0],0,1).substr($explode1[1],0,1);
                 $titleRank = substr($explode2[0],0,1).substr($explode2[1],0,1);
                 // 组合数据
-                $SerialNumber_M = $description.'-'.$monthly['personalActive'].'-'.$monthly['newBinaryUnlimitedLevelsLeft'].'-'.$monthly['newBinaryUnlimitedLevelsRight'].'-'.$monthly['activeLeftLegWithAutoPlacement'].'-'.$monthly['activeRightLegWithAutoPlacement'].'-'.$monthly['leftLegTotal'].'-'.$monthly['rightLegTotal'].'-'.$paidRank.'-'.$titleRank.'-'.$monthly['volumeLeft'].'-'.$monthly['volumeRight'];
+                switch ($monthly['personalActive']) {
+                    case '0':
+                        $monthly['personalActive'] = '未启动';
+                        break;
+                    case '1':
+                        $monthly['personalActive'] = '启动';
+                        break;
+                }
+                $Serial_M = array(
+                    'date' => $monthly['description'],
+                    'result' => $monthly['personalActive'].'-'.$paidRank.'-'.$titleRank,
+                    'number' => $monthly['newBinaryUnlimitedLevelsLeft'].'.'.$monthly['activeLeftLegWithAutoPlacement'].'.'.$monthly['leftLegTotal'].'.'.$monthly['volumeLeft'].'-'.$monthly['newBinaryUnlimitedLevelsRight'].'.'.$monthly['activeRightLegWithAutoPlacement'].'.'.$monthly['rightLegTotal'].'.'.$monthly['volumeRight'],
+                );
             }
+            $Serial = array(
+                'weekly' => $Serial_W,
+                'monthly' => $Serial_M
+            );
         }
-        if($SerialNumber_W && $SerialNumber_M){
+        if(!$map['errors']){
             $sample = array(
                 'status' => 1,
-                'SerialNumber_W' => $SerialNumber_W,
-                'SerialNumber_M' => $SerialNumber_M
+                'Serial' => $Serial,
             );
             $this->ajaxreturn($sample);
         }else{
