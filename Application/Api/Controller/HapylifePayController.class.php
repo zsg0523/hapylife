@@ -256,6 +256,10 @@ class HapylifePayController extends HomeBaseController{
 										            $data['status'] = 0;
 										            $this->ajaxreturn($data);
 		                                        }
+		                                    }else if($receipt['ir_ordertype']==5){
+		                                    	// 支付完成
+									            $data['status'] = 1;
+									            $this->ajaxreturn($data);
 		                                    }else{
 		                                    	// 存在htid，生成新账号
 			                                    if($receipt['htid']){
@@ -573,7 +577,7 @@ class HapylifePayController extends HomeBaseController{
                     'ir_paytype' =>1,
                     'status'  =>2,
                     'paytime'=>time(),
-                    'ips_trade_no' => $data['billno'],
+                    'ips_trade_no' => $data['ipsbillno'],
                     'ips_trade_status' => $data['msg']
                 );
                 $change_orderstatus = M('Receiptson')->where(array('pay_receiptnum'=>$data['billno']))->save($map);
