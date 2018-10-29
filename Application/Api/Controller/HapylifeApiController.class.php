@@ -710,10 +710,20 @@ class HapylifeApiController extends HomeBaseController{
                             break;
                         case '5':
                             if($isdt){
+                                $usa    = new \Common\UsaApi\Usa;
+                                $result = $usa->dtPoint($userinfo['customerid']);
+                                foreach($result['softCashCategories'] as $key=>$value){
+                                    if($value['categoryType'] == 'DreamTripPoints'){
+                                        $userinfo['iu_dt'] = $value['balance'];
+                                    }
+                                }
                                 $bcsub = bcsub($userinfo['iu_dt'],$product['ip_dt'],2);
                                 if($bcsub>=0){
                                     $saveDt= M('User')->where(array('CustomerId'=>$userinfo['customerid']))->setfield('iu_dt',$bcsub);
-                                    if($saveDt){
+                                    $usa    = new \Common\UsaApi\Usa;
+                                    $result = $usa->redeemVirtual($userinfo['customerid'],$product['ip_dt'],'DreamTripPoints',$product['ip_name_zh']);
+                                    $jsonStr = json_decode($result['result'],true);
+                                    if($jsonStr['message']){
                                         $dtNo = 'DT'.date('YmdHis').rand(10000, 99999);
                                         $mape            = array(
                                             'ir_receiptnum'   =>$order_num,

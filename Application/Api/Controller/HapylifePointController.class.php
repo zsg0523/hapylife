@@ -47,6 +47,17 @@ class HapylifePointController extends HomeBaseController{
     public function myPoint(){
         $iuid = I('post.iuid');
         $data = M('User')->where(array('iuid'=>$iuid))->find();
+        $usa = new \Common\UsaApi\Usa;
+        $result = $usa->dtPoint($data['customerid']);
+        if(!$result['errors']){
+            foreach($result['softCashCategories'] as $key=>$value){
+                if($value['categoryType'] == 'DreamTripPoints'){
+                    $data['iu_dt'] = $value['balance'];
+                }
+            }
+        }else{
+            $data['iu_dt'] = 0;
+        }
         if($data){
             $data['status'] = 1;
             $this->ajaxreturn($data);

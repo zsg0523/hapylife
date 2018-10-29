@@ -66,6 +66,7 @@ class PurchaseController extends HomeBaseController{
         $proArr = array();
         $an_pro = array();
         $third_pro = array();
+        $four_pro = array();
         //判断用户等级 show--1、可点击 2、不可点击
         $array   = array('HPL00000181','HPL00123539');//显示测试产品账号
         $arrayTo = array('61338465','64694832','65745561','HPL00123556','61751610','61624356','61695777','68068002');//显示真实产品账号
@@ -334,7 +335,7 @@ class PurchaseController extends HomeBaseController{
         $data = D('User')->where(array('iuid'=>$iuid))->find();
         $usa = new \Common\UsaApi\Usa;
         $map = $usa->activities($data['customerid']);
-        if(!$map['error']){
+        if(!$map['errors']){
             $weekly = $map['weekly'];
             $monthly = $map['monthly'];
             if($weekly){
@@ -383,6 +384,19 @@ class PurchaseController extends HomeBaseController{
                 'weekly' => $Serial_W,
                 'monthly' => $Serial_M
             );
+        }else{
+           $Serial = array(
+                'weekly' => array(
+                    'date' => '无',
+                    'result' => '无',
+                    'number' => '无'
+                ),
+                'monthly' => array(
+                    'date' => '无',
+                    'result' => '无',
+                    'number' => '无'
+                )
+            ); 
         }
         $this->assign('userinfo',$data);
         $this->assign('Serial',$Serial);
@@ -570,10 +584,8 @@ class PurchaseController extends HomeBaseController{
                                 $userinfo['iu_dt'] = $value['balance'];
                             }
                         }
-                        // p($userinfo);die;
                         $bcsub = bcsub($userinfo['iu_dt'],$product['ip_dt'],2);
                         if($bcsub>=0){
-                            // $saveDt= M('User')->where(array('CustomerId'=>$userinfo['customerid']))->setfield('iu_dt',$bcsub);
                             $usa    = new \Common\UsaApi\Usa;
                             $result = $usa->redeemVirtual($userinfo['customerid'],$product['ip_dt'],'DreamTripPoints',$product['ip_name_zh']);
                             $jsonStr = json_decode($result['result'],true);
@@ -728,7 +740,7 @@ class PurchaseController extends HomeBaseController{
                     'ir_paytype' =>1,
                     'status'  =>2,
                     'paytime'=>time(),
-                    'ips_trade_no' => $data['billno'],
+                    'ips_trade_no' => $data['ipsbillno'],
                     'ips_trade_status' => $data['msg']
                 );
                 $change_orderstatus = M('Receiptson')->where(array('pay_receiptnum'=>$data['billno']))->save($map);

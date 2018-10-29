@@ -5,53 +5,37 @@ use Common\Controller\HomeBaseController;
  * Vue示例
  */
 class DTPointController extends HomeBaseController{
-	/**
-	*我的DT和记录
-	**/
-	public function myDTPoint(){
-		$iuid = $_SESSION['user']['id'];
-		if($iuid){
-			$data  = M('User')->where(array('iuid'=>$iuid))->find();
-			$getdt = M('Getdt')->where(array('iuid'=>$iuid))->order('igid desc')->select();
-			$assign= array(
-				'data' =>$data,
-				'getdt'=>$getdt
-			);
-			// p($assign);die;
-			$this->assign('assign',$assign);
-        	$this->display();
-		}else{
-			$this->error('登录过期，请重新登录');
-		}
-	}
-
     /**
     *我的DT和记录
     **/
-    // public function myDTPoint(){
-    //     $iuid = $_SESSION['user']['id'];
-    //     if($iuid){
-    //         $userinfo  = M('User')->where(array('iuid'=>$iuid))->find();
-    //         // 获取用户在美国的dtp
-    //         $usa = new \Common\UsaApi\Usa;
-    //         $result = $usa->dtPoint($userinfo['customerid']);
-    //         foreach($result['softCashCategories'] as $key=>$value){
-    //             if($value['categoryType'] == 'DreamTripPoints'){
-    //                 $data['iu_dt'] = $value['balance'];
-    //             }
-    //         }
-    //         $getdt = M('Getdt')->where(array('iuid'=>$iuid))->order('igid desc')->select();
-    //         $assign= array(
-    //             'data' =>$data,
-    //             'getdt'=>$getdt
-    //         );
-    //         // p($assign);die;
-    //         $this->assign('assign',$assign);
-    //         $this->display();
-    //     }else{
-    //         $this->error('登录过期，请重新登录');
-    //     }
-    // }
+    public function myDTPoint(){
+        $iuid = $_SESSION['user']['id'];
+        if($iuid){
+            $userinfo  = M('User')->where(array('iuid'=>$iuid))->find();
+            // 获取用户在美国的dtp
+            $usa = new \Common\UsaApi\Usa;
+            $result = $usa->dtPoint($userinfo['customerid']);
+            if(!$result['errors']){
+                foreach($result['softCashCategories'] as $key=>$value){
+                    if($value['categoryType'] == 'DreamTripPoints'){
+                        $data['iu_dt'] = $value['balance'];
+                    }
+                }
+            }else{
+                $data['iu_dt'] = 0;
+            }
+            $getdt = M('Getdt')->where(array('iuid'=>$iuid))->order('igid desc')->select();
+            $assign= array(
+                'data' =>$data,
+                'getdt'=>$getdt
+            );
+            // p($assign);die;
+            $this->assign('assign',$assign);
+            $this->display();
+        }else{
+            $this->error('登录过期，请重新登录');
+        }
+    }
 	/**
 	*个人每月DT
 	**/
