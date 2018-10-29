@@ -179,7 +179,7 @@ class UserModel extends BaseModel{
 					->alias('u')
 			        ->join('left join hapylife_receipt c on u.iuid = c.riuid')
 			        ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-		            ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		            ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 		            ->count();
 				}
 		        $page=new_page($count,$limit);
@@ -211,7 +211,7 @@ class UserModel extends BaseModel{
 			            	->alias('u')
 			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
 			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+			                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
 			                ->select();         
@@ -221,7 +221,7 @@ class UserModel extends BaseModel{
 			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
 			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			                ->field($field)
-			                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+			                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
 			                ->select();         
@@ -241,7 +241,7 @@ class UserModel extends BaseModel{
 						->alias('u')
 				        ->join('left join hapylife_receipt c on u.iuid = c.riuid')
 				        ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			            ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+			            ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			            ->count();
 				}
 		        $page=new_page($count,$limit);
@@ -273,7 +273,7 @@ class UserModel extends BaseModel{
 			            	->alias('u')
 			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
 			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			                ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+			                ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
 			                ->select();         
@@ -283,7 +283,7 @@ class UserModel extends BaseModel{
 			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
 			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
 			                ->field($field)
-			                ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+			                ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 			                ->order($order)
 			                ->limit($page->firstRow.','.$page->listRows)
 			                ->select();         
@@ -317,7 +317,7 @@ class UserModel extends BaseModel{
 			}else{
 				$count=$model
 					->alias('u')
-		            ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		            ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 		            ->count();
 			}
 	        $page=new_page($count,$limit);
@@ -343,7 +343,7 @@ class UserModel extends BaseModel{
 	        	if (empty($field)) {
 		            $list=$model
 		            	->alias('u')
-		                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 		                ->order($order)
 		                ->limit($page->firstRow.','.$page->listRows)
 		                ->select();         
@@ -351,7 +351,7 @@ class UserModel extends BaseModel{
 		            $list=$model
 		            	->alias('u')
 		                ->field($field)
-		                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 		                ->order($order)
 		                ->limit($page->firstRow.','.$page->listRows)
 		                ->select();         

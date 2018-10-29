@@ -252,6 +252,31 @@ class PurchaseController extends HomeBaseController{
     public function myOrder(){
         $customerid = $_SESSION['user']['username'];
         $data['status'] = $_SESSION['user']['status'];
+        // 更新订单、对比产品与订单价格是否一致
+        $where = array(
+            'rCustomerID' => $customerid,
+            'ir_status' => 0,
+            'is_delete'=>0
+        );
+        $data = M('Receipt')
+                ->alias('r')
+                ->join('hapylife_receiptlist hr on r.ir_receiptnum = hr.ir_receiptnum')
+                ->join('hapylife_product hp on hr.ipid=hp.ipid')
+                ->where($where)
+                ->order('r.ir_date DESC')
+                ->select();
+        foreach($data as $key=>$value){
+            if($value['ip_price_rmb'] != $value['ir_price'] && $value['ip_point'] != $value['ir_point']){
+                $array = array(
+                    'ir_point' => $value['ip_point'],
+                    'ir_unpoint' => $value['ip_point'],
+                    'ir_price' => $value['ip_price_rmb'],
+                    'ir_unpaid' => $value['ip_price_rmb'],
+                );
+                $result = M('Receipt')->where(array('ir_receiptnum'=>$value['ir_receiptnum']))->save($array);
+            }
+        }
+        
         $map  = array(
                 'rCustomerID'=>$customerid,
                 'ir_status'=>array('in','0,2,3,4,5,202'),
@@ -679,7 +704,7 @@ class PurchaseController extends HomeBaseController{
                     'ir_paytype' =>1,
                     'status'  =>2,
                     'paytime'=>time(),
-                    'ips_trade_no' => $data['ipsbillno'],
+                    'ips_trade_no' => $data['billno'],
                     'ips_trade_status' => $data['msg']
                 );
                 $change_orderstatus = M('Receiptson')->where(array('pay_receiptnum'=>$data['billno']))->save($map);
@@ -1021,19 +1046,33 @@ class PurchaseController extends HomeBaseController{
                             }
                             //更新订单信息
                             $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+                            // 查询礼包等级
+                            $grade = D('Product')->where(array('ipid'=>$order['ipid']))->getfield('ip_after_grade');
+                            // 检测订单状态
                             $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
                             if($upreceipt){ 
                                 $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$order['ir_receiptnum']);
                                 if($ir_status == 2){
                                     $usa    = new \Common\UsaApi\Usa;
-                                    $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],'RBS,DTP');
+                                    switch($grade){
+                                        case 'Gold':
+                                            $products = 'RBS,DTGP'
+                                            break;
+                                        case 'Platinum':
+                                            $products = 'RBS,DTP'
+                                            break;
+                                        default:
+                                            $products = 'RBS,DTPP'
+                                            break;
+                                    }
+                                    $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
                                     if(!empty($result['result'])){
                                         $log = addUsaLog($result['result']);
                                         $maps = json_decode($result['result'],true);
                                         $wv  = array(
                                                     'wvCustomerID' => $maps['wvCustomerID'],
                                                     'wvOrderID'    => $maps['wvOrderID'],
-                                                    'Products'     => 'RBS,DTP'
+                                                    'Products'     => $products
                                                 );
                                         $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                                         if($res){

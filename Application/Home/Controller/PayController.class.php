@@ -329,10 +329,23 @@ class PayController extends HomeBaseController{
                                         );
                                         //更新订单信息
                                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+                                        // 查询礼包等级
+                                        $grade = D('Product')->where(array('ipid'=>$order['ipid']))->getfield('ip_after_grade');
+                                        // 检测订单状态
                                         $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
                                         if($ir_status == 2){
                                             $usa    = new \Common\UsaApi\Usa;
-                                            $products = 'RBS,DTP';
+                                            switch($grade){
+                                                case 'Gold':
+                                                    $products = 'RBS,DTGP'
+                                                    break;
+                                                case 'Platinum':
+                                                    $products = 'RBS,DTP'
+                                                    break;
+                                                default:
+                                                    $products = 'RBS,DTPP'
+                                                    break;
+                                            }
                                             $result = $usa->createCustomer($userinfos['customerid'],$tmpeArr['password'],$userinfos['enrollerid'],$userinfos['enfirstname'],$userinfos['enlastname'],$userinfos['email'],$userinfos['phone'],$products);
                                             if(!empty($result['result'])){
                                                 $log = addUsaLog($result['result']);

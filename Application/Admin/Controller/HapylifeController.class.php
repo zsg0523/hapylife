@@ -945,7 +945,7 @@ class HapylifeController extends AdminBaseController{
 			$map = array();
 		}else{
 			$map = array(
-				'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%')
+				'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%')
 			);
 		}
 		
@@ -1096,7 +1096,7 @@ class HapylifeController extends AdminBaseController{
 			$map = array();
 		}else{
 			$map = array(
-				'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName'=>array('like','%'.$word.'%')
+				'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%')
 			);
 		}
 		

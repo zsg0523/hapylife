@@ -364,7 +364,17 @@ class HapylifePayController extends HomeBaseController{
 			                                        if($ir_status == 2){
 				                                        // 发送数据到usa
 				                                        $usa    = new \Common\UsaApi\Usa;
-				                                        $products = 'RBS,DTP';
+				                                        switch($grade){
+				                                        	case 'Gold':
+				                                        		$products = 'RBS,DTGP'
+				                                        		break;
+				                                        	case 'Platinum':
+				                                        		$products = 'RBS,DTP'
+				                                        		break;
+				                                        	default:
+				                                        		$products = 'RBS,DTPP'
+				                                        		break;
+				                                        }
 				                                        $result = $usa->createCustomer($userinfos['customerid'],$tmpeArr['password'],$userinfos['enrollerid'],$userinfos['enfirstname'],$userinfos['enlastname'],$userinfos['email'],$userinfos['phone'],$products);
 				                                        if(!empty($result['result'])){
 				                                            $log = addUsaLog($result['result']);
@@ -563,7 +573,7 @@ class HapylifePayController extends HomeBaseController{
                     'ir_paytype' =>1,
                     'status'  =>2,
                     'paytime'=>time(),
-                    'ips_trade_no' => $data['ipsbillno'],
+                    'ips_trade_no' => $data['billno'],
                     'ips_trade_status' => $data['msg']
                 );
                 $change_orderstatus = M('Receiptson')->where(array('pay_receiptnum'=>$data['billno']))->save($map);
