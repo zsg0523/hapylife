@@ -154,13 +154,13 @@ class PurchaseController extends HomeBaseController{
         $ipid    = I('get.ipid');
         $data    = M('User')->where(array('iuid'=>$iuid))->find();
         // 获取用户在美国的dtp
-        // $usa = new \Common\UsaApi\Usa;
-        // $result = $usa->dtPoint($data['customerid']);
-        // foreach($result['softCashCategories'] as $key=>$value){
-        //     if($value['categoryType'] == 'DreamTripPoints'){
-        //         $data['iu_dt'] = $value['balance'];
-        //     }
-        // }
+        $usa = new \Common\UsaApi\Usa;
+        $result = $usa->dtPoint($data['customerid']);
+        foreach($result['softCashCategories'] as $key=>$value){
+            if($value['categoryType'] == 'DreamTripPoints'){
+                $data['iu_dt'] = $value['balance'];
+            }
+        }
         $bcsub   = bcsub($data['iu_dt'],$ip_dt,2);
         $data['bc_dt'] =$bcsub;
         $data['ipid']  =$ipid;
@@ -334,34 +334,58 @@ class PurchaseController extends HomeBaseController{
         $data = D('User')->where(array('iuid'=>$iuid))->find();
         $usa = new \Common\UsaApi\Usa;
         $map = $usa->activities($data['customerid']);
-        if($map){
-            $week = $map['weekly'];
+        if(!$map['error']){
+            $weekly = $map['weekly'];
             $monthly = $map['monthly'];
-            if($week){
+            if($weekly){
                 // 拆分数据
-                $explode = explode(' ',$week['description']);
-                $explode1 = explode(' ',$week['paidRank']);
-                $explode2 = explode(' ',$week['titleRank']);
+                $explode1 = explode(' ',$weekly['paidRank']);
+                $explode2 = explode(' ',$weekly['titleRank']);
                 $paidRank = substr($explode1[0],0,1).substr($explode1[1],0,1);
                 $titleRank = substr($explode2[0],0,1).substr($explode2[1],0,1);
                 // 组合数据
-                $SerialNumber_W = $explode[1].'-'.$week['personalActive'].'-'.$week['newBinaryUnlimitedLevelsLeft'].'-'.$week['newBinaryUnlimitedLevelsRight'].'-'.$week['activeLeftLegWithAutoPlacement'].'-'.$week['activeRightLegWithAutoPlacement'].'-'.$week['leftLegTotal'].'-'.$week['rightLegTotal'].'-'.$paidRank.'-'.$titleRank.'-'.$week['volumeLeft'].'-'.$week['volumeRight'];
+                switch ($weekly['personalActive']) {
+                    case '0':
+                        $weekly['personalActive'] = '未启动';
+                        break;
+                    case '1':
+                        $weekly['personalActive'] = '启动';
+                        break;
+                }
+                $Serial_W = array(
+                    'date' => $weekly['description'],
+                    'result' => $weekly['personalActive'].'-'.$paidRank.'-'.$titleRank,
+                    'number' => $weekly['newBinaryUnlimitedLevelsLeft'].'.'.$weekly['activeLeftLegWithAutoPlacement'].'.'.$weekly['leftLegTotal'].'.'.$weekly['volumeLeft'].'-'.$weekly['newBinaryUnlimitedLevelsRight'].'.'.$weekly['activeRightLegWithAutoPlacement'].'.'.$weekly['rightLegTotal'].'.'.$weekly['volumeRight']
+                );
             }
             if($monthly){
                 // 拆分数据
-                $description = date('mY',strtotime($monthly['description']));
                 $explode1 = explode(' ',$monthly['paidRank']);
                 $explode2 = explode(' ',$monthly['titleRank']);
                 $paidRank = substr($explode1[0],0,1).substr($explode1[1],0,1);
                 $titleRank = substr($explode2[0],0,1).substr($explode2[1],0,1);
                 // 组合数据
-                $SerialNumber_M = $description.'-'.$monthly['personalActive'].'-'.$monthly['newBinaryUnlimitedLevelsLeft'].'-'.$monthly['newBinaryUnlimitedLevelsRight'].'-'.$monthly['activeLeftLegWithAutoPlacement'].'-'.$monthly['activeRightLegWithAutoPlacement'].'-'.$monthly['leftLegTotal'].'-'.$monthly['rightLegTotal'].'-'.$paidRank.'-'.$titleRank.'-'.$monthly['volumeLeft'].'-'.$monthly['volumeRight'];
+                switch ($monthly['personalActive']) {
+                    case '0':
+                        $monthly['personalActive'] = '未启动';
+                        break;
+                    case '1':
+                        $monthly['personalActive'] = '启动';
+                        break;
+                }
+                $Serial_M = array(
+                    'date' => $monthly['description'],
+                    'result' => $monthly['personalActive'].'-'.$paidRank.'-'.$titleRank,
+                    'number' => $monthly['newBinaryUnlimitedLevelsLeft'].'.'.$monthly['activeLeftLegWithAutoPlacement'].'.'.$monthly['leftLegTotal'].'.'.$monthly['volumeLeft'].'-'.$monthly['newBinaryUnlimitedLevelsRight'].'.'.$monthly['activeRightLegWithAutoPlacement'].'.'.$monthly['rightLegTotal'].'.'.$monthly['volumeRight'],
+                );
             }
+            $Serial = array(
+                'weekly' => $Serial_W,
+                'monthly' => $Serial_M
+            );
         }
-
         $this->assign('userinfo',$data);
-        $this->assign('SerialNumber_W',$SerialNumber_W);
-        $this->assign('SerialNumber_M',$SerialNumber_M);
+        $this->assign('Serial',$Serial);
         $this->display();
     }
 
@@ -1046,23 +1070,21 @@ class PurchaseController extends HomeBaseController{
                             }
                             //更新订单信息
                             $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
-                            // 查询礼包等级
-                            $grade = D('Product')->where(array('ipid'=>$order['ipid']))->getfield('ip_after_grade');
                             // 检测订单状态
                             $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
                             if($upreceipt){ 
                                 $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$order['ir_receiptnum']);
                                 if($ir_status == 2){
                                     $usa    = new \Common\UsaApi\Usa;
-                                    switch($grade){
-                                        case 'Gold':
-                                            $products = 'RBS,DTGP'
+                                    switch($order['ipid']){
+                                        case '31':
+                                            $products = '1';
                                             break;
-                                        case 'Platinum':
-                                            $products = 'RBS,DTP'
+                                        case '62':
+                                            $products = '5';
                                             break;
-                                        default:
-                                            $products = 'RBS,DTPP'
+                                        case '64':
+                                            $products = '4';
                                             break;
                                     }
                                     $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);

@@ -364,16 +364,16 @@ class HapylifePayController extends HomeBaseController{
 			                                        if($ir_status == 2){
 				                                        // 发送数据到usa
 				                                        $usa    = new \Common\UsaApi\Usa;
-				                                        switch($grade){
-				                                        	case 'Gold':
-				                                        		$products = 'RBS,DTGP'
-				                                        		break;
-				                                        	case 'Platinum':
-				                                        		$products = 'RBS,DTP'
-				                                        		break;
-				                                        	default:
-				                                        		$products = 'RBS,DTPP'
-				                                        		break;
+				                                        switch($receipt['ipid']){
+				                                        	case '31':
+			                                                    $products = '1';
+			                                                    break;
+			                                                case '62':
+			                                                    $products = '5';
+			                                                    break;
+			                                                case '64':
+			                                                    $products = '4';
+			                                                    break;
 				                                        }
 				                                        $result = $usa->createCustomer($userinfos['customerid'],$tmpeArr['password'],$userinfos['enrollerid'],$userinfos['enfirstname'],$userinfos['enlastname'],$userinfos['email'],$userinfos['phone'],$products);
 				                                        if(!empty($result['result'])){
@@ -865,14 +865,25 @@ class HapylifePayController extends HomeBaseController{
                                 $addactivation = D('Activation')->addAtivation($OrderDate,$riuid,$order['ir_receiptnum']);
                                 $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
                                 if($ir_status == 2){
-                                    $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],'RBS,DTP');
+                                	switch($order['ipid']){
+                                        case '31':
+                                            $products = '1';
+                                            break;
+                                        case '62':
+                                            $products = '5';
+                                            break;
+                                        case '64':
+                                            $products = '4';
+                                            break;
+                                    }
+                                    $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
                                     if(!empty($result['result'])){
                                         $log = addUsaLog($result['result']);
                                         $maps = json_decode($result['result'],true);
                                         $wv  = array(
                                                     'wvCustomerID' => $maps['wvCustomerID'],
                                                     'wvOrderID'    => $maps['wvOrderID'],
-                                                    'Products'     => 'RBS,DTP'
+                                                    'Products'     => $products
                                                 );
                                         $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                                         if($res){
