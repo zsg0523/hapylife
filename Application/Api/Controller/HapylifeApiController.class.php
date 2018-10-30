@@ -512,6 +512,7 @@ class HapylifeApiController extends HomeBaseController{
     public function newscontent(){
         $nid  = I('post.nid');
         $data = M('News')->where(array('nid'=>$nid))->find();
+        $data['addtime'] = date('Y-m-d',strtotime($data['addtime']));
         if($data){
             $this->ajaxreturn($data);
         }else{
@@ -1017,7 +1018,6 @@ class HapylifeApiController extends HomeBaseController{
                     'is_pull'  =>1
                 );
                 $proArr  = D('Product')->where($tmpe)->order('is_sort desc')->select();
-                $product = array_merge($proArr,$an_pro,$third_pro);
                 if(in_array($find['customerid'],$array)){
                     $an_pro = M('Product')->where(array('ip_type'=>4,'is_pull'=>0))->select();
                 }else{
@@ -1030,7 +1030,7 @@ class HapylifeApiController extends HomeBaseController{
                 }
                 break;
         }  
-        $data['grade'] = $product;
+        $data['grade'] = $products;
         if($data){
             $this->ajaxreturn($data);
         }else{

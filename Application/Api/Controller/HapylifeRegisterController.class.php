@@ -174,7 +174,7 @@ class HapylifeRegisterController extends HomeBaseController{
     * 获取首购产品
     **/ 
     public function new_purchase(){
-        $data = D('product')->where(array('ip_type'=>1,'is_pull'=>1))->select();
+        $data = D('product')->where(array('ip_type'=>1,'is_pull'=>1))->order('is_sort desc')->select();
         $this->ajaxreturn($data);
 
     }
@@ -637,7 +637,7 @@ class HapylifeRegisterController extends HomeBaseController{
                         $jsonStr = json_decode($createPayment['result'],true);
                         if($jsonStr['paymentId']){
                             // 发送短信提示
-                            $templateId ='208995';
+                            $templateId ='219345';
                             $params     = array($userinfo['customerid'],$wv['wvCustomerID']);
                             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                             if($sms['errmsg'] == 'OK'){
@@ -649,7 +649,7 @@ class HapylifeRegisterController extends HomeBaseController{
                                             'addressee' => $userinfo['lastname'].$userinfo['firstname'],
                                             'product_name' => $receiptlist['product_name'],
                                             'date' => time(),
-                                            'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfo['customerid'].'以及 DreamTrips 会员号码是'.$wv['wvCustomerID'].'，同时注意查收Rovia邮件。',
+                                            'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfo['customerid'].'以及 DreamTrips 会员号码是'.$wv['wvCustomerID'].'，同时注意查收DreamTrips邮件。',
                                             'customerid' => $userinfo['customerid']
                                 );
                                 $logs = M('SmsLog')->add($contents);

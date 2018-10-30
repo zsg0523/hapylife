@@ -103,6 +103,7 @@ class HapylifeAddController extends HomeBaseController{
                 $map['NotificationType']        = $data['NotificationType'];
                 $map['NotificationDescription'] = $data['NotificationDescription'];
                 $map['Messages']                = json_encode($value);
+                $map['AddTime']                 = time();
                 $res = M('wvNotification')->add($map);
                 if(!$res){
                     E("错误信息");
@@ -547,7 +548,7 @@ class HapylifeAddController extends HomeBaseController{
                     $int = implode(',',array_intersect($allStatus,$ir_status));
                     if(in_array($int,$allStatus)){
                         $usa    = new \Common\UsaApi\Usa;
-                        $createPayment = $usa->createPayment($value['CustomerId'],$value['OrderId'],date('Y-m-d H:i',strtotime($value['Date'])));
+                        $createPayment = $usa->createPayment($value['HplId'],$value['OrderId'],date('Y-m-d H:i',strtotime($value['Date'])));
                         $log = addUsaLog($createPayment['result']);
                         $jsonStr = json_decode($createPayment['result'],true);
                         if($jsonStr['paymentId']){

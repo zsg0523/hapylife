@@ -102,7 +102,7 @@ class PurchaseController extends HomeBaseController{
                 if(in_array($find['customerid'],$array)){
                     $an_pro = M('Product')->where(array('ip_type'=>4,'is_pull'=>0))->select();
                 }else{
-                    $an_pro  = M('Product')->where(array('ip_type'=>4,'is_pull'=>1))->select();
+                    $an_pro = M('Product')->where(array('ip_type'=>4,'is_pull'=>1))->select();
                 }
                 $product = array_merge($proArr,$an_pro,$third_pro);
                 foreach ($product as $key => $value) {
@@ -1114,7 +1114,7 @@ class PurchaseController extends HomeBaseController{
                                             $log = addUsaLog($createPayment['result']);
                                             $jsonStr = json_decode($createPayment['result'],true);
                                             if($jsonStr['paymentId']){
-                                                $templateId ='208995';
+                                                $templateId ='219345';
                                                 $params     = array($userinfo['customerid'],$maps['wvCustomerID']);
                                                 $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                                 if($sms['errmsg'] == 'OK'){
@@ -1125,7 +1125,7 @@ class PurchaseController extends HomeBaseController{
                                                                 'addressee' => $userinfo['shopaddress1'],
                                                                 'product_name' => $receiptlist['product_name'],
                                                                 'date' => time(),
-                                                                'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfo['customerid'].'以及 DreamTrips 会员号码是'.$maps['wvCustomerID'].'，同时注意查收Rovia邮件。',
+                                                                'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfo['customerid'].'以及 DreamTrips 会员号码是'.$maps['wvCustomerID'].'，同时注意查收DreamTrips邮件。',
                                                                 'customerid' => $userinfo['customerid']
                                                     );
                                                     $logs = M('SmsLog')->add($contents);
