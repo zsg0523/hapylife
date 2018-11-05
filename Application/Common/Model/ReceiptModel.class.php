@@ -964,15 +964,21 @@ class ReceiptModel extends BaseModel{
             $content[$k]['productno'] = $v['productno'];
             // 商品数量
             // $content[$k]['productname'] = $v['productname'];
-            switch ($v['ip_type']) {
-                case '1':
+            switch ($v['ipid']) {
+                case '31':
                     $content[$k]['productname'] = $v['productnams'].'*8瓶';
                     break;
-                case '3':
+                case '39':
                     $content[$k]['productname'] = $v['productnams'].'*2瓶';
                     break;
-                case '6':
+                case '61':
                     $content[$k]['productname'] = $v['productnams'].'*4瓶';
+                    break;
+                case '62':
+                    $content[$k]['productname'] = $v['productnams'].'*2瓶';
+                    break;
+                case '64':
+                    $content[$k]['productname'] = $v['productnams'].'*2瓶';
                     break;
                 default:
                     $content[$k]['productname'] = $v['productnams'].'*1瓶';
@@ -987,7 +993,7 @@ class ReceiptModel extends BaseModel{
             // 收货地址
             $content[$k]['ia_address'] = $v['ia_province'].$v['ia_city'].$v['ia_area'].$v['ia_address'];
         }
-        create_csv($content,$title);
+        create_csv($content,$title,date('YmdHis',time()));
         return;
     }
 

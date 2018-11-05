@@ -632,5 +632,4 @@ class HapylifeAddController extends HomeBaseController{
                 //     }
                 //     break;
             // }
-
 }

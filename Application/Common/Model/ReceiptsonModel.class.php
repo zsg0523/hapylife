@@ -223,15 +223,21 @@ class ReceiptsonModel extends BaseModel{
             //收货人电话
             $content[$k]['ia_phone']       = $v['ia_phone'];
             //产品数量
-            switch ($v['ip_type']) {
-                case '1':
+            switch ($v['ipid']) {
+                case '31':
                     $content[$k]['productname'] = $v['productnams'].'*8瓶';
                     break;
-                case '3':
+                case '39':
                     $content[$k]['productname'] = $v['productnams'].'*2瓶';
                     break;
-                case '6':
+                case '61':
                     $content[$k]['productname'] = $v['productnams'].'*4瓶';
+                    break;
+                case '62':
+                    $content[$k]['productname'] = $v['productnams'].'*2瓶';
+                    break;
+                case '64':
+                    $content[$k]['productname'] = $v['productnams'].'*2瓶';
                     break;
                 default:
                     $content[$k]['productname'] = $v['productnams'].'*1瓶';
@@ -240,7 +246,7 @@ class ReceiptsonModel extends BaseModel{
             // 产品信息
             $content[$k]['ir_desc']       = $v['ir_desc'];
         }
-        create_csv($content,$title);
+        create_csv($content,$title,date('YmdHis',time()));
         return;
     }
 
@@ -293,15 +299,21 @@ class ReceiptsonModel extends BaseModel{
                 $content[$k]['ib_name']        = $v['ia_name'];
             }
             //产品数量
-            switch ($v['ip_type']) {
-                case '1':
+            switch ($v['ipid']) {
+                case '31':
                     $content[$k]['productname'] = $v['productnams'].'*8瓶';
                     break;
-                case '3':
+                case '39':
                     $content[$k]['productname'] = $v['productnams'].'*2瓶';
                     break;
-                case '6':
+                case '61':
                     $content[$k]['productname'] = $v['productnams'].'*4瓶';
+                    break;
+                case '62':
+                    $content[$k]['productname'] = $v['productnams'].'*2瓶';
+                    break;
+                case '64':
+                    $content[$k]['productname'] = $v['productnams'].'*2瓶';
                     break;
                 default:
                     $content[$k]['productname'] = $v['productnams'].'*1瓶';
@@ -312,7 +324,7 @@ class ReceiptsonModel extends BaseModel{
             // 通用券的由来
             $content[$k]['operator']      = $v['operator'];
         }
-        create_csv($content,$title);
+        create_csv($content,$title,date('YmdHis',time()));
         return;
     }
 

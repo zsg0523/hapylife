@@ -1210,6 +1210,7 @@ class HapylifeController extends AdminBaseController{
 		// 导出excel
 		if($excel == 'excel'){
 			$data = D('Receipt')->getSendPageSonAlls(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$array,$ipid,$order='ir_paytime asc');
+			p($data);die;
 			$export_send_excel = D('Receipt')->export_send_excel($data['data']);
 		}else{
 			$this->assign($assign);
