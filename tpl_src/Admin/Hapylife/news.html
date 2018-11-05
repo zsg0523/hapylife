@@ -36,7 +36,7 @@
 						<tr>
 							<td>{$v['news_title']}</td>
 							<td><img src="{$v['news_picture']}" width='40' height='40'></td>
-							<td>{$v['news_content']}</td>
+							<td>{:htmlspecialchars_decode($v['news_content'])}</td>
 							<td>{$v['news_des']}</td>
 							<td>{$v['addtime']}</td>
 							<td>
@@ -77,14 +77,18 @@
 							</tr>
 							<tr>
 								<th width="15%">内容：</th>
-								<td>
-									<textarea  name="news_content" style="width:300px;height:100px;" class="textArea"></textarea>
-								</td>
+								<!-- 加载编辑器的容器 -->
+							    <script id="container" name="news_content" type="text/plain">
+							    </script>
+							    <!-- 配置文件 -->
+							    <script type="text/javascript" src="__PUBLIC__/statics/ueditor1_4_3/ueditor.config.js"></script>
+							    <!-- 编辑器源码文件 -->
+							    <script type="text/javascript" src="__PUBLIC__/statics/ueditor1_4_3/ueditor.all.js"></script>
 							</tr>
 							<tr>
 								<th width="15%">内容提要：</th>
 								<td>
-									<input class="input-medium" type="text" name="news_des">默认截取内容前20字
+									<textarea  name="news_des" style="width:300px;height:100px;" class="textArea"></textarea>
 								</td>
 							</tr>
 							<tr>
@@ -94,21 +98,9 @@
 								</td>
 							</tr>
 							<tr>
-								<td>&nbsp;</td>
-								<td>
-									<!-- 加载编辑器的容器 -->
-								    <script id="container" name="content" type="text/plain">
-								        这里写你的初始化内容
-								    </script>
-								    <!-- 配置文件 -->
-								    <script type="text/javascript" src="__PUBLIC__/statics/ueditor1_4_3/ueditor.config.js"></script>
-								    <!-- 编辑器源码文件 -->
-								    <script type="text/javascript" src="__PUBLIC__/statics/ueditor1_4_3/ueditor.all.js"></script>
-								    <!-- 实例化编辑器 -->
-								    <script type="text/javascript">
-								        var ue = UE.getEditor('container');
-								    </script>
-								</td>
+								<th>
+									<td>132132&quot;123123</td>
+								</th>
 							</tr>
 							<tr>
 								<th></th>
@@ -148,14 +140,18 @@
 							</tr>
 							<tr>
 								<th width="15%">内容：</th>
-								<td>
-									<textarea  name="news_content" style="width:300px;height:100px;" class="textArea"></textarea>
-								</td>
+								<!-- 加载编辑器的容器 -->
+							    <script id="container1" name="news_content" type="text/plain">
+							    </script>
+							    <!-- 配置文件 -->
+							    <script type="text/javascript" src="__PUBLIC__/statics/ueditor1_4_3/ueditor.config.js"></script>
+							    <!-- 编辑器源码文件 -->
+							    <script type="text/javascript" src="__PUBLIC__/statics/ueditor1_4_3/ueditor.all.js"></script>
 							</tr>
 							<tr>
 								<th width="15%">内容提要：</th>
 								<td>
-									<input class="input-medium" type="text" name="news_des">默认截取内容前20字
+									<textarea  name="news_des" style="width:300px;height:100px;" class="textArea"></textarea>
 								</td>
 							</tr>
 							<tr>
@@ -183,6 +179,12 @@
 	// 添加菜单
 	function add(){
 		$("input[name='title']").val('');
+		// 实例化编辑器 
+		var ue = UE.getEditor('container',{
+			initialFrameWidth:'430',
+        	zIndex:10055
+        });
+        
 		$('#bjy-add').modal('show');
 	}
 
@@ -194,8 +196,22 @@
 		var newsDes=$(obj).attr('newsDes');
 		$("input[name='id']").val(newsId);
 		$("input[name='news_title']").val(newsTitle);
-		$("textarea[name='news_content']").val(newsContent);
-		$("input[name='news_des']").val(newsDes);
+		$("#container1").val(newsContent);
+		$("textarea[name='news_des']").val(newsDes);
+		// 实例化编辑器 
+		var ue = UE.getEditor('container1',{
+			initialFrameWidth:'430',
+        	zIndex:10055
+        });
+        ue.ready(function() {
+		    //设置编辑器的内容
+		    // ue.setContent('hello');
+		    //获取html内容，返回: <p>hello</p>
+		    // var html = ue.getContent();
+		    //获取纯文本内容，返回: hello
+		    var txt = ue.getContentTxt();
+        	$("#container1").val(txt);
+		});
 		$('#bjy-edit').modal('show');
 	}
 	</script>

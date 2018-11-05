@@ -1,6 +1,6 @@
 <extend name="Public:base" />
 
-<block name="title">wv账号重置HPL系统密码</block>
+<block name="title">删除wv账号</block>
 <block name="content">
     <!-- 导航栏开始 -->
     <div class="page-header">
@@ -9,7 +9,7 @@
             &gt;
             Hapylife
             &gt;
-			wv账号重置HPL系统密码
+			删除wv账号
         </h1>
     </div>
     <div class="col-xs-12">
@@ -39,7 +39,8 @@
 							<td>{$v.customerid}</td>
 							<td>{$v.lastname}</td>
 							<td>{$v.firstname}</td>
-							<td><a href="javascript:if(confirm('确定重置？'))location='{:U('Admin/Reset/resetPsd',array('customerid'=>$v['customerid']))}'">点击重置</a></td>
+							<!-- <td><a href="javascript:if(confirm('确定重置？'))location='{:U('Admin/Reset/resetPsd',array('customerid'=>$v['customerid']))}'">点击重置</a></td> -->
+							<td><a href="javascript:if(confirm('确定删除？'))location='{:U('Admin/Reset/delectAccount',array('customerid'=>$v['customerid']))}'">点击删除</a></td>
 						</tr>
 					</foreach>
 				</table>

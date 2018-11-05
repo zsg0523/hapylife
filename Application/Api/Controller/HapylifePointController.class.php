@@ -282,7 +282,7 @@ class HapylifePointController extends HomeBaseController{
                 }else{
                     // 请填写银行账号
                     $data['status'] = 6;
-                    $data['msg'] = '请填写银行账号';
+                    $data['msg'] = '请添加或选择银行信息';
                     $this->ajaxreturn($data);
                 }
             }else{

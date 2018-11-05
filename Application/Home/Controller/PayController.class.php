@@ -356,28 +356,38 @@ class PayController extends HomeBaseController{
                                                 );
                                                 $res = M('User')->where(array('iuid'=>$userinfos['iuid']))->save($wv);
                                                 if($res){
+                                                    $templateId ='219345';
+                                                    $params     = array($userinfos['customerid'],$maps['wvCustomerID']);
+                                                    $sms        = D('Smscode')->sms($userinfos['acnumber'],$userinfos['phone'],$params,$templateId);
+                                                    if($sms['errmsg'] == 'OK'){
+                                                        $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();
+                                                        $contents = array(
+                                                            'acnumber' => $userinfos['acnumber'],
+                                                            'phone' => $userinfos['phone'],
+                                                            'operator' => '系统',
+                                                            'addressee' => $status['ia_name'],
+                                                            'product_name' => $receiptlist['product_name'],
+                                                            'date' => time(),
+                                                            'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfos['customerid'].'以及 DreamTrips 会员号码是'.$maps['wvCustomerID'].'，同时注意查收DreamTrips邮件。',
+                                                            'customerid' => $userinfos['customerid']
+                                                        );
+                                                        $logs = M('SmsLog')->add($contents);
+                                                    }
+
+                                                    // 给上线发短信
+                                                    $enrollerinfo = M('User')->where(array('CustomerID'=>$userinfos['enrollerid']))->find(); 
+                                                    $templateId ='220861';
+                                                    $params     = array($enrollerinfo['customerid'],$userinfos['customerid']);
+                                                    $sms        = D('Smscode')->sms($enrollerinfo['acnumber'],$enrollerinfo['phone'],$params,$templateId);
+                                                    if($sms['errmsg'] == 'OK'){
+                                                        $addressee = $enrollerinfo['lastname'].$enrollerinfo['firstname'];
+                                                        $contents = '尊敬的'.$enrollerinfo['customerid'].'会员，您增加一名成员：'.$userinfos['customerid'];
+                                                        $addlog = D('Smscode')->addLog($enrollerinfo['acnumber'],$enrollerinfo['phone'],'系统',$addressee,'上线接收短信',$contents,$enrollerinfo['customerid']);
+                                                    }
+
                                                     $createPayment = $usa->createPayment($userinfos['customerid'],$maps['wvOrderID'],date('Y-m-d H:i',time()));
                                                     $log = addUsaLog($createPayment['result']);
-                                                    $jsonStr = json_decode($createPayment['result'],true);
-                                                    if($jsonStr['paymentId']){
-                                                        $templateId ='219345';
-                                                        $params     = array($userinfos['customerid'],$maps['wvCustomerID']);
-                                                        $sms        = D('Smscode')->sms($userinfos['acnumber'],$userinfos['phone'],$params,$templateId);
-                                                        if($sms['errmsg'] == 'OK'){
-                                                            $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();
-                                                            $contents = array(
-                                                                'acnumber' => $userinfos['acnumber'],
-                                                                'phone' => $userinfos['phone'],
-                                                                'operator' => '系统',
-                                                                'addressee' => $status['ia_name'],
-                                                                'product_name' => $receiptlist['product_name'],
-                                                                'date' => time(),
-                                                                'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfos['customerid'].'以及 DreamTrips 会员号码是'.$maps['wvCustomerID'].'，同时注意查收DreamTrips邮件。',
-                                                                'customerid' => $userinfos['customerid']
-                                                            );
-                                                            $logs = M('SmsLog')->add($contents);
-                                                        }
-                                                    }
+
                                                     // 支付完成
                                                     $this->success('注册成功',U('Home/Register/new_regsuccess',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
                                                 }
@@ -433,7 +443,11 @@ class PayController extends HomeBaseController{
                                             $jsonStr = json_decode($createPayment['result'],true);
                                             // p($jsonStr);die;
                                             if($jsonStr['paymentId']){
-                                                $showProduct = M('User')->where(array('iuid'=>$receipt['riuid']))->setfield('showProduct',0);
+                                                // 检测所有月费单是否存在未支付
+                                                $allIrstatus = M('Receipt')->where(array('ir_ordertype'=>3,'rCustomerID'=>$userinfo['customerid']))->getField('ir_status',true);
+                                                if(!in_array(0,$allIrstatus) && !in_array(7,$allIrstatus)){
+                                                    $statusResult = M('User')->where(array('customerid'=>$userinfo['customerid']))->setfield('showProduct','0');
+                                                }
                                                 // 支付完成
                                                 // $this->success('完成支付',U('Home/Purchase/center'));
                                                 $this->success('完成支付',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
@@ -485,36 +499,21 @@ class PayController extends HomeBaseController{
     /**
     *检查用户DT是否足够支付
     **/
-//     public function getUserDt(){
-//         $iuid    = $_SESSION['user']['id'];
-// //         $iuid    = I('post.iuid');
-//         $ip_dt   = I('post.ip_dt');
-//         $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
-//         $bcsub   = bcsub($userinfo['iu_dt'],$ip_dt,2);
-//         $data['iu_dt'] =$userinfo['iu_dt'];
-//         $data['bc_dt'] =$bcsub;
-//         if($bcsub>=0){
-//             $data['status']=1;
-//             $data['msg']   ='DT充足';
-//             $this->ajaxreturn($data);
-//         }else{
-//             $data['status']=0;
-//             $data['msg']   ='DT不足';
-//             $this->ajaxreturn($data);
-//         }
-//     }
     public function getUserDt(){
         $iuid    = $_SESSION['user']['id'];
-//         $iuid    = I('post.iuid');
         $ip_dt   = I('post.ip_dt');
         $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
         // 获取用户在美国的dtp
         $usa = new \Common\UsaApi\Usa;
         $result = $usa->dtPoint($userinfo['customerid']);
-        foreach($result['softCashCategories'] as $key=>$value){
-            if($value['categoryType'] == 'DreamTripPoints'){
-                $userinfo['iu_dt'] = $value['balance'];
+        if(!$result['errors']){
+            foreach($result['softCashCategories'] as $key=>$value){
+                if($value['categoryType'] == 'DreamTripPoints'){
+                    $userinfo['iu_dt'] = $value['balance'];
+                }
             }
+        }else{
+            $userinfo['iu_dt'] = 0;
         }
         $bcsub   = bcsub($userinfo['iu_dt'],$ip_dt,2);
         $data['iu_dt'] =$userinfo['iu_dt'];

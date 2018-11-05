@@ -39,23 +39,6 @@ class HapylifeDTPointController extends HomeBaseController{
     /**
     *检查用户DT
     **/
-    // public function dtpay(){
-    //     $iuid    = I('post.iuid');
-    //     $ip_dt   = I('post.ip_dt');
-    //     $ipid    = I('post.ipid');
-    //     $data    = M('User')->where(array('iuid'=>$iuid))->find();
-    //     $bcsub   = bcsub($data['iu_dt'],$ip_dt,2);
-    //     $data['bc_dt'] =$bcsub;
-    //     $data['ipid']  =$ipid;
-    //     $data['ip_dt'] =$ip_dt;
-    //     if($data){
-    //         $data['status'] = 1;
-    //         $this->ajaxreturn($data);
-    //     }else{
-    //         $data['status'] = 0;
-    //         $this->ajaxreturn($data);
-    //     }
-    // }
     public function dtpay(){
         $iuid    = I('post.iuid');
         $ip_dt   = I('post.ip_dt');
@@ -64,10 +47,14 @@ class HapylifeDTPointController extends HomeBaseController{
         // 获取用户在美国的dtp
         $usa = new \Common\UsaApi\Usa;
         $result = $usa->dtPoint($data['customerid']);
-        foreach($result['softCashCategories'] as $key=>$value){
-            if($value['categoryType'] == 'DreamTripPoints'){
-                $data['iu_dt'] = $value['balance'];
+        if(!$result['errors']){
+            foreach($result['softCashCategories'] as $key=>$value){
+                if($value['categoryType'] == 'DreamTripPoints'){
+                    $data['iu_dt'] = $value['balance'];
+                }
             }
+        }else{
+           $data['iu_dt'] = 0; 
         }
         $bcsub   = bcsub($data['iu_dt'],$ip_dt,2);
         $data['bc_dt'] =$bcsub;

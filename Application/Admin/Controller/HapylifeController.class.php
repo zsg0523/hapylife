@@ -22,12 +22,13 @@ class HapylifeController extends AdminBaseController{
 	public function add_news(){
 		$upload=post_upload();
 		$data=array(
-			'news_title'	=>I('news_title'),
-			'news_content'	=>I('news_content'),
+			'news_title'	=>I('post.news_title'),
+			'news_content'	=>I('post.news_content'),
 			'addtime'		=>date('Y-m-d H:i:s'),
 			'news_des'		=>I('post.news_des')?I('post.news_des'):mb_substr(I('post.news_content'),0,20).'.....',
 			'news_picture'	=>C('WEB_URL').$upload['name']
 		);
+		p($data);die;
 		$result=D('News')->addData($data);
 		if($result){
 			$this->redirect('Admin/Hapylife/news');
@@ -1736,6 +1737,134 @@ class HapylifeController extends AdminBaseController{
 		}
 		$assign = pages($son,$p,20);
 		$this->assign($assign);
+		$this->display();
+	}
+
+	/**
+	* wv推送消息列表
+	**/ 
+	public function wvNotification(){
+		$p = I('get.p',1);
+		$CustomerId = I('get.CustomerId');
+		$HplId = I('get.HplId');
+		$OrderId = I('get.OrderId');
+		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:0;
+		$data = M('wvNotification')->where(array('NotificationType'=>1))->order('id DESC')->select();
+		foreach($data as $key=>$value){
+			$data[$key]['messages'] = json_decode($value['messages'],true);
+			if($starttime && empty($endtime)){
+				if(strtotime($data[$key]['date']) >= $starttime){
+					if($CustomerId && empty($HplId) && empty($OrderId)){
+						if($data[$key]['messages']['CustomerId'] == $CustomerId){
+							$list[] = $data[$key];
+						}
+					}else if(empty($CustomerId) && empty($HplId) && $OrderId){
+						if($data[$key]['messages']['OrderId'] == $OrderId){
+							$list[] = $data[$key];
+						}
+					}else if(empty($CustomerId) && $HplId && empty($OrderId)){
+						if($data[$key]['messages']['HplId'] == $HplId){
+							$list[] = $data[$key];
+						}
+					}else if($CustomerId && $HplId && empty($OrderId)){
+						if($data[$key]['messages']['CustomerId'] == $CustomerId && $data[$key]['messages']['HplId'] == $HplId){
+							$list[] = $data[$key];
+						}
+					}else if(empty($CustomerId) && $HplId && $OrderId){
+						if($data[$key]['messages']['HplId'] == $HplId && $data[$key]['messages']['OrderId'] == $OrderId){
+							$list[] = $data[$key];
+						}
+					}else if($CustomerId && empty($HplId) && $OrderId){
+						if($data[$key]['messages']['CustomerId'] == $CustomerId && $data[$key]['messages']['OrderId'] == $OrderId){
+							$list[] = $data[$key];
+						}
+					}else if($CustomerId && $HplId && $OrderId){
+						if($data[$key]['messages']['CustomerId'] == $CustomerId && $data[$key]['messages']['HplId'] == $HplId && $data[$key]['messages']['OrderId'] == $OrderId){
+							$list[] = $data[$key];
+						}
+					}else{
+						$list[] = $data[$key];
+					}
+				}
+			}else if($starttime && $endtime){
+				if(strtotime($data[$key]['date']) >= $starttime && strtotime($data[$key]['date']) <= $endtime){
+					if($CustomerId && empty($HplId) && empty($OrderId)){
+						if($data[$key]['messages']['CustomerId'] == $CustomerId){
+							$list[] = $data[$key];
+						}
+					}else if(empty($CustomerId) && empty($HplId) && $OrderId){
+						if($data[$key]['messages']['OrderId'] == $OrderId){
+							$list[] = $data[$key];
+						}
+					}else if(empty($CustomerId) && $HplId && empty($OrderId)){
+						if($data[$key]['messages']['HplId'] == $HplId){
+							$list[] = $data[$key];
+						}
+					}else if($CustomerId && $HplId && empty($OrderId)){
+						if($data[$key]['messages']['CustomerId'] == $CustomerId && $data[$key]['messages']['HplId'] == $HplId){
+							$list[] = $data[$key];
+						}
+					}else if(empty($CustomerId) && $HplId && $OrderId){
+						if($data[$key]['messages']['HplId'] == $HplId && $data[$key]['messages']['OrderId'] == $OrderId){
+							$list[] = $data[$key];
+						}
+					}else if($CustomerId && empty($HplId) && $OrderId){
+						if($data[$key]['messages']['CustomerId'] == $CustomerId && $data[$key]['messages']['OrderId'] == $OrderId){
+							$list[] = $data[$key];
+						}
+					}else if($CustomerId && $HplId && $OrderId){
+						if($data[$key]['messages']['CustomerId'] == $CustomerId && $data[$key]['messages']['HplId'] == $HplId && $data[$key]['messages']['OrderId'] == $OrderId){
+							$list[] = $data[$key];
+						}
+					}else{
+						$list[] = $data[$key];
+					}
+				}
+			}else if(empty($starttime) && empty($endtime)){
+				if($CustomerId && empty($HplId) && empty($OrderId)){
+					if($data[$key]['messages']['CustomerId'] == $CustomerId){
+						$list[] = $data[$key];
+					}
+				}else if(empty($CustomerId) && empty($HplId) && $OrderId){
+					if($data[$key]['messages']['OrderId'] == $OrderId){
+						$list[] = $data[$key];
+					}
+				}else if(empty($CustomerId) && $HplId && empty($OrderId)){
+					if($data[$key]['messages']['HplId'] == $HplId){
+						$list[] = $data[$key];
+					}
+				}else if($CustomerId && $HplId && empty($OrderId)){
+					if($data[$key]['messages']['CustomerId'] == $CustomerId && $data[$key]['messages']['HplId'] == $HplId){
+						$list[] = $data[$key];
+					}
+				}else if(empty($CustomerId) && $HplId && $OrderId){
+					if($data[$key]['messages']['HplId'] == $HplId && $data[$key]['messages']['OrderId'] == $OrderId){
+						$list[] = $data[$key];
+					}
+				}else if($CustomerId && empty($HplId) && $OrderId){
+					if($data[$key]['messages']['CustomerId'] == $CustomerId && $data[$key]['messages']['OrderId'] == $OrderId){
+						$list[] = $data[$key];
+					}
+				}else if($CustomerId && $HplId && $OrderId){
+					if($data[$key]['messages']['CustomerId'] == $CustomerId && $data[$key]['messages']['HplId'] == $HplId && $data[$key]['messages']['OrderId'] == $OrderId){
+						$list[] = $data[$key];
+					}
+				}else{
+					$list[] = $data[$key];
+				}
+			}else{
+				$list[] = $data[$key];
+			}
+		}
+		p($list);
+		$assign = pages($list,$p,20);
+		$this->assign($assign);
+		$this->assign('CustomerId',$CustomerId);
+		$this->assign('HplId',$HplId);
+		$this->assign('OrderId',$OrderId);
+		$this->assign('starttime',I('get.starttime'));
+		$this->assign('endtime',I('get.endtime'));
 		$this->display();
 	}
 }

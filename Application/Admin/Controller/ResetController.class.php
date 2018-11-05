@@ -52,6 +52,19 @@ class ResetController extends AdminBaseController{
 	}
 
 	/**
+	* 删除wv账号
+	**/ 
+	public function delectAccount(){
+		$customerid = I('get.customerid');
+		$result = M('User')->where(array('CustomerID'=>$customerid))->delete();
+		if($result){
+			$this->success('删除成功',U('Admin/Reset/reset'));
+		}else{
+			$this->error('删除失败',U('Admin/Reset/reset'));
+		}
+	}
+
+	/**
 	 * hpl账号重置密码
 	 * 列表
 	 **/

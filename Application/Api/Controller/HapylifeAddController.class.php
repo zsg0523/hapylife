@@ -103,7 +103,7 @@ class HapylifeAddController extends HomeBaseController{
                 $map['NotificationType']        = $data['NotificationType'];
                 $map['NotificationDescription'] = $data['NotificationDescription'];
                 $map['Messages']                = json_encode($value);
-                $map['AddTime']                 = time();
+                $map['AddTime']                 = date('Y-m-d H:i:s');
                 $res = M('wvNotification')->add($map);
                 if(!$res){
                     E("错误信息");
@@ -399,27 +399,44 @@ class HapylifeAddController extends HomeBaseController{
         foreach($message as $key=>$value){
             $ir_receiptnum = M('Receipt')->getField('ir_receiptnum',true);
             $userinfo = M('User')->where(array('CustomerId'=>$value['HplId']))->find();
+            // 推荐上线
+            $enrollerinfo = M('User')->where(array('CustomerId'=>$userinfo['enrollerid']))->find();
             // 收信人名称
             $addressee = $userinfo['lastname'].$userinfo['firstname'];
+            // 上线名称
+            $enrollername = $enrollerinfo['lastname'].$enrollerinfo['firstname'];
             switch ($value['OrderTypeId']) {
                 case '4':
                     // 加5天模板
                     $time = date('Y-m',strtotime($value['Date']));
                     $endTime = date('Y-m-d',strtotime($value['Date'])+2*24*3600);
-                    // 发送短信提示
-                    $templateId ='208999';
                     $network = 'www.dreamtrips.com';
-                    $params     = array($time,$endTime,$network);
-                    $sms        = D('Smscode')->sms(86,$userinfo['phone'],$params,$templateId);
-                    $content = '这是'.$time.'续费通知，请在'.$endTime.'前完成缴费，避免无法登录'.$network;
-                    if($sms['result'] == 0){
-                        $result = D('Smscode')->addLog(86,$userinfo['phone'],'系统',$addressee,'续费通知',$content,$userinfo['customerid']);
+                    // 发送短信提示
+                    $templateId1 ='208999';
+                    $params1     = array($time,$endTime,$network);
+                    $sms1        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params1,$templateId1);
+                    $content1 = '这是'.$time.'续费通知，请在'.$endTime.'前完成缴费，避免无法登录'.$network;
+                    if($sms1['result'] == 0){
+                        $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'续费通知',$content1,$userinfo['customerid']);
                     }else{
-                        $result = D('Smscode')->addLog(86,$userinfo['phone'],'系统',$addressee,$sms['errmsg'],$content,$userinfo['customerid']);
+                        $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,$sms1['errmsg'],$content1,$userinfo['customerid']);
                     }
+
                     if($result){
                         $status = M('wvNotification')->where(array('id'=>$key))->setfield('status','1');
                     }
+
+                    // 发送短信提示
+                    $templateId2 ='221573';
+                    $params2     = array($userinfo['customerid'],$time,$network);
+                    $sms2        = D('Smscode')->sms($enrollerinfo['acnumber'],$enrollerinfo['phone'],$params2,$templateId2);
+                    $content2 = ' 您的成员'.$userinfo['customerid'].'收到续费通知，请提醒成员在'.$time.'前完成缴费，避免无法登录'.$network;
+                    if($sms2['result'] == 0){
+                        $result = D('Smscode')->addLog($enrollerinfo['acnumber'],$enrollerinfo['phone'],'系统',$enrollername,'下线续费通知',$content2,$enrollerinfo['customerid']);
+                    }else{
+                        $result = D('Smscode')->addLog($enrollerinfo['acnumber'],$enrollerinfo['phone'],'系统',$enrollername,$sms2['errmsg'],$content2,$enrollerinfo['customerid']);
+                    }
+
                     //商品信息
                     $product = M('Product')->where(array('ipid'=>39))->find();
                     // 设置显示正常月费包
@@ -517,7 +534,7 @@ class HapylifeAddController extends HomeBaseController{
                                 'action'    =>1,
                                 'type'      =>2,
                                 'create_time' =>time(),      
-                                'create_month'=>date('Y-m-d',time()),
+                                'create_month'=>date('Y-m',time()),
                             );
                             $addlog = M('Log')->add($log);
                         }
@@ -615,6 +632,5 @@ class HapylifeAddController extends HomeBaseController{
                 //     }
                 //     break;
             // }
-
 
 }
