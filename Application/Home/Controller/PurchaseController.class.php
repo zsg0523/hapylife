@@ -348,15 +348,15 @@ class PurchaseController extends HomeBaseController{
                 $explode2 = explode(' ',$weekly['titleRank']);
                 $paidRank = substr($explode1[0],0,1).substr($explode1[1],0,1);
                 $titleRank = substr($explode2[0],0,1).substr($explode2[1],0,1);
-                // 组合数据
-                switch ($weekly['personalActive']) {
-                    case '0':
-                        $weekly['personalActive'] = '未启动';
-                        break;
-                    case '1':
-                        $weekly['personalActive'] = '启动';
-                        break;
-                }
+                // // 组合数据
+                // switch ($weekly['personalActive']) {
+                //     case '0':
+                //         $weekly['personalActive'] = '未启动';
+                //         break;
+                //     case '1':
+                //         $weekly['personalActive'] = '启动';
+                //         break;
+                // }
                 $Serial_W = array(
                     'date' => $weekly['description'],
                     'result' => $weekly['personalActive'].'-'.$paidRank.'-'.$titleRank,
@@ -369,15 +369,15 @@ class PurchaseController extends HomeBaseController{
                 $explode2 = explode(' ',$monthly['titleRank']);
                 $paidRank = substr($explode1[0],0,1).substr($explode1[1],0,1);
                 $titleRank = substr($explode2[0],0,1).substr($explode2[1],0,1);
-                // 组合数据
-                switch ($monthly['personalActive']) {
-                    case '0':
-                        $monthly['personalActive'] = '未启动';
-                        break;
-                    case '1':
-                        $monthly['personalActive'] = '启动';
-                        break;
-                }
+                // // 组合数据
+                // switch ($monthly['personalActive']) {
+                //     case '0':
+                //         $monthly['personalActive'] = '未启动';
+                //         break;
+                //     case '1':
+                //         $monthly['personalActive'] = '启动';
+                //         break;
+                // }
                 $Serial_M = array(
                     'date' => $monthly['description'],
                     'result' => $monthly['personalActive'].'-'.$paidRank.'-'.$titleRank,
@@ -1072,6 +1072,9 @@ class PurchaseController extends HomeBaseController{
                                     'ia_name'    =>$userinfo['lastname'].$userinfo['firstname'],
                                     'ia_name_en' =>$userinfo['enlastname'].$userinfo['enfirstname'],
                                     'ia_phone'   =>$userinfo['phone'],
+                                    'ia_province'=>$userinfo['shopprovince'],
+                                    'ia_city'    =>$userinfo['shopcity'],
+                                    'ia_area'    =>$userinfo['shoparea'],
                                     'ia_address' =>$userinfo['shopaddress1'],
                                     'ir_unpaid'  =>$sub,
                                     'ir_unpoint' =>$unp,
@@ -1107,6 +1110,8 @@ class PurchaseController extends HomeBaseController{
                             }
                             //更新订单信息
                             $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+                            // 获取产品名称
+                            $productName = D('Product')->where(array('ipid'=>$order['ipid']))->getfield('ip_name_zh');
                             // 检测订单状态
                             $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
                             if($upreceipt){ 
@@ -1135,8 +1140,8 @@ class PurchaseController extends HomeBaseController{
                                                 );
                                         $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                                         if($res){
-                                            $templateId ='219345';
-                                            $params     = array($userinfo['customerid'],$maps['wvCustomerID']);
+                                            $templateId ='223637';
+                                            $params     = array($userinfo['customerid'],$maps['wvCustomerID'],$productName);
                                             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                             if($sms['errmsg'] == 'OK'){
                                                 $contents = array(
@@ -1146,7 +1151,7 @@ class PurchaseController extends HomeBaseController{
                                                             'addressee' => $userinfo['lastname'].$userinfo['firstname'],
                                                             'product_name' => $receiptlist['product_name'],
                                                             'date' => time(),
-                                                            'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfo['customerid'].'以及 DreamTrips 会员号码是'.$maps['wvCustomerID'].'，同时注意查收DreamTrips邮件。',
+                                                            'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：'.$userinfo['customerid'].'会员号码：'.$maps['wvCustomerID'].'产品：'.$productName.'使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
                                                             'customerid' => $userinfo['customerid']
                                                 );
                                                 $logs = M('SmsLog')->add($contents);

@@ -219,7 +219,12 @@ class ReceiptsonModel extends BaseModel{
                 $content[$k]['ib_name']        = $v['ia_name'];
             }
             //收货详细地址
-            $content[$k]['ia_address']     = $v['shopprovince'].$v['shopcity'].$v['shoparea'].$v['ia_address'];
+            if($v['ia_province'] && $v['ia_city'] && $v['ia_area'] && $v['ia_address']){
+                $content[$k]['ia_address'] = $v['ia_province'].$v['ia_city'].$v['ia_area'].$v['ia_address'];
+            }else{
+                $content[$k]['ia_address'] = $v['shopprovince'].$v['shopcity'].$v['shoparea'].$v['shopaddress1'];
+            }
+            // $content[$k]['ia_address']     = $v['shopprovince'].$v['shopcity'].$v['shoparea'].$v['ia_address'];
             //收货人电话
             $content[$k]['ia_phone']       = $v['ia_phone'];
             //产品数量
