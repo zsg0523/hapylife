@@ -347,7 +347,7 @@ class HapylifeChangeController extends HomeBaseController{
                 if($sms['errmsg'] == 'OK'){
                     $addressee = $userinfo['lastname'].$userinfo['firstname'];
                     $contents = '您的Hapylife账号为：'.$wvcustomerid.'，DT的ID：'.$customerid.'。';
-                    $addlog = D('Smscode')->addLog($acnumber,$phoneNumber,'系统',$addressee,'忘记账号',time(),$contents,$customerid);
+                    $addlog = D('Smscode')->addLog($acnumber,$phoneNumber,'系统',$addressee,$contents,$customerid);
                 }
                 if($addlog){
                     $sample = array(
