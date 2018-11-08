@@ -7730,3 +7730,27 @@
 2018-10-29 12:10:35**********{"errors":[{"parameter":"WVOrderID","message":"Invalid format","code":1002}]}**********
 2018-10-29 12:12:07**********{"errors":[{"parameter":"SponsorID","message":"The id does not exist","code":1003}]}**********
 2018-10-29 12:12:08**********{"errors":[{"parameter":"WVOrderID","message":"Invalid format","code":1002}]}**********
+2018-11-02 16:25:32**********{
+	"Messages":
+		[
+			{"OrderId":298818649,"CustomerId":71919789,"CustomerName":"SHUANG YAN","HplId":"HPL00123596","OrderTypeId":4,"OrderType":"Import","OrderStatus":"Pending","OrderDate":"2018-10-30T03:20:34","Amount":604.9200}
+		],
+	"Date":"2018-11-01T01:00:04.2782198Z",
+	"NotificationType":1,
+	"NotificationDescription":"Payment reminder"}**********
+2018-11-02 16:25:53**********{
+	"Messages":
+		[
+			{"OrderId":298818649,"CustomerId":71919789,"CustomerName":"SHUANG YAN","HplId":"HPL00123596","OrderTypeId":4,"OrderType":"Import","OrderStatus":"Pending","OrderDate":"2018-10-30T03:20:34","Amount":604.9200}
+		],
+	"Date":"2018-11-01T01:00:04.2782198Z",
+	"NotificationType":1,
+	"NotificationDescription":"Payment reminder"}**********
+2018-11-02 17:57:52**********{
+	"Messages":
+		[
+			{"OrderId":298818649,"CustomerId":71919789,"CustomerName":"SHUANG YAN","HplId":"HPL00123596","OrderTypeId":4,"OrderType":"Import","OrderStatus":"Pending","OrderDate":"2018-10-30T03:20:34","Amount":604.9200}
+		],
+	"Date":"2018-11-01T01:00:04.2782198Z",
+	"NotificationType":1,
+	"NotificationDescription":"Payment reminder"}**********

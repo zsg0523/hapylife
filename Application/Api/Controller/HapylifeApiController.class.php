@@ -494,7 +494,12 @@ class HapylifeApiController extends HomeBaseController{
                 ->select();
         foreach($data as $key=>$value){
             $data[$key]['addtime'] = date('Y-m-d',strtotime($value['addtime'])); 
+            $data[$key]['news_content'] = htmlspecialchars_decode($value['news_content']);
         }
+        // p($data);die;
+        // foreach($data as $key=>$value){
+        //     $data[$key]['news_content'] = stripslashes($value['news_content']);
+        // }
         if($data){
             $this->ajaxreturn($data);
         }else{
@@ -512,6 +517,7 @@ class HapylifeApiController extends HomeBaseController{
     public function newscontent(){
         $nid  = I('post.nid');
         $data = M('News')->where(array('nid'=>$nid))->find();
+        $data['addtime'] = date('Y-m-d',strtotime($data['addtime']));
         if($data){
             $this->ajaxreturn($data);
         }else{
@@ -683,7 +689,7 @@ class HapylifeApiController extends HomeBaseController{
                  //生成日志记录
                 $content = '您的'.$con.'订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
                 $log = array(
-                    'from_iuid' =>$iuid,
+                    'iuid' =>$iuid,
                     'content'   =>$content,
                     'action'    =>0,
                     'type'      =>2,
@@ -721,7 +727,7 @@ class HapylifeApiController extends HomeBaseController{
                                 if($bcsub>=0){
                                     $saveDt= M('User')->where(array('CustomerId'=>$userinfo['customerid']))->setfield('iu_dt',$bcsub);
                                     $usa    = new \Common\UsaApi\Usa;
-                                    $result = $usa->redeemVirtual($userinfo['customerid'],$product['ip_dt'],'DreamTripPoints',$product['ip_name_zh']);
+                                    $result = $usa->redeemVirtual($userinfo['customerid'],$product['ip_dt'],'DreamTripPoints','AY Product');
                                     $jsonStr = json_decode($result['result'],true);
                                     if($jsonStr['message']){
                                         $dtNo = 'DT'.date('YmdHis').rand(10000, 99999);
@@ -757,6 +763,18 @@ class HapylifeApiController extends HomeBaseController{
                                         $addtmp = M('Getdt')->add($tmp);
                                         $where= array('ir_status'=>202,'ir_dt'=>0);
                                         $save = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->save($where);
+
+                                        // 发送短信提示
+                                        $templateId ='221572';
+                                        $params     = array($userinfo['customerid'],$order_num,$product['ip_dt'],$bcsub);
+                                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                                        $content = '尊敬的'.$userinfo['customerid'].'会员，您的订单'.$order_num.'消费了'.$product['ip_dt'].'DT积分，现在DT余额为'.$bcsub;
+                                        if($sms['result'] == 0){
+                                            $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$tmp['hu_username'],'DT消费通知',$content,$userinfo['customerid']);
+                                        }else{
+                                            $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$tmp['hu_username'],$sms['errmsg'],$content,$userinfo['customerid']);
+                                        }
+                                        
                                         $order['status'] = 1;
                                         $order['msg']    = '订单已生成';
                                         $this->ajaxreturn($order);
@@ -1017,7 +1035,6 @@ class HapylifeApiController extends HomeBaseController{
                     'is_pull'  =>1
                 );
                 $proArr  = D('Product')->where($tmpe)->order('is_sort desc')->select();
-                $product = array_merge($proArr,$an_pro,$third_pro);
                 if(in_array($find['customerid'],$array)){
                     $an_pro = M('Product')->where(array('ip_type'=>4,'is_pull'=>0))->select();
                 }else{
@@ -1030,7 +1047,7 @@ class HapylifeApiController extends HomeBaseController{
                 }
                 break;
         }  
-        $data['grade'] = $product;
+        $data['grade'] = $products;
         if($data){
             $this->ajaxreturn($data);
         }else{

@@ -1,0 +1,87 @@
+<extend name="Public:base" />
+
+<block name="title">wv推送消息</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            首页
+            &gt;
+            Hapylife
+            &gt;
+			wv推送消息
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+            	<li class="active">
+					<a href="#home" data-toggle="tab">wv推送消息列表</a>
+			    </li>
+            </ul>
+		</div>
+            <div class="tab-content">
+            	<form action="{:U('Admin/Hapylife/wvNotification')}" method="get">
+					<table class="table table-striped table-bordered table-hover table-condensed">
+						<tr class="wvbonus-tr">
+							<th><input type="text" name='OrderId' placeholder="OrderId" value="{$OrderId}" /></th>
+							<th><input type="text" name='CustomerId' placeholder="CustomerId" value="{$CustomerId}" /></th>
+							<th></th>
+							<th><input type="text" name='HplId' placeholder="HplId" value="{$HplId}" /></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th>
+								<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px; width: 49%;" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off" placeholder="starttime" />
+				    			<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px; width: 49%; float: right;" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off" placeholder="endtime" />
+							</th>
+							<th></th>
+							<th><input class='btn btn-sm' type="submit" value="筛选" /></th>
+						</tr>
+						<tr>
+							<th >OrderId</th>
+							<th >CustomerId</th>
+							<th >CustomerName</th>
+							<th >HplId</th>
+	                        <th >OrderTypeId</th>
+	                        <th >OrderType</th>
+	                        <th >OrderStatus</th>
+	                        <th >OrderDate</th>
+	                        <th >Amount</th>
+	                        <th >Date</th>
+	                        <th >NotificationDescription</th>
+	                        <th >AddTime</th>
+						</tr>
+						<foreach name="data" item="v">
+							<tr>
+								<td>{$v.messages.OrderId}</td>
+								<td>{$v.messages.CustomerId}</td>
+								<td>{$v.messages.CustomerName}</td>
+								<td>{$v.messages.HplId}</td>
+								<td>{$v.messages.OrderTypeId}</td>
+								<td>{$v.messages.OrderType}</td>
+								<td>{$v.messages.OrderStatus}</td>
+								<td>{$v.messages.OrderDate}</td>
+								<td>{$v.messages.Amount}</td>
+								<td>{$v.date}</td>
+								<td>{$v.notificationdescription}</td>
+								<td>{$v.addtime}</td>
+							</tr>
+						</foreach>
+					</table>
+            	</form>
+				<div class='page'>
+					{$page}
+				</div>
+            </div>
+        </div>
+    </div>
+
+    
+
+</block>
+<block name="js">
+	
+</block>

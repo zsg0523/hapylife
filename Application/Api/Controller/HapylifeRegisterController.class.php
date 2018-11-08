@@ -174,7 +174,7 @@ class HapylifeRegisterController extends HomeBaseController{
     * 获取首购产品
     **/ 
     public function new_purchase(){
-        $data = D('product')->where(array('ip_type'=>1,'is_pull'=>1))->select();
+        $data = D('product')->where(array('ip_type'=>1,'is_pull'=>1))->order('is_sort desc')->select();
         $this->ajaxreturn($data);
 
     }
@@ -616,9 +616,9 @@ class HapylifeRegisterController extends HomeBaseController{
             $addlog = M('Log')->add($log);
             if($addlog){
                 if($back_result['is_dt'] == 1){
-                    $products = 'RBS,DTP,SIGNUP4';
+                    $products = 2;
                 }else{
-                    $products = 'RBS,DTP,SIGNUP5';
+                    $products = 3;
                 }
                 $result = $usa->createCustomer($userinfo['customerid'],$userinfo['wvpass'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
                 if(!empty($result['result'])){
@@ -632,29 +632,39 @@ class HapylifeRegisterController extends HomeBaseController{
                     );
                     $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
                     if($res){
+                        // 发送短信提示
+                        $templateId ='219345';
+                        $params     = array($userinfo['customerid'],$wv['wvCustomerID']);
+                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                        if($sms['errmsg'] == 'OK'){
+                            $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$order_num))->find();
+                            $contents = array(
+                                        'acnumber' => $userinfo['acnumber'],
+                                        'phone' => $userinfo['phone'],
+                                        'operator' => '系统',
+                                        'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                        'product_name' => $receiptlist['product_name'],
+                                        'date' => time(),
+                                        'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfo['customerid'].'以及 DreamTrips 会员号码是'.$wv['wvCustomerID'].'，同时注意查收DreamTrips邮件。',
+                                        'customerid' => $userinfo['customerid']
+                            );
+                            $logs = M('SmsLog')->add($contents);
+                        }
+
+                        // 给上线发短信
+                        $enrollerinfo = M('User')->where(array('CustomerID'=>$userinfo['enrollerid']))->find(); 
+                        $templateId ='220861';
+                        $params     = array($enrollerinfo['customerid'],$userinfo['customerid']);
+                        $sms        = D('Smscode')->sms($enrollerinfo['acnumber'],$enrollerinfo['phone'],$params,$templateId);
+                        if($sms['errmsg'] == 'OK'){
+                            $addressee = $enrollerinfo['lastname'].$enrollerinfo['firstname'];
+                            $contents = '尊敬的'.$enrollerinfo['customerid'].'会员，您增加一名成员：'.$userinfo['customerid'];
+                            $addlog = D('Smscode')->addLog($enrollerinfo['acnumber'],$enrollerinfo['phone'],'系统',$addressee,'上线接收短信',$contents,$enrollerinfo['customerid']);
+                        }
+                        
                         $createPayment = $usa->createPayment($userinfo['customerid'],$wv['wvOrderID'],date('Y-m-d H:i',time()));
                         $log = addUsaLog($createPayment['result']);
-                        $jsonStr = json_decode($createPayment['result'],true);
-                        if($jsonStr['paymentId']){
-                            // 发送短信提示
-                            $templateId ='208995';
-                            $params     = array($userinfo['customerid'],$wv['wvCustomerID']);
-                            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                            if($sms['errmsg'] == 'OK'){
-                                $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$order_num))->find();
-                                $contents = array(
-                                            'acnumber' => $userinfo['acnumber'],
-                                            'phone' => $userinfo['phone'],
-                                            'operator' => '系统',
-                                            'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                                            'product_name' => $receiptlist['product_name'],
-                                            'date' => time(),
-                                            'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfo['customerid'].'以及 DreamTrips 会员号码是'.$wv['wvCustomerID'].'，同时注意查收Rovia邮件。',
-                                            'customerid' => $userinfo['customerid']
-                                );
-                                $logs = M('SmsLog')->add($contents);
-                            }
-                        }
+                        
                         $sample['status'] = 1;
                         $this->ajaxreturn($sample);
                     }else{

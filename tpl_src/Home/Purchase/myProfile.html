@@ -154,13 +154,13 @@
 				</div>
 				<div class="row editProfile">
 					<div class="col-md-2 col-xs-4">
-						<span>推荐位置:</span>
+						<span>推荐设置:</span>
 					</div>
 					<div class="col-md-10 col-xs-8" onclick="window.location.href ='{:U("Home/Purchase/editPlacement")}'">
 						<if condition="$userinfo['placement'] eq 'BuildLeft'">
-							<span>自动</span>
+							<span>事业部一</span>
 						<elseif condition="$userinfo['placement'] eq 'BuildRight'" />
-							<span>手动</span>
+							<span>事业部二</span>
 						<elseif condition="empty($userinfo['placement']) eq true " />
 							<span>未设置</span>
 						</if>

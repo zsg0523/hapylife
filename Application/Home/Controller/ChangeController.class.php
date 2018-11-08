@@ -57,6 +57,14 @@ class ChangeController extends HomeBaseController{
                         // 发送给usa,更新usa数据
                         $res = $usa->changePassWord($userinfo['customerid'],I('post.passwords'));
                         if($res['code'] == 200){
+                            $templateId ='220956';
+                            $params     = array($userinfo['customerid'],I('post.passwords'));
+                            $sms        = D('Smscode')->sms($acnumber,$phoneNumber,$params,$templateId);
+                            if($sms['errmsg'] == 'OK'){
+                                $addressee = $userinfo['lastname'].$userinfo['firstname'];
+                                $contents = '尊敬的'.$userinfo['customerid'].'会员，您已成功将登录密码修改为：'.I('post.passwords');
+                                $addlog = D('Smscode')->addLog($acnumber,$phoneNumber,'系统',$addressee,'修改登录密码',$contents,$userinfo['customerid']);
+                            }
                             $sample['status'] = 1;
                             $this->ajaxreturn($sample);
                         }else{
@@ -77,6 +85,14 @@ class ChangeController extends HomeBaseController{
                 // 发送给usa,更新usa数据
                 $res = $usa->changePassWord($userinfo['customerid'],I('post.passwords'));
                 if($res['code'] == 200){
+                    $templateId ='220956';
+                    $params     = array($userinfo['customerid'],I('post.passwords'));
+                    $sms        = D('Smscode')->sms($acnumber,$phoneNumber,$params,$templateId);
+                    if($sms['errmsg'] == 'OK'){
+                        $addressee = $userinfo['lastname'].$userinfo['firstname'];
+                        $contents = '尊敬的'.$userinfo['customerid'].'会员，您已成功将登录密码修改为：'.I('post.passwords');
+                        $addlog = D('Smscode')->addLog($acnumber,$phoneNumber,'系统',$addressee,'修改登录密码',$contents,$userinfo['customerid']);
+                    }
                     $sample['status'] = 1;
                     $this->ajaxreturn($sample);
                 }else{
@@ -159,21 +175,28 @@ class ChangeController extends HomeBaseController{
         $data = I('post.');
         // p($data);die;
         $signPhone = M('User')->getField('phone',true);
+        $userinfo = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->find();
         if(in_array($data['Phone'],$signPhone)){
             $this->error('该手机号码已被注册，请重新填写！',U('Home/Purchase/editPhone'));
         }else{
             // 修改系统数据
             $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->save($data);
         }
-        if($saveData){
-            //更新usa数据
-            $usa    = new \Common\UsaApi\Usa;
-            $result = $usa->changePhone($data['happyLifeID'],$data['Phone']);
-            if($result['code'] == 200){
-                $this->success('修改成功',U('Home/Purchase/myProfile'));
-            }else{
-                $this->error('修改失败',U('Home/Purchase/editPhone'));
+        //更新usa数据
+        $usa    = new \Common\UsaApi\Usa;
+        $result = $usa->changePhone($data['happyLifeID'],$data['Phone']);
+        if($result['code'] == 200){
+            $templateId ='220954';
+            $params     = array($data['happyLifeID'],$data['Phone']);
+            $sms        = D('Smscode')->sms($userinfo['acnumber'],$data['Phone'],$params,$templateId);
+            if($sms['errmsg'] == 'OK'){
+                $addressee = $userinfo['lastname'].$userinfo['firstname'];
+                $contents = '尊敬的'.$data['happyLifeID'].'会员，您已成功将手机号码修改为：'.$data['Phone'];
+                $addlog = D('Smscode')->addLog($userinfo['acnumber'],$data['Phone'],'系统',$addressee,'修改手机号码',$contents,$data['happyLifeID']);
             }
+            $this->success('修改成功',U('Home/Purchase/myProfile'));
+        }else{
+            $this->error('修改失败',U('Home/Purchase/editPhone'));
         }
     }
 
@@ -191,6 +214,14 @@ class ChangeController extends HomeBaseController{
         $usa    = new \Common\UsaApi\Usa;
         $result = $usa->ChangePlacement($data['happyLifeID'],$data['Placement']);
         if($result['code'] == 200){
+            $templateId ='220957';
+            $params     = array($data['happyLifeID'],$data['Placement']);
+            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+            if($sms['errmsg'] == 'OK'){
+                $addressee = $userinfo['lastname'].$userinfo['firstname'];
+                $contents = '尊敬的'.$data['happyLifeID'].'会员，您已成功将推荐设置修改为：'.$data['Placement'];
+                $addlog = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'修改推荐设置',$contents,$data['happyLifeID']);
+            }
             $this->success('修改成功',U('Home/Purchase/myProfile'));
         }else{
             $this->error('修改失败',U('Home/Purchase/editPlacement'));
@@ -370,7 +401,7 @@ class ChangeController extends HomeBaseController{
                 if($sms['errmsg'] == 'OK'){
                     $addressee = $userinfo['lastname'].$userinfo['firstname'];
                     $contents = '您的Hapylife账号为：'.$wvcustomerid.'，DreamtripsID：'.$customerid.'。';
-                    $addlog = D('Smscode')->addLog($acnumber,$phoneNumber,'系统',$addressee,'忘记账号',time(),$contents,$customerid);
+                    $addlog = D('Smscode')->addLog($acnumber,$phoneNumber,'系统',$addressee,'忘记账号',$contents,$customerid);
                 }
                 if($addlog){
                     $sample = array(
@@ -411,6 +442,14 @@ class ChangeController extends HomeBaseController{
             $usa    = new \Common\UsaApi\Usa;
             $result = $usa->ChangeEmail($happyLifeID,$email);
             if($result['code'] == 200){
+                $templateId ='220955';
+                $params     = array($happyLifeID,$email);
+                $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                if($sms['errmsg'] == 'OK'){
+                    $addressee = $userinfo['lastname'].$userinfo['firstname'];
+                    $contents = '尊敬的'.$happyLifeID.'会员，您已成功将邮箱地址修改为：'.$email;
+                    $addlog = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'修改邮箱地址',$contents,$happyLifeID);
+                }
                 $this->success('修改成功',U('Home/Purchase/myProfile'));
             }else{
                 $this->error('修改失败',U('Home/Purchase/editNewEmail'));
