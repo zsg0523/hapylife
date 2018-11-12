@@ -679,7 +679,7 @@ class RegisterController extends HomeBaseController{
                         $products = 3;
                     }
                     $usa    = new \Common\UsaApi\Usa;
-                    $result = $usa->createCustomer($user['customerid'],$userinfo['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
+                    $result = $usa->createCustomer($user['customerid'],$userinfo['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products,$userinfo['birthday']);
                     if(!empty($result['result'])){
                         $log = addUsaLog($result['result']);
                         $maps = json_decode($result['result'],true);
@@ -834,7 +834,7 @@ class RegisterController extends HomeBaseController{
                     $products = 3;
                 }
                 $usa    = new \Common\UsaApi\Usa;
-                $result = $usa->createCustomer($userinfo['customerid'],$userinfo['wvpass'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
+                $result = $usa->createCustomer($userinfo['customerid'],$userinfo['wvpass'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products,$userinfo['birthday']);
                 if(!empty($result['result'])){
                     $log = addUsaLog($result['result']);
                     $maps = json_decode($result['result'],true);

@@ -525,7 +525,7 @@
 					var birthday=year+'-'+month+'-'+day;
 					// console.log(birthday);
 					var myDate = new Date();
-					if((myDate.getFullYear()-parseInt(year))>=22){
+					if((myDate.getFullYear()-parseInt(year))>=18){
 						$("#Birthday").val(birthday);
 						$("#idcardage").text("您的出生日期为"+birthday+"。");
 						$("#idcardage").css('color','#3E8F3E');
@@ -535,7 +535,7 @@
 						$("#Birthday").val(birthday);
 						$("#idcardage").text("您的出生日期为"+birthday+"。");
 						$("#idcardage").css('color','#3E8F3E');
-						alert('您的年龄不足22周岁不能注册！');
+						alert('您的年龄不足18周岁不能注册！');
 					}
 					
 //					alert(year+"+"+(myDate.getFullYear()-year));
@@ -548,7 +548,7 @@
 		}
 		function checkform(){
 			if(judge==false){
-				alert('您的年龄不足22周岁不能注册！');		
+				alert('您的年龄不足18周岁不能注册！');		
 			}
 			return judge;
 		}

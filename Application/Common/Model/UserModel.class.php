@@ -308,6 +308,109 @@ class UserModel extends BaseModel{
      * @param  integer  $field  $field
      * @return array            分页数据
      */
+    public function getPageAllmemBer($model,$word,$order='',$status,$starttime,$endtime,$limit=20){
+        switch ($status) {
+        	case '-1':
+		        // 获取分页数据
+		        if(empty($word)){
+		        	if (empty($field)) {
+			            $list=$model
+			            	->alias('u')
+			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+			                ->order($order)
+			                ->select();         
+			        }else{
+			            $list=$model
+			            	->alias('u')
+			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+			                ->field($field)
+			                ->order($order)
+			                ->select();
+			        }
+		        }else{
+		        	if(empty($field)) {
+			            $list=$model
+			            	->alias('u')
+			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+			                ->order($order)
+			                ->select();         
+			        }else{
+			            $list=$model
+			            	->alias('u')
+			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			                ->field($field)
+			                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+			                ->order($order)
+			                ->select();         
+			        }
+		        }
+        		break;
+        	default:
+		        // 获取分页数据
+		        if(empty($word)){
+		        	if (empty($field)) {
+			            $list=$model
+			            	->alias('u')
+			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			            	->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+			                ->order($order)
+			                ->select();         
+			        }else{
+			            $list=$model
+			            	->alias('u')
+			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			            	->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+			                ->field($field)
+			                ->order($order)
+			                ->select();         
+			        }
+		        }else{
+		        	if (empty($field)) {
+			            $list=$model
+			            	->alias('u')
+			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			                ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+			                ->order($order)
+			                ->select();         
+			        }else{
+			            $list=$model
+			            	->alias('u')
+			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+			                ->field($field)
+			                ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+			                ->order($order)
+			                ->select();         
+			        }
+		        }
+        		break;
+        }
+	        
+        $data=array(
+            'data'=>$list,
+            );
+        return $data;
+    }
+
+    /**
+     * 获取分页数据
+     * @param  subject  $model  model对象
+     * @param  array    $map    where条件
+     * @param  string   $order  排序规则
+     * @param  integer  $limit  每页数量
+     * @param  integer  $field  $field
+     * @return array            分页数据
+     */
     public function getPageS($model,$word,$order='',$starttime,$endtime,$limit=20){
     		if(empty($word)){
 				$count=$model
@@ -365,6 +468,55 @@ class UserModel extends BaseModel{
         return $data;
     }
 
+    /**
+     * 获取分页数据
+     * @param  subject  $model  model对象
+     * @param  array    $map    where条件
+     * @param  string   $order  排序规则
+     * @param  integer  $limit  每页数量
+     * @param  integer  $field  $field
+     * @return array            分页数据
+     */
+    public function getAllmemBer($model,$word,$order='',$starttime,$endtime){
+	        // 获取分页数据
+	        if(empty($word)){
+	        	if (empty($field)) {
+		            $list=$model
+		            	->alias('u')
+		            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->order($order)
+		                ->select();         
+		        }else{
+		            $list=$model
+		            	->alias('u')
+		            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->field($field)
+		                ->order($order)
+		                ->select();         
+		        }
+	        }else{
+	        	if (empty($field)) {
+		            $list=$model
+		            	->alias('u')
+		                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->order($order)
+		                ->select();         
+		        }else{
+		            $list=$model
+		            	->alias('u')
+		                ->field($field)
+		                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->order($order)
+		                ->select();         
+		        }
+	        }
+	        
+        $data=array(
+            'data'=>$list,
+            );
+        return $data;
+    }
+
 	public function export_excel($data){
 		if($_SESSION['user']['username'] == 'mary' || $_SESSION['user']['username'] == 'admin2'){
 			$title   = array('UREGTIME','Happy Life ID','Payment Date Time (Dallas time)','Sponsor ID W & H','Product','Gender','Last Name','First Name','En Last Name','En First Name','email address','password','phone1','mailing address1','mailing city','mailing province','mailing country','Identification Card (upload)','Account Type');
@@ -393,7 +545,7 @@ class UserModel extends BaseModel{
 				$content[$k]['idcard']             = $v['idcard'];
 				$content[$k]['accounttype']        = $v['accounttype'];
 			}
-	    	create_csv($content,$title);
+	    	create_csv($content,$title,date('YmdHis',time()));
 			return;
 		}else{
 			$title   = array('登记时间','账号名','支付时间','邀请人','产品名称','性别','中文姓','中文名','英文姓','英文名','电子邮箱','用户密码','手机号码','详细地址','所在城市','所在省份','所在国家','身份证号码','销售类型');
@@ -422,7 +574,7 @@ class UserModel extends BaseModel{
 				$content[$k]['idcard']             = $v['idcard'];
 				$content[$k]['accounttype']        = $v['accounttype'];
 			}
-	    	create_csv($content,$title);
+	    	create_csv($content,$title,date('YmdHis',time()));
 			return;
 		}
     }
@@ -437,7 +589,7 @@ class UserModel extends BaseModel{
 			$content[$k]['iu_dt']     		= $v['iu_dt'];
 			$content[$k]['realpoint4']      = $v['realpoint4'];
 		}
-    	create_csv($content,$title);
+    	create_csv($content,$title,date('YmdHis',time()));
 		return;
     }
 
@@ -902,4 +1054,27 @@ class UserModel extends BaseModel{
 		);        
 		return $data;
 	}
+
+	public function export_excelBD($data){
+        $title   = array('HapylifeID','wvCustomerID','LastName','FirstName','EnLastName','EnFirstName','Birthday');
+        foreach ($data as $k => $v) {
+            // HpID
+            $content[$k]['HpID'] = $v['customerid'];
+            // wvID
+            $content[$k]['wvID'] = $v['wvcustomerid'];
+            // lN
+            $content[$k]['lN'] = $v['lastname'];
+            // fN
+            $content[$k]['fN'] = $v['firstname'];
+            // elN
+            $content[$k]['elN'] = $v['enlastname'];
+            // efN
+            $content[$k]['efN'] = $v['enfirstname'];
+            // bD
+            $content[$k]['bD'] = $v['birthday'];
+            
+        }
+        create_csv($content,$title,date('YmdHis',time()));
+        return;
+    }
 }

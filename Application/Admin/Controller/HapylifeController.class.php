@@ -961,7 +961,8 @@ class HapylifeController extends AdminBaseController{
 		// die;
 		//导出excel
 		if($excel == 'excel'){
-			$export_excel = D('User')->export_excel($assign['data']);
+			$data = D('User')->getPageAllmemBer(D('User'),$word,$order='joinedon desc',$status,$starttime,$endtime);
+			$export_excel = D('User')->export_excel($data['data']);
 		}else{
 			$this->assign($assign);
 			$this->assign('count',$count);
@@ -1108,7 +1109,8 @@ class HapylifeController extends AdminBaseController{
 
 		//导出excel
 		if($excel == 'excel'){
-			$export_excel = D('User')->export_excel($assign['data']);
+			$data = D('User')->getAllmemBer(D('User'),$word,$order='joinedon desc',$starttime,$endtime);
+			$export_excel = D('User')->export_excel($data['data']);
 		}else{
 			$this->assign($assign);
 			$this->assign('count',$count);
@@ -1210,7 +1212,6 @@ class HapylifeController extends AdminBaseController{
 		// 导出excel
 		if($excel == 'excel'){
 			$data = D('Receipt')->getSendPageSonAlls(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$array,$ipid,$order='ir_paytime asc');
-			p($data);die;
 			$export_send_excel = D('Receipt')->export_send_excel($data['data']);
 		}else{
 			$this->assign($assign);
@@ -1222,6 +1223,18 @@ class HapylifeController extends AdminBaseController{
 			$this->assign('code',$code);
 			$this->display();
 		}
+	}
+
+	// 修改收货人信息
+	public function editAddress(){
+		$data = I('post.');
+		$map  = array('irid'=>$data['id']);
+        $save = M('Receipt')->where($map)->save($data);
+        if($save){
+        	redirect($_SERVER['HTTP_REFERER']);
+        }else{
+        	$this->error('修改失败');
+        }
 	}
 
 	//查看订单明细
@@ -1866,5 +1879,24 @@ class HapylifeController extends AdminBaseController{
 		$this->assign('starttime',I('get.starttime'));
 		$this->assign('endtime',I('get.endtime'));
 		$this->display();
+	}
+
+	/**
+	* 获取成功注册用户的生日
+	**/ 
+	public function getBirthday(){
+		$data = M('User')->order('iuid DESC')->select();
+		foreach($data as $key=>$value){
+			if(!empty($value['wvcustomerid']) && substr($value['customerid'],0,3) == 'HPL'){
+				$userinfo[] = $value;
+			}
+		}
+		$unlist = array('测试','测','试','测试点','test','testtest','测试测试','新建测试','测试地','测试点','测试账号');
+		foreach($userinfo as $key=>$value){
+			if(!in_array($value['lastname'],$unlist) && !in_array($value['firstname'],$unlist)){
+				$list[] = $value;
+			}
+		}
+		$export_excel = D('User')->export_excelBD($list);
 	}
 }

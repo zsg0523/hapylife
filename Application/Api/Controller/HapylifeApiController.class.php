@@ -1845,4 +1845,39 @@ class HapylifeApiController extends HomeBaseController{
             $this->ajaxreturn($sample);
         }
     }
+
+    /**
+    *生成个人二维码
+    **/
+    public function usercode(){
+        if(!IS_POST){
+            $tmp['status'] = 0;
+            $this->ajaxreturn($tmp);
+        }else{
+            $iuid     = I('post.iuid');
+            $whichApp = I('post.whichApp',5);
+            // $huid = 7;
+            $user = D('User')->where(array('iuid'=>$iuid))->find();
+            // die;
+            if($user['hu_codepic']){
+                unlink($user['hu_codepic']);
+            }
+            $web_url     = C('WEB_URL');
+            // 存放的内容
+            $content     = array('iuid'=>$iuid,'codetype'=>3,'hu_nickname'=>$user['customerid'],'whichApp'=>$whichApp,'createTime'=>date('Y-m-d H:i:s'));
+            $qrcode      = qrcode_arr($content);
+            $data = array(
+                'iuid'      =>$iuid,
+                'hu_codepic'=>$qrcode
+            );
+            $save = D('User')->save($data);
+            if($qrcode){
+                $tmp['status'] = $qrcode;               
+                $this->ajaxreturn($tmp);
+            }else{
+                $tmp['status'] = 0;
+                $this->ajaxreturn($tmp);
+            }
+        }
+    }
 }
