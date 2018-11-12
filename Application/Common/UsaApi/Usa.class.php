@@ -70,7 +70,7 @@ class usa
 	/**
 	* CREATE CUSTOMER
 	**/
-	public function createCustomer($happyLifeID,$password,$sponsorID,$firstName_EN,$lastName_EN,$emailAddress,$phone,$products,$dob='2000-1-1',$ipAddress='string')
+	public function createCustomer($happyLifeID,$password,$sponsorID,$firstName_EN,$lastName_EN,$emailAddress,$phone,$products,$dob,$ipAddress='string')
 	{
 		// ='RBS,DTP,SIGNUP4,SIGNUP5'
 		$key  = $this->key;

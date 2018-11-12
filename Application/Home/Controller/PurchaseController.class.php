@@ -1129,7 +1129,7 @@ class PurchaseController extends HomeBaseController{
                                             $products = '4';
                                             break;
                                     }
-                                    $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products);
+                                    $result = $usa->createCustomer($userinfo['customerid'],$tmpeArr['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products,$tmpeArr['birthday']);
                                     if(!empty($result['result'])){
                                         $log = addUsaLog($result['result']);
                                         $maps = json_decode($result['result'],true);
@@ -1961,4 +1961,33 @@ class PurchaseController extends HomeBaseController{
         }
     }
 
+    /**
+    * 我的二维码
+    **/ 
+    public function myQrcode(){
+        $iuid = $_SESSION['user']['id'];
+        $whichApp = I('post.whichApp',5);
+        // 用户信息
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
+
+        if($userinfo['hu_codepic']){
+            unlink($userinfo['hu_codepic']);
+        }
+        $web_url     = C('WEB_URL');
+        // 存放的内容
+        $content     = array('iuid'=>$iuid,'codetype'=>3,'hu_nickname'=>$userinfo['customerid'],'whichApp'=>$whichApp,'createTime'=>date('Y-m-d H:i:s'));
+        $qrcode      = qrcode_arr($content);
+        $data = array(
+            'iuid'      =>$iuid,
+            'hu_codepic'=>$qrcode
+        );
+        $save = D('User')->save($data);
+        
+        if($qrcode){
+            $tmp['status'] = $qrcode;
+            $tmp['userinfo'] = $userinfo;
+        }
+        $this->assign($tmp);         
+        $this->display();
+    }
 }

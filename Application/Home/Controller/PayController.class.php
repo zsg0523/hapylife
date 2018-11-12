@@ -350,7 +350,7 @@ class PayController extends HomeBaseController{
                                                     $products = '4';
                                                     break;
                                             }
-                                            $result = $usa->createCustomer($userinfos['customerid'],$tmpeArr['password'],$userinfos['enrollerid'],$userinfos['enfirstname'],$userinfos['enlastname'],$userinfos['email'],$userinfos['phone'],$products);
+                                            $result = $usa->createCustomer($userinfos['customerid'],$tmpeArr['password'],$userinfos['enrollerid'],$userinfos['enfirstname'],$userinfos['enlastname'],$userinfos['email'],$userinfos['phone'],$products,$tmpeArr['birthday']);
                                             if(!empty($result['result'])){
                                                 $log = addUsaLog($result['result']);
                                                 $maps = json_decode($result['result'],true);
