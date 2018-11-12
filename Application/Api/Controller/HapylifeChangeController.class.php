@@ -341,13 +341,13 @@ class HapylifeChangeController extends HomeBaseController{
             $this->ajaxreturn($sample);
         }else{
             if($data && $data['code']==$code){
-                $templateId ='213691';
+                $templateId ='223694';
                 $params     = array($wvcustomerid,$customerid);
                 $sms        = D('Smscode')->sms($acnumber,$phoneNumber,$params,$templateId);
                 if($sms['errmsg'] == 'OK'){
                     $addressee = $userinfo['lastname'].$userinfo['firstname'];
-                    $contents = '您的Hapylife账号为：'.$wvcustomerid.'，DreamtripsID：'.$customerid.'。';
-                    $addlog = D('Smscode')->addLog($acnumber,$phoneNumber,'系统',$addressee,'忘记账号',time(),$contents,$customerid);
+                    $contents = '您的Hapylife账号为：'.$wvcustomerid.'，DT的ID：'.$customerid.'。';
+                    $addlog = D('Smscode')->addLog($acnumber,$phoneNumber,'系统',$addressee,$contents,$customerid);
                 }
                 if($addlog){
                     $sample = array(

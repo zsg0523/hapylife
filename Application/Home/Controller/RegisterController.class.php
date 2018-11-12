@@ -692,8 +692,8 @@ class RegisterController extends HomeBaseController{
                         $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
                         if($res){
                             // 给注册会员发短信
-                            $templateId ='219345';
-                            $params     = array($user['customerid'],$maps['wvCustomerID']);
+                            $templateId ='223637';
+                            $params     = array($user['customerid'],$maps['wvCustomerID'],$product['ip_name_zh']);
                             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                             if($sms['errmsg'] == 'OK'){
                                 $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$order_num))->find();
@@ -704,7 +704,7 @@ class RegisterController extends HomeBaseController{
                                     'addressee' => $userinfo['lastname'].$userinfo['firstname'],
                                     'product_name' => $receiptlist['product_name'],
                                     'date' => time(),
-                                    'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$user['customerid'].'以及 DreamTrips 会员号码是'.$maps['wvCustomerID'].'，同时注意查收DreamTrips邮件。',
+                                    'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：'.$user['customerid'].'会员号码：'.$maps['wvCustomerID'].'产品：'.$product['ip_name_zh'].'使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
                                     'customerid' => $user['customerid']
                                 );
                                 $logs = M('SmsLog')->add($contents);
@@ -847,8 +847,8 @@ class RegisterController extends HomeBaseController{
                     $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
                     if($res){
                         // 发送短信提示
-                        $templateId ='219345';
-                        $params     = array($userinfo['customerid'],$maps['wvCustomerID']);
+                        $templateId ='223637';
+                        $params     = array($userinfo['customerid'],$maps['wvCustomerID'],$product['ip_name_zh']);
                         $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                         if($sms['errmsg'] == 'OK'){
                             $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$order_num))->find();
@@ -859,7 +859,7 @@ class RegisterController extends HomeBaseController{
                                         'addressee' => $userinfo['lastname'].$userinfo['firstname'],
                                         'product_name' => $receiptlist['product_name'],
                                         'date' => time(),
-                                        'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfo['customerid'].'以及 DreamTrips 会员号码是'.$maps['wvCustomerID'].'，同时注意查收DreamTrips邮件。',
+                                        'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：'.$userinfo['customerid'].'会员号码：'.$maps['wvCustomerID'].'产品：'.$product['ip_name_zh'].'使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
                                         'customerid' => $userinfo['customerid']
                             );
                             $logs = M('SmsLog')->add($contents);

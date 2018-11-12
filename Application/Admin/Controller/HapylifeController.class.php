@@ -1858,7 +1858,6 @@ class HapylifeController extends AdminBaseController{
 				$list[] = $data[$key];
 			}
 		}
-		p($list);
 		$assign = pages($list,$p,20);
 		$this->assign($assign);
 		$this->assign('CustomerId',$CustomerId);

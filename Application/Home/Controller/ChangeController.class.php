@@ -382,6 +382,7 @@ class ChangeController extends HomeBaseController{
             }else{
                 $id2 .= '暂无、';
             }
+            $addressee = $value['lastname'].$value['firstname'];
         }
         $wvcustomerid = substr($id1,0,-3);
         $customerid = substr($id2,0,-3);
@@ -395,12 +396,11 @@ class ChangeController extends HomeBaseController{
             $this->ajaxreturn($sample);
         }else{
             if($data && $data['code']==$code){
-                $templateId ='213691';
+                $templateId ='223694';
                 $params     = array($wvcustomerid,$customerid);
                 $sms        = D('Smscode')->sms($acnumber,$phoneNumber,$params,$templateId);
                 if($sms['errmsg'] == 'OK'){
-                    $addressee = $userinfo['lastname'].$userinfo['firstname'];
-                    $contents = '您的Hapylife账号为：'.$wvcustomerid.'，DreamtripsID：'.$customerid.'。';
+                    $contents = '您的Hapylife账号为：'.$wvcustomerid.'，DT的ID：'.$customerid.'。';
                     $addlog = D('Smscode')->addLog($acnumber,$phoneNumber,'系统',$addressee,'忘记账号',$contents,$customerid);
                 }
                 if($addlog){
@@ -409,7 +409,6 @@ class ChangeController extends HomeBaseController{
                         'msg' => '发送成功'
                     );
                     $this->ajaxreturn($sample);
-
                 }else{
                     $sample = array(
                         'status' => 0,

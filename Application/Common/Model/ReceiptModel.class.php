@@ -991,7 +991,11 @@ class ReceiptModel extends BaseModel{
             // 收货电话
             $content[$k]['ia_phone'] = $v['ia_phone'];
             // 收货地址
-            $content[$k]['ia_address'] = $v['ia_province'].$v['ia_city'].$v['ia_area'].$v['ia_address'];
+            if($v['ia_province'] && $v['ia_city'] && $v['ia_area'] && $v['ia_address']){
+                $content[$k]['ia_address'] = $v['ia_province'].$v['ia_city'].$v['ia_area'].$v['ia_address'];
+            }else{
+                $content[$k]['ia_address'] = $v['shopprovince'].$v['shopcity'].$v['shoparea'].$v['shopaddress1'];
+            }
         }
         create_csv($content,$title,date('YmdHis',time()));
         return;

@@ -463,7 +463,7 @@ class HapylifeFoodController extends HomeBaseController{
 		for ($i=0; $i<count($image); $i++) { 
 			$img_body                 = substr(strstr($image['image'.($i+1)],','),1);
 			if($img_body == ""){
-				$data['image'.($i+1)] = "无图片";
+				$data['image'.($i+1)] = "";
 			}else{
 				$imageName            = time().'_'.mt_rand().'.jpg';
 				$img                  = file_put_contents('./Upload/file/'.$imageName, base64_decode($img_body));
@@ -586,6 +586,23 @@ class HapylifeFoodController extends HomeBaseController{
 			$data['message']= '委任失败';
 			$this->ajaxreturn($data);
 		}
+	}
+
+	public function chang(){
+		$data = M('Feedback')->select();
+		// p($data);die;
+		foreach($data as $key=>$value){
+			if($value['image1'] == '0'){
+				p($value['fbid']);
+			}
+			// if($value['image2'] == 0){
+			// 	$result = M('Feedback')->where(array('fbid'=>$value['fbid']))->setfield('image2',NULL);
+			// }
+			// if($value['image3'] == 0){
+			// 	$result = M('Feedback')->where(array('fbid'=>$value['fbid']))->setfield('image3',NULL);
+			// }
+		}
+		p($result);
 	}
 
 	

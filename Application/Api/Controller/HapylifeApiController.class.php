@@ -1791,15 +1791,15 @@ class HapylifeApiController extends HomeBaseController{
                 $explode2 = explode(' ',$weekly['titleRank']);
                 $paidRank = substr($explode1[0],0,1).substr($explode1[1],0,1);
                 $titleRank = substr($explode2[0],0,1).substr($explode2[1],0,1);
-                // 组合数据
-                switch ($weekly['personalActive']) {
-                    case '0':
-                        $weekly['personalActive'] = '未启动';
-                        break;
-                    case '1':
-                        $weekly['personalActive'] = '启动';
-                        break;
-                }
+                // // 组合数据
+                // switch ($weekly['personalActive']) {
+                //     case '0':
+                //         $weekly['personalActive'] = '未启动';
+                //         break;
+                //     case '1':
+                //         $weekly['personalActive'] = '启动';
+                //         break;
+                // }
                 $Serial_W = array(
                     'date' => $weekly['description'],
                     'result' => $weekly['personalActive'].'-'.$paidRank.'-'.$titleRank,
@@ -1812,15 +1812,15 @@ class HapylifeApiController extends HomeBaseController{
                 $explode2 = explode(' ',$monthly['titleRank']);
                 $paidRank = substr($explode1[0],0,1).substr($explode1[1],0,1);
                 $titleRank = substr($explode2[0],0,1).substr($explode2[1],0,1);
-                // 组合数据
-                switch ($monthly['personalActive']) {
-                    case '0':
-                        $monthly['personalActive'] = '未启动';
-                        break;
-                    case '1':
-                        $monthly['personalActive'] = '启动';
-                        break;
-                }
+                // // 组合数据
+                // switch ($monthly['personalActive']) {
+                //     case '0':
+                //         $monthly['personalActive'] = '未启动';
+                //         break;
+                //     case '1':
+                //         $monthly['personalActive'] = '启动';
+                //         break;
+                // }
                 $Serial_M = array(
                     'date' => $monthly['description'],
                     'result' => $monthly['personalActive'].'-'.$paidRank.'-'.$titleRank,

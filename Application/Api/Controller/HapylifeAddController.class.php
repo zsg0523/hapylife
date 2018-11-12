@@ -414,12 +414,12 @@ class HapylifeAddController extends HomeBaseController{
                     // 发送短信提示
                     $templateId1 ='208999';
                     $params1     = array($time,$endTime,$network);
-                    $sms1        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params1,$templateId1);
+                    $sms1        = D('Smscode')->sms('86',$userinfo['phone'],$params1,$templateId1);
                     $content1 = '这是'.$time.'续费通知，请在'.$endTime.'前完成缴费，避免无法登录'.$network;
                     if($sms1['result'] == 0){
-                        $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'续费通知',$content1,$userinfo['customerid']);
+                        $result = D('Smscode')->addLog('86',$userinfo['phone'],'系统',$addressee,'续费通知',$content1,$userinfo['customerid']);
                     }else{
-                        $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,$sms1['errmsg'],$content1,$userinfo['customerid']);
+                        $result = D('Smscode')->addLog('86',$userinfo['phone'],'系统',$addressee,$sms1['errmsg'],$content1,$userinfo['customerid']);
                     }
 
                     if($result){
@@ -632,4 +632,5 @@ class HapylifeAddController extends HomeBaseController{
                 //     }
                 //     break;
             // }
+
 }

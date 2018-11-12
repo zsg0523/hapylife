@@ -324,12 +324,17 @@ class PayController extends HomeBaseController{
                                             'ia_name'    =>$userinfos['lastname'].$userinfos['firstname'],
                                             'ia_name_en' =>$userinfos['enlastname'].$userinfos['enfirstname'],
                                             'ia_phone'   =>$userinfos['phone'],
+                                            'ia_province'=>$userinfos['shopprovince'],
+                                            'ia_city'    =>$userinfos['shopcity'],
+                                            'ia_area'    =>$userinfos['shoparea'],
                                             'ia_address' =>$userinfos['shopaddress1'],
                                             'ir_unpaid'  =>$maps['ir_unpaid'],
                                             'ir_unpoint' =>$maps['ir_unpoint']
                                         );
                                         //更新订单信息
                                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
+                                        // 获取产品名称
+                                        $productName = D('Product')->where(array('ipid'=>$order['ipid']))->getfield('ip_name_zh');
                                         // 检测订单状态
                                         $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
                                         if($ir_status == 2){
@@ -356,8 +361,8 @@ class PayController extends HomeBaseController{
                                                 );
                                                 $res = M('User')->where(array('iuid'=>$userinfos['iuid']))->save($wv);
                                                 if($res){
-                                                    $templateId ='219345';
-                                                    $params     = array($userinfos['customerid'],$maps['wvCustomerID']);
+                                                    $templateId ='223637';
+                                                    $params     = array($userinfos['customerid'],$maps['wvCustomerID'],$productName);
                                                     $sms        = D('Smscode')->sms($userinfos['acnumber'],$userinfos['phone'],$params,$templateId);
                                                     if($sms['errmsg'] == 'OK'){
                                                         $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();
@@ -368,7 +373,7 @@ class PayController extends HomeBaseController{
                                                             'addressee' => $status['ia_name'],
                                                             'product_name' => $receiptlist['product_name'],
                                                             'date' => time(),
-                                                            'content' => '恭喜您创建成功，您的 HapyLife 会员号码是'.$userinfos['customerid'].'以及 DreamTrips 会员号码是'.$maps['wvCustomerID'].'，同时注意查收DreamTrips邮件。',
+                                                            'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：'.$userinfos['customerid'].'会员号码：'.$maps['wvCustomerID'].'产品：'.$productName.'使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
                                                             'customerid' => $userinfos['customerid']
                                                         );
                                                         $logs = M('SmsLog')->add($contents);
