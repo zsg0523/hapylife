@@ -35,15 +35,15 @@
         <div class="content">
             <div class="userInfo">
                 <div class="info_img">
-                    <img src="">
+                    <img src="{$userinfo['photo']}">
                 </div>
                 <div class="info_name">
-                    <span>姓名:</span>
-                    <span>账号:</span>
+                    <span>姓名:{$userinfo['lastname']}{$userinfo['firstname']}</span>
+                    <span>账号:{$userinfo['customerid']}</span>
                 </div>
             </div>
             <div class="img" id="img">
-                <img src="{{list.status}}" />
+                <img src="{$status}" />
             </div>      
         </div>          
     </div>  
