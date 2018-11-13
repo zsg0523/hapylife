@@ -58,6 +58,8 @@
 		
 		.main{height: auto;margin:60px auto 10px auto;}	
 		.commonHead{width:100%;position: fixed;top: 0;left: 0;z-index: 20;}
+		#form-group>span{height:160px;line-height: 160px;}
+		#form-group>div{height:40px;float: right;}
 		
       /*手机*/
       @media screen and (max-width: 768px){
@@ -88,21 +90,33 @@
 			<div class="rg-div">
 				<form class="form-horizontal" id="former" method="post" action="{:U('Home/Change/updatePlacement')}">
 					<if condition="empty($success) neq true ">
-						<div class="form-group"  style="margin-top: 10px;">
-							<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>推荐设置:</label>
+						<div class="form-group" id="form-group"  style="margin-top: 10px;">
+							<label class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>推荐设置:</label>
 							<if condition="$data['placement'] eq 'BuildLeft'">
-								<div class="col-lg-5 col-md-5 col-xs-4 control-label">
+								<div class="col-lg-10 col-md-10 col-xs-8 control-label">
 								    <input type="radio" name="Placement" id="atleft" value="BuildLeft" checked="checked">事业部一
 								</div>
-								<div class="col-lg-5 col-md-5 col-xs-4 control-label">
+								<div class="col-lg-10 col-md-10 col-xs-8 control-label">
 									<input type="radio" name="Placement" id="atright" value="BuildRight">事业部二
 								</div>
+								<div class="col-lg-10 col-md-10 col-xs-8 control-label">
+								    <input type="radio" name="Placement" value="StrongLegOutside">大事业部
+								</div>
+								<div class="col-lg-10 col-md-10 col-xs-8 control-label">
+									<input type="radio" name="Placement" value="WeakLeg">小事业部
+								</div>
 							<else />
-								<div class="col-lg-5 col-md-5 col-xs-4 control-label">
+								<div class="col-lg-10 col-md-10 col-xs-8 control-label">
 								    <input type="radio" name="Placement" id="atleft" value="BuildLeft">事业部一
 								</div>
-								<div class="col-lg-5 col-md-5 col-xs-4 control-label">
+								<div class="col-lg-10 col-md-10 col-xs-8 control-label">
 									<input type="radio" name="Placement" id="atright" value="BuildRight" checked="checked">事业部二
+								</div>
+																<div class="col-lg-10 col-md-10 col-xs-8 control-label">
+								    <input type="radio" name="Placement" value="StrongLegOutside">大事业部
+								</div>
+								<div class="col-lg-10 col-md-10 col-xs-8 control-label">
+									<input type="radio" name="Placement" value="WeakLeg">小事业部
 								</div>
 							</if>
 						</div>
