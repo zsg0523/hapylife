@@ -1982,11 +1982,11 @@ class PurchaseController extends HomeBaseController{
             'hu_codepic'=>$qrcode
         );
         $save = D('User')->save($data);
-        
         if($qrcode){
             $tmp['status'] = $qrcode;
             $tmp['userinfo'] = $userinfo;
         }
+        // p($tmp);die;
         $this->assign($tmp);         
         $this->display();
     }
