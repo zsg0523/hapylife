@@ -452,7 +452,7 @@ class HapylifeAddController extends HomeBaseController{
                             'action'    =>3,
                             'type'      =>3,
                             'create_time' =>time(),      
-                            'create_month'=>date('Y-m-d',time()),      
+                            'create_month'=>date('Y-m',time()),      
                         );
                         $addlog = M('Log')->add($log);
                     }else{
@@ -580,7 +580,7 @@ class HapylifeAddController extends HomeBaseController{
                                 'action'    =>3,
                                 'type'      =>3,
                                 'create_time' =>time(),      
-                                'create_month'=>date('Y-m-d',time()),
+                                'create_month'=>date('Y-m',time()),
                             );
                             $addlog = M('Log')->add($log);
                         }
@@ -593,7 +593,7 @@ class HapylifeAddController extends HomeBaseController{
                             'action'    =>202,
                             'type'      =>3,
                             'create_time' =>time(),      
-                            'create_month'=>date('Y-m-d',time()),
+                            'create_month'=>date('Y-m',time()),
                         );
                         $addlog = M('Log')->add($log);
                     }
