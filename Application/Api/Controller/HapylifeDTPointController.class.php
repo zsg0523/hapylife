@@ -75,7 +75,7 @@ class HapylifeDTPointController extends HomeBaseController{
         $iuid = I('post.iuid');
         $page  = trim(I('post.page'));
         if($iuid){
-            $getdt = M('Getdt')->where(array('iuid'=>$iuid))->limit($page)->order('igid desc')->select();
+            // $getdt = M('Getdt')->where(array('iuid'=>$iuid))->limit($page)->order('igid desc')->select();
             $assign= array(
                 'getdt'  => $getdt,
                 'status' => 1
