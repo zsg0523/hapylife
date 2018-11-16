@@ -14,7 +14,9 @@
     	.EP_top{width: 100%;height: 110px;background: #31bafa;color: #fff;}
     	.EP_top>span{width: 100%;height: 30px;line-height: 30px;display: block;}
     	.EP_top>a{width: 100%;height: 30px;line-height: 30px;display: block;color: #fff;text-align: center;font-size: 15px;margin-top: 5px;}
-    	
+    	.ep1{width:100%;height: 90px;color:#000; margin: 10px 0;background-color: #fff;border-bottom: 1px solid #ccc;}
+      .dtInfo{width: 100%;height:30px;line-height:30px;text-align: left;text-indent: 10px;overflow: hidden}
+
     	.EP_btn{width: 94%;height: auto;margin: auto;}
     	.transfer_btn{width: 100%;height: 40px;line-height: 40px;text-align: center;border: 1px solid #dedede;border-radius: 5px;margin: 10px auto;}
     	.rd{width: 100%;height: 40px;line-height: 40px;border-bottom: 1px solid #dedede;margin: 10px auto;}
@@ -36,11 +38,16 @@
   	</div> 
     <div class="main">  
   		<div class="EP_top">
-  			<div style="height: 20px;width: 100%;"></div>
-  			<!-- <h4 class="tc" style="color:red">DT积分系統正在升级，暂时无法使用。</h4> -->
-        <h4 class="tc">Hapylife可用DT:{$assign['data']['iu_dt']}</h4>
+  			<div style="height: 10px;width: 100%;"></div>
+        <h4 class="tc">{$assign['data']['iu_dt']}</h4>
+        <h5 class="tc">DreamTrips Points</h5>
   			<a onclick='window.location.href="{:U('Home/DTPoint/myDtMonth')}";'>查看明细</a>
   		</div>
+      <div class="ep1" >
+          <div class="dtInfo">DreamTrips Points ready to use:0-0-0 0:0:0</div>
+          <div class="dtInfo">DreamTrips Points pending maturity:0-0-0 0:0:0</div>
+          <div class="dtInfo">Pending DreamTrips Points mature:0-0-0 0:0:0</div>
+       </div>
   		<div class="EP_btn">
   			 <!--<div class=" transfer_btn" style="cursor:pointer" onclick='window.location.href="{:U('Home/Purchase/EPtransfer')}";'>DT转账</div>-->
   			 <!--<div class="rd">
@@ -86,5 +93,5 @@
         	window.location.href ="{:U('Home/Purchase/center')}";
    		}
 	</script>  
-</body>  
+</body>   
 </html>  
