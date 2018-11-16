@@ -161,6 +161,10 @@
 							<span>事业部一</span>
 						<elseif condition="$userinfo['placement'] eq 'BuildRight'" />
 							<span>事业部二</span>
+						<elseif condition="$userinfo['placement'] eq 'StrongLegOutside'" />
+							<span>大事业部</span>
+						<elseif condition="$userinfo['placement'] eq 'WeakLeg'" />
+							<span>小事业部</span>
 						<elseif condition="empty($userinfo['placement']) eq true " />
 							<span>未设置</span>
 						</if>

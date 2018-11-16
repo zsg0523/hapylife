@@ -54,12 +54,13 @@
 		#btn-info{background-color: #2490ed;}
 		
 		.form-horizontal .form-group{margin-left: 15px;margin-right: 15px;}
-		.form-horizontal .control-label{text-align: left;}
-		
+		.form-horizontal .control-label{}
+		.control-label>input{width: 15px;height: 15px;margin-top: 10px;}
 		.main{height: auto;margin:60px auto 10px auto;}	
 		.commonHead{width:100%;position: fixed;top: 0;left: 0;z-index: 20;}
-		#form-group>span{height:160px;line-height: 160px;}
-		#form-group>div{height:40px;float: right;}
+		#form-group label{height:40px;line-height: 40px;text-align: center;}
+		#form-group span{height:40px;line-height: 40px;text-align: center;}
+		#form-group>div{height:40px;float: right;text-align: center;}
 		
       /*手机*/
       @media screen and (max-width: 768px){
@@ -90,36 +91,108 @@
 			<div class="rg-div">
 				<form class="form-horizontal" id="former" method="post" action="{:U('Home/Change/updatePlacement')}">
 					<if condition="empty($success) neq true ">
-						<div class="form-group" id="form-group"  style="margin-top: 10px;">
-							<label class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>推荐设置:</label>
 							<if condition="$data['placement'] eq 'BuildLeft'">
-								<div class="col-lg-10 col-md-10 col-xs-8 control-label">
-								    <input type="radio" name="Placement" id="atleft" value="BuildLeft" checked="checked">事业部一
+								<div class="form-group" id="form-group"  style="margin-top: 10px;">
+									<label class="col-lg-4 col-md-4 col-xs-4 control-label">事业部一:</label>
+									<div class="col-lg-8 col-md-8 col-xs-8 control-label">
+									    <input type="radio" name="Placement" id="atleft" value="BuildLeft" checked="checked">
+									</div>
 								</div>
-								<div class="col-lg-10 col-md-10 col-xs-8 control-label">
-									<input type="radio" name="Placement" id="atright" value="BuildRight">事业部二
+								<div class="form-group" id="form-group"  style="margin-top: 10px;">
+									<label class="col-lg-4 col-md-4 col-xs-4 control-label">事业部二:</label>
+									<div class="col-lg-8 col-md-8 col-xs-8 control-label">
+									    <input type="radio" name="Placement" id="atleft" value="BuildRight">
+									</div>
 								</div>
-								<div class="col-lg-10 col-md-10 col-xs-8 control-label">
-								    <input type="radio" name="Placement" value="StrongLegOutside">大事业部
+								<div class="form-group" id="form-group"  style="margin-top: 10px;">
+									<label class="col-lg-4 col-md-4 col-xs-4 control-label">大事业部:</label>
+									<div class="col-lg-8 col-md-8 col-xs-8 control-label">
+									    <input type="radio" name="Placement" id="atleft" value="StrongLegOutside">
+									</div>
 								</div>
-								<div class="col-lg-10 col-md-10 col-xs-8 control-label">
-									<input type="radio" name="Placement" value="WeakLeg">小事业部
+								<div class="form-group" id="form-group"  style="margin-top: 10px;">
+									<label class="col-lg-4 col-md-4 col-xs-4 control-label">小事业部:</label>
+									<div class="col-lg-8 col-md-8 col-xs-8 control-label">
+									    <input type="radio" name="Placement" id="atleft" value="WeakLeg">
+									</div>
+								</div>
+							<elseif condition="$data['placement'] eq 'BuildRight'" />
+								<div class="form-group" id="form-group"  style="margin-top: 10px;">
+									<label class="col-lg-4 col-md-4 col-xs-4 control-label">事业部一:</label>
+									<div class="col-lg-8 col-md-8 col-xs-8 control-label">
+									    <input type="radio" name="Placement" id="atleft" value="BuildLeft" >
+									</div>
+								</div>
+								<div class="form-group" id="form-group"  style="margin-top: 10px;">
+									<label class="col-lg-4 col-md-4 col-xs-4 control-label">事业部二:</label>
+									<div class="col-lg-8 col-md-8 col-xs-8 control-label">
+									    <input type="radio" name="Placement" id="atleft" value="BuildRight" checked="checked">
+									</div>
+								</div>
+								<div class="form-group" id="form-group"  style="margin-top: 10px;">
+									<label class="col-lg-4 col-md-4 col-xs-4 control-label">大事业部:</label>
+									<div class="col-lg-8 col-md-8 col-xs-8 control-label">
+									    <input type="radio" name="Placement" id="atleft" value="StrongLegOutside">
+									</div>
+								</div>
+								<div class="form-group" id="form-group"  style="margin-top: 10px;">
+									<label class="col-lg-4 col-md-4 col-xs-4 control-label">小事业部:</label>
+									<div class="col-lg-8 col-md-8 col-xs-8 control-label">
+									    <input type="radio" name="Placement" id="atleft" value="WeakLeg">
+									</div>
+								</div>
+							<elseif condition="$data['placement'] eq 'StrongLegOutside'" />
+								<div class="form-group" id="form-group"  style="margin-top: 10px;">
+									<label class="col-lg-4 col-md-4 col-xs-4 control-label">事业部一:</label>
+									<div class="col-lg-8 col-md-8 col-xs-8 control-label">
+									    <input type="radio" name="Placement" id="atleft" value="BuildLeft" >
+									</div>
+								</div>
+								<div class="form-group" id="form-group"  style="margin-top: 10px;">
+									<label class="col-lg-4 col-md-4 col-xs-4 control-label">事业部二:</label>
+									<div class="col-lg-8 col-md-8 col-xs-8 control-label">
+									    <input type="radio" name="Placement" id="atleft" value="BuildRight">
+									</div>
+								</div>
+								<div class="form-group" id="form-group"  style="margin-top: 10px;">
+									<label class="col-lg-4 col-md-4 col-xs-4 control-label">大事业部:</label>
+									<div class="col-lg-8 col-md-8 col-xs-8 control-label">
+									    <input type="radio" name="Placement" id="atleft" value="StrongLegOutside" checked="checked">
+									</div>
+								</div>
+								<div class="form-group" id="form-group"  style="margin-top: 10px;">
+									<label class="col-lg-4 col-md-4 col-xs-4 control-label">小事业部:</label>
+									<div class="col-lg-8 col-md-8 col-xs-8 control-label">
+									    <input type="radio" name="Placement" id="atleft" value="WeakLeg">
+									</div>
 								</div>
 							<else />
-								<div class="col-lg-10 col-md-10 col-xs-8 control-label">
-								    <input type="radio" name="Placement" id="atleft" value="BuildLeft">事业部一
+								<div class="form-group" id="form-group"  style="margin-top: 10px;">
+									<label class="col-lg-4 col-md-4 col-xs-4 control-label">事业部一:</label>
+									<div class="col-lg-8 col-md-8 col-xs-8 control-label">
+									    <input type="radio" name="Placement" id="atleft" value="BuildLeft" >
+									</div>
 								</div>
-								<div class="col-lg-10 col-md-10 col-xs-8 control-label">
-									<input type="radio" name="Placement" id="atright" value="BuildRight" checked="checked">事业部二
+								<div class="form-group" id="form-group"  style="margin-top: 10px;">
+									<label class="col-lg-4 col-md-4 col-xs-4 control-label">事业部二:</label>
+									<div class="col-lg-8 col-md-8 col-xs-8 control-label">
+									    <input type="radio" name="Placement" id="atleft" value="BuildRight">
+									</div>
 								</div>
-																<div class="col-lg-10 col-md-10 col-xs-8 control-label">
-								    <input type="radio" name="Placement" value="StrongLegOutside">大事业部
+								<div class="form-group" id="form-group"  style="margin-top: 10px;">
+									<label class="col-lg-4 col-md-4 col-xs-4 control-label">大事业部:</label>
+									<div class="col-lg-8 col-md-8 col-xs-8 control-label">
+									    <input type="radio" name="Placement" id="atleft" value="StrongLegOutside">
+									</div>
 								</div>
-								<div class="col-lg-10 col-md-10 col-xs-8 control-label">
-									<input type="radio" name="Placement" value="WeakLeg">小事业部
+								<div class="form-group" id="form-group"  style="margin-top: 10px;">
+									<label class="col-lg-4 col-md-4 col-xs-4 control-label">小事业部:</label>
+									<div class="col-lg-8 col-md-8 col-xs-8 control-label">
+									    <input type="radio" name="Placement" id="atleft" value="WeakLeg"  checked="checked">
+									</div>
 								</div>
 							</if>
-						</div>
+						
 						<input type="hidden" name="happyLifeID" value="{$data['customerid']}">
 						<div class="form-group">
 							<div class=" col-md-12 col-xs-12">

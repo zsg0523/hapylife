@@ -24,7 +24,7 @@ class DTPointController extends HomeBaseController{
             }else{
                 $data['iu_dt'] = 0;
             }
-            $getdt = M('Getdt')->where(array('iuid'=>$iuid))->order('igid desc')->select();
+            // $getdt = M('Getdt')->where(array('iuid'=>$iuid))->order('igid desc')->select();
             $assign= array(
                 'data' =>$data,
                 'getdt'=>$getdt

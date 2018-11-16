@@ -1760,7 +1760,7 @@ class HapylifeController extends AdminBaseController{
 	public function wvNotification(){
 		$p = I('get.p',1);
 		$CustomerId = I('get.CustomerId');
-		$HplId = I('get.HplId');
+		$HplId = trim(strtoupper(I('get.HplId')));
 		$OrderId = I('get.OrderId');
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:0;

@@ -181,6 +181,7 @@ class HapylifeUsaController extends HomeBaseController{
 	* @param paymentDate:yyyy-MM-dd HH:mm
 	**/ 
 	public function createPayment(){
+		p(date('Y-m-d H:i:s',1541994837));die;
 		$map  = I('post.');
 		$key  = $this->key;
 		$url  = $this->url;
