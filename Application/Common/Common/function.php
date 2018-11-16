@@ -823,10 +823,10 @@ function several_upload($path='file',$format='empty',$maxSize='3145728000'){
     $path=strtolower(substr($path, 0,6))==='upload' ? ucfirst($path) : 'Upload/'.$path;
     // 上传文件类型控制
     $ext_arr= array(
-            'image' => array('gif', 'jpg', 'jpeg', 'png', 'bmp','mp4','avi'),
+            'image' => array('gif', 'jpg', 'jpeg', 'png','bmp'),
             'photo' => array('jpg', 'jpeg', 'png'),
             'flash' => array('swf', 'flv'),
-            'media' => array('swf', 'flv', 'mp3', 'wav', 'wma', 'wmv', 'mid', 'avi', 'mpg', 'asf', 'rm', 'rmvb'),
+            'media' => array('swf', 'flv', 'mp3', 'wav', 'wma', 'wmv', 'mid', 'avi', 'mpg', 'asf', 'rm','rmvb','mp4','avi'),
             'file'  => array('doc', 'docx', 'xls', 'xlsx', 'ppt', 'htm', 'html', 'txt', 'zip', 'rar', 'gz', 'bz2','pdf')
         );
     if(!empty($_FILES)){

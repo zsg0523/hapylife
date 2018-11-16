@@ -52,9 +52,15 @@ class HapylifeDTPointController extends HomeBaseController{
                 if($value['categoryType'] == 'DreamTripPoints'){
                     $data['iu_dt'] = $value['balance'];
                 }
+                if($value['categoryType'] == 'DreamTripPoints_Accrued'){
+                    $data['iu_ac'] = $value['balance'];
+                }
             }
+            $data['endTime'] = date('l,F d,Y',$userinfo['joinedon']+24*3600*365);
         }else{
-           $data['iu_dt'] = 0; 
+           $data['iu_dt'] = 0;
+           $data['iu_ac'] = 0;
+           $data['endTime'] = '';
         }
         $bcsub   = bcsub($data['iu_dt'],$ip_dt,2);
         $data['bc_dt'] =$bcsub;

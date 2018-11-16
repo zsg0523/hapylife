@@ -576,8 +576,8 @@ class HapylifeApiController extends HomeBaseController{
         $product   = M('Product')->where(array('ipid'=>$ipid))->find();
         //用户信息
         $userinfo  = M('User')->where(array('iuid'=>$iuid))->find();
-        switch ($userinfo['showproduct']) {
-            case '0':
+        // switch ($userinfo['showproduct']) {
+        //     case '0':
                 //生成唯一订单号
                 $order_num = date('YmdHis').rand(10000, 99999);
                 //查看地址
@@ -801,12 +801,12 @@ class HapylifeApiController extends HomeBaseController{
                     $order['msg']    = '订单生成失败';
                     $this->ajaxreturn($order);
                 }
-                break;
-            default:
-                $sample['status'] = 201;
-                $this->ajaxreturn($sample);
-                break;
-        }
+                // break;
+            // default:
+            //     $sample['status'] = 201;
+            //     $this->ajaxreturn($sample);
+            //     break;
+        // }
     }
 
 
