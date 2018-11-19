@@ -54,7 +54,7 @@ class PayController extends HomeBaseController{
                         $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
                         break;
                     case '2':
-                        $this->redirect('Home/Pay/toCheckPoint',array('ir_receiptnum'=>$pay_receiptnum)); 
+                        $this->redirect('Home/Pay/payPoint',array('ir_receiptnum'=>$pay_receiptnum)); 
                         break;
                     case '4':
                         $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
@@ -534,7 +534,22 @@ class PayController extends HomeBaseController{
         }
     }
 
-
+    /**
+    * 积分支付页面
+    **/ 
+    public function payPoint(){
+        $iuid = $_SESSION['user']['id'];
+        $ir_receiptnum = I('get.ir_receiptnum');
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
+        $receipt = M('Receiptson')->where(array('pay_receiptnum'=>$ir_receiptnum))->find();
+        $data = array(
+            'ir_point' => $receipt['ir_point'],
+            'iu_point' => $userinfo['iu_point'],
+            're_ep' => bcsub($userinfo['iu_point'],$receipt['ir_point'],2),
+        );
+        $this->assign('data',$data);
+        $this->display();
+    }
 
 
 

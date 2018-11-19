@@ -17,15 +17,13 @@ class DTPointController extends HomeBaseController{
             $result = $usa->dtPoint($userinfo['customerid']);
             if(!$result['errors']){
                 foreach($result['softCashCategories'] as $key=>$value){
-                    if($value['categoryType'] == 'DreamTripPoints'){
-                        $data['iu_dt'] = $value['balance'];
-                    }else{
-                        $data['iu_dt'] = 0;
-                    }
-                    if($value['categoryType'] == 'DreamTripPoints_Accrued'){
-                        $data['iu_ac'] = $value['balance'];
-                    }else{
-                        $data['iu_ac'] = 0;
+                    switch ($value['categoryType']) {
+                        case 'DreamTripPoints':
+                            $data['iu_dt'] = $value['balance'];
+                            break;
+                        case 'DreamTripPoints_Accrued':
+                            $data['iu_ac'] = $value['balance'];
+                            break;
                     }
                 }
                 $data['endTime'] = date('l,F d,Y',$userinfo['joinedon']+24*3600*365);

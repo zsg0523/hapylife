@@ -49,8 +49,10 @@ class HapylifeDTPointController extends HomeBaseController{
         $result = $usa->dtPoint($data['customerid']);
         if(!$result['errors']){
             foreach($result['softCashCategories'] as $key=>$value){
-                if($value['categoryType'] == 'DreamTripPoints'){
-                    $data['iu_dt'] = $value['balance'];
+                switch ($value['categoryType']) {
+                    case 'DreamTripPoints':
+                        $data['iu_dt'] = $value['balance'];
+                        break;
                 }
             }
         }else{
