@@ -53,10 +53,20 @@ class HapylifePointController extends HomeBaseController{
             foreach($result['softCashCategories'] as $key=>$value){
                 if($value['categoryType'] == 'DreamTripPoints'){
                     $data['iu_dt'] = $value['balance'];
+                }else{
+                    $data['iu_dt'] = 0;
+                }
+                if($value['categoryType'] == 'DreamTripPoints_Accrued'){
+                    $data['iu_ac'] = $value['balance'];
+                }else{
+                    $data['iu_ac'] = 0;
                 }
             }
+            $data['endTime'] = date('l,F d,Y',$data['joinedon']+24*3600*365);
         }else{
             $data['iu_dt'] = 0;
+            $data['iu_ac'] = 0;
+            $data['endTime'] = '';
         }
         if($data){
             $data['status'] = 1;

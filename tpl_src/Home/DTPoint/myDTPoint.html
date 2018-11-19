@@ -44,9 +44,9 @@
   			<a onclick='window.location.href="{:U('Home/DTPoint/myDtMonth')}";'>查看明细</a>
   		</div>
       <div class="ep1" >
-          <div class="dtInfo">DreamTrips Points ready to use:0-0-0 0:0:0</div>
-          <div class="dtInfo">DreamTrips Points pending maturity:0-0-0 0:0:0</div>
-          <div class="dtInfo">Pending DreamTrips Points mature:0-0-0 0:0:0</div>
+          <div class="dtInfo">DreamTrips Points ready to use:{$assign['data']['iu_dt']}</div>
+          <div class="dtInfo">DreamTrips Points pending maturity:{$assign['data']['iu_ac']}</div>
+          <div class="dtInfo">Pending DreamTrips Points mature:{$assign['data']['endTime']}</div>
        </div>
   		<div class="EP_btn">
   			 <!--<div class=" transfer_btn" style="cursor:pointer" onclick='window.location.href="{:U('Home/Purchase/EPtransfer')}";'>DT转账</div>-->
