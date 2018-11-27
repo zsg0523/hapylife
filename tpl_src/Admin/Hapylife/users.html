@@ -59,6 +59,8 @@
                         <th>身份证正面</th>
                         <th>身份证反面</th>
                         <th>登记时间</th>
+                        <th>会籍状态</th>
+						<th>操作</th>
                         <if condition="$session['user']['username'] eq sandy">
                     	<else />
 							<th>操作</th>
@@ -89,6 +91,26 @@
 							<td><?php if(!empty($v['justidcard'])){echo '<a href="'.$v['justidcard'].'" target="_blank"><img width="20" height="20" src="'.$v['justidcard'].'">'.'<a>';}else{echo '';} ?></td>
 							<td><?php if(!empty($v['backidcard'])){echo '<a href="'.$v['backidcard'].'" target="_blank"><img width="20" height="20" src="'.$v['backidcard'].'">'.'<a>';}else{echo '';} ?></td>
 							<td>{:date('Y-m-d H:i:s',$v['joinedon'])}</td>
+							<td>
+								<if condition="$v['isexit'] eq 1">
+				    				<if condition="$v['distributortype'] eq Pc">
+										暂无会籍
+					    			<else />
+										正常
+					    			</if>
+				    			<else />已退会
+				    			</if>
+							</td>
+							<td>
+				    			<if condition="$v['isexit'] eq 1">
+				    				<if condition="$v['distributortype'] eq Pc">
+										暂无会籍
+					    			<else />
+										<a href="javascript:if(confirm('确定退会{$v.customerid}？'))location='{:U('Admin/Hapylife/isexit',array('id'=>$v['iuid'],'isexit'=>$v['isexit']))}'">点击退会</a> 
+					    			</if>
+				    			<else />已退会
+				    			</if>
+							</td>
 							<if condition="$session['user']['username'] eq sandy">
                         	<else />
 								<td>

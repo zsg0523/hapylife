@@ -11,8 +11,14 @@ class HapylifeNetworkController extends HomeBaseController{
     **/
     public function getUserBinary(){
         $account = I('post.CustomerID');
+        $wvId = M('User')->where(array('CustomerID'=>$account))->getfield('wvCustomerID');
         $time = time()-14*86400;
-        $data    = D('User')->where(array('EnrollerID'=>$account,'CustomerID'=>array('like','%'.'HPL'.'%')))->select();
+        if($wvId){
+            $CustomerID = $account.','.$wvId;
+            $data = M('User')->where(array('isexit'=>1,'enrollerid'=>array('IN',$CustomerID)))->select();
+        }else{
+            $data = M('User')->where(array('isexit'=>1,'enrollerid'=>$account))->select();
+        }
         // p($data);die;
         foreach($data as $key=>$value){
             // 去除非正式会员

@@ -1027,6 +1027,24 @@ class HapylifeController extends AdminBaseController{
 			$this->error('删除失败');
 		}
 	}
+	/**
+	* 用户退会
+	**/
+	public function isexit(){
+		$id    =I('get.id');
+		$isexit=I('get.isexit')?0:1;
+		$map=array(
+			'iuid'=>$id,
+			'isexit'=>$isexit
+		);
+		
+		$result=D('User')->save($map);
+		if($result){
+			redirect($_SERVER['HTTP_REFERER']);
+		}else{
+			$this->error('退会失败');
+		}
+	}
 
 	/**
 	* 房间列表

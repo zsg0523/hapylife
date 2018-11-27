@@ -1524,8 +1524,14 @@ class PurchaseController extends HomeBaseController{
 // **************我的推荐人*****************
     public function recommenderList(){
         $customerid = $_SESSION['user']['username'];
+        $wvId = M('User')->where(array('CustomerID'=>$customerid))->getfield('wvCustomerID');
         $time = time()-14*86400;
-        $data = M('User')->where(array('enrollerid'=>$customerid))->select();
+        if($wvId){
+            $CustomerID = $customerid.','.$wvId;
+            $data = M('User')->where(array('isexit'=>1,'enrollerid'=>array('IN',$CustomerID)))->select();
+        }else{
+            $data = M('User')->where(array('isexit'=>1,'enrollerid'=>$customerid))->select();
+        }
         foreach($data as $key=>$value){
             // 去除非正式会员
             if($value['distributortype'] != 'Pc'){
@@ -2026,21 +2032,19 @@ class PurchaseController extends HomeBaseController{
             unlink($userinfo['hu_codepic']);
         }
         $web_url     = C('WEB_URL');
-        //图片存储的绝对路径
-        $save_path   = isset($_GET['save_path'])?$_GET['save_path']:'Public/codepic/';
         // 存放的内容
-        $url     = 'http://apps.hapy-life.com/hapylife/index.php/Home/Register/new_register/iuid/'.$iuid.'/codetype/3/hu_nickname/'.$userinfo['customerid'].'/whichApp/'.$whichApp.'/createTime/'.date('Y-m-d H:i:s');
-        $qrcode      = createQRcode($save_path,$url,$qr_level='L',$qr_size=4,$save_prefix='qrcode');
-        $hu_codepic = $web_url.'/'.$save_path.$qrcode;
+        $content     = array('iuid'=>$iuid,'codetype'=>3,'hu_nickname'=>$userinfo['customerid'],'whichApp'=>$whichApp,'createTime'=>date('Y-m-d H:i:s'));
+        $qrcode      = qrcode_arr($content);
         $data = array(
             'iuid'      =>$iuid,
-            'hu_codepic'=>$hu_codepic
+            'hu_codepic'=>$qrcode
         );
         $save = D('User')->save($data);
         if($qrcode){
-            $tmp['status'] = $hu_codepic;
+            $tmp['status'] = $qrcode;
             $tmp['userinfo'] = $userinfo;
         }
+        // p($tmp);die;
         $this->assign($tmp);         
         $this->display();
     }
