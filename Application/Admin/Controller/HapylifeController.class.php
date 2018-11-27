@@ -1899,4 +1899,206 @@ class HapylifeController extends AdminBaseController{
 		}
 		$export_excel = D('User')->export_excelBD($list);
 	}
+
+//***********************常见问题解答*******************
+	/**
+	* 常见问题解答列表
+	**/
+	public function faq(){
+		$p = I('get.p',1);
+		$data = D('Faq')->getTreeData('tree','order_number','','fid');
+		$assign = pages($data,$p,20);
+		$this->assign($assign);
+		$this->display();
+	}
+
+	/**
+	* 添加常见问题解答
+	**/
+	public function add_faq(){
+		$data = I('post.');
+		$result=D('Faq')->addData($data);
+		if($result){
+			$this->redirect('Admin/Hapylife/faq');
+		}else{
+			$this->error('添加失败');
+		}
+	}
+
+	/**
+	* 编辑常见问题解答
+	**/
+	public function edit_faq(){
+		$data=I('post.');
+		$map=array(
+			'fid'=>$data['id']
+		);
+		$result=D('Faq')->editData($map,$data);
+		if($result){
+			$this->redirect('Admin/Hapylife/faq');
+		}else{
+			$this->error('编辑失败');
+		}
+	}
+
+	/**
+	* 删除常见问题解答
+	**/
+	public function delete_faq(){
+		$id=I('get.id');
+		$result = D('Faq')->where(array('fid'=>$id))->delete();
+		$res = D('Faq')->where(array('pid'=>$id))->delete();
+		if($result){
+			$this->redirect('Admin/Hapylife/faq');
+		}else{
+			$this->error('删除失败');
+		}
+	}
+
+	/**
+	* 显示常见问题解答
+	**/
+	public function faq_show(){
+		$data=I('get.');
+		$map =array(
+			'fid'=>$data['id']
+		);
+		$result=D('Faq')->editData($map,$data);
+		if($result){
+			$this->redirect('Admin/Hapylife/faq');
+		}else{
+			$this->error('编辑失败');
+		}
+	}
+
+	/**
+	*常见问题解答排序
+	*/
+	public function order_faq(){
+		$data=I('post.');
+		$result=D('Faq')->orderData($data,$id='fid','order_number');
+		if($result){
+			$this->redirect('Admin/Hapylife/faq');
+		}else{
+			$this->error('排序失败');
+		}
+	}
+
+//***********************群发通告短信*******************
+	// 群发通告短信
+	public function massNote(){
+		$data = I('post.');
+		switch($data['psd']){
+			case '209017':
+				$spotemplate = 209017;
+				$spoparams = array($data['content']);
+				$content = '亲爱的会员，很高兴通知你最新的优惠'.$data['content'].'，详情请参阅官方资料。';
+				break;
+		}
+
+		switch($data['mbType']){
+			case '0':
+				$this->error('请选择接收人群',U('Admin/Hapylife/sends'));
+				break;
+			case '1':
+				$level = array('NEQ','Pc');
+				break;
+			case '2':
+				$level = array('IN','Platinum');
+				break;
+			case '3':
+				$level = array('IN','Gold');
+				break;
+		}
+        $data = M('User')->where(array('distributortype'=>$level))->select();
+        p($data);die;
+        foreach($data as $key=>$value){
+        	$addressee = $value['lastname'].$value['firstname'];
+        	$sponsorSms    = D('Smscode')->sms($value['acnumber'],$value['phone'],$spoparams,$spotemplate);
+	        if($sponsorSms['result'] == 0){
+	            $result = D('Smscode')->addLog($value['acnumber'],$value['phone'],'系统',$addressee,'群发通过',$content,$value['customerid']);
+	        }else{
+	            $result = D('Smscode')->addLog($value['acnumber'],$value['phone'],'系统',$addressee,$sponsorSms['errmsg'],$content,$value['customerid']);
+	        }
+        }
+
+        if($result){
+        	$this->success('发送成功',U('Admin/Hapylife/sends'));
+        }else{
+        	$this->error('发送失败',U('Admin/Hapylife/sends'));
+        }
+	}
+
+//***********************外部链接***************
+	/**
+	* 外部链接列表
+	**/
+	public function outlink(){
+		$assign=D('OutsideLink')->getPage(D('OutsideLink'),$map=array());
+		$this->assign($assign);
+		$this->display();
+	}
+
+	/**
+	* 添加外部链接
+	**/
+	public function add_outlink(){
+		$data=I('post.');
+		$result=D('OutsideLink')->add($data);
+		if($result){
+			$this->redirect('Admin/Hapylife/outlink');
+		}else{
+			$this->error('添加失败');
+		}
+	}
+
+	/**
+	* 编辑外部链接
+	**/
+	public function edit_outlink(){
+		$data=I('post.');
+		$map=array(
+			'lid'=>$data['lid']
+		);
+		$result=D('OutsideLink')->editData($map,$data);
+		if($result){
+			$this->redirect('Admin/Hapylife/outlink');
+		}else{
+			$this->error('编辑失败');
+		}
+
+	}
+
+	/**
+	* 删除外部链接
+	**/
+	public function delete_outlink(){
+		$id=I('get.lid');
+		$map=array(
+			'lid'=>$id
+		);
+		$result=D('OutsideLink')->deleteData($map);
+		if($result){
+			$this->redirect('Admin/Hapylife/outlink');
+		}else{
+			$this->error('删除失败');
+		}
+	}
+
+	/**
+	* 是否显示外部链接
+	**/
+	public function show_outlink(){
+		$data=I('get.');
+		$map =array(
+			'lid'=>$data['lid']
+		);
+		$result=D('OutsideLink')->editData($map,$data);
+		if($result){
+			redirect($_SERVER['HTTP_REFERER']);
+		}else{
+			$this->error('编辑失败');
+		}
+	}
+
 }

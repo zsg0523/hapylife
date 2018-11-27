@@ -92,7 +92,7 @@
 		</div>
 		<div class="main">
 			<div class="rg-div">
-				<form class="form-horizontal" method="post" action="{:U('Home/Register/new_registerInfo')}" enctype="multipart/form-data" onsubmit="return checkform();">
+				<form class="form-horizontal" method="post" action="{:U('Home/Register/new_registerInfo',array('iuid'=>$iuid,'hu_nickname'=>$customerid))}" enctype="multipart/form-data" onsubmit="return checkform();">
 					<!--<input type="hidden" name="acnumber" value="{:I('get.acnumber')}" />
 					<input type="hidden" name="Phone"  value="{:I('get.phoneNumber')}" />
 					<input type="hidden" name="acid" value="{:I('get.acid')}" />-->
@@ -172,14 +172,22 @@
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>推荐人:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
 							<input type="hidden" name="teamCode" value="">
-							<input type="text" class="form-control" name="EnrollerNameCn" placeholder="推荐人" disabled="disabled" value="{$Think.session.user.name_cn}" >
+							<if condition="empty($hu_nickname) neq true">
+								<input type="text" class="form-control" name="EnrollerNameCn" placeholder="推荐人" value="{$hu_nickname}" readonly="readonly" />
+							<else />
+								<input type="text" class="form-control" name="EnrollerNameCn" placeholder="推荐人" readonly="readonly"  value="{$Think.session.user.name_cn}" >
+							</if>
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnrollerID']}</div>
 					</div>
 					<div class="form-group" onclick="hiden(this);">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>推荐ID:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
-							<input type="text" class="form-control"   name="EnrollerID" placeholder="HPL开头或纯数字号码" value="{$Think.session.user.username}"/>
+							<if condition="empty($customerid) neq true">
+								<input type="text" class="form-control" name="EnrollerID" placeholder="HPL开头或纯数字号码" value="{$customerid}" readonly="readonly" />
+							<else />
+								<input type="text" class="form-control" name="EnrollerID" placeholder="HPL开头或纯数字号码" value="{$Think.session.user.username}"/>
+							</if>
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['EnrollerIDd']}</div>
 					</div>

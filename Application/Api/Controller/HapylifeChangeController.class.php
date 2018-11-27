@@ -420,9 +420,23 @@ class HapylifeChangeController extends HomeBaseController{
             // 修改系统数据
             $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->save($data);
         }
+        switch($data['Placement']){
+            case 'BuildLeft':
+                $note = '事业部一';
+                break;
+            case 'BuildRight':
+                $note = '事业部二';
+                break;
+            case 'StrongLegOutside':
+                $note = '大事业部';
+                break;
+            case 'WeakLeg':
+                $note = '小事业部';
+                break;
+        }
         //更新usa数据
         $usa    = new \Common\UsaApi\Usa;
-        $result = $usa->ChangePlacement($data['happyLifeID'],$data['Placement']);
+        $result = $usa->ChangePlacement($data['happyLifeID'],$note);
         if($result['code'] == 200){
             $sample = array(
                 'status' => 1,

@@ -423,7 +423,7 @@ class ReceiptsonModel extends BaseModel{
         if($merchant==0){
             $count=$model
                 ->alias('r')
-                ->join('hapylife_user u on r.riuid = u.iuid ')
+                ->join('left join hapylife_user u on r.riuid = u.iuid ')
                 ->join('hapylife_receipt AS hr ON r.ir_receiptnum = hr.ir_receiptnum')
                 ->where(
                     array(
@@ -441,7 +441,7 @@ class ReceiptsonModel extends BaseModel{
         if($merchant==0){
             $list=$model
             ->alias('r')
-            ->join('hapylife_user u on r.riuid = u.iuid ')
+            ->join('left join hapylife_user u on r.riuid = u.iuid ')
             ->join('hapylife_receipt AS hr ON r.ir_receiptnum = hr.ir_receiptnum')
             ->where(
                 array(

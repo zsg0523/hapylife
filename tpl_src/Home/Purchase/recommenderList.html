@@ -21,7 +21,7 @@
       .main{height: auto;margin: auto;}
       .commonHead{width: 100%;height: auto;}
       
-      .recommender{width: 100%;height:120px;border: 1px solid #DEDEDE;margin-top: 5px;}
+      .recommender{width: 100%;min-height:120px;border: 1px solid #DEDEDE;margin-top: 5px;}
       .recommender>li{width: 100%;height: 30px;text-align: left;line-height: 30px;}
       .recommender>li>span{width: auto;display: block;float: right;}
       
@@ -66,6 +66,10 @@
               <else />
                 <li>&nbsp;推荐日期:<span>{$v['orderdate']}&nbsp;</span></li>
               </if>
+              <li>&nbsp;月费状态:<span>{$v['payNote']}&nbsp;</span></li>
+              <li>&nbsp;创建时间:<span>{$v['crateTime']}&nbsp;</span></li>
+              <li>&nbsp;支付时间:<span>{$v['payTime']}&nbsp;</span></li>
+              <li>&nbsp;金额:<span>{$v['payMoney']}&nbsp;</span></li>
     				</ul>
           </foreach>
   				

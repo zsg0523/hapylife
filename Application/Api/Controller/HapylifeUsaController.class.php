@@ -256,6 +256,8 @@ class HapylifeUsaController extends HomeBaseController{
 		print_r($result);
 		p($jsonStr);
 	}
+
+	
 	
 
 

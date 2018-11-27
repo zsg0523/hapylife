@@ -111,7 +111,7 @@ class IndexController extends HomeBaseController{
         }else{
             if(IS_POST){
                 $tmpe = I('post.');
-                $data = D('User')->where(array('CustomerID|wvCustomerID'=>$tmpe['CustomerID']))->find();
+                $data = D('User')->where(array('CustomerID|wvCustomerID'=>$tmpe['CustomerID'],'isexit'=>1))->find();
                 if($data){
                     if($data['password']==md5($tmpe['PassWord'])){
                         $_SESSION['user']=array(

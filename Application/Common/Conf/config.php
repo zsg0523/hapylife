@@ -1,7 +1,7 @@
 <?php
 return array(
 //*************************************附加设置***********************************
-    'WEB_URL'                => 'ubuntu/data/hapylife',    //上传文件前缀     
+    'WEB_URL'                => 'localhost/hapylife',    //上传文件前缀     
     'SHOW_PAGE_TRACE'        => false,                           // 是否显示调试面板
     'URL_CASE_INSENSITIVE'   => false,                           // url区分大小写
     'TAGLIB_BUILD_IN'        => 'Cx,Common\Tag\My',              // 加载自定义标签

@@ -251,7 +251,7 @@ class HapylifeApiController extends HomeBaseController{
     public function login(){
         if(IS_POST){
             $tmpe = I('post.');
-            $data = D('User')->where(array('CustomerID|wvCustomerID'=>$tmpe['CustomerID']))->find();
+            $data = D('User')->where(array('CustomerID|wvCustomerID'=>$tmpe['CustomerID'],'isexit'=>1))->find();
             if($data){
                 if($data['password']==md5($tmpe['PassWord'])){
                     $data['status'] =1;
@@ -1879,6 +1879,175 @@ class HapylifeApiController extends HomeBaseController{
                 $tmp['status'] = 0;
                 $this->ajaxreturn($tmp);
             }
+        }
+    }
+
+    /**
+    *生成个人二维码
+    **/
+    public function usercode1(){
+        if(!IS_POST){
+            $tmp['status'] = 0;
+            $this->ajaxreturn($tmp);
+        }else{
+            $iuid     = I('post.iuid');
+            $whichApp = I('post.whichApp',5);
+            // $huid = 7;
+            $user = D('User')->where(array('iuid'=>$iuid))->find();
+            // die;
+            if($user['hu_codepic']){
+                unlink($user['hu_codepic']);
+            }
+            $web_url     = C('WEB_URL');
+            // 存放的内容
+            // $content     = array('iuid'=>$iuid,'codetype'=>3,'hu_nickname'=>$user['customerid'],'whichApp'=>$whichApp,'createTime'=>date('Y-m-d H:i:s'));
+            $url     = 'http://apps.hapy-life.com/hapylife/index.php/Home/Register/new_register/iuid/'.$iuid.'/codetype/3/hu_nickname/'.$user['customerid'].'/whichApp/'.$whichApp.'/createTime/'.date('Y-m-d H:i:s');
+            $qrcode      = qrcode($url);
+            $data = array(
+                'iuid'      =>$iuid,
+                'hu_codepic'=>$qrcode
+            );
+            $save = D('User')->save($data);
+            if($qrcode){
+                $tmp['status'] = $qrcode;               
+                $this->ajaxreturn($tmp);
+            }else{
+                $tmp['status'] = 0;
+                $this->ajaxreturn($tmp);
+            }
+        }
+    }
+
+    /**
+    *FAQ列表
+    **/
+    public function faq(){
+        $data = M('Faq')->where(array('pid'=>0))->order('order_number DESC')->select();
+        foreach($data as $key=>$value){
+            $data[$key]['answer'] = M('Faq')->where(array('pid'=>$value['fid']))->select();
+        }
+        if($data){
+            $map = array(
+                'status' => 1,
+                'list' => $data
+            );
+            $this->ajaxreturn($map);
+        }else{
+            $map = array(
+                'status' => 0,
+                'msg' => '不存在数据'
+            );
+            $this->ajaxreturn($map);
+        }
+    }
+
+    /**
+    *奖金列表
+    **/
+    public function BounsList(){
+
+    }
+
+
+    /**
+    * 群发通告短信
+    **/ 
+    public function massNote(){
+        $data = I('post.');
+
+        switch($data['psd']){
+            case '209017':
+                $spotemplate = 209017;
+                $spoparams = array($data['name'],$data['time']);
+                $content = '';
+                break;
+            case '209019':
+                $spotemplate = 209019;
+                $spoparams = array();
+                $content = '';
+                break;
+            case '209098':
+                $spotemplate = 209098;
+                $spoparams = array();
+                $content = '';
+                break;
+            case '208996':
+                $spotemplate = 208996;
+                $spoparams = array();
+                $content = '';
+                break;
+        }
+
+        switch($data['mbType']){
+            case '1':
+                $level = array('NEQ','Pc');
+                break;
+            case '2':
+                $level = array('IN','Platinum');
+                break;
+            case '3':
+                $level = array('IN','Gold');
+                break;
+        }
+        $data = M('User')->where(array('distributortype'=>$level))->select();
+        // p($data);die;
+        foreach($data as $key=>$value){
+            $addressee = $value['lastname'].$value['firstname'];
+            $sponsorSms    = D('Smscode')->sms($value['acnumber'],$value['phone'],$spoparams,$spotemplate);
+            if($sponsorSms['result'] == 0){
+                $result = D('Smscode')->addLog($value['acnumber'],$value['phone'],'系统',$addressee,'群发通过',$content,$value['customerid']);
+            }else{
+                $result = D('Smscode')->addLog($value['acnumber'],$value['phone'],'系统',$addressee,$sponsorSms['errmsg'],$content,$value['customerid']);
+            }
+        }
+
+        if($result){
+            $this->success('发送成功',U('Admin/Hapylife/sends'));
+        }else{
+            $this->error('发送失败',U('Admin/Hapylife/sends'));
+        }
+    }
+
+    /**
+    * 外部链接地址获取
+    **/ 
+    public function OutsideLink(){
+        p(date("m/d/Y h:i:s A",'1541474103'));
+        die;
+        $data = M('OutsideLink')->where(array('isshow'=>1))->find();
+        if($data){
+            $map = array(
+                'status' => 1,
+                'link' => $data,
+            );
+            $this->ajaxreturn($map);
+        }else{
+            $map = array(
+                'status' => 0,
+                'msg' => '暂无数据',
+            );
+            $this->ajaxreturn($map);
+        }
+    }
+
+    /**
+    * 获取用户信息
+    **/ 
+    public function userList(){
+        $jsonStr = file_get_contents("php://input");
+        //写入服务器日志文件
+        $log     = addUsaLog($jsonStr);
+        $data    = json_decode($jsonStr,true);
+        $userinfo = M('User')->where(array('CustomerID'=>$data['customerid']))->find();
+        if($userinfo){
+            $map = array(
+                'status' => 1,
+                'data' => $userinfo,
+            );
+            $this->ajaxreturn($map);
+        }else{
+            $map['status'] = 0;
+            $this->ajaxreturn($map);
         }
     }
 }

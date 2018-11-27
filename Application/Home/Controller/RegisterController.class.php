@@ -24,6 +24,19 @@ class RegisterController extends HomeBaseController{
         $this->display();
     }
     public function new_register(){
+        $iuid = I('get.iuid');
+        $customerid = strtoupper(I('get.hu_nickname'));
+        if($customerid){
+            $data = array(
+                    'customerid' => $customerid,
+                );
+            $data    = json_encode($data);
+            // $sendUrl = "http://10.16.0.153/hapylife/index.php/Api/HapylifeApi/userList";
+            $sendUrl = "http://localhost/hapylife/index.php/Api/HapylifeApi/userList";
+            $result  = post_json_data($sendUrl,$data);
+            $back_msg = json_decode($result['result'],true);
+            $hu_nickname = $back_msg['data']['lastname'].$back_msg['data']['firstname'];
+        }
         header("Content-type: text/html; charset=gb2312"); 
         $mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
         foreach ($mape as $key => $value) {
@@ -35,6 +48,9 @@ class RegisterController extends HomeBaseController{
             }
         }
         $this->assign('dat',$dat);
+        $this->assign('customerid',$customerid);
+        $this->assign('hu_nickname',$hu_nickname);
+        $this->assign('iuid',$iuid);
         $this->display();
     }
     /**
@@ -163,6 +179,20 @@ class RegisterController extends HomeBaseController{
             $msg['message']= '未提交任何数据';
             $this->ajaxreturn($msg);
         }else{
+            $iuid = I('get.iuid');
+            $customerid = strtoupper(I('get.hu_nickname'));
+            if($customerid){
+                $data = array(
+                        'customerid' => $customerid,
+                    );
+                $data    = json_encode($data);
+                // $sendUrl = "http://10.16.0.153/hapylife/index.php/Api/HapylifeApi/userList";
+                $sendUrl = "http://localhost/hapylife/index.php/Api/HapylifeApi/userList";
+                $result  = post_json_data($sendUrl,$data);
+                $back_msg = json_decode($result['result'],true);
+                $hu_nickname = $back_msg['data']['lastname'].$back_msg['data']['firstname'];
+            }
+
             $data = I('post.');
             $upload = several_upload();
             $User = D("User"); // 实例化User对象
@@ -176,14 +206,17 @@ class RegisterController extends HomeBaseController{
                         $dat[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
                     }
                 }
-                 // 如果创建失败 表示验证没有通过 输出错误提示信息
+                // 如果创建失败 表示验证没有通过 输出错误提示信息
                 $error = $User->getError();
                 $assign = array(
-                            'error' => $error,
-                            'data' => $data,
-                            'dat' => $dat
-                            );
+                    'error' => $error,
+                    'data' => $data,
+                    'dat' => $dat
+                );
                 $this->assign($assign);
+                $this->assign('customerid',$customerid);
+                $this->assign('hu_nickname',$hu_nickname);
+                $this->assign('iuid',$iuid);
                 $this->display('Register/new_register');
             }else{
                 if(isset($upload['name'])){
@@ -199,6 +232,7 @@ class RegisterController extends HomeBaseController{
                 $add = D('Tempuser')->add($data);
                 if($add){
                     $this->assign('userinfo',$data);
+                    $this->assign('iuid',I('get.iuid'));
                     $this->display();
                 }
             }
@@ -208,8 +242,10 @@ class RegisterController extends HomeBaseController{
     * 获取首购产品
     **/ 
     public function new_purchase(){
+        $iuid = I('get.iuid');
         $data = D('product')->where(array('ip_type'=>1,'is_pull'=>1))->order('is_sort DESC')->select();
         $this->assign('data',$data);
+        $this->assign('iuid',$iuid);
         $this->display();
 
     }
@@ -217,16 +253,24 @@ class RegisterController extends HomeBaseController{
     * 获取产品详情
     **/ 
     public function new_purchaseInfo(){
+        $iuid = I('get.iuid');
         $ipid =I('get.ipid');
         $data = D('product')->where(array('ipid'=>$ipid))->find();
         $this->assign('data',$data);
+        $this->assign('iuid',$iuid);
         $this->display();
     }
     /**
     * 首购订单
     **/
     public function registerOrder(){
-        $iuid = $_SESSION['user']['id'];
+        if(I('get.iuid')){
+            $iuid = I('get.iuid');
+            // 外部链接注册唯一参数
+            $status = md5(time());
+        }else{
+            $iuid = $_SESSION['user']['id'];
+        }
         $ipid = I('get.ipid');
         $htid = D('Tempuser')->order('htid desc')->getfield('htid');
         //商品信息
@@ -304,7 +348,7 @@ class RegisterController extends HomeBaseController{
         $addlog = M('Log')->add($log);
         if($addlog){
             if($product['ip_type'] == 1){
-                $this->redirect('Home/Pay/choosePay1',array('ir_unpoint'=>$product['ip_point'],'ir_price'=>$product['ip_price_rmb'],'ir_point'=>$product['ip_point'],'ir_unpaid'=>$product['ip_price_rmb'],'ir_receiptnum'=>$order_num));
+                $this->redirect('Home/Pay/choosePay1',array('ir_unpoint'=>$product['ip_point'],'ir_price'=>$product['ip_price_rmb'],'ir_point'=>$product['ip_point'],'ir_unpaid'=>$product['ip_price_rmb'],'ir_receiptnum'=>$order_num,'status'=>$status));
             }else{
                 $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$product['ip_point'],'ir_price'=>$product['ip_price_rmb'],'ir_point'=>$product['ip_point'],'ir_unpaid'=>$product['ip_price_rmb'],'ir_receiptnum'=>$order_num));
             }
@@ -317,12 +361,14 @@ class RegisterController extends HomeBaseController{
     *代理成功注册页面
     **/
     public function new_regsuccess(){
+        $status = I('get.status');
         $ir_receiptnum = I('get.ir_receiptnum');
         $receipt = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
         if($receipt['ir_status'] == 2){
             $data                  = M('User')->where(array('CustomerID'=>$receipt['rcustomerid']))->find();
             $data['ir_receiptnum'] = $ir_receiptnum;
             $this->assign('data',$data);
+            $this->assign('status',$status);
             $this->display();
         }else{
             $this->error('失败');
@@ -688,12 +734,15 @@ class RegisterController extends HomeBaseController{
                             'wvOrderID'    => $maps['wvOrderID'],
                             'DistributorType' => $product['ip_after_grade'],
                             'Products'      => $products,
+                            'Number'        => 1,
+                            'OrderDate'     => date("m/d/Y h:i:s A")
                         );
                         $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
                         if($res){
+                            $addressee = $userinfo['lastname'].$userinfo['firstname'];
                             // 给注册会员发短信
                             $templateId ='223637';
-                            $params     = array($user['customerid'],$maps['wvCustomerID'],$product['ip_name_zh']);
+                            $params     = array($addressee,$maps['wvCustomerID'],$product['ip_name_zh']);
                             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                             if($sms['errmsg'] == 'OK'){
                                 $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$order_num))->find();
@@ -701,10 +750,10 @@ class RegisterController extends HomeBaseController{
                                     'acnumber' => $userinfo['acnumber'],
                                     'phone' => $userinfo['phone'],
                                     'operator' => '系统',
-                                    'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                    'addressee' => $addressee,
                                     'product_name' => $receiptlist['product_name'],
                                     'date' => time(),
-                                    'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：'.$user['customerid'].'会员号码：'.$maps['wvCustomerID'].'产品：'.$product['ip_name_zh'].'使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
+                                    'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：'.$addressee.'会员号码：'.$maps['wvCustomerID'].'产品：'.$product['ip_name_zh'].'使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
                                     'customerid' => $user['customerid']
                                 );
                                 $logs = M('SmsLog')->add($contents);
@@ -843,12 +892,15 @@ class RegisterController extends HomeBaseController{
                         'wvOrderID'    => $maps['wvOrderID'],
                         'DistributorType' => $product['ip_after_grade'],
                         'Products'      => $products,
+                        'Number'        => 1,
+                        'OrderDate'     => date("m/d/Y h:i:s A")
                     );
                     $res = M('User')->where(array('iuid'=>$iuid))->save($wv);
                     if($res){
+                        $addressee = $userinfo['lastname'].$userinfo['firstname'];
                         // 发送短信提示
                         $templateId ='223637';
-                        $params     = array($userinfo['customerid'],$maps['wvCustomerID'],$product['ip_name_zh']);
+                        $params     = array($addressee,$maps['wvCustomerID'],$product['ip_name_zh']);
                         $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                         if($sms['errmsg'] == 'OK'){
                             $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$order_num))->find();
@@ -856,10 +908,10 @@ class RegisterController extends HomeBaseController{
                                         'acnumber' => $userinfo['acnumber'],
                                         'phone' => $userinfo['phone'],
                                         'operator' => '系统',
-                                        'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                        'addressee' => $addressee,
                                         'product_name' => $receiptlist['product_name'],
                                         'date' => time(),
-                                        'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：'.$userinfo['customerid'].'会员号码：'.$maps['wvCustomerID'].'产品：'.$product['ip_name_zh'].'使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
+                                        'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：'.$addressee.'会员号码：'.$maps['wvCustomerID'].'产品：'.$product['ip_name_zh'].'使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
                                         'customerid' => $userinfo['customerid']
                             );
                             $logs = M('SmsLog')->add($contents);

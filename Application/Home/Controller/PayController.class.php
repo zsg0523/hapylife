@@ -361,8 +361,9 @@ class PayController extends HomeBaseController{
                                                 );
                                                 $res = M('User')->where(array('iuid'=>$userinfos['iuid']))->save($wv);
                                                 if($res){
+                                                    $addressee = $status['ia_name'];
                                                     $templateId ='223637';
-                                                    $params     = array($userinfos['customerid'],$maps['wvCustomerID'],$productName);
+                                                    $params     = array($addressee,$maps['wvCustomerID'],$productName);
                                                     $sms        = D('Smscode')->sms($userinfos['acnumber'],$userinfos['phone'],$params,$templateId);
                                                     if($sms['errmsg'] == 'OK'){
                                                         $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();
@@ -370,10 +371,10 @@ class PayController extends HomeBaseController{
                                                             'acnumber' => $userinfos['acnumber'],
                                                             'phone' => $userinfos['phone'],
                                                             'operator' => '系统',
-                                                            'addressee' => $status['ia_name'],
+                                                            'addressee' => $addressee,
                                                             'product_name' => $receiptlist['product_name'],
                                                             'date' => time(),
-                                                            'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：'.$userinfos['customerid'].'会员号码：'.$maps['wvCustomerID'].'产品：'.$productName.'使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
+                                                            'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：'.$addressee.'会员号码：'.$maps['wvCustomerID'].'产品：'.$productName.'使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
                                                             'customerid' => $userinfos['customerid']
                                                         );
                                                         $logs = M('SmsLog')->add($contents);

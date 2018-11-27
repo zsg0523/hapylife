@@ -1140,18 +1140,19 @@ class PurchaseController extends HomeBaseController{
                                                 );
                                         $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                                         if($res){
+                                            $addressee = $userinfo['lastname'].$userinfo['firstname'];
                                             $templateId ='223637';
-                                            $params     = array($userinfo['customerid'],$maps['wvCustomerID'],$productName);
+                                            $params     = array($addressee,$maps['wvCustomerID'],$productName);
                                             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                             if($sms['errmsg'] == 'OK'){
                                                 $contents = array(
                                                             'acnumber' => $userinfo['acnumber'],
                                                             'phone' => $userinfo['phone'],
                                                             'operator' => '系统',
-                                                            'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                                            'addressee' => $addressee,
                                                             'product_name' => $receiptlist['product_name'],
                                                             'date' => time(),
-                                                            'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：'.$userinfo['customerid'].'会员号码：'.$maps['wvCustomerID'].'产品：'.$productName.'使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
+                                                            'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：'.$addressee.'会员号码：'.$maps['wvCustomerID'].'产品：'.$productName.'使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
                                                             'customerid' => $userinfo['customerid']
                                                 );
                                                 $logs = M('SmsLog')->add($contents);
@@ -1263,7 +1264,7 @@ class PurchaseController extends HomeBaseController{
         $order          = D('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
         if($order['ir_unpaid']==0){
             if($order['htid']){
-                $this->redirect('Home/Register/new_regsuccess',array('ir_receiptnum'=>$order['ir_receiptnum']));
+                $this->redirect('Home/Register/new_regsuccess',array('ir_receiptnum'=>$order['ir_receiptnum'],'status'=>md5(time())));
             }else{
                 $this->redirect('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$order['ir_receiptnum']));
             }
@@ -1523,10 +1524,61 @@ class PurchaseController extends HomeBaseController{
 // **************我的推荐人*****************
     public function recommenderList(){
         $customerid = $_SESSION['user']['username'];
+        $time = time()-14*86400;
         $data = M('User')->where(array('enrollerid'=>$customerid))->select();
+        foreach($data as $key=>$value){
+            // 去除非正式会员
+            if($value['distributortype'] != 'Pc'){
+                $newData[] = $value;
+            }else{
+                if($value['joinedon']>$time){
+                    $newData[] = $value;
+                }
+            }
+        }
+        // 查询下线的订单支付状态
+        foreach($newData as $key=>$value){
+            $newData[$key]['receiptlist'] = M('Receipt')->where(array('rCustomerID'=>$value['customerid'],'ir_ordertype'=>array('IN','1,2')))->order('irid DESC')->select();
+        }
 
+        // 检测下线订单支付情况
+        foreach($newData as $key=>$value){
+            if($value['receiptlist']){
+                // 判断最新一条月费单支付状态
+                switch($value['receiptlist'][0]['ir_status']){
+                    // 未支付
+                    case '0':
+                        // 订单支付时间
+                        $newData[$key]['payTime']  = '';
+                        // 订单创建时间
+                        $newData[$key]['crateTime']  = date('Y-m-d H:i:s',$value['receiptlist'][0]['ir_date']);
+                        // 订单价格
+                        $newData[$key]['payMoney'] = $value['receiptlist'][0]['ir_price'];
+                        $newData[$key]['payNote']  = '未缴费';
+                        break;
+                    // 未支付
+                    case '7':
+                        // 订单支付时间
+                        $newData[$key]['payTime']  = '';
+                        // 订单创建时间
+                        $newData[$key]['crateTime']  = date('Y-m-d H:i:s',$value['receiptlist'][0]['ir_date']);
+                        // 订单价格
+                        $newData[$key]['payMoney'] = $value['receiptlist'][0]['ir_price'];
+                        $newData[$key]['payNote']  = '未缴费';
+                        break;
+                    // 已支付
+                    default:
+                        $newData[$key]['payTime']  = date('Y-m-d H:i:s',$value['receiptlist'][0]['ir_paytime']);
+                        $newData[$key]['crateTime']  = date('Y-m-d H:i:s',$value['receiptlist'][0]['ir_date']);
+                        $newData[$key]['payMoney'] = $value['receiptlist'][0]['ir_price'];
+                        $newData[$key]['payNote']  = '已支付';
+                        break;
+                }
+            }
+        }
+        
         $assign = array(
-                    'data' => $data,
+                    'data' => $newData,
                 );
         $this->assign($assign);
         $this->display();
@@ -1974,19 +2026,21 @@ class PurchaseController extends HomeBaseController{
             unlink($userinfo['hu_codepic']);
         }
         $web_url     = C('WEB_URL');
+        //图片存储的绝对路径
+        $save_path   = isset($_GET['save_path'])?$_GET['save_path']:'Public/codepic/';
         // 存放的内容
-        $content     = array('iuid'=>$iuid,'codetype'=>3,'hu_nickname'=>$userinfo['customerid'],'whichApp'=>$whichApp,'createTime'=>date('Y-m-d H:i:s'));
-        $qrcode      = qrcode_arr($content);
+        $url     = 'http://apps.hapy-life.com/hapylife/index.php/Home/Register/new_register/iuid/'.$iuid.'/codetype/3/hu_nickname/'.$userinfo['customerid'].'/whichApp/'.$whichApp.'/createTime/'.date('Y-m-d H:i:s');
+        $qrcode      = createQRcode($save_path,$url,$qr_level='L',$qr_size=4,$save_prefix='qrcode');
+        $hu_codepic = $web_url.'/'.$save_path.$qrcode;
         $data = array(
             'iuid'      =>$iuid,
-            'hu_codepic'=>$qrcode
+            'hu_codepic'=>$hu_codepic
         );
         $save = D('User')->save($data);
         if($qrcode){
-            $tmp['status'] = $qrcode;
+            $tmp['status'] = $hu_codepic;
             $tmp['userinfo'] = $userinfo;
         }
-        // p($tmp);die;
         $this->assign($tmp);         
         $this->display();
     }
