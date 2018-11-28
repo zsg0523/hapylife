@@ -1028,6 +1028,9 @@ class HapylifeApiController extends HomeBaseController{
                         $third_pro = M('Product')->where(array('ipid'=>39))->select();
                         break;
                     case '2':
+                        $third_pro = M('Product')->where(array('ipid'=>63))->select();
+                        break;
+                    case '3':
                         $third_pro = M('Product')->where(array('ipid'=>46))->select();
                         break;
                 }
@@ -2012,8 +2015,6 @@ class HapylifeApiController extends HomeBaseController{
     * 外部链接地址获取
     **/ 
     public function OutsideLink(){
-        p(date("m/d/Y h:i:s A",'1541474103'));
-        die;
         $data = M('OutsideLink')->where(array('isshow'=>1))->find();
         if($data){
             $map = array(

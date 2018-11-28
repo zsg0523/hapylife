@@ -7964,3 +7964,99 @@
 2018-11-26 17:28:19**********{"customerid":"HPL00000181"}**********
 2018-11-26 18:02:56********************
 2018-11-26 18:04:16********************
+2018-11-28 11:09:12**********{
+	"Messages": [{
+		"OrderId": 299748044,
+		"CustomerId": 298988674,
+		"CustomerName": "jinfeng liu",
+		"HplId": "HPL00000181",
+		"OrderTypeId": 4,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-11-26T00:45:14",
+		"Amount": 604.9200,
+		"PaymentTypeId": 6,
+		"PaymentTypeName": "RBS DTP Voucher 4 Initial"
+	},
+	{
+		"OrderId": 299749619,
+		"CustomerId": 298989493,
+		"CustomerName": "guiying wang",
+		"HplId": "HPL00123730",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-11-26T04:01:29",
+		"Amount": 604.9200,
+		"PaymentTypeId": 5,
+		"PaymentTypeName": "RBS DTP Initial"
+	}],
+	"Date": "2018-11-27T22:47:29.7849208Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-11-28 11:09:19**********{"errors":[{"parameter":"HapyLifeID","message":"The id does not exist","code":1003}]}**********
+2018-11-28 11:10:57**********{
+	"Messages": [{
+		"OrderId": 299748044,
+		"CustomerId": 298988674,
+		"CustomerName": "jinfeng liu",
+		"HplId": "HPL00000181",
+		"OrderTypeId": 4,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-11-26T00:45:14",
+		"Amount": 604.9200,
+		"PaymentTypeId": 5,
+		"PaymentTypeName": "RBS DTP Voucher 4 Initial"
+	},
+	{
+		"OrderId": 299749619,
+		"CustomerId": 298989493,
+		"CustomerName": "guiying wang",
+		"HplId": "HPL00123730",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-11-26T04:01:29",
+		"Amount": 604.9200,
+		"PaymentTypeId": 5,
+		"PaymentTypeName": "RBS DTP Initial"
+	}],
+	"Date": "2018-11-27T22:47:29.7849208Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-11-28 11:12:28**********{
+	"Messages": [{
+		"OrderId": 299748044,
+		"CustomerId": 298988674,
+		"CustomerName": "jinfeng liu",
+		"HplId": "HPL00000181",
+		"OrderTypeId": 4,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-11-26T00:45:14",
+		"Amount": 604.9200,
+		"PaymentTypeId": 7,
+		"PaymentTypeName": "RBS DTP Voucher 4 Initial"
+	},
+	{
+		"OrderId": 299749619,
+		"CustomerId": 298989493,
+		"CustomerName": "guiying wang",
+		"HplId": "HPL00123730",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-11-26T04:01:29",
+		"Amount": 604.9200,
+		"PaymentTypeId": 5,
+		"PaymentTypeName": "RBS DTP Initial"
+	}],
+	"Date": "2018-11-27T22:47:29.7849208Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2018-11-28 11:12:29**********{"errors":[{"parameter":"HapyLifeID","message":"The id does not exist","code":1003}]}**********
+2018-11-28 11:12:31**********{"errors":[{"parameter":"HapyLifeID","message":"The id does not exist","code":1003}]}**********
