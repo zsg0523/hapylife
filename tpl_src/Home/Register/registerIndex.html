@@ -15,7 +15,7 @@
 		.btn-blue{background-color: #2491ee;color: #fff;}
 		.btn-write{background-color: #fff;color: #2491ee;border: 1px solid #2491ee;}
 		.photo{width: 100%;height: 150px;float: left;text-align: center;}
-		.photo>img{height: 100%;border-radius: 50%;}
+		.photo>img{width: 150px;height: 100%;border-radius: 50%;}
 		.file{width: 100%;height: 80px;float: left;text-align: center;}
  		input:-webkit-autofill {
   			-webkit-box-shadow: 0 0 0px 30px white inset;
@@ -56,10 +56,14 @@
 				</div>
 				<div  id="loginform">
 					<div class="photo">
-						<img src="__PUBLIC_IMAGE__/default_icon.png">
+						<if condition="empty($data['photo']) eq true">
+							<img src="__PUBLIC_IMAGE__/default_icon.png">
+						<else />
+							<img src="{$data['photo']}">
+						</if>
 					</div>
 					<div class="file">
-						<h4>测试测试</h4>
+						<h4>{$data['lastname']}{$data['firstname']}</h4>
 						<h4>欢迎加入HAPYLIFE大家庭！</h4>
 					</div>
 				</div>	
