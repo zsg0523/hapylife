@@ -41,6 +41,7 @@
     <div class="main">  
 		<form class="paymentInfo" id="paymentInfo" action="{:U('Home/Pay/receiptSon')}" method="post" >
 			<input type="hidden" name="ir_receiptnum" id="ir_receiptnum" value="{:I('get.ir_receiptnum')}" />
+			<input type="hidden" id="status" value="{:I('get.status')}" />
 			<div class="payCheck">
 				<span class="tc">付款详情</span>
 				<div class="radioBox">
@@ -84,7 +85,13 @@
 		});
 		var mypoint;
 		function back(){
-        	window.location.href ="{:U('Home/Purchase/center')}";
+			var status=$('#status').val();
+			if(status&&status!=''){
+				window.location.href ="{:U('Home/Index/login')}";
+			}else{
+				window.location.href ="{:U('Home/Purchase/center')}";
+			}
+        	
    		}
    		function getReceiptInfo(){
    			var ir_receiptnum=$('#ir_receiptnum').val();

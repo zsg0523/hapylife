@@ -60,6 +60,8 @@
 		<div class="commonHead">
   			<include file="Common/commonHead1" />
 		</div>
+		<input type="hidden" id='iuid' value="{:I('get.iuid')}" />
+		<input type="hidden" id='hu_nickname' value="{:I('get.hu_nickname')}" />
 		<div class="main container-fluid">
 			<div class="row">
 				<div class="col-md-2 col-xs-4">
@@ -309,8 +311,14 @@
 		   		changeCommonHead('确认资料');
 			});
 			function back(){
-	        	window.location.href ="{:U('Home/Purchase/center')}";
-	   		}
+	        	var iuid=$("#iuid").val();
+	        	var hu_nickname=$("#hu_nickname").val();
+				if(iuid&&iuid!=''){
+					window.location.href ="{:U('Home/Register/new_register/iuid/"+iuid+"/hu_nickname/"+hu_nickname+"')}";
+				}else{
+					window.location.href ="{:U('Home/Purchase/center')}";
+				}
+   			}
 	    </script>
 	</body>
 

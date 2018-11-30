@@ -50,6 +50,7 @@
 	<div class="commonHead">
   		<include file="Common/commonHead1" />
 	</div>
+	<input type="hidden" id='iuid' value="{:I('get.iuid')}" />
 	<div class="main row">
 		<volist id='v' name='data'>
 			<div class="giftPackage col-xs-12 col-sm-12 col-md-12" id="giftPackage">
@@ -70,7 +71,12 @@
 	   		changeCommonHead('新代理购买礼包');
 		});
 		function back(){
-        	window.location.href ="{:U('Home/Purchase/center')}";
+			var iuid=$("#iuid").val();
+			if(iuid&&iuid!=''){
+				window.location.href ="{:U('Home/Register/registerIndex/iuid/"+iuid+"')}";
+			}else{
+				window.location.href ="{:U('Home/Purchase/center')}";
+			}
    		}
     </script>
     
