@@ -91,6 +91,9 @@ class PurchaseController extends HomeBaseController{
                         $third_pro = M('Product')->where(array('ipid'=>39))->select();
                         break;
                     case '2':
+                        $third_pro = M('Product')->where(array('ipid'=>63))->select();
+                        break;
+                    case '3':
                         $third_pro = M('Product')->where(array('ipid'=>46))->select();
                         break;
                 }

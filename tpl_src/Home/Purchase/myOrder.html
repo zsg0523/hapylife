@@ -104,9 +104,12 @@
 						</li>
 
 						<if condition="$v['ir_status'] eq 0">
-							<li class="col-xs-6 col-sm-6  col-md-1">
-								<a class="del" href="{:U('Home/Purchase/delete_order',array('ir_receiptnum'=>$v['ir_receiptnum']))}" >删除</a>
-							</li>
+							<if condition="$v['ir_ordertype'] eq 3">
+							<else />
+								<li class="col-xs-6 col-sm-6  col-md-1">
+									<a class="del" href="{:U('Home/Purchase/delete_order',array('ir_receiptnum'=>$v['ir_receiptnum']))}" >删除</a>
+								</li>
+							</if>
 						<else/>
 							<li class="col-xs-6 col-sm-6  col-md-1">
 								<a class="del" href="{:U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$v['ir_receiptnum']))}" >详情</a>

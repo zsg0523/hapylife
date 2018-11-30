@@ -146,27 +146,18 @@ class RegisterController extends HomeBaseController{
     public function checkName(){
         $customerid = strtoupper(trim(I('post.EnrollerID')));
         if($customerid){
-            if(strlen($customerid)==8){
-                $usa = new \Common\UsaApi\Usa;
-                $map = $usa->validateHpl($customerid);
-                if(empty($map['errors'])){
-                    $data['lastname'] = $map['lastName'];
-                    $data['firstname'] = $map['firstName'];
-                    $this->ajaxreturn($data);     
-                }else{
-                    $data['status'] = 0;
-                    $this->ajaxreturn($data);           
-                }
+            $usa = new \Common\UsaApi\Usa;
+            $map = $usa->validateHpl($customerid);
+            if(empty($map['errors'])){
+                $data['lastname'] = $map['lastName'];
+                $data['firstname'] = $map['firstName'];
+                $this->ajaxreturn($data);     
             }else{
-                $data = M('User')->where(array('CustomerID'=>$customerid))->find();
-                if($data){
-                    $this->ajaxreturn($data);
-                }else{
-                    $data['status'] = 0;
-                    $this->ajaxreturn($data); 
-                }
+                $data['status'] = 0;
+                $this->ajaxreturn($data);           
             }
         }else{
+            $data['status'] = 0;
             $this->ajaxreturn($data);           
         }
     }
@@ -975,6 +966,15 @@ class RegisterController extends HomeBaseController{
         $this->ajaxreturn($province);
     }
 
+    /**
+    * 获取二维码内容，显示在页面
+    **/ 
+    public function registerIndex(){
+        $iuid = I('get.iuid');
+        $data = M('User')->where(array('iuid'=>$iuid))->find();
+        $this->assign('data',$data);
+        $this->display();
+    }
 
 }
 

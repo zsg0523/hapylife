@@ -437,10 +437,28 @@ class HapylifeAddController extends HomeBaseController{
                         $result = D('Smscode')->addLog($enrollerinfo['acnumber'],$enrollerinfo['phone'],'系统',$enrollername,$sms2['errmsg'],$content2,$enrollerinfo['customerid']);
                     }
 
-                    //商品信息
-                    $product = M('Product')->where(array('ipid'=>39))->find();
-                    // 设置显示正常月费包
-                    $showProduct = M('User')->where(array('CustomerID'=>$value['HplId']))->setfield('showProduct',1);
+                    
+                    switch ($value['PaymentTypeId']) {
+                        case '6':
+                            //商品信息
+                            $product = M('Product')->where(array('ipid'=>39))->find();
+                            // 设置显示正常月费包
+                            $showProduct = M('User')->where(array('CustomerID'=>$value['HplId']))->setfield('showProduct',1);
+                            break;
+                        case '7':
+                            //商品信息
+                            $product = M('Product')->where(array('ipid'=>63))->find();
+                            // 设置显示正常月费包
+                            $showProduct = M('User')->where(array('CustomerID'=>$value['HplId']))->setfield('showProduct',2);
+                            break;   
+                        case '8':
+                            //商品信息
+                            $product = M('Product')->where(array('ipid'=>46))->find();
+                            // 设置显示正常月费包
+                            $showProduct = M('User')->where(array('CustomerID'=>$value['HplId']))->setfield('showProduct',3);
+                            break;   
+                    }
+                    
                     // 设置时区
                     date_default_timezone_set('PRC');
                     $order_num = $value['OrderId'];
@@ -541,27 +559,19 @@ class HapylifeAddController extends HomeBaseController{
                     }
                     break;
                 case '5':
-                    // // 不加5天模板
-                    // $time = date('Y-m-d H:i:s',strtotime($value['Date']));
-                    // // 发送短信提示
-                    // $templateId ='211391';
-                    // $params     = array($time);
-                    // $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                    // $content = '恭喜您，当月成功推荐4名新会员，可享有月费优惠，请在'.$time.'前完成缴费';
-                    // if($sms['result'] == 0){
-                    //     $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'月费到期通知',$content,$userinfo['customerid']);
-                    // }else{
-                    //     $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,$sms['errmsg'],$content,$userinfo['customerid']);
-                    // }
-                    // if($result){
-                    //     $status = M('wvNotification')->where(array('id'=>$key))->setfield('status','1');
-                    // }
-                    // //商品信息
-                    // $product = M('Product')->where(array('ipid'=>46))->find();
-                    // // 设置显示优惠月费包
-                    // $showProduct = M('User')->where(array('CustomerID'=>$value['HplId']))->setfield('showProduct',2);
+                    // 检测是否完成支付首单，且没有退款
                     $allStatus = array(2,3,4);
-                    $ir_status = M('Receipt')->where(array('rCustomerID'=>$value['HplId'],'ipid'=>31))->getField('ir_status',true);
+                    switch($value['PaymentTypeId']){
+                        case '1':
+                            $ir_status = M('Receipt')->where(array('rCustomerID'=>$value['HplId'],'ipid'=>31))->getField('ir_status',true);
+                            break;
+                        case '4':
+                            $ir_status = M('Receipt')->where(array('rCustomerID'=>$value['HplId'],'ipid'=>64))->getField('ir_status',true);
+                            break;
+                        case '5':
+                            $ir_status = M('Receipt')->where(array('rCustomerID'=>$value['HplId'],'ipid'=>62))->getField('ir_status',true);
+                            break;
+                    }
                     $int = implode(',',array_intersect($allStatus,$ir_status));
                     if(in_array($int,$allStatus)){
                         $usa    = new \Common\UsaApi\Usa;
@@ -639,46 +649,42 @@ class HapylifeAddController extends HomeBaseController{
             $message[$value['id']]['addtime'] = $value['addtime'];
         }
         foreach($message as $key=>$value){
-            // 用户信息
-            $userinfo = M('User')->where(array('CustomerID'=>$value['HplId']))->find();
-            // 推荐人信息
-            $enrollerinfo = M('User')->where(array('EnrollerID'=>$userinfo['enrollerid']))->find();
-            // 收信人名称
-            $addressee = $userinfo['lastname'].$userinfo['firstname'];
-            // 上线名称
-            $enrollername = $enrollerinfo['lastname'].$enrollerinfo['firstname'];
-            // 判断发送时间是否超过4天
-            if(strtotime($value['addtime'])%time()>=4){
-                // 加5天模板
-                $time = date('Y-m',strtotime($value['Date']));
-                $endTime = date('Y-m-d',strtotime($value['Date'])+2*24*3600);
-                $network = 'www.dreamtrips.com';
-                // 发送短信提示
-                $templateId1 ='208999';
-                $params1     = array($time,$endTime,$network);
-                $sms1        = D('Smscode')->sms('86',$userinfo['phone'],$params1,$templateId1);
-                $content1 = '这是'.$time.'续费通知，请在'.$endTime.'前完成缴费，避免无法登录'.$network;
-                if($sms1['result'] == 0){
-                    $result = D('Smscode')->addLog('86',$userinfo['phone'],'系统',$addressee,'续费通知',$content1,$userinfo['customerid']);
+            if($value['OrderTypeId'] == 4){
+                $ReceiptPayTime = M('Receipt')->where(array('ir_receiptnum'=>$value['OrderId']))->getfield('ir_paytime');
+                if(!empty($ReceiptPayTime)){
+                    $status = 1;
                 }else{
-                    $result = D('Smscode')->addLog('86',$userinfo['phone'],'系统',$addressee,$sms1['errmsg'],$content1,$userinfo['customerid']);
-                }
+                    // 用户信息
+                    $userinfo = M('User')->where(array('CustomerID'=>$value['HplId']))->find();
+                    // 收信人名称
+                    $addressee = $userinfo['lastname'].$userinfo['firstname'];
+                    $time = date('Y-m-d');
+                    // 判断发送时间是否超过4天
+                    if(bcdiv(bcsub(time(),strtotime($value['addtime'])),86400,0)>=4){
+                        // 发送短信提示
+                        $templateId ='236758';
+                        $params     = array($addressee,$time);
+                        $sms        = D('Smscode')->sms('86',$userinfo['phone'],$params,$templateId);
+                        $content = '亲爱的会员'.$addressee.'，这是系统提醒消息，您有未支付的订单，请在'.$time.'之前完成支付。';
+                        if($sms['result'] == 0){
+                            $result = D('Smscode')->addLog('86',$userinfo['phone'],'系统',$addressee,'二次缴费通知',$content,$userinfo['customerid']);
+                        }else{
+                            $result = D('Smscode')->addLog('86',$userinfo['phone'],'系统',$addressee,$sms['errmsg'],$content,$userinfo['customerid']);
+                        }
 
-                if($result){
-                    $status = M('wvNotification')->where(array('id'=>$key))->setfield('secStatus','1');
-                }
-
-                // 发送短信提示
-                $templateId2 ='221573';
-                $params2     = array($userinfo['customerid'],$time,$network);
-                $sms2        = D('Smscode')->sms($enrollerinfo['acnumber'],$enrollerinfo['phone'],$params2,$templateId2);
-                $content2 = ' 您的成员'.$userinfo['customerid'].'收到续费通知，请提醒成员在'.$time.'前完成缴费，避免无法登录'.$network;
-                if($sms2['result'] == 0){
-                    $result = D('Smscode')->addLog($enrollerinfo['acnumber'],$enrollerinfo['phone'],'系统',$enrollername,'下线续费通知',$content2,$enrollerinfo['customerid']);
-                }else{
-                    $result = D('Smscode')->addLog($enrollerinfo['acnumber'],$enrollerinfo['phone'],'系统',$enrollername,$sms2['errmsg'],$content2,$enrollerinfo['customerid']);
-                }
+                        if($result){
+                            $status = M('wvNotification')->where(array('id'=>$key))->setfield('secStatus','1');
+                        }
+                    }
+                }       
             }
+        }
+        if($status){
+            $map = array(
+                'status' => 200,
+                'msg' => '调用完成'
+            );
+            $this->ajaxreturn($map);
         }
     }
 }

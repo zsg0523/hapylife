@@ -1028,6 +1028,9 @@ class HapylifeApiController extends HomeBaseController{
                         $third_pro = M('Product')->where(array('ipid'=>39))->select();
                         break;
                     case '2':
+                        $third_pro = M('Product')->where(array('ipid'=>63))->select();
+                        break;
+                    case '3':
                         $third_pro = M('Product')->where(array('ipid'=>46))->select();
                         break;
                 }
@@ -1847,6 +1850,41 @@ class HapylifeApiController extends HomeBaseController{
         }
     }
 
+    // /**
+    // *生成个人二维码
+    // **/
+    // public function usercode(){
+    //     if(!IS_POST){
+    //         $tmp['status'] = 0;
+    //         $this->ajaxreturn($tmp);
+    //     }else{
+    //         $iuid     = I('post.iuid');
+    //         $whichApp = I('post.whichApp',5);
+    //         // $huid = 7;
+    //         $user = D('User')->where(array('iuid'=>$iuid))->find();
+    //         // die;
+    //         if($user['hu_codepic']){
+    //             unlink($user['hu_codepic']);
+    //         }
+    //         $web_url     = C('WEB_URL');
+    //         // 存放的内容
+    //         $content     = array('iuid'=>$iuid,'codetype'=>3,'hu_nickname'=>$user['customerid'],'whichApp'=>$whichApp,'createTime'=>date('Y-m-d H:i:s'));
+    //         $qrcode      = qrcode_arr($content);
+    //         $data = array(
+    //             'iuid'      =>$iuid,
+    //             'hu_codepic'=>$qrcode
+    //         );
+    //         $save = D('User')->save($data);
+    //         if($qrcode){
+    //             $tmp['status'] = $qrcode;               
+    //             $this->ajaxreturn($tmp);
+    //         }else{
+    //             $tmp['status'] = 0;
+    //             $this->ajaxreturn($tmp);
+    //         }
+    //     }
+    // }
+
     /**
     *生成个人二维码
     **/
@@ -1863,53 +1901,19 @@ class HapylifeApiController extends HomeBaseController{
             if($user['hu_codepic']){
                 unlink($user['hu_codepic']);
             }
-            $web_url     = C('WEB_URL');
-            // 存放的内容
-            $content     = array('iuid'=>$iuid,'codetype'=>3,'hu_nickname'=>$user['customerid'],'whichApp'=>$whichApp,'createTime'=>date('Y-m-d H:i:s'));
-            $qrcode      = qrcode_arr($content);
-            $data = array(
-                'iuid'      =>$iuid,
-                'hu_codepic'=>$qrcode
-            );
-            $save = D('User')->save($data);
-            if($qrcode){
-                $tmp['status'] = $qrcode;               
-                $this->ajaxreturn($tmp);
-            }else{
-                $tmp['status'] = 0;
-                $this->ajaxreturn($tmp);
-            }
-        }
-    }
-
-    /**
-    *生成个人二维码
-    **/
-    public function usercode1(){
-        if(!IS_POST){
-            $tmp['status'] = 0;
-            $this->ajaxreturn($tmp);
-        }else{
-            $iuid     = I('post.iuid');
-            $whichApp = I('post.whichApp',5);
-            // $huid = 7;
-            $user = D('User')->where(array('iuid'=>$iuid))->find();
-            // die;
-            if($user['hu_codepic']){
-                unlink($user['hu_codepic']);
-            }
-            $web_url     = C('WEB_URL');
+            $web_url     = C('WEB_URL').'/Upload/file/'.date('Y-m-d').'/';
             // 存放的内容
             // $content     = array('iuid'=>$iuid,'codetype'=>3,'hu_nickname'=>$user['customerid'],'whichApp'=>$whichApp,'createTime'=>date('Y-m-d H:i:s'));
+            // $url     = 'http://apps.hapy-life.com/hapylife/index.php/Home/Register/registerIndex/iuid/'.$iuid.'/codetype/3/hu_nickname/'.$user['customerid'].'/whichApp/'.$whichApp.'/createTime/'.date('Y-m-d H:i:s');
             $url     = 'http://apps.hapy-life.com/hapylife/index.php/Home/Register/new_register/iuid/'.$iuid.'/codetype/3/hu_nickname/'.$user['customerid'].'/whichApp/'.$whichApp.'/createTime/'.date('Y-m-d H:i:s');
-            $qrcode      = qrcode($url);
+            $qrcode      = createQRcode('./Upload/file/'.date('Y-m-d').'/',$url);
             $data = array(
                 'iuid'      =>$iuid,
-                'hu_codepic'=>$qrcode
+                'hu_codepic'=>$web_url.$qrcode
             );
             $save = D('User')->save($data);
             if($qrcode){
-                $tmp['status'] = $qrcode;               
+                $tmp['status'] = $web_url.$qrcode;               
                 $this->ajaxreturn($tmp);
             }else{
                 $tmp['status'] = 0;
@@ -2012,8 +2016,8 @@ class HapylifeApiController extends HomeBaseController{
     * 外部链接地址获取
     **/ 
     public function OutsideLink(){
-        p(date("m/d/Y h:i:s A",'1541474103'));
-        die;
+        $time = I('post.time');
+        p(date("m/d/Y h:i:s A",$time));die;
         $data = M('OutsideLink')->where(array('isshow'=>1))->find();
         if($data){
             $map = array(
