@@ -105,7 +105,8 @@
   		<include file="Common/commonHead1" />
 	</div>
 	
-	<div class="main container-fluid ">	
+	<div class="main container-fluid ">
+      <input type="hidden" id='iuid' value="{:I('get.iuid')}"/>	
 			<div class="pageDetial">
 				<div class="icon">
 					<img class="" src="{$data.ip_picture_zh}">
@@ -126,7 +127,8 @@
 	   		changeCommonHead('礼包详情');
 		});
 		function back(){
-        	window.location.href ="{:U('Home/Register/new_purchase')}";
+          var iuid=$("#iuid").val();
+        	window.location.href ="{:U('Home/Register/new_purchase/iuid/"+iuid+"')}";
    		}
     </script>
    </script>

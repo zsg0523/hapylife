@@ -93,9 +93,10 @@
 		<div class="main">
 			<div class="rg-div">
 				<form class="form-horizontal" method="post" action="{:U('Home/Register/new_registerInfo',array('iuid'=>$iuid,'hu_nickname'=>$customerid))}" enctype="multipart/form-data" onsubmit="return checkform();">
-					<!--<input type="hidden" name="acnumber" value="{:I('get.acnumber')}" />
-					<input type="hidden" name="Phone"  value="{:I('get.phoneNumber')}" />
-					<input type="hidden" name="acid" value="{:I('get.acid')}" />-->
+					<!-- <input type="hidden" name="acnumber" value="{:I('get.acnumber')}" />
+					<input type="hidden" name="Phone"  value="{:I('get.phoneNumber')}" /> -->
+					<input type="hidden" id='iuid' value="{:I('get.iuid')}" />
+					<input type="hidden" id='hu_nickname' value="{:I('get.hu_nickname')}" />
 					<div class="form-group" onclick="hiden(this);" style="margin-top: 10px;">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>中文姓:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
@@ -432,7 +433,13 @@
    		changeCommonHead('新代理注册');
 	});
 	function back(){
-		window.location.href ="{:U('Home/Purchase/center')}";
+		var iuid=$("#iuid").val();
+    	var hu_nickname=$("#hu_nickname").val();
+		if(iuid&&iuid!=''){
+			window.location.href ="{:U('Home/Register/registerIndex/iuid/"+iuid+"/hu_nickname/"+hu_nickname+"')}";
+		}else{
+			window.location.href ="{:U('Home/Purchase/center')}";
+		}
    }
 	  //获取所有的input并监听blur时间
     $('input').blur(function(){
