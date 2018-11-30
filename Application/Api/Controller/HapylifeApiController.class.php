@@ -2016,8 +2016,6 @@ class HapylifeApiController extends HomeBaseController{
     * 外部链接地址获取
     **/ 
     public function OutsideLink(){
-        $time = I('post.time');
-        p(date("m/d/Y h:i:s A",$time));die;
         $data = M('OutsideLink')->where(array('isshow'=>1))->find();
         if($data){
             $map = array(

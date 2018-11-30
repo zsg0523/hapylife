@@ -2029,23 +2029,25 @@ class PurchaseController extends HomeBaseController{
         $iuid = $_SESSION['user']['id'];
         $whichApp = I('post.whichApp',5);
         // 用户信息
-        $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
-
-        if($userinfo['hu_codepic']){
-            unlink($userinfo['hu_codepic']);
+        $user = D('User')->where(array('iuid'=>$iuid))->find();
+            // die;
+        if($user['hu_codepic']){
+            unlink($user['hu_codepic']);
         }
-        $web_url     = C('WEB_URL');
+        $web_url     = C('WEB_URL').'/Upload/file/'.date('Y-m-d').'/';
         // 存放的内容
-        $content     = array('iuid'=>$iuid,'codetype'=>3,'hu_nickname'=>$userinfo['customerid'],'whichApp'=>$whichApp,'createTime'=>date('Y-m-d H:i:s'));
-        $qrcode      = qrcode_arr($content);
+        // $content     = array('iuid'=>$iuid,'codetype'=>3,'hu_nickname'=>$user['customerid'],'whichApp'=>$whichApp,'createTime'=>date('Y-m-d H:i:s'));
+        $url     = 'http://apps.hapy-life.com/hapylife/index.php/Home/Register/registerIndex/iuid/'.$iuid.'/codetype/3/hu_nickname/'.$user['customerid'].'/whichApp/'.$whichApp.'/createTime/'.date('Y-m-d H:i:s');
+        // $url     = 'http://apps.hapy-life.com/hapylife/index.php/Home/Register/new_register/iuid/'.$iuid.'/codetype/3/hu_nickname/'.$user['customerid'].'/whichApp/'.$whichApp.'/createTime/'.date('Y-m-d H:i:s');
+        $qrcode      = createQRcode('./Upload/file/'.date('Y-m-d').'/',$url);
         $data = array(
             'iuid'      =>$iuid,
-            'hu_codepic'=>$qrcode
+            'hu_codepic'=>$web_url.$qrcode
         );
         $save = D('User')->save($data);
         if($qrcode){
-            $tmp['status'] = $qrcode;
-            $tmp['userinfo'] = $userinfo;
+            $tmp['status'] = $web_url.$qrcode;
+            $tmp['userinfo'] = $user;
         }
         // p($tmp);die;
         $this->assign($tmp);         
