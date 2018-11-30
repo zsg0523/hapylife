@@ -562,14 +562,14 @@ class HapylifeAddController extends HomeBaseController{
                     // 检测是否完成支付首单，且没有退款
                     $allStatus = array(2,3,4);
                     switch($value['PaymentTypeId']){
-                        case '1':
-                            $ir_status = M('Receipt')->where(array('rCustomerID'=>$value['HplId'],'ipid'=>31))->getField('ir_status',true);
-                            break;
                         case '4':
                             $ir_status = M('Receipt')->where(array('rCustomerID'=>$value['HplId'],'ipid'=>64))->getField('ir_status',true);
                             break;
                         case '5':
                             $ir_status = M('Receipt')->where(array('rCustomerID'=>$value['HplId'],'ipid'=>62))->getField('ir_status',true);
+                            break;
+                        default :
+                            $ir_status = M('Receipt')->where(array('rCustomerID'=>$value['HplId'],'ipid'=>31))->getField('ir_status',true);
                             break;
                     }
                     $int = implode(',',array_intersect($allStatus,$ir_status));
