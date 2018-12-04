@@ -1267,7 +1267,7 @@ class PurchaseController extends HomeBaseController{
         $order          = D('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
         if($order['ir_unpaid']==0){
             if($order['htid']){
-                $this->redirect('Home/Register/new_regsuccess',array('ir_receiptnum'=>$order['ir_receiptnum'],'status'=>md5(time())));
+                $this->redirect('Home/Register/new_regsuccess',array('ir_receiptnum'=>$order['ir_receiptnum']));
             }else{
                 $this->redirect('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$order['ir_receiptnum']));
             }

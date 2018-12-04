@@ -1,0 +1,118 @@
+<extend name="Public:base" />
+
+<block name="title">退货管理</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            首页
+            &gt;
+            Hapylife
+            &gt;
+			退货管理
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+			    <li>
+			    	<form action="{:U('Admin/Hapylife/returns')}" method="get">
+			    		<select name="status">
+			    			<option <?php if($status == 0)echo "selected";?>  value="0">所有</option>
+			    			<option <?php if($status == 5)echo "selected";?>  value="5">申请退货</option>
+			    			<option <?php if($status == 8)echo "selected";?>  value="8">已退货</option>
+			    		</select>
+			    		<select name="timeType">
+			    			<option <?php if($timeType == 'applytime')echo "selected";?> value="applytime">申请时间</option>
+			    			<option <?php if($timeType == 'confirmtime')echo "selected";?> value="confirmtime" >确认时间</option>
+		    			</select>
+			    		<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM'})" autocomplete="off"/>
+			    		<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM'})" autocomplete="off"/>
+                        <input name="word" type="text" placeholder="关键词" value="{$word}" size="20" />
+                        <input class='btn btn-sm' type="submit" value="筛选" />
+                        <!-- <input class='btn btn-sm' type="submit" name='excel' value="excel" /> -->
+                	</form>
+			    </li>
+            </ul>
+		</div>
+        <div class="tab-content">
+			<table class="table table-striped table-bordered table-hover table-condensed">
+				<tr>
+					<th >订单编号</th>
+					<th >账号</th>
+					<th >姓名</th>
+                    <th >总金额</th>
+                    <th >总积分</th>
+                    <th >商品名称</th>
+                    <th >商品编号</th>
+                    <th >订单备注</th>
+                    <th >状态</th>
+                    <th >支付日期</th>
+                    <th >退货凭证</th>
+                    <th >退货数量</th>
+                    <th >退货金额</th>
+                    <th >退货备注</th>
+                    <th >申请发起人</th>
+                    <th >申请时间</th>
+                    <th >申请确认人</th>
+                    <th >申请时间</th>
+                    <th >确认退货</th>
+				</tr>
+				<foreach name="data" item="v">
+					<tr>
+						<td>{$v['ir_receiptnum']}</td>
+						<td>{$v['rcustomerid']}</td>
+						<td>{$v['ia_name']}</td>
+						<td>{$v['ir_price']}</td>
+						<td>{$v['ir_point']}</td>
+						<td>{$v['ip_name_zh']}</td>
+						<td>{$v['ip_bh']}</td>
+						<td>{$v['ir_desc']}</td>
+						<td>
+                            <if condition="$v['ir_status'] eq 5">申请退货
+                            <elseif condition="$v['ir_status'] eq 8"/>已退货
+                        	</if>
+						</td>
+						<td>
+							<if condition="$v['ir_paytime'] eq 0">
+							<else/>{:date('Y-m-d H:i:s',$v['ir_paytime'])}
+							</if>
+						</td>
+						<td><img src="{$v['rimg']}"></td>
+						<td>{$v['rnum']}瓶</td>
+						<td>{$v['rmoney']}RMB</td>
+						<td>{$v['rdesc']}</td>
+						<td>{$v['rproposer']}</td>
+						<td>
+							<if condition="empty($v['applytime']) neq true">
+								{:date('Y-m-d h:i:s',$v['applytime'])}
+							<else />
+							</if>
+						</td>
+						<td>{$v['roperator']}</td>
+						<td>
+							<if condition="empty($v['confirmtime']) neq true">
+								{:date('Y-m-d h:i:s',$v['confirmtime'])}
+							<else />
+							</if>
+						</td>
+						<td>
+							<if condition="$v['status'] eq 0">
+								<a href="javascript:if(confirm('确定退货？'))location='{:U('Admin/Hapylife/returns',array('rid'=>$v['rid'],'rir_receiptnum'=>$v['rir_receiptnum']))}'">确认退货</a>
+							<elseif condition="$v['status'] eq 1" />
+								确认退货
+							</if>
+						</td>
+					</tr>
+				</foreach>
+			</table>
+			<div class='page'>
+				{$page}
+			</div>
+        </div>
+    </div>
+</block>
+<block name="js">
+	<script>
+	</script>
+</block>

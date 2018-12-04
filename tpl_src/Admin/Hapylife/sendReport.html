@@ -1,6 +1,6 @@
 <extend name="Public:base" />
 
-<block name="title">订单管理</block>
+<block name="title">送货报表</block>
 <block name="content">
     <!-- 导航栏开始 -->
     <div class="page-header">
@@ -58,8 +58,7 @@
                         <th >送达日期</th>
                         <th >确认发货</th>
                         <th >确认送达</th>
-                        <th >确认退货</th>
-                        <th >退货确认</th>
+                        <th >申请退货</th>
                         <th >发送物流短信</th>
                         <th >操作</th>
 					</tr>
@@ -115,15 +114,12 @@
 								</if>
 							</td>
 							<td>
-								<if condition="$v['ir_status'] eq 2" ><a href="javascript:if(confirm('确定退货？'))location='{:U('Admin/Hapylife/send',array('id'=>$v['irid'],'ir_statuss'=>1))}'">申请退货</a>
-								<elseif condition="$v['ir_status'] eq 5"/>已申请退货
-								<elseif condition="$v['ir_status'] eq 8"/>已退货
-								</if>
-							</td>
-							<td>
-								<if condition="$v['ir_status'] eq 2" >未申请退货
-								<elseif condition="$v['ir_status'] eq 5"/><a href="javascript:if(confirm('退货确认？'))location='{:U('Admin/Hapylife/send',array('id'=>$v['irid'],'ir_statuss'=>2))}'">退货确认</a>
-								<elseif condition="$v['ir_status'] eq 8"/>已退货
+								<if condition="$v['ir_status'] eq 5">
+									已申请退货
+								<elseif condition="$v['ir_status'] eq 8" />
+									已确认退货
+								<else />
+									<a href="javascript:;" onclick="sale(this)" irId="{$v['irid']}" Productnams="{$v['productnams']}" userName="{$v['lastname']}{$v['firstname']}" customerId="{$v['customerid']}" irPrice="{$v['ir_price']}" iaPhone="{$v['ia_phone']}" iaProvice="{$v['ia_province']}" iaCity="{$v['ia_city']}" iaArea="{$v['ia_area']}" iaAdress="{$v['ia_address']}" irReceiptnum="{$v['ir_receiptnum']}" iaName="{$v['ia_name']}" >申请退货</a>
 								</if>
 							</td>
 							<if condition="$v['is_send'] eq 2">
@@ -134,7 +130,7 @@
 								</td>
 							</if>
 							<td>
-								<a href="javascript:;" onclick="edit(this)" irId="{$v['irid']}" Productnams="{$v['productnams']}" userName="{$v['lastname']}{$v['firstname']}" customerId="{$v['customerid']}" irPrice="{$v['ir_price']}" iaPhone="{$v['ia_phone']}" iaProvice="{$v['ia_province']}" iaCity="{$v['ia_city']}" iaArea="{$v['ia_area']}" iaAdress="{$v['ia_address']}" irReceiptnum="{$v['ir_receiptnum']}" iaName="{$v['ia_name']}">修改收货人信息</a>
+								<a href="javascript:;" onclick="edit(this)" userName="{$v['lastname']}{$v['firstname']}" irPrice="{$v['ir_price']}" irReceiptnum="{$v['ir_receiptnum']}">修改收货人信息</a>
 							</td>
 						</tr>
 					</foreach>
@@ -269,6 +265,71 @@
 	</div>
 	<!-- 修改收货人信息模态框结束 -->
 
+	<!-- 申请退货模态框开始 -->
+	<div class="modal fade" id="bjy-return" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						申请退货
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form" class="form-inline" action="{:U('Admin/Hapylife/saleReturn')}" method="post" enctype="multipart/form-data">
+						<input type="hidden" name="rir_receiptnum">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="15%">编号：</th>
+								<td id='Receiptnum1'></td>
+							</tr>
+							<tr>
+								<th>会员：</th>
+								<td id='Receiptuser1'></td>
+							</tr>
+							<tr>
+								<th>金额：</th>
+								<td id='Receiptprice1'></td>
+							</tr>
+							<tr>
+								<th>退货凭证：</th>
+								<td>
+									<input type="file" name="img">
+								</td>
+							</tr>
+							<tr>
+								<th>退货数量：</th>
+								<td>
+									<input type="text" name="rnum">（瓶）
+								</td>
+							</tr>
+							<tr>
+								<th>退货金额：</th>
+								<td>
+									<input type="text" name="rmoney">（RMB）
+								</td>
+							</tr>
+							<tr>
+								<th>备注</th>
+								<td>
+									<textarea name="rdesc" style="width:300px;height:100px;" class="textArea"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="submit" value="确认申请">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 申请退货模态框结束 -->
 </block>
 <block name="js">
 	<script>
@@ -313,6 +374,19 @@
         $("input[name='ia_phone']").val(iaPhone);
         $("input[name='ia_address']").val(iaAdress);
         $('#bjy-edit').modal('show');
+    }
+
+    // 申请退货
+    function sale(obj){
+		var userName =$(obj).attr('userName');
+		var irPrice =$(obj).attr('irPrice');
+		var irReceiptnum =$(obj).attr('irReceiptnum');
+
+        Receiptnum1.innerText   =irReceiptnum;
+        Receiptuser1.innerText  =userName;
+        Receiptprice1.innerText =irPrice;
+        $("input[name='rir_receiptnum']").val(irReceiptnum);
+    	$('#bjy-return').modal('show');
     }
 	</script>
 </block>

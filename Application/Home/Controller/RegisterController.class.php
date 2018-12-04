@@ -258,9 +258,10 @@ class RegisterController extends HomeBaseController{
         if(I('get.iuid')){
             $iuid = I('get.iuid');
             // 外部链接注册唯一参数
-            $status = md5(time());
+            $isOutside = 1;
         }else{
             $iuid = $_SESSION['user']['id'];
+            $isOutside = 0;
         }
         $ipid = I('get.ipid');
         $htid = D('Tempuser')->order('htid desc')->getfield('htid');
@@ -311,7 +312,9 @@ class RegisterController extends HomeBaseController{
             //产品id
             'ipid'         => $product['ipid'],
             //待注册用户id
-            'htid'        => $htid
+            'htid'        => $htid,
+            // 是否外部链接接入
+            'isOutside' => $isOutside,
         );
         $receipt = M('Receipt')->add($order);
         if($receipt){
@@ -339,7 +342,7 @@ class RegisterController extends HomeBaseController{
         $addlog = M('Log')->add($log);
         if($addlog){
             if($product['ip_type'] == 1){
-                $this->redirect('Home/Pay/choosePay1',array('ir_unpoint'=>$product['ip_point'],'ir_price'=>$product['ip_price_rmb'],'ir_point'=>$product['ip_point'],'ir_unpaid'=>$product['ip_price_rmb'],'ir_receiptnum'=>$order_num,'status'=>$status));
+                $this->redirect('Home/Pay/choosePay1',array('ir_unpoint'=>$product['ip_point'],'ir_price'=>$product['ip_price_rmb'],'ir_point'=>$product['ip_point'],'ir_unpaid'=>$product['ip_price_rmb'],'ir_receiptnum'=>$order_num,'status'=>$isOutside));
             }else{
                 $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$product['ip_point'],'ir_price'=>$product['ip_price_rmb'],'ir_point'=>$product['ip_point'],'ir_unpaid'=>$product['ip_price_rmb'],'ir_receiptnum'=>$order_num));
             }
@@ -352,14 +355,13 @@ class RegisterController extends HomeBaseController{
     *代理成功注册页面
     **/
     public function new_regsuccess(){
-        $status = I('get.status');
         $ir_receiptnum = I('get.ir_receiptnum');
         $receipt = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
         if($receipt['ir_status'] == 2){
             $data                  = M('User')->where(array('CustomerID'=>$receipt['rcustomerid']))->find();
             $data['ir_receiptnum'] = $ir_receiptnum;
+            $data['isoutside'] = $receipt['isoutside'];
             $this->assign('data',$data);
-            $this->assign('status',$status);
             $this->display();
         }else{
             $this->error('失败');

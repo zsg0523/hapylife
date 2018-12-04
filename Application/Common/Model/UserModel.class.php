@@ -169,126 +169,329 @@ class UserModel extends BaseModel{
      * @param  integer  $field  $field
      * @return array            分页数据
      */
-    public function getPage($model,$word,$order='',$status,$starttime,$endtime,$limit=20){
+    public function getPage($model,$map,$order='',$status,$starttime,$endtime,$limit=20){
         switch ($status) {
         	case '-1':
-		        if(empty($word)){
-					$count=$model->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))->count();
-				}else{
-					$count=$model
-					->alias('u')
-			        ->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			        ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-		            ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-		            ->count();
-				}
-		        $page=new_page($count,$limit);
-		        // 获取分页数据
-		        if(empty($word)){
-		        	if (empty($field)) {
-			            $list=$model
-			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-			                ->order($order)
-			                ->limit($page->firstRow.','.$page->listRows)
-			                ->select();         
-			        }else{
-			            $list=$model
-			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-			                ->field($field)
-			                ->order($order)
-			                ->limit($page->firstRow.','.$page->listRows)
-			                ->select();
-			        }
-		        }else{
-		        	if(empty($field)) {
-			            $list=$model
-			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-			                ->order($order)
-			                ->limit($page->firstRow.','.$page->listRows)
-			                ->select();         
-			        }else{
-			            $list=$model
-			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			                ->field($field)
-			                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-			                ->order($order)
-			                ->limit($page->firstRow.','.$page->listRows)
-			                ->select();         
-			        }
-		        }
-        		break;
-        	default:
-        		if(empty($word)){
-					$count=$model
-						->alias('u')
-						->join('left join hapylife_receipt c on u.iuid = c.riuid')
-						->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-						->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-						->count();
-				}else{
-					$count=$model
+	        	if(!empty($starttime) && empty($endtime)){
+	        		if(empty($map)){
+						$count=$model->where(array('joinedon'=>array('egt',$starttime)))->count();
+					}else{
+						$count=$model
 						->alias('u')
 				        ->join('left join hapylife_receipt c on u.iuid = c.riuid')
 				        ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			            ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				        ->where($map)
+			            ->where(array('joinedon'=>array('egt',$starttime)))
 			            ->count();
-				}
-		        $page=new_page($count,$limit);
-		        // 获取分页数据
-		        if(empty($word)){
-		        	if (empty($field)) {
-			            $list=$model
-			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			            	->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-			                ->order($order)
-			                ->limit($page->firstRow.','.$page->listRows)
-			                ->select();         
+					}
+			        $page=new_page($count,$limit);
+			        // 获取分页数据
+			        if(empty($map)){
+			        	if (empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where(array('joinedon'=>array('egt',$starttime)))
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where(array('joinedon'=>array('egt',$starttime)))
+				                ->field($field)
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();
+				        }
 			        }else{
-			            $list=$model
-			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			            	->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-			                ->field($field)
-			                ->order($order)
-			                ->limit($page->firstRow.','.$page->listRows)
-			                ->select();         
+			        	if(empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where($map)
+				                ->where(array('joinedon'=>array('egt',$starttime)))
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				                ->field($field)
+				                ->where($map)
+				                ->where(array('joinedon'=>array('egt',$starttime)))
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();         
+				        }
 			        }
-		        }else{
-		        	if (empty($field)) {
-			            $list=$model
-			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			                ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-			                ->order($order)
-			                ->limit($page->firstRow.','.$page->listRows)
-			                ->select();         
+	        	}else if(!empty($starttime) && !empty($endtime)){
+	        		if(empty($map)){
+						$count=$model->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))->count();
+					}else{
+						$count=$model
+						->alias('u')
+				        ->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				        ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				        ->where($map)
+			            ->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+			            ->count();
+					}
+			        $page=new_page($count,$limit);
+			        // 获取分页数据
+			        if(empty($map)){
+			        	if (empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->field($field)
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();
+				        }
 			        }else{
-			            $list=$model
-			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			                ->field($field)
-			                ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-			                ->order($order)
-			                ->limit($page->firstRow.','.$page->listRows)
-			                ->select();         
+			        	if(empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where($map)
+				                ->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				                ->field($field)
+				                ->where($map)
+				                ->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();         
+				        }
 			        }
-		        }
+	        	}else{
+	        		if(!empty($map)){
+						$count=$model
+							->alias('u')
+					        ->join('left join hapylife_receipt c on u.iuid = c.riuid')
+					        ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+					        ->where($map)
+				            ->count();
+					}
+			        $page=new_page($count,$limit);
+			        // 获取分页数据
+			        if(!empty($map)){
+			        	if (empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where($map)
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where($map)
+				                ->field($field)
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();
+				        }
+			        }
+	        	}
+        		break;
+        	default:
+	        	if(!empty($starttime) && empty($endtime)){
+	        		if(empty($map)){
+						$count=$model
+							->alias('u')
+							->join('left join hapylife_receipt c on u.iuid = c.riuid')
+							->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+							->where(array('ir_status'=>$status,'joinedon'=>array('egt',$starttime)))
+							->count();
+					}else{
+						$count=$model
+							->alias('u')
+					        ->join('left join hapylife_receipt c on u.iuid = c.riuid')
+					        ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+					        ->where($map)
+				            ->where(array('ir_status'=>$status,'joinedon'=>array('egt',$starttime)))
+				            ->count();
+					}
+			        $page=new_page($count,$limit);
+			        // 获取分页数据
+			        if(empty($map)){
+			        	if (empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where(array('ir_status'=>$status,'joinedon'=>array('egt',$starttime)))
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where(array('ir_status'=>$status,'joinedon'=>array('egt',$starttime)))
+				                ->field($field)
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();         
+				        }
+			        }else{
+			        	if (empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where($map)
+				                ->where(array('ir_status'=>$status,'joinedon'=>array('egt',$starttime)))
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				                ->field($field)
+				                ->where($map)
+				                ->where(array('ir_status'=>$status,'joinedon'=>array('egt',$starttime)))
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();         
+				        }
+			        }
+	        	}else if(!empty($starttime) && !empty($endtime)){
+	        		if(empty($map)){
+						$count=$model
+							->alias('u')
+							->join('left join hapylife_receipt c on u.iuid = c.riuid')
+							->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+							->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+							->count();
+					}else{
+						$count=$model
+							->alias('u')
+					        ->join('left join hapylife_receipt c on u.iuid = c.riuid')
+					        ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+					        ->where($map)
+				            ->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				            ->count();
+					}
+			        $page=new_page($count,$limit);
+			        // 获取分页数据
+			        if(empty($map)){
+			        	if (empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->field($field)
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();         
+				        }
+			        }else{
+			        	if (empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where($map)
+				                ->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				                ->field($field)
+				                ->where($map)
+				                ->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();         
+				        }
+			        }
+	        	}else{
+	        		if(!empty($map)){
+						$count=$model
+							->alias('u')
+					        ->join('left join hapylife_receipt c on u.iuid = c.riuid')
+					        ->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+					        ->where($map)
+					        ->where(array('ir_status'=>$status))
+				            ->count();
+					}
+			        $page=new_page($count,$limit);
+			        // 获取分页数据
+			        if(!empty($map)){
+			        	if (empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where($map)
+				                ->where(array('ir_status'=>$status))
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				                ->field($field)
+				                ->where($map)
+				                ->where(array('ir_status'=>$status))
+				                ->order($order)
+				                ->limit($page->firstRow.','.$page->listRows)
+				                ->select();         
+				        }
+			        }
+	        	}
+        		
         		break;
         }
 	        
@@ -308,89 +511,225 @@ class UserModel extends BaseModel{
      * @param  integer  $field  $field
      * @return array            分页数据
      */
-    public function getPageAllmemBer($model,$word,$order='',$status,$starttime,$endtime,$limit=20){
+    public function getPageAllmemBer($model,$map,$order='',$status,$starttime,$endtime,$limit=20){
         switch ($status) {
         	case '-1':
 		        // 获取分页数据
-		        if(empty($word)){
-		        	if (empty($field)) {
-			            $list=$model
-			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-			                ->order($order)
-			                ->select();         
+	        	if(!empty($starttime) && empty($endtime)){
+	        		if(empty($map)){
+			        	if (empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where(array('joinedon'=>array('egt',$starttime)))
+				                ->order($order)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where(array('joinedon'=>array('egt',$starttime)))
+				                ->field($field)
+				                ->order($order)
+				                ->select();
+				        }
 			        }else{
-			            $list=$model
-			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-			                ->field($field)
-			                ->order($order)
-			                ->select();
+			        	if(empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where($map)
+				                ->where(array('joinedon'=>array('egt',$starttime)))
+				                ->order($order)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				                ->field($field)
+				                ->where($map)
+				                ->where(array('joinedon'=>array('egt',$starttime)))
+				                ->order($order)
+				                ->select();         
+				        }
 			        }
-		        }else{
-		        	if(empty($field)) {
-			            $list=$model
-			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-			                ->order($order)
-			                ->select();         
+	        	}else if(!empty($starttime) && !empty($endtime)){
+	        		if(empty($map)){
+			        	if (empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->order($order)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->field($field)
+				                ->order($order)
+				                ->select();
+				        }
 			        }else{
-			            $list=$model
-			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			                ->field($field)
-			                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-			                ->order($order)
-			                ->select();         
+			        	if(empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where($map)
+				                ->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->order($order)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				                ->field($field)
+				                ->where($map)
+				                ->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->order($order)
+				                ->select();         
+				        }
 			        }
-		        }
+	        	}else{
+	        		if(!empty($map)){
+			        	if(empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				                ->where($map)
+				                ->order($order)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				                ->field($field)
+				                ->where($map)
+				                ->order($order)
+				                ->select();         
+				        }
+			        }
+	        	} 
         		break;
         	default:
 		        // 获取分页数据
-		        if(empty($word)){
-		        	if (empty($field)) {
-			            $list=$model
-			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			            	->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-			                ->order($order)
-			                ->select();         
+		        if(!empty($starttime) && empty($endtime)){
+		        	if(empty($map)){
+			        	if (empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where(array('ir_status'=>$status,'joinedon'=>array('egt',$starttime)))
+				                ->order($order)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where(array('ir_status'=>$status,'joinedon'=>array('egt',$starttime)))
+				                ->field($field)
+				                ->order($order)
+				                ->select();         
+				        }
 			        }else{
-			            $list=$model
-			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			            	->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-			                ->field($field)
-			                ->order($order)
-			                ->select();         
+			        	if (empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where($map)
+				                ->where(array('ir_status'=>$status,'joinedon'=>array('egt',$starttime)))
+				                ->order($order)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				                ->field($field)
+				                ->where($map)
+				                ->where(array('ir_status'=>$status,'joinedon'=>array('egt',$starttime)))
+				                ->order($order)
+				                ->select();         
+				        }
+			        }
+		        }else if(!empty($starttime) && !empty($endtime)){
+		        	if(empty($map)){
+			        	if (empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->order($order)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->field($field)
+				                ->order($order)
+				                ->select();         
+				        }
+			        }else{
+			        	if (empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where($map)
+				                ->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->order($order)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				                ->field($field)
+				                ->where($map)
+				                ->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->order($order)
+				                ->select();         
+				        }
 			        }
 		        }else{
-		        	if (empty($field)) {
-			            $list=$model
-			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			                ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-			                ->order($order)
-			                ->select();         
-			        }else{
-			            $list=$model
-			            	->alias('u')
-			            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
-			            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
-			                ->field($field)
-			                ->where(array('ir_status'=>$status,'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
-			                ->order($order)
-			                ->select();         
+		        	if(!empty($word)){
+			        	if (empty($field)) {
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				            	->where($map)
+				                ->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->order($order)
+				                ->select();         
+				        }else{
+				            $list=$model
+				            	->alias('u')
+				            	->join('left join hapylife_receipt c on u.iuid = c.riuid')
+				            	->join('left join hapylife_receiptlist l on c.ir_receiptnum = l.ir_receiptnum')
+				                ->field($field)
+				                ->where($map)
+				                ->where(array('ir_status'=>$status,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+				                ->order($order)
+				                ->select();         
+				        }
 			        }
 		        }
         		break;
@@ -411,8 +750,22 @@ class UserModel extends BaseModel{
      * @param  integer  $field  $field
      * @return array            分页数据
      */
-    public function getPageS($model,$word,$order='',$starttime,$endtime,$limit=20){
-    		if(empty($word)){
+    public function getPageS($model,$map,$order='',$starttime,$endtime,$limit=20){
+    	if(!empty($starttime) && empty($endtime)){
+    		if(empty($map)){
+				$count=$model
+					->alias('u')
+					->where(array('joinedon'=>array('egt',$starttime)))
+					->count();
+			}else{
+				$count=$model
+					->alias('u')
+					->where($map)
+		            ->where(array('joinedon'=>array('egt',$starttime)))
+		            ->count();
+			}
+    	}else if(!empty($starttime) && !empty($endtime)){
+    		if(empty($map)){
 				$count=$model
 					->alias('u')
 					->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
@@ -420,12 +773,59 @@ class UserModel extends BaseModel{
 			}else{
 				$count=$model
 					->alias('u')
-		            ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		            ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>$word,'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 		            ->count();
 			}
-	        $page=new_page($count,$limit);
+    	}else{
+    		if(!empty($map)){
+				$count=$model
+					->alias('u')
+					->where($map)
+		            ->count();
+			}
+    	}
+        $page=new_page($count,$limit);
 	        // 获取分页数据
-	        if(empty($word)){
+       	if(!empty($starttime) && empty($endtime)){
+       		if(empty($map)){
+	        	if (empty($field)) {
+		            $list=$model
+		            	->alias('u')
+		            	->where(array('joinedon'=>array('egt',$starttime)))
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }else{
+		            $list=$model
+		            	->alias('u')
+		            	->where(array('joinedon'=>array('egt',$starttime)))
+		                ->field($field)
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }
+	        }else{
+	        	if (empty($field)) {
+		            $list=$model
+		            	->alias('u')
+		            	->where($map)
+		                ->where(array('joinedon'=>array('egt',$starttime)))
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }else{
+		            $list=$model
+		            	->alias('u')
+		                ->field($field)
+		                ->where($map)
+		                ->where(array('joinedon'=>array('egt',$starttime)))
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }
+	        }
+       	}else if(!empty($starttime) && !empty($endtime)){
+       		if(empty($map)){
 	        	if (empty($field)) {
 		            $list=$model
 		            	->alias('u')
@@ -446,7 +846,8 @@ class UserModel extends BaseModel{
 	        	if (empty($field)) {
 		            $list=$model
 		            	->alias('u')
-		                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		            	->where($map)
+		                ->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 		                ->order($order)
 		                ->limit($page->firstRow.','.$page->listRows)
 		                ->select();         
@@ -454,13 +855,34 @@ class UserModel extends BaseModel{
 		            $list=$model
 		            	->alias('u')
 		                ->field($field)
-		                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->where($map)
+		                ->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 		                ->order($order)
 		                ->limit($page->firstRow.','.$page->listRows)
 		                ->select();         
 		        }
 	        }
-	        
+       	}else{
+       		if(!empty($map)){
+	        	if(empty($field)) {
+		            $list=$model
+		            	->alias('u')
+		            	->where($map)
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }else{
+		            $list=$model
+		            	->alias('u')
+		                ->field($field)
+		                ->where($map)
+		                ->order($order)
+		                ->limit($page->firstRow.','.$page->listRows)
+		                ->select();         
+		        }
+	        }
+       	}
+
         $data=array(
             'data'=>$list,
             'page'=>$page->show()
@@ -477,9 +899,44 @@ class UserModel extends BaseModel{
      * @param  integer  $field  $field
      * @return array            分页数据
      */
-    public function getAllmemBer($model,$word,$order='',$starttime,$endtime){
+    public function getAllmemBer($model,$map,$order='',$starttime,$endtime){
 	        // 获取分页数据
-	        if(empty($word)){
+    	if(!empty($starttime) && empty($endtime)){
+    		if(empty($map)){
+	        	if (empty($field)) {
+		            $list=$model
+		            	->alias('u')
+		            	->where(array('joinedon'=>array('egt',$starttime)))
+		                ->order($order)
+		                ->select();         
+		        }else{
+		            $list=$model
+		            	->alias('u')
+		            	->where(array('joinedon'=>array('egt',$starttime)))
+		                ->field($field)
+		                ->order($order)
+		                ->select();         
+		        }
+	        }else{
+	        	if (empty($field)) {
+		            $list=$model
+		            	->alias('u')
+		            	->where($map)
+		                ->where(array('joinedon'=>array('egt',$starttime)))
+		                ->order($order)
+		                ->select();         
+		        }else{
+		            $list=$model
+		            	->alias('u')
+		                ->field($field)
+		                ->where($map)
+		                ->where(array('joinedon'=>array('egt',$starttime)))
+		                ->order($order)
+		                ->select();         
+		        }
+	        }
+    	}else if(!empty($starttime) && !empty($endtime)){
+    		if(empty($map)){
 	        	if (empty($field)) {
 		            $list=$model
 		            	->alias('u')
@@ -498,18 +955,39 @@ class UserModel extends BaseModel{
 	        	if (empty($field)) {
 		            $list=$model
 		            	->alias('u')
-		                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		            	->where($map)
+		                ->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 		                ->order($order)
 		                ->select();         
 		        }else{
 		            $list=$model
 		            	->alias('u')
 		                ->field($field)
-		                ->where(array('iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%'),'joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
+		                ->where($map)
+		                ->where(array('joinedon'=>array(array('egt',$starttime),array('elt',$endtime))))
 		                ->order($order)
 		                ->select();         
 		        }
 	        }
+    	}else{
+    		if(!empty($map)){
+	        	if (empty($field)) {
+		            $list=$model
+		            	->alias('u')
+		            	->where($map)
+		                ->order($order)
+		                ->select();         
+		        }else{
+		            $list=$model
+		            	->alias('u')
+		            	->where($map)
+		                ->field($field)
+		                ->order($order)
+		                ->select();         
+		        }
+	        }
+	        
+    	}
 	        
         $data=array(
             'data'=>$list,
@@ -1076,5 +1554,33 @@ class UserModel extends BaseModel{
         }
         create_csv($content,$title,date('YmdHis',time()));
         return;
+    }
+
+    public function getMemberList($model,$wv,$order='',$limit=20){
+    	if(!empty($wv)){
+			$count = $model->where(array('CustomerID'=>$wv))->count();
+		}
+		$page=new_page($count,$limit);
+
+    	if(!empty($wv)){
+			$data = $model->where(array('CustomerID'=>$wv))->select();
+		}
+		foreach($data as $key=>$value){
+			if(strlen($value['customerid']) == 8){
+				$data[$key]['son'] = $model->where(array('EnrollerID'=>$value['customerid']))->select();	
+			}
+		}
+		foreach($data as $key=>$value){
+			if($value['son']){
+				$data[$key]['num'] = count($value['son']);
+			}else{
+				$data[$key]['num'] = 0;
+			}
+		}
+		$map=array(
+            'data'=>$data,
+            'page'=>$page->show()
+            );
+        return $map;
     }
 }

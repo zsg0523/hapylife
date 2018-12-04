@@ -256,10 +256,12 @@ class ReceiptsonModel extends BaseModel{
     }
 
     public function export_excels($data){
-        $title   = array('创建日期','创建时间','用户ID','订单号','流水号','流水方式','订单状态','订单总价','订货人','收货人','产品数量','产品信息','通用券的由来');
+        $title   = array('创建日期','创建时间','支付日期','支付时间','用户ID','订单号','流水号','流水方式','订单状态','订单总价','订货人','收货人','产品数量','产品信息','通用券的由来');
         foreach ($data as $k => $v) {
             $content[$k]['ir_date']        = date('Y-m-d',$v['ir_date']);
             $content[$k]['ir_time']        = date('H:i:s',$v['ir_date']);
+            $content[$k]['ir_paytime']     = date('Y-m-d',$v['ir_paytime']);
+            $content[$k]['ir_paytimes']    = date('H:i:s',$v['ir_paytime']);
             $content[$k]['rcustomerid']    = $v['rcustomerid'];
             $content[$k]['ir_receiptnum']  = $v['ir_receiptnum'];
             $content[$k]['receiptson']  = $v['receiptson'];

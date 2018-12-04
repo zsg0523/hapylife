@@ -28,7 +28,6 @@ class HapylifeController extends AdminBaseController{
 			'news_des'		=>I('post.news_des')?I('post.news_des'):mb_substr(I('post.news_content'),0,20).'.....',
 			'news_picture'	=>C('WEB_URL').$upload['name']
 		);
-		p($data);die;
 		$result=D('News')->addData($data);
 		if($result){
 			$this->redirect('Admin/Hapylife/news');
@@ -562,7 +561,7 @@ class HapylifeController extends AdminBaseController{
 		}
 		$timeType  = I('get.timeType')?I('get.timeType'):'ir_paytime';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
-		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:0;
 		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$starttime,$endtime,$status,$order='ir_date desc',$timeType);
 		//导出excel
 		if($excel == 'excel'){
@@ -601,8 +600,8 @@ class HapylifeController extends AdminBaseController{
 		$test      ='测试,测,试,测试点,test,testtest,测试测试,新建测试,测试地,测试点,测试账号';
 		$timeType  = I('get.timeType')?I('get.timeType'):'ir_paytime';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
-		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
-		$assign    = D('Receipt')->FinanceGetPage(D('Receipt'),$word,$starttime,$endtime,$status,$test,$timeType,$order='ir_date desc');
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:0;
+		$assign    = D('Receipt')->FinanceGetPage(D('Receipt'),$word,$starttime,$endtime,$status,$test,$timeType,$order='ir_paytime desc');
 		//导出excel
 		if($excel == 'excel'){
 			$data = D('Receipt')->FinanceGetAllSendData(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$test,$order='ir_paytime desc');
@@ -946,22 +945,18 @@ class HapylifeController extends AdminBaseController{
 			$map = array();
 		}else{
 			$map = array(
-				'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%')
+				'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>$word
 			);
 		}
 		
 		$excel     = I('get.excel');
 		$status    = I('get.status')-1;
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
-		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
-		$assign    = D('User')->getPage(D('User'),$word,$order='joinedon desc',$status,$starttime,$endtime);
-
-		// $assign = unique_arr($data['data']);
-		// p($assign);
-		// die;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:0;
+		$assign    = D('User')->getPage(D('User'),$map,$order='joinedon desc',$status,$starttime,$endtime);
 		//导出excel
 		if($excel == 'excel'){
-			$data = D('User')->getPageAllmemBer(D('User'),$word,$order='joinedon desc',$status,$starttime,$endtime);
+			$data = D('User')->getPageAllmemBer(D('User'),$map,$order='joinedon desc',$status,$starttime,$endtime);
 			$export_excel = D('User')->export_excel($data['data']);
 		}else{
 			$this->assign($assign);
@@ -1116,18 +1111,18 @@ class HapylifeController extends AdminBaseController{
 			$map = array();
 		}else{
 			$map = array(
-				'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>array('like','%'.$word.'%')
+				'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>$word
 			);
 		}
 		
 		$excel     = I('get.excel');
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
-		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
-		$assign    = D('User')->getPageS(D('User'),$word,$order='joinedon desc',$starttime,$endtime);
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:0;
+		$assign    = D('User')->getPageS(D('User'),$map,$order='joinedon desc',$starttime,$endtime);
 
 		//导出excel
 		if($excel == 'excel'){
-			$data = D('User')->getAllmemBer(D('User'),$word,$order='joinedon desc',$starttime,$endtime);
+			$data = D('User')->getAllmemBer(D('User'),$map,$order='joinedon desc',$starttime,$endtime);
 			$export_excel = D('User')->export_excel($data['data']);
 		}else{
 			$this->assign($assign);
@@ -1182,7 +1177,7 @@ class HapylifeController extends AdminBaseController{
 		$word      = trim(I('get.word',''));
 		$timeType  = I('get.timeType')?I('get.timeType'):'ir_paytime';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
-		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:0;
 		$assign    = D('Receipt')->getSendPage(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime asc');
 		// 导出excel
 		if($excel == 'excel'){
@@ -1215,7 +1210,7 @@ class HapylifeController extends AdminBaseController{
 		$order_status = I('get.status')-1;
 		if($order_status== -1){
 			//所有订单
-			$status = '2,3,4,5,6,8';
+			$status = '2,3,4,5,6,7,8';
 		}else{
 			$status = (string)$order_status;
 		}
@@ -1223,7 +1218,7 @@ class HapylifeController extends AdminBaseController{
 		$word      = trim(I('get.word',''));
 		$timeType  = I('get.timeType')?I('get.timeType'):'ir_paytime';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
-		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:0;
 		$array  = '测,测试,test,试,试点,testtest';
 		$ipid = '47,48';
 		$assign    = D('Receipt')->getSendPages(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$array,$ipid,$order='ir_paytime asc');
@@ -1253,6 +1248,82 @@ class HapylifeController extends AdminBaseController{
         }else{
         	$this->error('修改失败');
         }
+	}
+
+	// 退货申请
+	public function saleReturn(){
+		$data = I('post.');
+		$upload=post_upload();
+		if(isset($upload['name'])){
+			$data['rimg']=C('WEB_URL').$upload['name'];
+		}else{
+			$this->error('申请失败，请上传退货凭证');
+		}
+		if(empty($data['rdesc'])){
+			$this->error('备注不能为空');
+		}
+		if($data){
+			// 修改原订单状态
+			$editStatus = M('Receipt')->where(array('ir_receiptnum'=>$data['rir_receiptnum']))->setfield('ir_status',5);
+			$array = array(
+				'rir_receiptnum' => $data['rir_receiptnum'],
+				'rnir_receiptnum' => 'SR'.date('YmdHis').rand(10000, 99999),
+				'rimg' => $data['rimg'],
+				'rnum' => $data['rnum'],
+				'rmoney' => $data['rmoney'],
+				'rproposer' => $_SESSION['user']['username'],
+				'roperator' => '',
+				'applyTime' => time(),
+				'rdesc' => $data['rdesc']
+			);
+			$addReturn = M('SaleReturn')->add($array);
+		}
+		
+        if($addReturn){
+        	redirect($_SERVER['HTTP_REFERER']);
+        }else{
+        	$this->error('申请失败');
+        }
+	}
+
+	// 退货管理
+	public function returns(){
+		$word = I('get.word');
+		$timeType = I('get.timeType')?I('get.timeType'):'applytime';
+		$status = I('get.status');
+		if($status == 0){
+			$ir_status = array(5,8);
+		}else{
+			$ir_status = $status;
+		}
+		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600*30:0;
+		$rid = I('get.rid');
+		$rir_receiptnum = I('get.rir_receiptnum');
+		if($rid && $rir_receiptnum){
+			// 修改订单退货状态
+			$receipt = M('Receipt')->where(array('ir_receiptnum'=>$rir_receiptnum))->setfield('ir_status',8);
+			// 修改退货记录
+			$save = array(
+				'status' => 1,
+				'roperator' => $_SESSION['user']['username'],
+				'confirmTime' => time(),
+			);
+			$sale = M('SaleReturn')->where(array('rid'=>$rid))->save($save);
+			if($receipt && $sale){
+				redirect($_SERVER['HTTP_REFERER']);
+			}else{
+				$this->error('确认失败');
+			}
+		}
+		$assign = D('SaleReturn')->getSendPage(D('SaleReturn'),$word,$starttime,$endtime,$ir_status,$timeType);
+		$this->assign($assign);
+		$this->assign('status',I('get.status'));
+		$this->assign('word',$word);
+		$this->assign('timeType',$timeType);
+		$this->assign('starttime',I('get.starttime'));
+		$this->assign('endtime',I('get.endtime'));
+		$this->display();
 	}
 
 	//查看订单明细
@@ -1532,7 +1603,7 @@ class HapylifeController extends AdminBaseController{
 		$word      = trim(I('get.word',''));
 		$timeType  = I('get.timeType')?I('get.timeType'):'ir_paytime';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
-		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:0;
 		$array  = '测试,测,试,测试点,test,testtest,测试测试,新建测试,测试地,测试点,测试账号';
 		$assign    = D('Receipt')->getSendPagesearch(D('Receipt'),$word,$starttime,$endtime,$ir_status,$timeType,$array,$order='ir_paytime asc');
 		// 导出excel
@@ -1747,28 +1818,10 @@ class HapylifeController extends AdminBaseController{
 	**/ 
 	public function wvRecommend(){
 		$p = I('get.p',1);
-		$data = M('User')->select();
-		foreach($data as $key=>$value){
-			if(strlen($value['customerid']) == 8){
-				$array[$key]['son'] = M('User')->where(array('EnrollerID'=>$value['customerid']))->select();	
-			}
-		}
-		foreach($array as $key=>$value){
-			// 数组去空值
-			$list[] = array_filter($value);	
-		}
-		$son = array();
-		$son = array_filter($list);
-		foreach($son as $key=>$value){
-			foreach($value as $ke=>$val){
-				foreach($val as $k=>$v){
-					$son[$key]['userinfo'] = M('User')->where(array('customerid'=>$v['enrollerid']))->find();
-				}
-				$son[$key]['num'] = count($val);
-			}
-		}
-		$assign = pages($son,$p,20);
+		$wv = I('get.wv');
+		$assign = D('User')->getMemberList(D('User'),$wv);
 		$this->assign($assign);
+		$this->assign('wv',$wv);
 		$this->display();
 	}
 

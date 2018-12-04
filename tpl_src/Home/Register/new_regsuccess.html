@@ -34,8 +34,8 @@
 					</div>
 				</div>
 				<div class="col-md-12 rg-btn" >
-					<if condition="empty($status) neq true">
-						<a href="{:U('Home/Index/login')}" class="btn btn-block btn-info">去登录</a>
+					<if condition="empty($data['isoutside']) neq true">
+						<a href="{:U('Home/Index/log_out')}" class="btn btn-block btn-info">去登录</a>
 					<else />
 						<a href="{:U('Home/Purchase/recommenderList')}" class="btn btn-block btn-info">我的推荐</a>
 					</if>

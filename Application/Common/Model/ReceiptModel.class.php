@@ -15,32 +15,122 @@ class ReceiptModel extends BaseModel{
      * @return array            分页数据
      */
     public function getPage($model,$word,$starttime,$endtime,$status,$order='',$timeType,$limit=20){
-        $count=$model
-            ->alias('r')
-            ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-            ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
-            ->count();
+        if(!empty($starttime) && empty($endtime)){
+            if(empty($word)){
+                $count=$model
+                    ->alias('r')
+                    ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                    ->where(array('ir_status'=>array('in',$status),$timeType=>array('egt',$starttime)))
+                    ->count();
+            }else{
+                $count=$model
+                    ->alias('r')
+                    ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                    ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime)))
+                    ->count();
+            }
+        }else if(!empty($starttime) && !empty($endtime)){
+            if(empty($word)){
+                $count=$model
+                    ->alias('r')
+                    ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                    ->where(array('ir_status'=>array('in',$status),$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
+                    ->count();
+            }else{
+                $count=$model
+                    ->alias('r')
+                    ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                    ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
+                    ->count();
+            }
+        }
+        
         // p($count);die;
         $page=new_page($count,$limit);
         // 获取分页数据
-        if (empty($field)) {
-            $list=$model
-                ->alias('r')
-                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-                ->order($order)
-                ->limit($page->firstRow.','.$page->listRows)
-                ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
-                ->select();
-        }else{
-            $list=$model
-                ->alias('r')
-                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-                ->field($field)
-                ->order($order)
-                ->limit($page->firstRow.','.$page->listRows)
-                ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
-                ->select();         
+        if(!empty($starttime) && empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('ir_status'=>array('in',$status),$timeType=>array('egt',$starttime)))
+                        ->order($order)
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('ir_status'=>array('in',$status),$timeType=>array('egt',$starttime)))
+                        ->order($order)
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();         
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime)))
+                        ->order($order)
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime)))
+                        ->order($order)
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();         
+                }
+            }
+        }else if(!empty($starttime) && !empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('ir_status'=>array('in',$status),$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
+                        ->order($order)
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('ir_status'=>array('in',$status),$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
+                        ->order($order)
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();         
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
+                        ->order($order)
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->order($order)
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->where(array('ir_status'=>array('in',$status),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime))))
+                        ->select();         
+                }
+
+            }
         }
+        
 
         $data=array(
             'data'=>$list,
@@ -58,32 +148,121 @@ class ReceiptModel extends BaseModel{
      * @return array            分页数据
      */
     public function FinanceGetPage($model,$word,$starttime,$endtime,$status,$test,$timeType,$order='',$limit=20){
-        $count=$model
-            ->alias('r')
-            ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-            ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test)))
-            ->count();
+        if(!empty($starttime) && empty($endtime)){
+            if(empty($word)){
+                $count=$model
+                    ->alias('r')
+                    ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                    ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test)))
+                    ->count();
+            }else{
+                $count=$model
+                    ->alias('r')
+                    ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                    ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test)))
+                    ->count();
+            }
+        }else if(!empty($starttime) && !empty($endtime)){
+            if(empty($word)){
+                $count=$model
+                    ->alias('r')
+                    ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                    ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test)))
+                    ->count();
+            }else{
+                $count=$model
+                    ->alias('r')
+                    ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                    ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test)))
+                    ->count();
+            }
+        }
+        
         // p($count);die;
         $page=new_page($count,$limit);
         // 获取分页数据
-        if (empty($field)) {
-            $list=$model
-                ->alias('r')
-                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-                ->order($order)
-                ->limit($page->firstRow.','.$page->listRows)
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test)))
-                ->select();
-        }else{
-            $list=$model
-                ->alias('r')
-                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-                ->field($field)
-                ->order($order)
-                ->limit($page->firstRow.','.$page->listRows)
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test)))
-                ->select();         
+        if(!empty($starttime) && empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test)))
+                        ->order($order)
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test)))
+                        ->order($order)
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();         
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test)))
+                        ->order($order)
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test)))
+                        ->order($order)
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();         
+                }
+            }
+        }else if(!empty($starttime) && !empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test)))
+                        ->order($order)
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->order($order)
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test)))
+                        ->select();         
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->order($order)
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test)))
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->order($order)
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$status),'r.ia_name'=>array('NOT IN',$test)))
+                        ->select();         
+                }
+            }
         }
+        
         foreach ($list as $key => $value) {
             $arr = D('Receiptlist')
                     ->join('hapylife_product on hapylife_receiptlist.ipid = hapylife_product.ipid')
@@ -162,32 +341,121 @@ class ReceiptModel extends BaseModel{
      * @return array            分页数据
      */
     public function getSendPage($model,$word,$starttime,$endtime,$ir_status,$timeType,$array,$order='',$limit=50,$field=''){
-        $count=$model
-            ->alias('r')
-            ->join('hapylife_user u on r.riuid = u.iuid')
-            ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
-            ->count();
+        if(!empty($starttime) && empty($endtime)){
+            if(empty($word)){
+                $count=$model
+                    ->alias('r')
+                    ->join('hapylife_user u on r.riuid = u.iuid')
+                    ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status)))
+                    ->count();
+            }else{
+                $count=$model
+                    ->alias('r')
+                    ->join('hapylife_user u on r.riuid = u.iuid')
+                    ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status)))
+                    ->count();
+            }
+        }else if(!empty($starttime) && !empty($endtime)){
+            if(empty($word)){
+                $count=$model
+                    ->alias('r')
+                    ->join('hapylife_user u on r.riuid = u.iuid')
+                    ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                    ->count();
+            }else{
+                $count=$model
+                    ->alias('r')
+                    ->join('hapylife_user u on r.riuid = u.iuid')
+                    ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                    ->count();
+            }
+        }
+        
         // p($count);die;
         $page=new_page($count,$limit);
         // 获取分页数据
-        if (empty($field)) {
-            $list=$model
-                ->alias('r')
-                ->join('hapylife_user u on r.riuid = u.iuid')
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
-                ->order('ir_paytime desc')
-                ->limit($page->firstRow.','.$page->listRows)
-                ->select();
-        }else{
-            $list=$model
-                ->alias('r')
-                ->join('hapylife_user u on r.riuid = u.iuid')
-                ->field($field)
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
-                ->order('ir_paytime desc')
-                ->limit($page->firstRow.','.$page->listRows)
-                ->select();         
+        if(!empty($starttime) && empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();         
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();         
+                }
+            }
+        }else if(!empty($starttime) && !empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();         
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();         
+                }
+            }
         }
+        
         // p($list);
         foreach ($list as $key => $value) {
             $ia_address = '';
@@ -242,31 +510,118 @@ class ReceiptModel extends BaseModel{
      * @return array            分页数据
      */
     public function getSendPages($model,$word,$starttime,$endtime,$ir_status,$timeType,$array,$ipid,$order='',$limit=50,$field=''){
-        $count=$model
-            ->alias('r')
-            ->join('hapylife_user u on r.riuid = u.iuid')
-            ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
-            ->count();
+        if(!empty($starttime) && empty($endtime)){
+            if(empty($word)){
+                $count=$model
+                    ->alias('r')
+                    ->join('hapylife_user u on r.riuid = u.iuid')
+                    ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                    ->count();
+            }else{
+                $count=$model
+                    ->alias('r')
+                    ->join('hapylife_user u on r.riuid = u.iuid')
+                    ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                    ->count();
+            }
+        }else if(!empty($starttime) && !empty($endtime)){
+            if(empty($word)){
+                $count=$model
+                    ->alias('r')
+                    ->join('hapylife_user u on r.riuid = u.iuid')
+                    ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                    ->count();
+            }else{
+                $count=$model
+                    ->alias('r')
+                    ->join('hapylife_user u on r.riuid = u.iuid')
+                    ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                    ->count();
+            }
+        }
         // p($count);die;
         $page=new_page($count,$limit);
         // 获取分页数据
-        if (empty($field)) {
-            $list=$model
-                ->alias('r')
-                ->join('hapylife_user u on r.riuid = u.iuid')
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
-                ->order('ir_paytime desc')
-                ->limit($page->firstRow.','.$page->listRows)
-                ->select();
-        }else{
-            $list=$model
-                ->alias('r')
-                ->join('hapylife_user u on r.riuid = u.iuid')
-                ->field($field)
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
-                ->order('ir_paytime desc')
-                ->limit($page->firstRow.','.$page->listRows)
-                ->select();         
+        if(!empty($starttime) && empty($endtime)){
+            if(empty($field)){
+                if(empty($word)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }
+            }else{
+                if(empty($word)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }
+            }
+        }else if(!empty($starttime) && !empty($endtime)){
+            if(empty($field)){
+                if(empty($word)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }
+            }else{
+                if(empty($word)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }
+            }
         }
         foreach ($list as $key => $value) {
             $ia_address = '';
@@ -318,32 +673,121 @@ class ReceiptModel extends BaseModel{
      * @return array            分页数据
      */
     public function getSendPagesearch($model,$word,$starttime,$endtime,$ir_status,$timeType,$array,$order='',$limit=50,$field=''){
-        $count=$model
-            ->alias('r')
-            ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-            ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('NOT IN',$array),'r.ipid'=>48))
-            ->count();
+        if(!empty($starttime) && empty($endtime)){
+            if(empty($word)){
+                $count=$model
+                    ->alias('r')
+                    ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                    ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('NOT IN',$array),'r.ipid'=>48))
+                    ->count();
+            }else{
+                $count=$model
+                    ->alias('r')
+                    ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                    ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('NOT IN',$array),'r.ipid'=>48))
+                    ->count();
+            }
+        }else if(!empty($starttime) && !empty($endtime)){
+            if(empty($word)){
+                $count=$model
+                    ->alias('r')
+                    ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                    ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('NOT IN',$array),'r.ipid'=>48))
+                    ->count();
+            }else{
+                $count=$model
+                    ->alias('r')
+                    ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                    ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('NOT IN',$array),'r.ipid'=>48))
+                    ->count();
+            }
+        }
+        
         // p($count);die;
         $page=new_page($count,$limit);
         // 获取分页数据
-        if (empty($field)) {
-            $list=$model
-                ->alias('r')
-                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('NOT IN',$array),'r.ipid'=>48))
-                ->order('ir_paytime desc')
-                ->limit($page->firstRow.','.$page->listRows)
-                ->select();
-        }else{
-            $list=$model
-                ->alias('r')
-                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-                ->field($field)
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('NOT IN',$array),'r.ipid'=>48))
-                ->order('ir_paytime desc')
-                ->limit($page->firstRow.','.$page->listRows)
-                ->select();         
+        if(!empty($starttime) && empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('NOT IN',$array),'r.ipid'=>48))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('NOT IN',$array),'r.ipid'=>48))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();         
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('NOT IN',$array),'r.ipid'=>48))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('NOT IN',$array),'r.ipid'=>48))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();         
+                }
+            }
+        }else if(!empty($starttime) && !empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('NOT IN',$array),'r.ipid'=>48))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('NOT IN',$array),'r.ipid'=>48))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();         
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('NOT IN',$array),'r.ipid'=>48))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('NOT IN',$array),'r.ipid'=>48))
+                        ->order('ir_paytime desc')
+                        ->limit($page->firstRow.','.$page->listRows)
+                        ->select();         
+                }
+            }
         }
+        
         // p($list);
         foreach ($list as $key => $value) {
             $ia_address = '';
@@ -408,22 +852,81 @@ class ReceiptModel extends BaseModel{
     **/
     public function getAllSendData($model,$word,$starttime,$endtime,$ir_status,$timeType,$order='',$field=''){
         // 获取分页数据
-        if (empty($field)) {
-            $list=$model
-                ->alias('r')
-                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
-                ->order('ir_paytime desc')
-                ->select();
-        }else{
-            $list=$model
-                ->alias('r')
-                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-                ->field($field)
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
-                ->order('ir_paytime desc')
-                ->select();         
+        if(!empty($starttime) && empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }
+        }else if(!empty($starttime) && !empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }
         }
+        
+        
         foreach ($list as $key => $value) {
             $ia_address = '';
             $mape[$key] = $value;
@@ -504,22 +1007,80 @@ class ReceiptModel extends BaseModel{
     **/
     public function FinanceGetAllSendData($model,$word,$starttime,$endtime,$ir_status,$timeType,$test,$order='',$field=''){
         // 获取分页数据
-        if (empty($field)) {
-            $list=$model
-                ->alias('r')
-                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('not in',$test)))
-                ->order('ir_paytime desc')
-                ->select();
-        }else{
-            $list=$model
-                ->alias('r')
-                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-                ->field($field)
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('not in',$test)))
-                ->order('ir_paytime desc')
-                ->select();         
+        if(!empty($starttime) && empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('not in',$test)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('not in',$test)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('not in',$test)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('not in',$test)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }
+        }else if(!empty($starttime) && !empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('not in',$test)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('not in',$test)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('not in',$test)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ia_name'=>array('not in',$test)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }
         }
+        
         foreach ($list as $key => $value) {
             $ia_address = '';
             $mape[$key] = $value;
@@ -534,8 +1095,8 @@ class ReceiptModel extends BaseModel{
                     'coupon_code' => $value['coucode'],
                 );
                 $data    = json_encode($data);
-                // $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/codeGetCouponInfo";
-                $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/codeGetCouponInfo";
+                $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/codeGetCouponInfo";
+                // $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/codeGetCouponInfo";
                 $result  = post_json_data($sendUrl,$data);
                 $back_message = json_decode($result['result'],true);
                 $mape[$key]['operator'] = $back_message['operator'];
@@ -644,22 +1205,80 @@ class ReceiptModel extends BaseModel{
      */
     public function getSendPageSonAll($model,$word,$starttime,$endtime,$ir_status,$timeType,$order='',$field=''){
         // 获取分页数据
-        if (empty($field)) {
-            $list=$model
-                ->alias('r')
-                ->join('hapylife_user u on r.riuid = u.iuid')
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
-                ->order('ir_paytime desc')
-                ->select();
-        }else{
-            $list=$model
-                ->alias('r')
-                ->join('hapylife_user u on r.riuid = u.iuid')
-                ->field($field)
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
-                ->order('ir_paytime desc')
-                ->select();         
+        if(!empty($starttime) && empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }
+        }else if(!empty($starttime) && !empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }
         }
+        
         foreach ($list as $key => $value) {
             $ia_address = '';
             $mape[$key] = $value;
@@ -743,21 +1362,78 @@ class ReceiptModel extends BaseModel{
      */
     public function getSendPageSonAlls($model,$word,$starttime,$endtime,$ir_status,$timeType,$array,$ipid,$order='',$field=''){
         // 获取分页数据
-        if (empty($field)) {
-            $list=$model
-                ->alias('r')
-                ->join('hapylife_user u on r.riuid = u.iuid')
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
-                ->order('ir_paytime desc')
-                ->select();
-        }else{
-            $list=$model
-                ->alias('r')
-                ->join('hapylife_user u on r.riuid = u.iuid')
-                ->field($field)
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
-                ->order('ir_paytime desc')
-                ->select();         
+        if(!empty($starttime) && empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }
+            }
+        }else if(!empty($starttime) && !empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>array('NOT IN',$ipid),'u.LastName|u.FirstName'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }
         }
         // p($list);die;
         foreach ($list as $key => $value) {
@@ -845,22 +1521,80 @@ class ReceiptModel extends BaseModel{
      */
     public function getSendPageSonAllsearch($model,$word,$starttime,$endtime,$ir_status,$timeType,$array,$order='',$field=''){
         // 获取分页数据
-        if (empty($field)) {
-            $list=$model
-                ->alias('r')
-                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>48,'r.ia_name'=>array('NOT IN',$array)))
-                ->order('ir_paytime desc')
-                ->select();
-        }else{
-            $list=$model
-                ->alias('r')
-                ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
-                ->field($field)
-                ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>48,'r.ia_name'=>array('NOT IN',$array)))
-                ->order('ir_paytime desc')
-                ->select();         
+        if(!empty($starttime) && empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ipid'=>48,'r.ia_name'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array($timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ipid'=>48,'r.ia_name'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ipid'=>48,'r.ia_name'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array('egt',$starttime),'ir_status'=>array('in',$ir_status),'r.ipid'=>48,'r.ia_name'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }
+        }else if(!empty($starttime) && !empty($endtime)){
+            if(empty($word)){
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>48,'r.ia_name'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>48,'r.ia_name'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }else{
+                if(empty($field)){
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>48,'r.ia_name'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->select();
+                }else{
+                    $list=$model
+                        ->alias('r')
+                        ->join('LEFT JOIN hapylife_user u on r.riuid = u.iuid')
+                        ->field($field)
+                        ->where(array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>$word,$timeType=>array(array('egt',$starttime),array('elt',$endtime)),'ir_status'=>array('in',$ir_status),'r.ipid'=>48,'r.ia_name'=>array('NOT IN',$array)))
+                        ->order('ir_paytime desc')
+                        ->select();         
+                }
+            }
         }
+        
         foreach ($list as $key => $value) {
             $ia_address = '';
             $mape[$key] = $value;

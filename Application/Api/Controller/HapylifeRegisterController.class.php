@@ -123,30 +123,36 @@ class HapylifeRegisterController extends HomeBaseController{
             $this->ajaxreturn($data);
         }else{
             $data        = I('post.');
-            // $data['iuid']= $_SESSION['user']['id'];
-            $data['iuid'] = I('post.iuid');
-            if(!empty($data['JustIdcard'])){
-                $img_body1 = substr(strstr($data['JustIdcard'],','),1);
-                $JustIdcard = time().'_'.mt_rand().'.jpg';
-                $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
-                $data['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
-            }
-            if(!empty($data['BackIdcard'])){
-                $img_body2 = substr(strstr($data['BackIdcard'],','),1);
-                $BackIdcard = time().'_'.mt_rand().'.jpg';
-                $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
-                $data['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
-            }
-            $data['EnrollerID'] = strtoupper(I('post.EnrollerID'));
-            $data['LastName'] = trim(I('post.LastName'));
-            $data['FirstName'] = trim(I('post.FirstName'));
-            $data['EnLastName'] = trim(I('post.EnLastName'));
-            $data['EnFirstName'] = trim(I('post.EnFirstName'));
-            $data['WvPass'] = trim(I('post.PassWord'));
-            $add = D('Tempuser')->add($data);
-            if($add){
-                $data['status'] = 1;
-                $this->ajaxreturn($data);
+            if($data){
+                // $data['iuid']= $_SESSION['user']['id'];
+                $data['iuid'] = I('post.iuid');
+                if(!empty($data['JustIdcard'])){
+                    $img_body1 = substr(strstr($data['JustIdcard'],','),1);
+                    $JustIdcard = time().'_'.mt_rand().'.jpg';
+                    $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
+                    $data['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
+                }
+                if(!empty($data['BackIdcard'])){
+                    $img_body2 = substr(strstr($data['BackIdcard'],','),1);
+                    $BackIdcard = time().'_'.mt_rand().'.jpg';
+                    $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
+                    $data['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
+                }
+                $data['EnrollerID'] = strtoupper(I('post.EnrollerID'));
+                $data['LastName'] = trim(I('post.LastName'));
+                $data['FirstName'] = trim(I('post.FirstName'));
+                $data['EnLastName'] = trim(I('post.EnLastName'));
+                $data['EnFirstName'] = trim(I('post.EnFirstName'));
+                $data['WvPass'] = trim(I('post.PassWord'));
+                $add = D('Tempuser')->add($data);
+                if($add){
+                    $data['status'] = 1;
+                    $this->ajaxreturn($data);
+                }else{
+                    $sample['status'] = 0;
+                    $this->ajaxreturn($sample);
+                }
+                
             }else{
                 $sample['status'] = 0;
                 $this->ajaxreturn($sample);
@@ -353,32 +359,37 @@ class HapylifeRegisterController extends HomeBaseController{
             $this->ajaxreturn($data);
         }else{
             $data = I('post.');
-            if(!empty($data['JustIdcard'])){
-                $img_body1 = substr(strstr($data['JustIdcard'],','),1);
-                $JustIdcard = time().'_'.mt_rand().'.jpg';
-                $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
-                $data['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
-            }
-            if(!empty($data['BackIdcard'])){
-                $img_body2 = substr(strstr($data['BackIdcard'],','),1);
-                $BackIdcard = time().'_'.mt_rand().'.jpg';
-                $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
-                $data['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
-            }
-            $data['PassWord'] = I('post.PassWord');
-            $data['JoinedOn'] = time();
-            $data['EnrollerID'] = strtoupper(I('post.EnrollerID'));
-            $data['LastName'] = trim(I('post.LastName'));
-            $data['FirstName'] = trim(I('post.FirstName'));
-            $data['EnLastName'] = trim(I('post.EnLastName'));
-            $data['EnFirstName'] = trim(I('post.EnFirstName'));
-            $data['WvPass'] = trim(I('post.PassWord'));
-            $result = D('Tempuser')->add($data);
-            if($result){
-                $sample = array(
-                            'status' => 1,
-                            'htid' => $result
-                        );
+            if($data){
+                if(!empty($data['JustIdcard'])){
+                    $img_body1 = substr(strstr($data['JustIdcard'],','),1);
+                    $JustIdcard = time().'_'.mt_rand().'.jpg';
+                    $img1 = file_put_contents('./Upload/file/'.$JustIdcard, base64_decode($img_body1));
+                    $data['JustIdcard'] = C('WEB_URL').'/Upload/file/'.$JustIdcard;
+                }
+                if(!empty($data['BackIdcard'])){
+                    $img_body2 = substr(strstr($data['BackIdcard'],','),1);
+                    $BackIdcard = time().'_'.mt_rand().'.jpg';
+                    $img2 = file_put_contents('./Upload/file/'.$BackIdcard, base64_decode($img_body2));
+                    $data['BackIdcard'] = C('WEB_URL').'/Upload/file/'.$BackIdcard;
+                }
+                $data['PassWord'] = I('post.PassWord');
+                $data['JoinedOn'] = time();
+                $data['EnrollerID'] = strtoupper(I('post.EnrollerID'));
+                $data['LastName'] = trim(I('post.LastName'));
+                $data['FirstName'] = trim(I('post.FirstName'));
+                $data['EnLastName'] = trim(I('post.EnLastName'));
+                $data['EnFirstName'] = trim(I('post.EnFirstName'));
+                $data['WvPass'] = trim(I('post.PassWord'));
+                $result = D('Tempuser')->add($data);
+                if($result){
+                    $sample = array(
+                                'status' => 1,
+                                'htid' => $result
+                            );
+                    $this->ajaxreturn($sample);
+                }
+            }else{
+                $sample['status'] = 0;
                 $this->ajaxreturn($sample);
             }
         }
