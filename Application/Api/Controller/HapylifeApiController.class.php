@@ -1904,8 +1904,8 @@ class HapylifeApiController extends HomeBaseController{
             $web_url     = C('WEB_URL').'/Upload/file/'.date('Y-m-d').'/';
             // 存放的内容
             // $content     = array('iuid'=>$iuid,'codetype'=>3,'hu_nickname'=>$user['customerid'],'whichApp'=>$whichApp,'createTime'=>date('Y-m-d H:i:s'));
-            // $url     = 'http://apps.hapy-life.com/hapylife/index.php/Home/Register/registerIndex/iuid/'.$iuid.'/codetype/3/hu_nickname/'.$user['customerid'].'/whichApp/'.$whichApp.'/createTime/'.date('Y-m-d H:i:s');
-            $url     = 'http://apps.hapy-life.com/hapylife/index.php/Home/Register/new_register/iuid/'.$iuid.'/codetype/3/hu_nickname/'.$user['customerid'].'/whichApp/'.$whichApp.'/createTime/'.date('Y-m-d H:i:s');
+            $url     = 'http://apps.hapy-life.com/hapylife/index.php/Home/Register/registerIndex/iuid/'.$iuid.'/codetype/3/hu_nickname/'.$user['customerid'].'/whichApp/'.$whichApp.'/createTime/'.date('Y-m-d H:i:s');
+            // $url     = 'http://apps.hapy-life.com/hapylife/index.php/Home/Register/new_register/iuid/'.$iuid.'/codetype/3/hu_nickname/'.$user['customerid'].'/whichApp/'.$whichApp.'/createTime/'.date('Y-m-d H:i:s');
             $qrcode      = createQRcode('./Upload/file/'.date('Y-m-d').'/',$url);
             $data = array(
                 'iuid'      =>$iuid,
@@ -1949,7 +1949,10 @@ class HapylifeApiController extends HomeBaseController{
     *奖金列表
     **/
     public function BounsList(){
-
+        $url = I('post.url');
+        $result = createQRcode('./Upload/file/'.date('Y-m-d').'/',$url);
+        $logo = QrLogo('./tpl_src/Public/images/icon150x150.png','./Upload/file/'.date('Y-m-d').'/'.$result);
+        p($logo);
     }
 
 
