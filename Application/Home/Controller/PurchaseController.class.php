@@ -1535,7 +1535,10 @@ class PurchaseController extends HomeBaseController{
         }else{
             $data = M('User')->where(array('isexit'=>1,'enrollerid'=>$customerid))->select();
         }
+        
         foreach($data as $key=>$value){
+            // 替换会员姓名
+            $value['firstname'] = str_replace(substr($value['firstname'],0,3),"*",$value['firstname']);
             // 去除非正式会员
             if($value['distributortype'] != 'Pc'){
                 $newData[] = $value;
