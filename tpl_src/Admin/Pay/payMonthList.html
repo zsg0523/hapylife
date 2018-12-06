@@ -1,0 +1,91 @@
+<extend name="Public:base" />
+
+<block name="title">每月综合报表</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            首页
+            &gt;
+            第三方支付报表
+            &gt;
+			每月综合报表
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+			  	<li class="active">
+					<a href="#home" data-toggle="tab">每月综合报表</a>
+			    </li>
+            </ul>
+            <div class="tab-content">
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<form action="{:U('Admin/Pay/payMonthList')}" method="get">
+						<tr>
+							<th  colspan="7">
+								开始月份:											
+								&nbsp;&nbsp;&nbsp;&nbsp;
+								<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM'})" autocomplete="off"/>
+								结束月份:
+								&nbsp;&nbsp;&nbsp;&nbsp;
+								<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM'})" autocomplete="off"/>						
+								<input style="float:right" class='btn btn-sm' type="submit" value="筛选" />
+							</th>
+						</tr>
+						<tr>
+							<th colspan="7">
+								<input type="hidden" value="{$type}" id="type">
+								选择方式:											
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="1" />&nbsp;&nbsp;IPS</label> </span>
+									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="2" />&nbsp;&nbsp;积分</label></span>
+									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="4" />&nbsp;&nbsp;畅捷</label></span>
+									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="5" />&nbsp;&nbsp;现金</label></span>
+									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="6" />&nbsp;&nbsp;接龙易</label></span>
+									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="7" />&nbsp;&nbsp;DT支付</label></span>
+							</th>
+						</tr>
+					</form>
+					<tr>
+						<th>月份</th>
+						<th>总额</th>
+						<th>当月注册人数</th>
+						<th>当月月费人数</th>
+						<th>当月累计注册人数</th>
+						<th>当月累计月费人数</th>
+						<th>当月明细</th>
+					</tr>
+					<foreach name="data" item="v">
+						<tr>
+							<td width="300px" align="left">{$v['date']}</td>
+							<td width="300px" align="center">{$v['count']?$v['count']:0}</td>
+							<td width="300px" align="center">{$v['signup']?$v['signup']:0}</td>
+							<td width="300px" align="center">{$v['monthly']?$v['monthly']:0}</td>
+							<td width="300px" align="center">{$v['fullsignup']?$v['fullsignup']:0}</td>
+							<td width="300px" align="center">{$v['fullmonthly']?$v['fullmonthly']:0}</td>
+							<td width="300px" align="center"><a href="{:U('Admin/Pay/payDayList',array('date'=>$v['date'],'type'=>$type))}">查看</a></td>
+						</tr>
+					</foreach>
+				</table>
+				<div class="page">
+					{$page}
+				</div>
+            </div>
+        </div>
+    </div>
+</block>
+<block name="js"> 
+	<script>
+		var typeArr=$('#type').val().split(',');
+		var typeInput=$("input[name='type[]']");
+		for(var i=0;i<typeArr.length;i++){
+			for(j=0;j<typeInput.length;j++){
+				if(typeArr[i]==typeInput[j].value){
+					typeInput[j].checked='true';
+				}
+			}	
+		}
+		
+	</script>
+</block>

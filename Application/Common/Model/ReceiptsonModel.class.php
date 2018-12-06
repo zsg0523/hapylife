@@ -513,4 +513,202 @@ class ReceiptsonModel extends BaseModel{
             );
         return $data;
     }
+
+    public function getAllFullMonthPay($model,$starttime,$endtime,$paytype){
+        $type = implode(',',$paytype);
+        $list = $model
+                    ->alias('rs')
+                    ->join('hapylife_receipt AS r ON rs.ir_receiptnum = r.ir_receiptnum')
+                    ->where(array('status'=>2,'ir_paytype'=>array('in',$type),'paytime'=>array(array('egt',$starttime),array('elt',$endtime))))
+                    ->select();
+        $date1 = explode('-',date('Y-m',$starttime)); 
+        $date2 = explode('-',date("Y-m",strtotime("-1 month",$endtime))); 
+        //两个时间相隔月份
+        $month_number= abs($date2[0]-$date1[0])*12+abs($date2[1]-$date1[1]);
+        // p($month_number);die;
+        for($i=0;$i<=$month_number;$i++){
+            $month[$i] = date("Y-m",strtotime($i."month",$starttime));
+        }
+
+        // p($list);die;
+
+        foreach($month as $key => $value){
+            foreach($list as $k => $v){
+                if(date('Y-m',$v['paytime'])==$value){
+                    switch($v['ir_ordertype']){
+                        case '1':
+                            $signup[] = $v;
+                            // 当月累计注册人数
+                            $data[$key]['fullsignup'] = count($signup);
+                            break;
+                        case '3':
+                            $monthly[] = $v;
+                            // 当月累计月费人数
+                            $data[$key]['fullmonthly'] = count($monthly);
+                            break;
+                    }
+                    $data[$key]['count'] = bcadd($data[$key]['count'],$v['ir_price'],2);
+                    $data[$key]['date']  = $value;
+                }
+            }
+        }
+        foreach($data as $key=>$value){
+            $newData[] = $value;
+        }
+        foreach($newData as $key=>$value){
+            if(empty($value['fullsignup']) && $key == 0){
+                $newData[$key]['fullsignup'] = 0;
+            }else{
+                if(empty($value['fullsignup'])){
+                    $newData[$key]['fullsignup'] = $newData[$key-1]['fullsignup'];
+                }
+            }
+
+            if(empty($value['fullmonthly']) && $key == 0){
+                $newData[$key]['fullmonthly'] = 0;
+            }else{
+                if(empty($value['fullmonthly'])){
+                    $newData[$key]['fullmonthly'] = $newData[$key-1]['fullmonthly'];
+                }
+            }
+        }
+        for($i=0;$i<count($newData);$i++){
+            // 当月注册人数
+            $newData[$i]['signup'] = bcsub($newData[$i]['fullsignup'],$newData[$i-1]['fullsignup'],0);
+            if($newData[$i]['signup']>=0){
+                $newData[$i]['signup'] = $newData[$i]['signup'];
+            }else{
+                $newData[$i]['signup'] = 0;
+            }
+            // 当月月费人数
+            $newData[$i]['monthly'] = bcsub($newData[$i]['fullmonthly'],$newData[$i-1]['fullmonthly'],0);
+            if($newData[$i]['monthly']>=0){
+                $newData[$i]['monthly'] = $newData[$i]['monthly'];
+            }else{
+                $newData[$i]['monthly'] = 0;
+            }
+        }
+        // p($newData);
+        //排序
+        $die = array_sort($newData,'date','desc');
+        $data=array(
+            'data'=>$die,
+        );
+        return $data;
+    }
+
+    /**
+    *第三方支付某月的综合报表 $model $app $paytype支付方式
+    **/
+    public function getAllFullDayPay($model,$date,$paytype){
+        $type = implode(',',$paytype);
+        $j    = date("t",strtotime($date)); //获取当前月份天数
+        $start_time  = strtotime($date.'-'.'01');  //获取本月第一天时间戳
+        $day = array();
+        for($i=0;$i<$j;$i++){
+            $day[] = date('Y-m-d',$start_time+$i*86400); //每隔一天赋值给数组
+        }
+        $starttime   = strtotime($day[0]);
+        $endtime     = strtotime("+1 day",strtotime($day[$j-1]));
+        $list = $model
+                    ->alias('rs')
+                    ->join('hapylife_receipt AS r ON rs.ir_receiptnum = r.ir_receiptnum')
+                    ->where(array('status'=>2,'ir_paytype'=>array('in',$type),'paytime'=>array(array('egt',$starttime),array('elt',$endtime))))
+                    ->select();
+
+        foreach($day as $key => $value){
+            foreach ($list as $k => $v){
+                if(date('Y-m-d',$v['paytime'])==$value){
+                    switch($v['ir_ordertype']){
+                        case '1':
+                            $signup[] = $v;
+                            // 当月累计注册人数
+                            $data[$key]['fullsignup'] = count($signup);
+                            break;
+                        case '3':
+                            $monthly[] = $v;
+                            // 当月累计月费人数
+                            $data[$key]['fullmonthly'] = count($monthly);
+                            break;
+                    }
+                    $data[$key]['count'] = bcadd($data[$key]['count'],$v['ir_price'],2);
+                    $data[$key]['date']  = $value;
+                }
+            }
+        }
+        // p($data);
+        foreach($data as $key=>$value){
+            $newData[] = $value;
+        }
+        foreach($newData as $key=>$value){
+            if(empty($value['fullsignup']) && $key == 0){
+                $newData[$key]['fullsignup'] = 0;
+            }else{
+                if(empty($value['fullsignup'])){
+                    $newData[$key]['fullsignup'] = $newData[$key-1]['fullsignup'];
+                }
+            }
+
+            if(empty($value['fullmonthly']) && $key == 0){
+                $newData[$key]['fullmonthly'] = 0;
+            }else{
+                if(empty($value['fullmonthly'])){
+                    $newData[$key]['fullmonthly'] = $newData[$key-1]['fullmonthly'];
+                }
+            }
+        }
+        for($i=0;$i<count($newData);$i++){
+            // 当月注册人数
+            $newData[$i]['signup'] = bcsub($newData[$i]['fullsignup'],$newData[$i-1]['fullsignup'],0);
+            if($newData[$i]['signup']>=0){
+                $newData[$i]['signup'] = $newData[$i]['signup'];
+            }else{
+                $newData[$i]['signup'] = 0;
+            }
+            // 当月月费人数
+            $newData[$i]['monthly'] = bcsub($newData[$i]['fullmonthly'],$newData[$i-1]['fullmonthly'],0);
+            if($newData[$i]['monthly']>=0){
+                $newData[$i]['monthly'] = $newData[$i]['monthly'];
+            }else{
+                $newData[$i]['monthly'] = 0;
+            }
+        }
+        // p($newData);
+        // //排序
+        $die = array_sort($newData,'date','desc');
+        $data=array(
+            'data'=>$die,
+        );
+        return $data;
+    }
+    /**
+    *第三方支付某天流水 $model $app $paytype支付方式
+    **/
+    public function getAllFullDayPayInfo($model,$date,$paytype,$word,$limit='50'){
+        $type = implode(',',$paytype);
+        $starttime   = strtotime($date);
+        $endtime     = strtotime("+1 day",strtotime($date));
+        if($word['ir_receiptnum']){
+            $where['r.ir_receiptnum'] = $word['ir_receiptnum'];
+        }
+        if($word['customerid']){
+            $where['u.customerid'] = $word['customerid'];
+        }
+        $data = $model
+                    ->alias('r')
+                    ->join('hapylife_user AS u ON r.riuid = u.iuid')
+                    ->where($where)
+                    ->where(array('status'=>2,'ir_paytype'=>array('in',$type),'paytime'=>array(array('egt',$starttime),array('elt',$endtime))))
+                    ->select();
+        //排序
+        $die   = array_sort($data,'paytime','desc');
+        $count = count($die);
+        $page  = new_page($count,$limit);;
+        $lists = array_slice($die, $page->firstRow,$page->listRows);
+        $data=array(
+            'data'=>$lists,
+            'page'=>$page->show()
+        );
+        return $data;
+    }
 }
