@@ -1950,10 +1950,25 @@ class HapylifeApiController extends HomeBaseController{
     *奖金列表
     **/
     public function BounsList(){
-        $url = I('post.url');
-        $result = createQRcode('./Upload/file/'.date('Y-m-d').'/',$url);
-        $logo = QrLogo('./tpl_src/Public/images/icon150x150.png','./Upload/file/'.date('Y-m-d').'/'.$result);
-        p($logo);
+        // 给注册会员发短信
+        $templateId ='223637';
+        $params     = array('吴朝芳','299430877','Platinum 优惠首购+月费');
+        $sms        = D('Smscode')->sms('86','13991986039',$params,$templateId);
+        if($sms['errmsg'] == 'OK'){
+            $contents = array(
+                'acnumber' => 86,
+                'phone' => '13991986039',
+                'operator' => '系统',
+                'addressee' => '吴朝芳',
+                'product_name' => 'Platinum 优惠首购+月费',
+                'date' => time(),
+                'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：吴朝芳会员号码：299430877产品：Platinum 优惠首购+月费使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
+                'customerid' => 'HPL00123849'
+            );
+            $logs = M('SmsLog')->add($contents);
+        }
+        p($sms);
+        // 给上线发短信
     }
 
 
