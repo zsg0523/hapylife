@@ -279,7 +279,7 @@
 						</div>
 						<div class=" col-md-offset-2 col-md-10 col-xs-offset-4 col-xs-8 err">{$error['ShopCountry']}</div>
 					</div>
-					<div data-toggle="distpicker">
+					<div id="distpicker">
 						<div class="form-group" onclick="hiden(this);">
 							<label for="" class="col-lg-2  col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>省:</label>
 							<div class="col-lg-10  col-md-10 col-xs-8">
@@ -432,6 +432,10 @@
 	$(document).ready(function(){
    		changeCommonHead('新代理注册');
 	});
+	$("#distpicker").distpicker({
+	  	placeholder: false,
+	});
+	$("input[name='EnrollerNameCn']").val($("input[name='EnrollerNameCn']").val().replace($("input[name='EnrollerNameCn']").val().substring(1,2),'*'));
 	function back(){
 		var iuid=$("#iuid").val();
     	var hu_nickname=$("#hu_nickname").val();
@@ -460,11 +464,13 @@
 					},
 					success:function(data){
 						// alert(EnrollerID);
-		//				console.log(data);
+						console.log(data);
 						if(data.status == 0){
 							$("input[name='EnrollerNameCn']").val("请输入正确的推荐ID！");
 						}else{
-							$("input[name='EnrollerNameCn']").val(data.lastname+data.firstname);
+							var hideName=data.lastname+data.firstname;
+							hideName=hideName.replace(hideName.substring(1,2),'*');
+							$("input[name='EnrollerNameCn']").val(hideName);
 							$("input[name='teamCode']").val(data.teamcode);
 						}
 						
