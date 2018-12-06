@@ -18,13 +18,18 @@
             	<li class="active">
 					<a href="#home" data-toggle="tab">奖金报表列表</a>
 			    </li>
-			    <li>
-					<a href="javascript:;" data-toggle="tab" onclick="parities(this)" Parities="{$parities}">修改当前汇率</a>
-			    </li>
             </ul>
 		</div>
             <div class="tab-content">
             	<form action="{:U('Admin/Hapylife/wvbonus')}" method="get">
+            		<table class="table table-striped table-bordered table-hover table-condensed">
+	            		<th>当前汇率</th>
+	            		<th>操作</th>
+	            		<tr>
+	            			<td>{$parities}</td>
+	            			<td><a href="javascript:;" data-toggle="tab" onclick="parities(this)" Parities="{$parities}">修改当前汇率</a></td>
+	            		</tr>
+	            	</table>
 					<table class="table table-striped table-bordered table-hover table-condensed">
 						<tr class="wvbonus-tr">
 							<th><input type="text" name='customerid' placeholder="customerid" value="{$customerid}" /></th>
