@@ -422,16 +422,16 @@ class HapylifeChangeController extends HomeBaseController{
         }
         switch($data['Placement']){
             case 'BuildLeft':
-                $note = '事业部一';
+                $note = '区域一';
                 break;
             case 'BuildRight':
-                $note = '事业部二';
+                $note = '区域二';
                 break;
             case 'StrongLegOutside':
-                $note = '大事业部';
+                $note = '大区域';
                 break;
             case 'WeakLeg':
-                $note = '小事业部';
+                $note = '小区域';
                 break;
         }
         //更新usa数据
