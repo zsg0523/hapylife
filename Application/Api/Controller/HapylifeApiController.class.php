@@ -1907,13 +1907,14 @@ class HapylifeApiController extends HomeBaseController{
             $url     = 'http://apps.hapy-life.com/hapylife/index.php/Home/Register/registerIndex/iuid/'.$iuid.'/codetype/3/hu_nickname/'.$user['customerid'].'/whichApp/'.$whichApp.'/createTime/'.date('Y-m-d H:i:s');
             // $url     = 'http://apps.hapy-life.com/hapylife/index.php/Home/Register/new_register/iuid/'.$iuid.'/codetype/3/hu_nickname/'.$user['customerid'].'/whichApp/'.$whichApp.'/createTime/'.date('Y-m-d H:i:s');
             $qrcode      = createQRcode('./Upload/file/'.date('Y-m-d').'/',$url);
+            $logo = QrLogo('./tpl_src/Public/images/icon150x150.png','./Upload/file/'.date('Y-m-d').'/'.$qrcode);
             $data = array(
                 'iuid'      =>$iuid,
-                'hu_codepic'=>$web_url.$qrcode
+                'hu_codepic'=>$url.$logo
             );
             $save = D('User')->save($data);
-            if($qrcode){
-                $tmp['status'] = $web_url.$qrcode;               
+            if($logo){
+                $tmp['status'] = $web_url.$logo;               
                 $this->ajaxreturn($tmp);
             }else{
                 $tmp['status'] = 0;

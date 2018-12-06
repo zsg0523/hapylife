@@ -2941,7 +2941,7 @@ function QrLogo($logo,$QR){
     //输出图片
     $imagepng = imagepng($QR,$savefile.$filename);
     if($imagepng){
-        return $savefile.$filename;
+        return $filename;
     }else{
         return false;
     }
