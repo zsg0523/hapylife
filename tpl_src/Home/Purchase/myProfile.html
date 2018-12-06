@@ -49,7 +49,7 @@
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-md-2 col-xs-4">
-						<span>用户ID:</span>
+						<span>会员编号:</span>
 					</div>
 					<div class="col-md-10 col-xs-8">
 						<span>{$userinfo.customerid}</span>
@@ -57,7 +57,7 @@
 				</div>
 				<div class="row">
 					<div class="col-md-2 col-xs-4">
-						<span>DreamTripsID:</span>
+						<span>DT编号:</span>
 					</div>
 					<div class="col-md-10 col-xs-8">
 						<span>{$userinfo.wvcustomerid}</span>
@@ -65,7 +65,7 @@
 				</div>
 				<div class="row">
 					<div class="col-md-2 col-xs-4">
-						<span>推荐ID:</span>
+						<span>推荐编号:</span>
 					</div>
 					<div class="col-md-10 col-xs-8">
 						<span>{$userinfo.enrollerid}</span>
@@ -154,23 +154,23 @@
 				</div>
 				<div class="row editProfile">
 					<div class="col-md-2 col-xs-4">
-						<span>推荐设置:</span>
+						<span>区域设置:</span>
 					</div>
 					<div class="col-md-10 col-xs-8" onclick="window.location.href ='{:U("Home/Purchase/editPlacement")}'">
 						<if condition="$userinfo['placement'] eq 'BuildLeft'">
-							<span>事业部一</span>
+							<span>区域一</span>
 						<elseif condition="$userinfo['placement'] eq 'BuildRight'" />
-							<span>事业部二</span>
+							<span>区域二</span>
 						<elseif condition="$userinfo['placement'] eq 'StrongLegOutside'" />
-							<span>大事业部</span>
+							<span>大区域</span>
 						<elseif condition="$userinfo['placement'] eq 'WeakLeg'" />
-							<span>小事业部</span>
+							<span>小区域</span>
 						<elseif condition="empty($userinfo['placement']) eq true " />
 							<span>未设置</span>
 						</if>
 					</div>	
 				</div>
-				<div class="row">
+<!-- 				<div class="row">
 					<div class="col-md-2 col-xs-4">
 						<span>周期:</span>
 					</div>
@@ -219,7 +219,7 @@
 					</div>	
 				</div>
 
-			</div>
+			</div> -->
 			<!-- <div class="form-group">
 				<div class=" col-md-12 col-xs-12">
 					<button class="btn btn-block btn-blue" onclick="window.location.href ='{:U("Home/Purchase/checkPhone")}'">修改资料</button>
