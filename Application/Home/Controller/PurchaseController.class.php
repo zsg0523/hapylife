@@ -27,6 +27,19 @@ class PurchaseController extends HomeBaseController{
     }
     
     /**
+    * center页面
+    **/ 
+    public function center(){
+        $iuid = $_SESSION['user']['id'];
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
+        if($userinfo){
+            $this->display();
+        }else{
+            $this->error('请先登录',U('Home/Index/log_out'));
+        }
+    }
+
+    /**
     * 主界面
     **/
     public function main(){
@@ -1305,34 +1318,38 @@ class PurchaseController extends HomeBaseController{
     public function addressList(){
         $iuid = $_SESSION['user']['id'];
         // 查询注册信息
-        $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
-        // 查询地址表信息
-        $ia_road = M('Address')->where(array('iuid'=>$iuid))->getField('ia_road',true); 
-        
-        if(!in_array($userinfo['shopaddress1'], $ia_road) && $userinfo['is_login'] == 0 && !empty($userinfo['shopaddress1']) && !empty($userinfo['shopprovince']) && !empty($userinfo['shopcity']) && !empty($userinfo['shoparea'])){
-           $message = array(
-                    'iuid'            => $userinfo['iuid'],
-                    'ia_name'         => $userinfo['lastname'].$userinfo['firstname'],
-                    'ia_phone'        => $userinfo['phone'],
-                    'ia_province'     => $userinfo['shopprovince'],
-                    'ia_town'         => $userinfo['shopcity'],
-                    'ia_region'       => $userinfo['shoparea'],
-                    'ia_road'         => $userinfo['shopaddress1'],
-                    'is_address_show' => 1
-                );
-            $result = M('Address')->add($message);
-            if($result){
-                $arr['is_login'] = 1;
-                $res = M('User')->where(array('iuid'=>$iuid))->save($arr);
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
+        if($userinfo){
+            // 查询地址表信息
+            $ia_road = M('Address')->where(array('iuid'=>$iuid))->getField('ia_road',true); 
+            
+            if(!in_array($userinfo['shopaddress1'], $ia_road) && $userinfo['is_login'] == 0 && !empty($userinfo['shopaddress1']) && !empty($userinfo['shopprovince']) && !empty($userinfo['shopcity']) && !empty($userinfo['shoparea'])){
+               $message = array(
+                        'iuid'            => $userinfo['iuid'],
+                        'ia_name'         => $userinfo['lastname'].$userinfo['firstname'],
+                        'ia_phone'        => $userinfo['phone'],
+                        'ia_province'     => $userinfo['shopprovince'],
+                        'ia_town'         => $userinfo['shopcity'],
+                        'ia_region'       => $userinfo['shoparea'],
+                        'ia_road'         => $userinfo['shopaddress1'],
+                        'is_address_show' => 1
+                    );
+                $result = M('Address')->add($message);
+                if($result){
+                    $arr['is_login'] = 1;
+                    $res = M('User')->where(array('iuid'=>$iuid))->save($arr);
+                }
             }
+            
+            $data = M('Address')->where(array('iuid'=>$iuid))->order('iaid DESC')->select();
+            $assign = array(
+                        'data' => $data
+                    );
+            $this->assign($assign);
+            $this->display();
+        }else{
+            $this->error('请先登录',U('Home/Index/log_out'));
         }
-        
-        $data = M('Address')->where(array('iuid'=>$iuid))->order('iaid DESC')->select();
-        $assign = array(
-                    'data' => $data
-                );
-        $this->assign($assign);
-        $this->display();
     } 
 
     /**
@@ -1416,38 +1433,42 @@ class PurchaseController extends HomeBaseController{
     public function bankList(){
         $iuid = $_SESSION['user']['id'];
         // 查询注册信息
-        $userinfo = M('User')->where(array('iuid'=>$iuid))->find(); 
-        // 查询银行表信息
-        $bankaccount = M('Bank')->where(array('iuid'=>$iuid))->getField('bankaccount',true); 
-        
-        if(!in_array($userinfo['bankaccount'], $bankaccount) && $userinfo['is_login'] == 0 && !empty($userinfo['bankaccount']) && !empty($userinfo['bankprovince']) && !empty($userinfo['banktown']) && !empty($userinfo['bankregion'])){
-           $message = array(
-                    'iuid'         => $userinfo['iuid'],
-                    'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
-                    'bankaccount'  => $userinfo['bankaccount'],
-                    'bankprovince' => $userinfo['bankprovince'],
-                    'banktown'     => $userinfo['bankcity'],
-                    'bankregion'   => $userinfo['bankarea'],
-                    'bankname'     => $userinfo['bankname'],
-                    'bankbranch'   => $userinfo['subname'],
-                    'createtime'   => time(),
-                    'isshow'       => 1,
-                );
-            $result = M('Bank')->add($message);
-            if($result){
-                $arr['is_login'] = 1;
-                $res = M('User')->where(array('iuid'=>$iuid))->save($arr);
+        $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
+        if($userinfo){
+            // 查询银行表信息
+            $bankaccount = M('Bank')->where(array('iuid'=>$iuid))->getField('bankaccount',true); 
+            
+            if(!in_array($userinfo['bankaccount'], $bankaccount) && $userinfo['is_login'] == 0 && !empty($userinfo['bankaccount']) && !empty($userinfo['bankprovince']) && !empty($userinfo['banktown']) && !empty($userinfo['bankregion'])){
+               $message = array(
+                        'iuid'         => $userinfo['iuid'],
+                        'iu_name'      => $userinfo['lastname'].$userinfo['firstname'],
+                        'bankaccount'  => $userinfo['bankaccount'],
+                        'bankprovince' => $userinfo['bankprovince'],
+                        'banktown'     => $userinfo['bankcity'],
+                        'bankregion'   => $userinfo['bankarea'],
+                        'bankname'     => $userinfo['bankname'],
+                        'bankbranch'   => $userinfo['subname'],
+                        'createtime'   => time(),
+                        'isshow'       => 1,
+                    );
+                $result = M('Bank')->add($message);
+                if($result){
+                    $arr['is_login'] = 1;
+                    $res = M('User')->where(array('iuid'=>$iuid))->save($arr);
+                }
             }
-        }
-        
-        $data = M('Bank')->where(array('iuid'=>$iuid))->order('bid DESC')->select();
+            
+            $data = M('Bank')->where(array('iuid'=>$iuid))->order('bid DESC')->select();
 
-        $assign = array(
-                    'data' => $data,
-                    'userinfo' => $userinfo
-                );
-        $this->assign($assign);
-        $this->display();
+            $assign = array(
+                        'data' => $data,
+                        'userinfo' => $userinfo
+                    );
+            $this->assign($assign);
+            $this->display();
+        }else{
+            $this->error('请先登录',U('Home/Index/log_out'));
+        }
     } 
 
 

@@ -9,6 +9,12 @@ class PayController extends HomeBaseController{
     * 
     **/
     public function receiptSon(){
+        // 初始化redis
+        $redis = new \Predis\Client(array(  
+            'scheme' => 'tcp',  
+            'host'   => '127.0.0.1',  
+            'port'   => '6379'  
+        ));  
         $ir_receiptnum   = I('post.ir_receiptnum');
         $ip_paytype      = I('post.ip_paytype');
 //      p($ip_paytype);die;
@@ -18,53 +24,69 @@ class PayController extends HomeBaseController{
         $iuid            = D('User')->where(array('CustomerID'=>$customerid))->getfield('iuid');
         $saveReceipt     = D('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->save(array('riuid'=>$iuid));
         $saveReceiptSon  = D('Receiptson')->where(array('ir_receiptnum'=>$ir_receiptnum))->save(array('riuid'=>$iuid));
-        if($ip_paytype == 2){
-            $ir_prices = bcmul($ir_price,100,2);
-            $mape            = array(
-                'ir_receiptnum'   =>$ir_receiptnum,
-                'ir_paytype'      =>$ip_paytype,
-                'ir_price'        =>$ir_prices,
-                'pay_receiptnum'  =>$pay_receiptnum,
-                'riuid'           =>$iuid,
-                'cretime'         =>time(),
-                'ir_point'        =>$ir_price
-            );
-        }else{
-            $ir_prices = bcdiv($ir_price,100,2);
-            $mape            = array(
-                'ir_receiptnum'   =>$ir_receiptnum,
-                'ir_paytype'      =>$ip_paytype,
-                'ir_price'        =>$ir_price,
-                'pay_receiptnum'  =>$pay_receiptnum,
-                'riuid'           =>$iuid,
-                'cretime'         =>time(),
-                'ir_point'        =>$ir_prices
-            );
-        }
-        if($ir_price>0){
-            $add = D('receiptson')->add($mape);
-            if($add){
-             	// if($ip_paytype==1){
-             	// 	$this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
-             	// }else if($ip_paytype==4){
-             	// 	$this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
-             	// }
-                switch ($ip_paytype) {
-                    case '1':
-                        $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
-                        break;
-                    case '2':
-                        $this->redirect('Home/Pay/payPoint',array('ir_receiptnum'=>$pay_receiptnum)); 
-                        break;
-                    case '4':
-                        $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
-                        break;
-                }
-            }else{
-               $this->error('系统超时,请重新提交'); 
+        //这个key记录该用户1的访问次数 
+        $key = 'user:'.$iuid.':api_count';
+        //限制次数为1
+        $limit = 1;
+        $check = $redis->exists($key);
+        if($check){
+            $redis->incr($key);
+            $count = $redis->get($key);
+            if($count > $limit){
+                exit('your have too many request');
             }
         }else{
-            $this->error('支付金额不能少于或等于0');
+            $redis->incr($key);
+            //限制时间为30秒 
+            $redis->expire($key,30);
+            if($ip_paytype == 2){
+                $ir_prices = bcmul($ir_price,100,2);
+                $mape            = array(
+                    'ir_receiptnum'   =>$ir_receiptnum,
+                    'ir_paytype'      =>$ip_paytype,
+                    'ir_price'        =>$ir_prices,
+                    'pay_receiptnum'  =>$pay_receiptnum,
+                    'riuid'           =>$iuid,
+                    'cretime'         =>time(),
+                    'ir_point'        =>$ir_price
+                );
+            }else{
+                $ir_prices = bcdiv($ir_price,100,2);
+                $mape            = array(
+                    'ir_receiptnum'   =>$ir_receiptnum,
+                    'ir_paytype'      =>$ip_paytype,
+                    'ir_price'        =>$ir_price,
+                    'pay_receiptnum'  =>$pay_receiptnum,
+                    'riuid'           =>$iuid,
+                    'cretime'         =>time(),
+                    'ir_point'        =>$ir_prices
+                );
+            }
+            if($ir_price>0){
+                $add = D('receiptson')->add($mape);
+                if($add){
+                 	// if($ip_paytype==1){
+                 	// 	$this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
+                 	// }else if($ip_paytype==4){
+                 	// 	$this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
+                 	// }
+                    switch ($ip_paytype) {
+                        case '1':
+                            $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
+                            break;
+                        case '2':
+                            $this->redirect('Home/Pay/payPoint',array('ir_receiptnum'=>$pay_receiptnum)); 
+                            break;
+                        case '4':
+                            $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
+                            break;
+                    }
+                }else{
+                   $this->error('系统超时,请重新提交'); 
+                }
+            }else{
+                $this->error('支付金额不能少于或等于0');
+            }
         }
     }
 

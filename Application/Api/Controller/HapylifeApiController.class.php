@@ -1950,6 +1950,36 @@ class HapylifeApiController extends HomeBaseController{
     *奖金列表
     **/
     public function BounsList(){
+        $redis = new \Predis\Client(array(  
+            'scheme' => 'tcp',  
+            'host'   => '127.0.0.1',  
+            'port'   => '6379'  
+        ));  
+        //这个key记录该用户1的访问次数 
+        $key = 'user:3:api_count';
+
+
+        //限制次数为5 
+        $limit = 5;
+
+
+        $check = $redis->exists($key);
+        if($check){
+            $redis->incr($key);
+            $count = $redis->get($key);
+            if($count > $limit){
+                exit('your have too many request');
+            }
+        }else{
+            $redis->incr($key);
+            //限制时间为60秒 
+            $redis->expire($key,30);
+        }
+
+
+        $count = $redis->get($key);
+        echo 'You have '.$count.' request';
+
     }
 
 

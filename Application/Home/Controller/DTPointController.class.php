@@ -10,8 +10,8 @@ class DTPointController extends HomeBaseController{
     **/
     public function myDTPoint(){
         $iuid = $_SESSION['user']['id'];
-        if($iuid){
-            $userinfo  = M('User')->where(array('iuid'=>$iuid))->find();
+        $userinfo  = M('User')->where(array('iuid'=>$iuid))->find();
+        if($userinfo){
             // 获取用户在美国的dtp
             $usa = new \Common\UsaApi\Usa;
             $result = $usa->dtPoint($userinfo['customerid']);
