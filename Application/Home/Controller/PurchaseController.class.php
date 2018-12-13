@@ -649,7 +649,7 @@ class PurchaseController extends HomeBaseController{
                                 $save = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->save($where);
 
                                 // 发送短信提示
-                                $templateId ='221572';
+                                $templateId ='244305';
                                 $params     = array($userinfo['customerid'],$order_num,$product['ip_dt'],$bcsub);
                                 $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                 $content = '尊敬的'.$userinfo['customerid'].'会员，您的订单'.$order_num.'消费了'.$product['ip_dt'].'DT积分，现在DT余额为'.$bcsub;
@@ -829,7 +829,7 @@ class PurchaseController extends HomeBaseController{
                             $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
                             if($ir_status == 2){
                                 // 发送短信提示
-                                $templateId ='209011';
+                                $templateId ='178959';
                                 $params     = array($receipt['ir_receiptnum'],$product_name);
                                 $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                 if($sms['errmsg'] == 'OK'){
@@ -862,7 +862,7 @@ class PurchaseController extends HomeBaseController{
                             // 共总支付
                             $total = bcsub($order['ir_unpaid'],$sub,2);
                             // 发送短信提示
-                            $templateId ='209014';
+                            $templateId ='178957';
                             $params     = array($receipt['ir_receiptnum'],$receipt['ir_price'],$total,$sub);
                             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                             if($sms['errmsg'] == 'OK'){
@@ -1157,7 +1157,7 @@ class PurchaseController extends HomeBaseController{
                                         $res = M('User')->where(array('iuid'=>$userinfo['iuid']))->save($wv);
                                         if($res){
                                             $addressee = $userinfo['lastname'].$userinfo['firstname'];
-                                            $templateId ='223637';
+                                            $templateId ='244312';
                                             $params     = array($addressee,$maps['wvCustomerID'],$productName);
                                             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                             if($sms['errmsg'] == 'OK'){
@@ -1176,7 +1176,7 @@ class PurchaseController extends HomeBaseController{
 
                                             // 给上线发短信
                                             $enrollerinfo = M('User')->where(array('CustomerID'=>$userinfo['enrollerid']))->find(); 
-                                            $templateId ='220861';
+                                            $templateId ='244300';
                                             $params     = array($enrollerinfo['customerid'],$userinfo['customerid']);
                                             $sms        = D('Smscode')->sms($enrollerinfo['acnumber'],$enrollerinfo['phone'],$params,$templateId);
                                             if($sms['errmsg'] == 'OK'){
@@ -1250,7 +1250,7 @@ class PurchaseController extends HomeBaseController{
                         // 总共已经支付金额
                         $total = bcsub($receipt['ir_price'],$sub,2);
                         // 发送短信提示
-                        $templateId ='209014';
+                        $templateId ='178957';
                         $params     = array($receipt['ir_receiptnum'],$receiptson['ir_price'],$total,$sub);
                         $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                         if($sms['errmsg'] == 'OK'){

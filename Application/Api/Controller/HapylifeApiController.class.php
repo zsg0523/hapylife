@@ -772,7 +772,7 @@ class HapylifeApiController extends HomeBaseController{
                                 $save = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->save($where);
 
                                 // 发送短信提示
-                                $templateId ='221572';
+                                $templateId ='244305';
                                 $params     = array($userinfo['customerid'],$order_num,$product['ip_dt'],$bcsub);
                                 $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                 $content = '尊敬的'.$userinfo['customerid'].'会员，您的订单'.$order_num.'消费了'.$product['ip_dt'].'DT积分，现在DT余额为'.$bcsub;
@@ -1979,6 +1979,24 @@ class HapylifeApiController extends HomeBaseController{
 
         $count = $redis->get($key);
         echo 'You have '.$count.' request';
+        // $templateId ='223637';
+        // $params     = array('伍萍','299453875','Gold 首购+月费');
+        // $sms        = D('Smscode')->sms('86','13920364256',$params,$templateId);
+        // if($sms['errmsg'] == 'OK'){
+            
+        //     $contents = array(
+        //         'acnumber' => '86',
+        //         'phone' => '13920364256',
+        //         'operator' => '系统',
+        //         'addressee' => '伍萍',
+        //         'product_name' => 'Gold 首购+月费',
+        //         'date' => time(),
+        //         'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：伍萍会员号码：299453875产品：Gold 首购+月费使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
+        //         'customerid' => 'HPL00123828'
+        //     );
+        //     $logs = M('SmsLog')->add($contents);
+        // }
+        // p($sms);
 
     }
 

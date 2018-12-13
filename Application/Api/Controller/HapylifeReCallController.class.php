@@ -25,7 +25,7 @@ class HapylifeReCallController extends HomeBaseController{
                     // 判断发送时间是否超过4天
                     if(bcdiv(bcsub(time(),strtotime($value['addtime'])),86400,0)>=4){
                         // 发送短信提示
-                        $templateId ='236758';
+                        $templateId ='244310';
                         $params     = array($addressee,$time);
                         $sms        = D('Smscode')->sms('86',$userinfo['phone'],$params,$templateId);
                         $content = '亲爱的会员'.$addressee.'，这是系统提醒消息，您有未支付的订单，请在'.$time.'之前完成支付。';

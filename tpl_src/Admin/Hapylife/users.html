@@ -65,6 +65,10 @@
                     	<else />
 							<th>操作</th>
 				    	</if>
+				    	<if condition="$session['user']['username'] eq sandy">
+                    	<else />
+							<th>查询美国信息</th>
+				    	</if>
 					</tr>
 					<foreach name="data" item="v">
 						<tr>
@@ -114,7 +118,13 @@
 							<if condition="$session['user']['username'] eq sandy">
                         	<else />
 								<td>
-									<a href="javascript:if(confirm('确定删除{$v.customerid}？'))location='{:U('Admin/Hapylife/delete_users',array('id'=>$v['iuid']))}'">删除</a> 
+									<a href="javascript:if(confirm('确定删除{$v.customerid}？'))location='{:U('Admin/Hapylife/delete_users',array('id'=>$v['iuid']))}'">删除</a>
+								</td>
+					    	</if>
+					    	<if condition="$session['user']['username'] eq sandy">
+                        	<else />
+								<td>
+									<a href="javascript:searchForUsa();" CustomerID="{$v['customerid']}">查询</a>
 								</td>
 					    	</if>
 						</tr>
@@ -161,8 +171,8 @@
 	</div>
 	<!-- 添加菜单模态框结束 -->
 
-	<!-- 修改菜单模态框开始 -->
-	<div class="modal fade" id="bjy-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!-- 显示会员信息模态框开始 -->
+	<div class="modal fade" id="bjy-msg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			 <div class="modal-content">
 				<div class="modal-header">
@@ -170,73 +180,151 @@
 						&times;
 					</button>
 					<h4 class="modal-title" id="myModalLabel">
-						修改会员
+						会员信息
 					</h4>
 				</div>
 				<div class="modal-body">
-					<form id="bjy-form" class="form-inline" action="{:U('Admin/Hapylife/edit_users')}" method="post" enctype="multipart/form-data">
-						<input type="hidden" name="id">
-						<table class="table table-striped table-bordered table-hover table-condensed">
-							<tr>
-								<th width="12%">会员昵称：</th>
-								<td>
-									<input class="input-medium" type="text" name="hu_nickname">
-								</td>
-							</tr>
-							<tr>
-								<th width="12%">会员姓名：</th>
-								<td>
-									<input class="input-medium" type="text" name="hu_username">
-								</td>
-							</tr>
-							<tr>
-								<th width="12%">会员积分：</th>
-								<td>
-									<input class="input-medium" type="text" name="iu_point">
-								</td>
-							</tr>
-							<tr>
-								<th width="12%">电话：</th>
-								<td>
-									<input class="input-medium" type="text" name="hu_phone">
-								</td>
-							</tr>
-							<tr>
-								<th width="12%">电邮：</th>
-								<td>
-									<input class="input-medium" type="text" name="hu_email">
-								</td>
-							</tr>
-							<tr>
-								<th width="12%">会员等级：</th>
-								<td>
-									<select name="iu_grade" id="">
-										<option value="0">普通会员</option>
-										<option value="1">铜卡会员</option>
-										<option value="2">银卡会员</option>
-										<option value="3">金卡会员</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<th width="12%">头像：</th>
-								<td>
-									<input class="input-medium" type="file" name="hu_photo">
-								</td>
-							</tr>
-							<tr>
-								<th></th>
-								<td>
-									<input class="btn btn-success" type="submit" value="修改">
-								</td>
-							</tr>
-						</table>
-					</form>
+					<table class="table table-striped table-bordered table-hover table-condensed">
+						<tr>
+							<th width="12%">isActive：</th>
+							<td id="isActive"></td>
+						</tr>
+						<tr>
+							<th width="12%">firstName：</th>
+							<td id="firstName"></td>
+						</tr>
+						<tr>
+							<th width="12%">lastName：</th>
+							<td id="lastName"></td>
+						</tr>
+						<tr>
+							<th width="12%">wvCustomerId：</th>
+							<td id="wvCustomerId"></td>
+						</tr>
+						<tr>
+							<th width="12%">DreamTripPoints：</th>
+							<td id="DreamTripPoints"></td>
+						</tr>
+						<tr>
+							<th width="12%">DreamTripPoints_Accrued：</th>
+							<td id="DreamTripPoints_Accrued"></td>
+						</tr>
+						<tr>
+							<th width="12%">weekly：</th>
+							<td>
+								<table style="width: 100%;">
+									<tr>
+										<th>description</th>
+										<td id="description_w"></td>
+									</tr>
+									<tr>
+										<th>personalActive</th>
+										<td id="personalActive_w"></td>
+									</tr>
+									<tr>
+										<th>newBinaryUnlimitedLevelsLeft</th>
+										<td id="newBinaryUnlimitedLevelsLeft_w"></td>
+									</tr>
+									<tr>
+										<th>newBinaryUnlimitedLevelsRight</th>
+										<td id="newBinaryUnlimitedLevelsRight_w"></td>
+									</tr>
+									<tr>
+										<th>activeLeftLegWithAutoPlacement</th>
+										<td id="activeLeftLegWithAutoPlacement_w"></td>
+									</tr>
+									<tr>
+										<th>activeRightLegWithAutoPlacement</th>
+										<td id="activeRightLegWithAutoPlacement_w"></td>
+									</tr>
+									<tr>
+										<th>leftLegTotal</th>
+										<td id="leftLegTotal_w"></td>
+									</tr>
+									<tr>
+										<th>rightLegTotal</th>
+										<td id="rightLegTotal_w"></td>
+									</tr>
+									<tr>
+										<th>paidRank</th>
+										<td id="paidRank_w"></td>
+									</tr>
+									<tr>
+										<th>titleRank</th>
+										<td id="titleRank_w"></td>
+									</tr>
+									<tr>
+										<th>volumeLeft</th>
+										<td id="volumeLeft_w"></td>
+									</tr>
+									<tr>
+										<th>volumeRight</th>
+										<td id="volumeRight_w"></td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<th width="12%">monthly：</th>
+							<td>
+								<table style="width: 100%;">
+									<tr>
+										<th>description</th>
+										<td id="description_m"></td>
+									</tr>
+									<tr>
+										<th>personalActive</th>
+										<td id="personalActive_m"></td>
+									</tr>
+									<tr>
+										<th>newBinaryUnlimitedLevelsLeft</th>
+										<td id="newBinaryUnlimitedLevelsLeft_m"></td>
+									</tr>
+									<tr>
+										<th>newBinaryUnlimitedLevelsRight</th>
+										<td id="newBinaryUnlimitedLevelsRight_m"></td>
+									</tr>
+									<tr>
+										<th>activeLeftLegWithAutoPlacement</th>
+										<td id="activeLeftLegWithAutoPlacement_m"></td>
+									</tr>
+									<tr>
+										<th>activeRightLegWithAutoPlacement</th>
+										<td id="activeRightLegWithAutoPlacement_m"></td>
+									</tr>
+									<tr>
+										<th>leftLegTotal</th>
+										<td id="leftLegTotal_m"></td>
+									</tr>
+									<tr>
+										<th>rightLegTotal</th>
+										<td id="rightLegTotal_m"></td>
+									</tr>
+									<tr>
+										<th>paidRank</th>
+										<td id="paidRank_m"></td>
+									</tr>
+									<tr>
+										<th>titleRank</th>
+										<td id="titleRank_m"></td>
+									</tr>
+									<tr>
+										<th>volumeLeft</th>
+										<td id="volumeLeft_m"></td>
+									</tr>
+									<tr>
+										<th>volumeRight</th>
+										<td id="volumeRight_m"></td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
 				</div>
 			</div>
 		</div>
 	</div>
-	<!-- 修改菜单模态框结束 -->
+	<!-- 显示会员信息模态框结束 -->
 </block>
 <block name="js">
 	<script>
@@ -246,23 +334,61 @@
 		$('#bjy-add').modal('show');
 	}
 
-	// 修改菜单
-	function edit(obj){
-		var usersId=$(obj).attr('usersId');
-		var usersDisplayname=$(obj).attr('usersDisplayname');
-		var usersUsername=$(obj).attr('usersUsername');
-		var usersPoint=$(obj).attr('usersPoint');
-		var usersPhone=$(obj).attr('usersPhone');
-		var usersEmail=$(obj).attr('usersEmail');
-		var usersGrade=$(obj).attr('usersGrade');
-		$("input[name='id']").val(usersId);
-		$("input[name='hu_nickname']").val(usersDisplayname);
-		$("input[name='hu_username']").val(usersUsername);
-		$("input[name='iu_point']").val(usersPoint);
-		$("input[name='hu_phone']").val(usersPhone);
-		$("input[name='hu_email']").val(usersEmail);
-		$("select[name='iu_grade']").val(usersGrade);
-		$('#bjy-edit').modal('show');
+	// 显示会员信息
+	function searchForUsa(obj){
+		var CustomerID =$(obj).attr('CustomerID');
+		$.ajax({
+			type:"post",
+			url:"{:U('Admin/Hapylife/searchForUsa')}",
+			async:false,
+			dataType:'json',
+			data:{
+				customerid:CustomerID
+			},
+			success:function(data){
+				if(data.status == 0){
+					alert('无数据');
+				}else{
+					$('#isActive').text(data.validateHpl.isActive);
+					$('#firstName').text(data.validateHpl.firstName);
+					$('#lastName').text(data.validateHpl.lastName);
+					$('#wvCustomerId').text(data.validateHpl.customerId);
+					$('#DreamTripPoints').text(data.iu_dt);
+					$('#DreamTripPoints_Accrued').text(data.iu_ac);
+					// $('#DreamTripPoints_Accrued').innerText = data.dtPoint.softCashCategories[1].balance;
+					// $('#description_w').innerText = data.activities.weekly.description;
+					// $('#personalActive_w').innerText = data.activities.weekly.personalActive;
+					// $('#newBinaryUnlimitedLevelsLeft_w').innerText = data.activities.weekly.newBinaryUnlimitedLevelsLeft;
+					// $('#newBinaryUnlimitedLevelsRight_w').innerText = data.activities.weekly.newBinaryUnlimitedLevelsRight;
+					// $('#activeLeftLegWithAutoPlacement_w').innerText = data.activities.weekly.activeLeftLegWithAutoPlacement;
+					// $('#activeRightLegWithAutoPlacement_w').innerText = data.activities.weekly.activeRightLegWithAutoPlacement;
+					// $('#leftLegTotal_w').innerText = data.activities.weekly.leftLegTotal;
+					// $('#rightLegTotal_w').innerText = data.activities.weekly.rightLegTotal;
+					// $('#paidRank_w').innerText = data.activities.weekly.paidRank;
+					// $('#titleRank_w').innerText = data.activities.weekly.titleRank;
+					// $('#volumeLeft_w').innerText = data.activities.weekly.volumeLeft;
+					// $('#volumeRight_w').innerText = data.activities.weekly.volumeRight;
+					// $('#description_m').innerText = data.activities.monthly.description;
+					// $('#personalActive_m').innerText = data.activities.monthly.personalActive;
+					// $('#newBinaryUnlimitedLevelsLeft_m').innerText = data.activities.monthly.newBinaryUnlimitedLevelsLeft;
+					// $('#newBinaryUnlimitedLevelsRight_m').innerText = data.activities.monthly.newBinaryUnlimitedLevelsRight;
+					// $('#activeLeftLegWithAutoPlacement_m').innerText = data.activities.monthly.activeLeftLegWithAutoPlacement;
+					// $('#activeRightLegWithAutoPlacement_m').innerText = data.activities.monthly.activeRightLegWithAutoPlacement;
+					// $('#leftLegTotal_m').innerText = data.activities.monthly.leftLegTotal;
+					// $('#rightLegTotal_m').innerText = data.activities.monthly.rightLegTotal;
+					// $('#paidRank_m').innerText = data.activities.monthly.paidRank;
+					// $('#titleRank_m').innerText = data.activities.monthly.titleRank;
+					// $('#volumeLeft_m').innerText = data.activities.monthly.volumeLeft;
+					// $('#volumeRight_m').innerText = data.activities.monthly.volumeRight;
+					$('#bjy-msg').modal('show');
+				}
+			},
+			error:function(){
+				alert('ajax请求错误~！');
+				
+			},
+		});
+		
 	}
 	</script>
 </block>

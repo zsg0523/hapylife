@@ -10,11 +10,11 @@ class PayController extends HomeBaseController{
     **/
     public function receiptSon(){
         // 初始化redis
-        $redis = new \Predis\Client(array(  
-            'scheme' => 'tcp',  
-            'host'   => '127.0.0.1',  
-            'port'   => '6379'  
-        ));  
+        // $redis = new \Predis\Client(array(  
+        //     'scheme' => 'tcp',  
+        //     'host'   => '127.0.0.1',  
+        //     'port'   => '6379'  
+        // ));  
         $ir_receiptnum   = I('post.ir_receiptnum');
         $ip_paytype      = I('post.ip_paytype');
 //      p($ip_paytype);die;
@@ -24,21 +24,21 @@ class PayController extends HomeBaseController{
         $iuid            = D('User')->where(array('CustomerID'=>$customerid))->getfield('iuid');
         $saveReceipt     = D('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->save(array('riuid'=>$iuid));
         $saveReceiptSon  = D('Receiptson')->where(array('ir_receiptnum'=>$ir_receiptnum))->save(array('riuid'=>$iuid));
-        //这个key记录该用户1的访问次数 
-        $key = 'user:'.$iuid.':api_count';
-        //限制次数为1
-        $limit = 1;
-        $check = $redis->exists($key);
-        if($check){
-            $redis->incr($key);
-            $count = $redis->get($key);
-            if($count > $limit){
-                exit('your have too many request');
-            }
-        }else{
-            $redis->incr($key);
-            //限制时间为30秒 
-            $redis->expire($key,30);
+        // //这个key记录该用户1的访问次数 
+        // $key = 'user:'.$iuid.':api_count';
+        // //限制次数为1
+        // $limit = 1;
+        // $check = $redis->exists($key);
+        // if($check){
+        //     $redis->incr($key);
+        //     $count = $redis->get($key);
+        //     if($count > $limit){
+        //         $this->error('您有正在支付的订单，请耐心等待3分钟，切勿重复支付');
+        //     }
+        // }else{
+            // $redis->incr($key);
+            // //限制时间为30秒 
+            // $redis->expire($key,180);
             if($ip_paytype == 2){
                 $ir_prices = bcmul($ir_price,100,2);
                 $mape            = array(
@@ -87,7 +87,7 @@ class PayController extends HomeBaseController{
             }else{
                 $this->error('支付金额不能少于或等于0');
             }
-        }
+        // }
     }
 
     // 确认密码
@@ -196,7 +196,7 @@ class PayController extends HomeBaseController{
                                 $change_receipts = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($maps);
                                 if($change_receipts){
                                     // 发送短信提示
-                                    $templateId ='209014';
+                                    $templateId ='178957';
                                     $params     = array($receipt['ir_receiptnum'],$receiptson['ir_price'],$total,$ir_unpaid);
                                     $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                     if($sms['errmsg'] == 'OK'){
@@ -236,7 +236,7 @@ class PayController extends HomeBaseController{
                                 $change_receipt = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($maps);
                                 if($change_receipt){
                                     // 发送短信提示
-                                    $templateId ='209011';
+                                    $templateId ='178959';
                                     $params     = array($receipt['ir_receiptnum'],$product_name);
                                     $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                                     if($sms['errmsg'] == 'OK'){
@@ -384,7 +384,7 @@ class PayController extends HomeBaseController{
                                                 $res = M('User')->where(array('iuid'=>$userinfos['iuid']))->save($wv);
                                                 if($res){
                                                     $addressee = $status['ia_name'];
-                                                    $templateId ='223637';
+                                                    $templateId ='244312';
                                                     $params     = array($addressee,$maps['wvCustomerID'],$productName);
                                                     $sms        = D('Smscode')->sms($userinfos['acnumber'],$userinfos['phone'],$params,$templateId);
                                                     if($sms['errmsg'] == 'OK'){
@@ -404,7 +404,7 @@ class PayController extends HomeBaseController{
 
                                                     // 给上线发短信
                                                     $enrollerinfo = M('User')->where(array('CustomerID'=>$userinfos['enrollerid']))->find(); 
-                                                    $templateId ='220861';
+                                                    $templateId ='244300';
                                                     $params     = array($enrollerinfo['customerid'],$userinfos['customerid']);
                                                     $sms        = D('Smscode')->sms($enrollerinfo['acnumber'],$enrollerinfo['phone'],$params,$templateId);
                                                     if($sms['errmsg'] == 'OK'){

@@ -33,9 +33,9 @@ class HapylifeRegisterController extends HomeBaseController{
         }else{
             vendor('SmsSing.SmsSingleSender');
             // 短信应用SDK AppID
-            $appid = 1400149268; // 1400开头
+            $appid = 1400096409; // 1400开头
             // 短信应用SDK AppKey
-            $appkey = "010151f33eaec872109b1b507c820bce";
+            $appkey = "fc1c7e21ab36fef1865b0a3110709c51";
             // 需要发送短信的手机号码
             $phoneNumber = I('post.phoneNumber');
             //手机区号
@@ -43,8 +43,8 @@ class HapylifeRegisterController extends HomeBaseController{
             // 短信模板ID，需要在短信应用中申请$templateId
             // 签名
             if($acnumber==86){
-                $templateId = 209020;  // NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
-                $smsSign = "安永中国"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
+                $templateId = 127203;  // NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
+                $smsSign = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
             }else if($acnumber==886 || $acnumber==852 || $acnumber==853){
                 $templateId = 127206;  // NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请      
                 $smsSign = "eggcarton";
@@ -490,7 +490,7 @@ class HapylifeRegisterController extends HomeBaseController{
         }
         if($addResult){
             // 发送短信提示
-            $templateId ='209009';
+            $templateId ='183054';
             $params     = array();
             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
             if($sms['errmsg'] == 'OK'){
@@ -647,7 +647,7 @@ class HapylifeRegisterController extends HomeBaseController{
                     if($res){
                         $addressee = $userinfo['lastname'].$userinfo['firstname'];
                         // 发送短信提示
-                        $templateId ='223637';
+                        $templateId ='244312';
                         $params     = array($addressee,$wv['wvCustomerID'],$product['ip_name_zh']);
                         $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                         if($sms['errmsg'] == 'OK'){
@@ -667,7 +667,7 @@ class HapylifeRegisterController extends HomeBaseController{
 
                         // 给上线发短信
                         $enrollerinfo = M('User')->where(array('CustomerID'=>$userinfo['enrollerid']))->find(); 
-                        $templateId ='220861';
+                        $templateId ='244300';
                         $params     = array($enrollerinfo['customerid'],$userinfo['customerid']);
                         $sms        = D('Smscode')->sms($enrollerinfo['acnumber'],$enrollerinfo['phone'],$params,$templateId);
                         if($sms['errmsg'] == 'OK'){

@@ -57,7 +57,7 @@ class ChangeController extends HomeBaseController{
                         // 发送给usa,更新usa数据
                         $res = $usa->changePassWord($userinfo['customerid'],I('post.passwords'));
                         if($res['code'] == 200){
-                            $templateId ='220956';
+                            $templateId ='244303';
                             $params     = array($userinfo['customerid'],I('post.passwords'));
                             $sms        = D('Smscode')->sms($acnumber,$phoneNumber,$params,$templateId);
                             if($sms['errmsg'] == 'OK'){
@@ -85,7 +85,7 @@ class ChangeController extends HomeBaseController{
                 // 发送给usa,更新usa数据
                 $res = $usa->changePassWord($userinfo['customerid'],I('post.passwords'));
                 if($res['code'] == 200){
-                    $templateId ='220956';
+                    $templateId ='244303';
                     $params     = array($userinfo['customerid'],I('post.passwords'));
                     $sms        = D('Smscode')->sms($acnumber,$phoneNumber,$params,$templateId);
                     if($sms['errmsg'] == 'OK'){
@@ -116,9 +116,9 @@ class ChangeController extends HomeBaseController{
         }else{
             vendor('SmsSing.SmsSingleSender');
             // 短信应用SDK AppID
-            $appid = 1400149268; // 1400开头
+            $appid = 1400096409; // 1400开头
             // 短信应用SDK AppKey
-            $appkey = "010151f33eaec872109b1b507c820bce";
+            $appkey = "fc1c7e21ab36fef1865b0a3110709c51";
             // 需要发送短信的手机号码
             $phoneNumber = I('post.phoneNumber');
             //手机区号
@@ -126,8 +126,8 @@ class ChangeController extends HomeBaseController{
             // 短信模板ID，需要在短信应用中申请$templateId
             // 签名
             if($acnumber==86){
-                $templateId = 209020;  // NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
-                $smsSign = "安永中国"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
+                $templateId = 127203;  // NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
+                $smsSign = "三次猿"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
             }else if($acnumber==886 || $acnumber==852 || $acnumber==853){
                 $templateId = 127206;  // NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请      
                 $smsSign = "eggcarton";
@@ -186,7 +186,7 @@ class ChangeController extends HomeBaseController{
         $usa    = new \Common\UsaApi\Usa;
         $result = $usa->changePhone($data['happyLifeID'],$data['Phone']);
         if($result['code'] == 200){
-            $templateId ='220954';
+            $templateId ='244301';
             $params     = array($data['happyLifeID'],$data['Phone']);
             $sms        = D('Smscode')->sms($userinfo['acnumber'],$data['Phone'],$params,$templateId);
             if($sms['errmsg'] == 'OK'){
@@ -228,7 +228,7 @@ class ChangeController extends HomeBaseController{
         $usa    = new \Common\UsaApi\Usa;
         $result = $usa->ChangePlacement($data['happyLifeID'],$note);
         if($result['code'] == 200){
-            $templateId ='220957';
+            $templateId ='244304';
             $params     = array($data['happyLifeID'],$data['Placement']);
             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
             if($sms['errmsg'] == 'OK'){
@@ -410,7 +410,7 @@ class ChangeController extends HomeBaseController{
             $this->ajaxreturn($sample);
         }else{
             if($data && $data['code']==$code){
-                $templateId ='223694';
+                $templateId ='244308';
                 $params     = array($wvcustomerid,$customerid);
                 $sms        = D('Smscode')->sms($acnumber,$phoneNumber,$params,$templateId);
                 if($sms['errmsg'] == 'OK'){
@@ -455,7 +455,7 @@ class ChangeController extends HomeBaseController{
             $usa    = new \Common\UsaApi\Usa;
             $result = $usa->ChangeEmail($happyLifeID,$email);
             if($result['code'] == 200){
-                $templateId ='220955';
+                $templateId ='244302';
                 $params     = array($happyLifeID,$email);
                 $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                 if($sms['errmsg'] == 'OK'){

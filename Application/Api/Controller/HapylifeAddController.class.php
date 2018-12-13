@@ -312,7 +312,7 @@ class HapylifeAddController extends HomeBaseController{
         $receiptlist_result = M('receiptlist')->add($receiptlist);
         if($receipt_result && $receiptson_result && $receiptlist_result){
             // 发送短信提示
-            $templateId ='209011';
+            $templateId ='178959';
             $params     = array($receipt['ir_receiptnum'],$product['ip_name_zh']);
             $sms        = D('Smscode')->sms(86,$ia_phone,$params,$templateId);
             if($sms['errmsg'] == 'OK'){
@@ -411,11 +411,48 @@ class HapylifeAddController extends HomeBaseController{
                     $time = date('Y-m',strtotime($value['Date']));
                     $endTime = date('Y-m-d',strtotime($value['Date'])+2*24*3600);
                     $network = 'www.dreamtrips.com';
+
+                    switch ($value['PaymentTypeId']) {
+                        case '6':
+                            //商品信息
+                            $product = M('Product')->where(array('ipid'=>39))->find();
+                            // 设置显示正常月费包
+                            $showProduct = M('User')->where(array('CustomerID'=>$value['HplId']))->setfield('showProduct',1);
+                            // 短信模板ID
+                            $templateId1 ='244292';
+                            // 短信模板参数
+                            $params1     = array($time,$endTime,$network);
+                            // 短信模板内容
+                            $content1 = '这是'.$time.'重销通知，请在'.$endTime.'前完成支付，避免无法登录'.$network;
+                            break;
+                        case '7':
+                            //商品信息
+                            $product = M('Product')->where(array('ipid'=>63))->find();
+                            // 设置显示GOLD月费包
+                            $showProduct = M('User')->where(array('CustomerID'=>$value['HplId']))->setfield('showProduct',2);
+                            // 短信模板ID
+                            $templateId1 ='244292';
+                            // 短信模板参数
+                            $params1     = array($time,$endTime,$network);
+                            // 短信模板内容
+                            $content1 = '这是'.$time.'重销通知，请在'.$endTime.'前完成支付，避免无法登录'.$network;
+                            break;   
+                        case '8':
+                            //商品信息
+                            $product = M('Product')->where(array('ipid'=>46))->find();
+                            // 设置显示优惠月费包
+                            $showProduct = M('User')->where(array('CustomerID'=>$value['HplId']))->setfield('showProduct',3);
+                            // 短信模板ID
+                            $templateId1 ='244297';
+                            // 短信模板参数
+                            $params1     = array($time);
+                            // 短信模板内容
+                            $content1 = '恭喜您，当月符合优惠资格，可享有重销优惠，请在'.$time.'前完成支付。 回T退订！';
+                            break;   
+                    }
+
                     // 发送短信提示
-                    $templateId1 ='208999';
-                    $params1     = array($time,$endTime,$network);
                     $sms1        = D('Smscode')->sms('86',$userinfo['phone'],$params1,$templateId1);
-                    $content1 = '这是'.$time.'续费通知，请在'.$endTime.'前完成缴费，避免无法登录'.$network;
                     if($sms1['result'] == 0){
                         $result = D('Smscode')->addLog('86',$userinfo['phone'],'系统',$addressee,'续费通知',$content1,$userinfo['customerid']);
                     }else{
@@ -427,36 +464,14 @@ class HapylifeAddController extends HomeBaseController{
                     }
 
                     // 发送短信提示
-                    $templateId2 ='221573';
+                    $templateId2 ='244306';
                     $params2     = array($userinfo['customerid'],$time,$network);
                     $sms2        = D('Smscode')->sms($enrollerinfo['acnumber'],$enrollerinfo['phone'],$params2,$templateId2);
-                    $content2 = ' 您的成员'.$userinfo['customerid'].'收到续费通知，请提醒成员在'.$time.'前完成缴费，避免无法登录'.$network;
+                    $content2 = ' 您的成员'.$userinfo['customerid'].'收到重销通知，请提醒成员在'.$time.'前完成支付，避免无法登录'.$network;
                     if($sms2['result'] == 0){
                         $result = D('Smscode')->addLog($enrollerinfo['acnumber'],$enrollerinfo['phone'],'系统',$enrollername,'下线续费通知',$content2,$enrollerinfo['customerid']);
                     }else{
                         $result = D('Smscode')->addLog($enrollerinfo['acnumber'],$enrollerinfo['phone'],'系统',$enrollername,$sms2['errmsg'],$content2,$enrollerinfo['customerid']);
-                    }
-
-                    
-                    switch ($value['PaymentTypeId']) {
-                        case '6':
-                            //商品信息
-                            $product = M('Product')->where(array('ipid'=>39))->find();
-                            // 设置显示正常月费包
-                            $showProduct = M('User')->where(array('CustomerID'=>$value['HplId']))->setfield('showProduct',1);
-                            break;
-                        case '7':
-                            //商品信息
-                            $product = M('Product')->where(array('ipid'=>63))->find();
-                            // 设置显示正常月费包
-                            $showProduct = M('User')->where(array('CustomerID'=>$value['HplId']))->setfield('showProduct',2);
-                            break;   
-                        case '8':
-                            //商品信息
-                            $product = M('Product')->where(array('ipid'=>46))->find();
-                            // 设置显示正常月费包
-                            $showProduct = M('User')->where(array('CustomerID'=>$value['HplId']))->setfield('showProduct',3);
-                            break;   
                     }
                     
                     // 设置时区
@@ -492,22 +507,9 @@ class HapylifeAddController extends HomeBaseController{
                                 $con = 'DT商店'.$product['ip_name_zh'];
                                 break;
                         }
+                        // 检测是否有默认地址
                         $address = M('Address')->where(array('iuid'=>$userinfo['iuid'],'is_address_show'=>1))->find();
-                        if($address){
-                            $ia_name = $address['ia_name'];
-                            $ia_phone = $address['ia_phone'];
-                            $ia_province = $address['ia_province'];
-                            $ia_city = $address['ia_town'];
-                            $ia_area = $address['ia_region'];
-                            $ia_address = $address['ia_road'];
-                        }else{
-                            $ia_name = $userinfo['lastname'].$userinfo['firstname'];
-                            $ia_phone = $userinfo['phone'];
-                            $ia_province = $userinfo['shopprovince'];
-                            $ia_city = $userinfo['shopcity'];
-                            $ia_area = $userinfo['shoparea'];
-                            $ia_address = $userinfo['shopaddress1'];
-                        }
+                        // 创建订单
                         $order = array(
                             //订单编号
                             'ir_receiptnum' =>$order_num,
@@ -516,21 +518,21 @@ class HapylifeAddController extends HomeBaseController{
                             //订单的状态(0待生成订单，1待支付订单，202未全额,2已付款订单)
                             'ir_status'     =>0,
                             //下单用户id
-                            'riuid'          =>$userinfo['iuid'],
+                            'riuid'         =>$userinfo['iuid'],
                             //下单用户
-                            'rCustomerID'    =>$userinfo['customerid'],
+                            'rCustomerID'   =>$userinfo['customerid'],
                             //收货人
-                            'ia_name'       =>$ia_name,
+                            'ia_name'       =>$address['ia_name']?$address['ia_name']:$userinfo['lastname'].$userinfo['firstname'],
                             //收货人电话
-                            'ia_phone'      =>$ia_phone,
+                            'ia_phone'      =>$address['ia_phone']?$address['ia_phone']:$userinfo['phone'],
                             // 省，州
-                            'ia_province' => $ia_province,
+                            'ia_province'   =>$address['ia_province']?$address['ia_province']:$userinfo['shopprovince'],
                             // 市
-                            'ia_city' => $ia_city,
+                            'ia_city'       =>$address['ia_town']?$address['ia_town']:$userinfo['shopcity'],
                             // 区
-                            'ia_area' => $ia_area,
+                            'ia_area'       =>$address['ia_region']?$address['ia_region']:$userinfo['shoparea'],
                             //收货地址
-                            'ia_address'    =>$ia_address,
+                            'ia_address'    =>$address['ia_road']?$address['ia_road']:$userinfo['shopaddress1'],
                             //订单总商品数量
                             'ir_productnum' =>1,
                             //订单总金额
@@ -678,7 +680,7 @@ class HapylifeAddController extends HomeBaseController{
                     // 判断发送时间是否超过4天
                     if(bcdiv(bcsub(time(),strtotime($value['addtime'])),86400,0)>=4){
                         // 发送短信提示
-                        $templateId ='236758';
+                        $templateId ='244310';
                         $params     = array($addressee,$time);
                         $sms        = D('Smscode')->sms('86',$userinfo['phone'],$params,$templateId);
                         $content = '亲爱的会员'.$addressee.'，这是系统提醒消息，您有未支付的订单，请在'.$time.'之前完成支付。';

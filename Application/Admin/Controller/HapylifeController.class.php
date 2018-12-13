@@ -678,7 +678,7 @@ class HapylifeController extends AdminBaseController{
         		if($save){
         			if($unpoint == 0 && $unpoint==0){
                         // 发送短信提示
-                        $templateId ='209011';
+                        $templateId ='178959';
                         $params     = array($receiptnum,$receipt['ir_desc']);
                         $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                         if($sms['errmsg'] == 'OK'){
@@ -716,7 +716,7 @@ class HapylifeController extends AdminBaseController{
                         // 共总支付
                         $total = bcsub($receipt['ir_unpaid'],$unpaind,2);
                         // 发送短信提示
-                        $templateId ='209014';
+                        $templateId ='178957';
                         $params     = array($receiptnum,$receipt['ir_price'],$total,$unpaind);
                         $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
                         if($sms['errmsg'] == 'OK'){
@@ -907,7 +907,7 @@ class HapylifeController extends AdminBaseController{
 	 		$receiptlist_result = M('receiptlist')->add($receiptlist);
 	 		if($receipt_result && $receiptson_result && $receiptlist_result){
 	 			// 发送短信提示
-                $templateId ='209001';
+                $templateId ='183580';
                 $params     = array($product['ip_name_zh']);
                 $sms        = D('Smscode')->sms($value[G],$value[H],$params,$templateId);
                 if($sms['errmsg'] == 'OK'){
@@ -1149,6 +1149,42 @@ class HapylifeController extends AdminBaseController{
 			redirect($_SERVER['HTTP_REFERER']);
 		}else{
 			$this->error('删除失败');
+		}
+	}
+
+	/**
+	* 查询用户在美国的资料
+	**/ 
+	public function searchForUsa(){
+		$customerid = I('post.customerid');
+		$usa = new \Common\UsaApi\Usa;
+		$validateHpl = $usa->validateHpl($customerid);
+		// $activities = $usa->activities($customerid);
+		$dtPoint = $usa->dtPoint($customerid);
+
+		if(!$validateHpl['errors'] && !$dtPoint['errors']){
+			if($dtPoint['softCashCategories'][0]){
+				$iu_dt = $dtPoint['softCashCategories'][0]['balance'];
+			}else{
+				$iu_dt = 0;
+			}
+
+			if($dtPoint['softCashCategories'][1]){
+				$iu_ac = $dtPoint['softCashCategories'][1]['balance'];
+			}else{
+				$iu_ac = 0;
+			}
+			$data = array(
+				'status' => 1,
+				'validateHpl' => $validateHpl,
+				// 'activities' => $activities,
+				'iu_dt' => $iu_dt,
+				'iu_ac' => $iu_ac,
+			);
+			$this->ajaxreturn($data);
+		}else{
+			$data['status'] = 0;
+			$this->ajaxreturn($data);
 		}
 	}
 
@@ -1760,7 +1796,7 @@ class HapylifeController extends AdminBaseController{
 				);
 				$log_result = M('WvBonusLog')->add($log);
 				if($log_result){
-					$templateId ='213374';
+					$templateId ='244298';
 		            $params     = array($customerid,$array['realpoint'],$array['leftpoint']);
 		            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
 		            if($sms['errmsg'] == 'OK'){
