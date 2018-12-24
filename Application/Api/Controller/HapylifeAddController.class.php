@@ -586,6 +586,12 @@ class HapylifeAddController extends HomeBaseController{
                         case '5':
                             $ir_status = M('Receipt')->where(array('rCustomerID'=>$value['HplId'],'ipid'=>62))->getField('ir_status',true);
                             break;
+                        case '9':
+                            $ir_status = M('Receipt')->where(array('rCustomerID'=>$value['HplId'],'ipid'=>66))->getField('ir_status',true);
+                            break;
+                        case '10':
+                            $ir_status = M('Receipt')->where(array('rCustomerID'=>$value['HplId'],'ipid'=>67))->getField('ir_status',true);
+                            break;
                         default :
                             $ir_status = M('Receipt')->where(array('rCustomerID'=>$value['HplId'],'ipid'=>31))->getField('ir_status',true);
                             break;

@@ -261,39 +261,34 @@ class HapylifeApiController extends HomeBaseController{
                     $this->ajaxreturn($data);
                 }
             }else{
-                if(strlen($tmpe['CustomerID']) == 8){
-                    //检查WV api用户信息
-                    $usa      = new \Common\UsaApi\Usa;
-                    $userinfo = $usa->validateHpl($tmpe['CustomerID']);
-                    //检查wv是否存在该账号 Y创建该账号  N登录失败
-                    switch ($userinfo['isActive']) {
-                        case true:
-                            //创建该新账号在本系统
-                            $map = array(
-                                'CustomerID'  =>$tmpe['CustomerID'],
-                                'PassWord'    =>md5($tmpe['PassWord']),
-                                'WvPass'      =>$tmpe['PassWord'],
-                                'LastName'    =>$userinfo['lastName'],
-                                'FirstName'   =>$userinfo['firstName'],
-                                'isActive'    =>$userinfo['isActive'],
-                            );
-                            $createUser = D('User')->add($map);
-                            if($createUser){
-                                $data = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
-                                $data['status'] =1;
-                            }else{
-                                $data['status'] =0;
-                            }
-                            break;
-                        default:
-                            $data['status'] = 0;
-                            break;
-                    }
-                    $this->ajaxreturn($data); 
-                }else{
-                    $data['status'] = 0;
-                    $this->ajaxreturn($data); 
+                //检查WV api用户信息
+                $usa      = new \Common\UsaApi\Usa;
+                $userinfo = $usa->validateHpl($tmpe['CustomerID']);
+                //检查wv是否存在该账号 Y创建该账号  N登录失败
+                switch ($userinfo['isActive']) {
+                    case true:
+                        //创建该新账号在本系统
+                        $map = array(
+                            'CustomerID'  =>$tmpe['CustomerID'],
+                            'PassWord'    =>md5($tmpe['PassWord']),
+                            'WvPass'      =>$tmpe['PassWord'],
+                            'LastName'    =>$userinfo['lastName'],
+                            'FirstName'   =>$userinfo['firstName'],
+                            'isActive'    =>$userinfo['isActive'],
+                        );
+                        $createUser = D('User')->add($map);
+                        if($createUser){
+                            $data = D('User')->where(array('CustomerID'=>trim($tmpe['CustomerID'])))->find();
+                            $data['status'] =1;
+                        }else{
+                            $data['status'] =0;
+                        }
+                        break;
+                    default:
+                        $data['status'] = 0;
+                        break;
                 }
+                $this->ajaxreturn($data); 
             }
         }else{
             $data['status'] = 0;
