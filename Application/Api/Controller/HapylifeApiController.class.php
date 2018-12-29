@@ -1974,7 +1974,7 @@ class HapylifeApiController extends HomeBaseController{
 
         // $count = $redis->get($key);
         // echo 'You have '.$count.' request';
-        $templateId =I('post.templateId');
+        $templateId ='244312';
         $params     = array(I('post.username'),I('post.wvid'),I('post.product'));
         $sms        = D('Smscode')->sms('86',I('post.phone'),$params,$templateId);
         if($sms['errmsg'] == 'OK'){
@@ -1992,6 +1992,7 @@ class HapylifeApiController extends HomeBaseController{
             $logs = M('SmsLog')->add($contents);
         }
         p($sms);
+
 
     }
 
