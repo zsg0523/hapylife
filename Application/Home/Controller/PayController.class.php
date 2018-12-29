@@ -355,37 +355,43 @@ class PayController extends HomeBaseController{
                                         );
                                         //更新订单信息
                                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
-                                        // 获取产品名称
-                                        $productName = D('Product')->where(array('ipid'=>$order['ipid']))->getfield('ip_name_zh');
+                                        // 获取产品
+                                        $product = D('Product')->where(array('ipid'=>$order['ipid']))->find();
                                         // 检测订单状态
                                         $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
                                         if($ir_status == 2){
                                             $usa    = new \Common\UsaApi\Usa;
-                                            switch($receipt['ipid']){
-                                                case '31':
-                                                    $products = '1';
-                                                    break;
-                                                case '62':
-                                                    $products = '5';
-                                                    break;
-                                                case '64':
-                                                    $products = '4';
-                                                    break;
-                                            }
-                                            $result = $usa->createCustomer($userinfos['customerid'],$tmpeArr['password'],$userinfos['enrollerid'],$userinfos['enfirstname'],$userinfos['enlastname'],$userinfos['email'],$userinfos['phone'],$products,$tmpeArr['birthday']);
+                                            // switch($receipt['ipid']){
+                                            //     case '31':
+                                            //         $products = '1';
+                                            //         break;
+                                            //     case '62':
+                                            //         $products = '5';
+                                            //         break;
+                                            //     case '64':
+                                            //         $products = '4';
+                                            //         break;
+                                            //     case '66':
+                                            //         $products = '6';
+                                            //         break;
+                                            //     case '67':
+                                            //         $products = '7';
+                                            //         break;
+                                            // }
+                                            $result = $usa->createCustomer($userinfos['customerid'],$tmpeArr['password'],$userinfos['enrollerid'],$userinfos['enfirstname'],$userinfos['enlastname'],$userinfos['email'],$userinfos['phone'],$product['productid'],$tmpeArr['birthday']);
                                             if(!empty($result['result'])){
                                                 $log = addUsaLog($result['result']);
                                                 $maps = json_decode($result['result'],true);
                                                 $wv  = array(
                                                     'wvCustomerID' => $maps['wvCustomerID'],
                                                     'wvOrderID'    => $maps['wvOrderID'],
-                                                    'Products'     => $products
+                                                    'Products'     => $product['productid']
                                                 );
                                                 $res = M('User')->where(array('iuid'=>$userinfos['iuid']))->save($wv);
                                                 if($res){
                                                     $addressee = $status['ia_name'];
                                                     $templateId ='244312';
-                                                    $params     = array($addressee,$maps['wvCustomerID'],$productName);
+                                                    $params     = array($addressee,$maps['wvCustomerID'],$product['ip_name_zh']);
                                                     $sms        = D('Smscode')->sms($userinfos['acnumber'],$userinfos['phone'],$params,$templateId);
                                                     if($sms['errmsg'] == 'OK'){
                                                         $receiptlist = M('Receiptlist')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->find();
@@ -396,7 +402,7 @@ class PayController extends HomeBaseController{
                                                             'addressee' => $addressee,
                                                             'product_name' => $receiptlist['product_name'],
                                                             'date' => time(),
-                                                            'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：'.$addressee.'会员号码：'.$maps['wvCustomerID'].'产品：'.$productName.'使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
+                                                            'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：'.$addressee.'会员号码：'.$maps['wvCustomerID'].'产品：'.$product['ip_name_zh'].'使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
                                                             'customerid' => $userinfos['customerid']
                                                         );
                                                         $logs = M('SmsLog')->add($contents);

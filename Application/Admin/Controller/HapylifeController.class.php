@@ -377,8 +377,8 @@ class HapylifeController extends AdminBaseController{
 			'appkey' => 'ALL',
 		);
 		$data    = json_encode($data);
-		$sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
-		// $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/getCouponList";
+		// $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
+		$sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/getCouponList";
 		$result  = post_json_data($sendUrl,$data);
 		$back_message = json_decode($result['result'],true);
 		$CouponGroups = $back_message;
@@ -540,6 +540,18 @@ class HapylifeController extends AdminBaseController{
 		}
 	}
 
+	/**
+	* 商品排序
+	**/ 
+	public function order_product(){
+		$data=I('post.');
+		$result=D('Product')->orderData($data,$id='ipid');
+		if ($result) {
+			redirect($_SERVER['HTTP_REFERER']);
+		}else{
+			$this->error('排序失败');
+		}
+	}
 	//**********************订单*********************
 	/**
 	* 订单列表
@@ -1802,7 +1814,7 @@ class HapylifeController extends AdminBaseController{
 		            if($sms['errmsg'] == 'OK'){
 		            	$addressee = $userinfo['lastname'].$userinfo['firstname'];
 		                $contents = '尊敬的'.$customerid.'会员，您已成功收到EP'.$array['realpoint'].'，当前EP余额是'.$array['leftpoint'].'，请登录Hapylife查询。';
-		            	$addlog = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'积分通知',time(),$contents,$customerid);
+		            	$addlog = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'积分通知',$contents,$customerid);
 		            }
 				}
 			}

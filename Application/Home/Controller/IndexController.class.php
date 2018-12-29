@@ -50,33 +50,25 @@ class IndexController extends HomeBaseController{
             );
             $this->ajaxreturn($data);   
         }else{
-            if(strlen($CustomerID) == 8){
-                //核对usa 账号是否正确存在
-                $usa    = new \Common\UsaApi\Usa;
-                $result = $usa->validateHpl($CustomerID);
-                switch ($result['isActive']) {
-                    case true:
-                        $data = array(
-                            'status'=>2,
-                            'message'=>'正确旧用户，旧用户界面登录'
-                        );
-                        $this->ajaxreturn($data);
-                        break;
-                    default:
-                        $data = array(
-                            'status'=>0,
-                            'message'=>'输入账号有误'
-                        );
-                        $this->ajaxreturn($data);
-                        break;
-                }
-            }else{
-                $data = array(
-                    'status'=>0,
-                    'message'=>'输入账号有误'
-                );
-                $this->ajaxreturn($data);
-            } 
+            //核对usa 账号是否正确存在
+            $usa    = new \Common\UsaApi\Usa;
+            $result = $usa->validateHpl($CustomerID);
+            switch ($result['isActive']) {
+                case true:
+                    $data = array(
+                        'status'=>2,
+                        'message'=>'正确旧用户，旧用户界面登录'
+                    );
+                    $this->ajaxreturn($data);
+                    break;
+                default:
+                    $data = array(
+                        'status'=>0,
+                        'message'=>'输入账号有误'
+                    );
+                    $this->ajaxreturn($data);
+                    break;
+            }
         }
     }
 

@@ -520,6 +520,7 @@ class ReceiptsonModel extends BaseModel{
                     ->alias('rs')
                     ->join('hapylife_receipt AS r ON rs.ir_receiptnum = r.ir_receiptnum')
                     ->where(array('status'=>2,'ir_paytype'=>array('in',$type),'paytime'=>array(array('egt',$starttime),array('elt',$endtime))))
+                    ->field('paytime,ir_ordertype,rs.ir_price')
                     ->select();
         $date1 = explode('-',date('Y-m',$starttime)); 
         $date2 = explode('-',date("Y-m",strtotime("-1 month",$endtime))); 
@@ -529,8 +530,6 @@ class ReceiptsonModel extends BaseModel{
         for($i=0;$i<=$month_number;$i++){
             $month[$i] = date("Y-m",strtotime($i."month",$starttime));
         }
-
-        // p($list);die;
 
         foreach($month as $key => $value){
             foreach($list as $k => $v){
@@ -614,6 +613,7 @@ class ReceiptsonModel extends BaseModel{
                     ->alias('rs')
                     ->join('hapylife_receipt AS r ON rs.ir_receiptnum = r.ir_receiptnum')
                     ->where(array('status'=>2,'ir_paytype'=>array('in',$type),'paytime'=>array(array('egt',$starttime),array('elt',$endtime))))
+                    ->field('paytime,ir_ordertype,rs.ir_price')
                     ->select();
 
         foreach($day as $key => $value){

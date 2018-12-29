@@ -11,12 +11,12 @@ class HapylifeUsaController extends HomeBaseController{
 
 	public function _initialize(){
 		// production 生产环境配置
-		$this->key = "KDHE5011CVFO1KJEP1A0S";
-		$this->url = "https://signupapi.wvhservices.com";
+		// $this->key = "KDHE5011CVFO1KJEP1A0S";
+		// $this->url = "https://signupapi.wvhservices.com";
 
 		// qa 沙盒环境
-		// $this->key = "QACER3H5T6HGYDCCDAZM3";
-		// $this->url = "https://signupapi-qa.wvhservices.com";
+		$this->key = "QACER3H5T6HGYDCCDAZM3";
+		$this->url = "https://signupapi-qa.wvhservices.com";
 	}
 	
 	/**
@@ -126,7 +126,7 @@ class HapylifeUsaController extends HomeBaseController{
             'lastName_EN'  =>$map['lastName_EN'],
             'emailAddress' =>$map['emailAddress'],
             'phone'        =>$map['phone'],
-            'productId'    =>$map['products'],
+            'productId'    =>$map['productId'],
             'dob'          =>$map['dob'],
             'ipAddress'	   =>'string',
             'key'          =>$key

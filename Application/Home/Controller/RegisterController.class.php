@@ -264,11 +264,11 @@ class RegisterController extends HomeBaseController{
             $isOutside = 0;
         }
         $ipid = I('get.ipid');
-        $htid = D('Tempuser')->order('htid desc')->getfield('htid');
-        //商品信息
-        $product = M('Product')->where(array('ipid'=>$ipid))->find();
         //用户信息
         $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
+        $htid = D('Tempuser')->where(array('EnrollerID'=>$userinfo['customerid']))->order('htid desc')->getfield('htid');
+        //商品信息
+        $product = M('Product')->where(array('ipid'=>$ipid))->find();
         //生成唯一订单号
         $order_num = date('YmdHis').rand(10000, 99999);
         $con = '首购单';
@@ -284,7 +284,7 @@ class RegisterController extends HomeBaseController{
             //下单用户
             'rCustomerID'=>$userinfo['customerid'],
             //收货人
-            'ia_name'=>$userinfo['firstname'],
+            'ia_name'=>$userinfo['firstname'].$userinfo['lastname'],
             //收货人电话
             'ia_phone'=>$userinfo['phone'],
             // 省，州
