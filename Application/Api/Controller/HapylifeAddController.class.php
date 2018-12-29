@@ -410,7 +410,7 @@ class HapylifeAddController extends HomeBaseController{
                     // 加5天模板
                     $time = date('Y-m',strtotime($value['Date']));
                     $endTime = date('Y-m-d',strtotime($value['Date'])+2*24*3600);
-                    $network = 'www.dreamtrips.com';
+                    $network = 'DT.com';
 
                     switch ($value['PaymentTypeId']) {
                         case '6':
@@ -710,5 +710,37 @@ class HapylifeAddController extends HomeBaseController{
             );
             $this->ajaxreturn($map);
         }
+    }
+
+    public function reSend(){
+        $starttime = strtotime('2018-10-01');
+        $endtime = strtotime('2018-10-30')+24*3600;
+        $receipt = M('Receipt')->where(array('ir_ordertype'=>3,'ir_paytime'=>0,'ir_date'=>array(array('egt',$starttime),array('elt',$endtime))))->select();
+        foreach($receipt as $key=>$value){
+            $userinfo[] = M('User')->where(array('CustomerID'=>$value['rcustomerid']))->find();
+        }
+        foreach($userinfo as $key=>$value){
+            // 发送短信提示
+            $addressee = $value['lastname'].$value['firstname'];
+            // 短信模板ID
+            $templateId ='244292';
+            // 短信模板参数
+            $params    = array('2018-10','到期日','DT.com');
+            // 短信模板内容
+            $content = '这是2018-10重销通知，请在到期日前完成支付，避免无法登录DT.com';
+            $sms       = D('Smscode')->sms($value['acnumber'],$value['phone'],$params,$templateId);
+            if($sms['result'] == 0){
+                $result = D('Smscode')->addLog($value['acnumber'],$value['phone'],'系统',$addressee,'续费通知',$content,$value['customerid']);
+            }else{
+                $result = D('Smscode')->addLog($value['acnumber'],$value['phone'],'系统',$addressee,$sms['errmsg'],$content,$value['customerid']);
+            }
+        }
+        p($sms);
+    }
+
+    public function test(){
+        $htid = I('post.htid');
+        $data = M('Tempuser')->where(array('htid'=>$htid))->find();
+        p($data);
     }
 }

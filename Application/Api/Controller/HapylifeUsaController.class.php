@@ -126,7 +126,7 @@ class HapylifeUsaController extends HomeBaseController{
             'lastName_EN'  =>$map['lastName_EN'],
             'emailAddress' =>$map['emailAddress'],
             'phone'        =>$map['phone'],
-            'productId'    =>$map['products'],
+            'productId'    =>$map['productId'],
             'dob'          =>$map['dob'],
             'ipAddress'	   =>'string',
             'key'          =>$key

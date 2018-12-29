@@ -1945,53 +1945,53 @@ class HapylifeApiController extends HomeBaseController{
     *奖金列表
     **/
     public function BounsList(){
-        $redis = new \Predis\Client(array(  
-            'scheme' => 'tcp',  
-            'host'   => '127.0.0.1',  
-            'port'   => '6379'  
-        ));  
-        //这个key记录该用户1的访问次数 
-        $key = 'user:3:api_count';
+        // $redis = new \Predis\Client(array(  
+        //     'scheme' => 'tcp',  
+        //     'host'   => '127.0.0.1',  
+        //     'port'   => '6379'  
+        // ));  
+        // //这个key记录该用户1的访问次数 
+        // $key = 'user:3:api_count';
 
 
-        //限制次数为5 
-        $limit = 5;
+        // //限制次数为5 
+        // $limit = 5;
 
 
-        $check = $redis->exists($key);
-        if($check){
-            $redis->incr($key);
-            $count = $redis->get($key);
-            if($count > $limit){
-                exit('your have too many request');
-            }
-        }else{
-            $redis->incr($key);
-            //限制时间为60秒 
-            $redis->expire($key,30);
-        }
-
-
-        $count = $redis->get($key);
-        echo 'You have '.$count.' request';
-        // $templateId ='223637';
-        // $params     = array('伍萍','299453875','Gold 首购+月费');
-        // $sms        = D('Smscode')->sms('86','13920364256',$params,$templateId);
-        // if($sms['errmsg'] == 'OK'){
-            
-        //     $contents = array(
-        //         'acnumber' => '86',
-        //         'phone' => '13920364256',
-        //         'operator' => '系统',
-        //         'addressee' => '伍萍',
-        //         'product_name' => 'Gold 首购+月费',
-        //         'date' => time(),
-        //         'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：伍萍会员号码：299453875产品：Gold 首购+月费使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
-        //         'customerid' => 'HPL00123828'
-        //     );
-        //     $logs = M('SmsLog')->add($contents);
+        // $check = $redis->exists($key);
+        // if($check){
+        //     $redis->incr($key);
+        //     $count = $redis->get($key);
+        //     if($count > $limit){
+        //         exit('your have too many request');
+        //     }
+        // }else{
+        //     $redis->incr($key);
+        //     //限制时间为60秒 
+        //     $redis->expire($key,30);
         // }
-        // p($sms);
+
+
+        // $count = $redis->get($key);
+        // echo 'You have '.$count.' request';
+        $templateId =I('post.templateId');
+        $params     = array(I('post.username'),I('post.wvid'),I('post.product'));
+        $sms        = D('Smscode')->sms('86',I('post.phone'),$params,$templateId);
+        if($sms['errmsg'] == 'OK'){
+            
+            $contents = array(
+                'acnumber' => '86',
+                'phone' => I('post.phone'),
+                'operator' => '系统',
+                'addressee' => I('post.username'),
+                'product_name' => I('post.product'),
+                'date' => time(),
+                'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：'.I('post.username').'会员号码：'.I('post.wvid').'产品：'.I('post.product').'使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
+                'customerid' => I('post.customerid')
+            );
+            $logs = M('SmsLog')->add($contents);
+        }
+        p($sms);
 
     }
 
