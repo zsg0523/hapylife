@@ -39,7 +39,7 @@
             <span class="tc" >剩余EP:&nbsp;&nbsp;</span>
             <span id="havePoint">{$data['re_ep']}</span>
         </div>
-        <a class="tc" onclick='window.location.href="{:U('Home/Pay/toCheckPoint',array('ir_receiptnum'=>$ir_receiptnum))}"'>确认支付</a>                            
+        <a class="tc" onclick='window.location.href="{:U('Home/Pay/toCheckPoint',array('ir_receiptnum'=>I("get.ir_receiptnum")))}";'>确认支付</a>                            
         
     </div>  
     

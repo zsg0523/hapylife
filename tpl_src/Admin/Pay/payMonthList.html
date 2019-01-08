@@ -38,12 +38,12 @@
 								<input type="hidden" value="{$type}" id="type">
 								选择方式:											
 									&nbsp;&nbsp;&nbsp;&nbsp;
-									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="1" />&nbsp;&nbsp;IPS</label> </span>
-									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="2" />&nbsp;&nbsp;积分</label></span>
-									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="4" />&nbsp;&nbsp;畅捷</label></span>
-									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="5" />&nbsp;&nbsp;现金</label></span>
-									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="6" />&nbsp;&nbsp;接龙易</label></span>
-									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="7" />&nbsp;&nbsp;DT支付</label></span>
+									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="1" checked="checked"  />&nbsp;&nbsp;IPS</label> </span>
+									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="2" checked="checked"  />&nbsp;&nbsp;积分</label></span>
+									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="4" checked="checked"  />&nbsp;&nbsp;畅捷</label></span>
+									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="5" checked="checked"  />&nbsp;&nbsp;现金</label></span>
+									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="6" checked="checked"  />&nbsp;&nbsp;接龙易</label></span>
+									<label><span style="display:block;width:100px;"><input name="type[]" type="checkbox" value="7" checked="checked"  />&nbsp;&nbsp;DT支付</label></span>
 							</th>
 						</tr>
 					</form>
@@ -79,12 +79,15 @@
 	<script>
 		var typeArr=$('#type').val().split(',');
 		var typeInput=$("input[name='type[]']");
+		if(typeArr[0] != ''){
+			typeInput.removeAttr('checked');
+		}
 		for(var i=0;i<typeArr.length;i++){
-			for(j=0;j<typeInput.length;j++){
-				if(typeArr[i]==typeInput[j].value){
-					typeInput[j].checked='true';
+			for(var j = 0;j<typeInput.length;j++){
+				if(typeInput[j].value==typeArr[i]){
+					typeInput[j].checked="checked";
 				}
-			}	
+			}
 		}
 		
 	</script>

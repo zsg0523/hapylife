@@ -10,6 +10,9 @@ class PayController extends AdminBaseController{
     **/ 
     public function payMonthList(){
         $map = I('get.');
+        $map['starttime'] = $map['starttime']?$map['starttime']:date('Y-m',strtotime("-6 month",time()));
+        $map['endtime']   = $map['endtime']?$map['endtime']:date('Y-m');
+        // p($map);
         if($map['starttime'] && $map['endtime'] && $map['type']){
             $starttime = strtotime($map['starttime']);
             $endtime   = strtotime(date("Y-m",strtotime("+1 month",strtotime($map['endtime']))));
@@ -18,6 +21,8 @@ class PayController extends AdminBaseController{
             $assign   = array();
         }
         $this->assign($assign);
+        $this->assign('starttime',$map['starttime']);
+        $this->assign('endtime',$map['endtime']);
         $this->assign('type',implode(',',$map['type']));
         $this->assign('starttime',$map['starttime']);
         $this->assign('endtime',$map['endtime']);

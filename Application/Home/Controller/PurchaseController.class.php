@@ -32,7 +32,9 @@ class PurchaseController extends HomeBaseController{
     public function center(){
         $iuid = $_SESSION['user']['id'];
         $userinfo = M('User')->where(array('iuid'=>$iuid))->find();
+        $notice = M('Notice')->where(array('isshow'=>1))->find();
         if($userinfo){
+            $this->assign('data',$notice);
             $this->display();
         }else{
             $this->error('请先登录',U('Home/Index/log_out'));
@@ -455,226 +457,233 @@ class PurchaseController extends HomeBaseController{
         $isdt = trim(I('get.isdt'));
         //商品信息
         $product = M('Product')->where(array('ipid'=>$ipid))->find();
-        //用户信息
-        $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
-        // 查询是否存在未支付的订单
-        $ir_receiptnum = M('Receipt')->where(array('riuid'=>$iuid,'ir_ordertype'=>$product['ip_type'],'ir_status'=>0))->getfield('ir_receiptnum');
-        //查看地址
-        $address   = M('Address')->where(array('iuid'=>$iuid,'is_address_show'=>1))->find(); 
-        if(!empty($ir_receiptnum)){
-            $result = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->delete();
-            if($result){
-                $res = M('Receiptlist')->where(array('ir_receiptnum'=>$ir_receiptnum))->delete();
-            }
-        }
-        //生成唯一订单号
-        $order_num = date('YmdHis').rand(10000, 99999);
-        switch ($product['ip_type']){
-            case '1':
-                $con = '首购单';
-                break;
-            case '2':
-                $con = '升级单';
-                break;
+        switch ($product['ip_type']) {
             case '3':
-                $con = '月费单';
-                break;
-            case '4':
-                $con = '通用券'.$product['ip_name_zh'];
-                break;
-            case '5':
-                $con = 'DT商店'.$product['ip_name_zh'];
-                break;
-        }
-        switch ($isdt){
-            case '1':
-                $rmb   = $product['ip_sprice'];
-                $point = bcdiv($product['ip_sprice'],100,2);
-                $irdt  = $product['ip_dt'];
+                $this->error('错误订单',U('Home/Purchase/center'));
                 break;
             default:
-                $rmb   = $product['ip_price_rmb'];
-                $point = $product['ip_point'];
-                $irdt  = 0;
-                break;
-        }
-        // if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
-        //     $this->error('请先填写个人信息的地区和详细地址');
-        // }
-        if($address){
-            $ia_name     = $address['ia_name'];    
-            $phone       = $address['ia_phone'];
-            $ia_province = $address['ia_province'];
-            $ia_town     = $address['ia_town'];
-            $ia_region   = $address['ia_region'];
-            $shopaddress = $address['ia_road'];    
-        }else{
-            $ia_name     = $userinfo['lastname'].$userinfo['firstname'];
-            $phone       = $userinfo['phone'];
-            $ia_province = $userinfo['shopprovince'];
-            $ia_town     = $userinfo['shopcity'];
-            $ia_region   = $userinfo['shoparea'];
-            $shopaddress = $userinfo['shopaddress1'];    
-        }
-        if(empty($ia_province) || empty($ia_town) || empty($ia_region) || empty($shopaddress)){
-            $this->error('请填写默认收货地址',U('Home/Purchase/addressList'));
-        }
-        $order = array(
-            //订单编号
-            'ir_receiptnum' =>$order_num,
-            //订单创建日期
-            'ir_date'       =>time(),
-            //订单的状态(0待生成订单，1待支付订单，202未全额,2已付款订单)
-            'ir_status'     =>0,
-            //下单用户id==
-            'riuid'          =>$iuid,
-            //下单用户
-            'rCustomerID'    =>$userinfo['customerid'],
-            //收货人
-            'ia_name'       =>$ia_name,
-            //收货人电话
-            'ia_phone'      =>$phone,
-            // 省，州
-            'ia_province' => $ia_province,
-            // 市
-            'ia_city' => $ia_town,
-            // 区
-            'ia_area' => $ia_region,
-            //收货地址
-            'ia_address'    =>$shopaddress,
-            //订单总商品数量
-            'ir_productnum' =>1,
-            //订单总金额
-            'ir_price'      =>$rmb,
-            'ir_unpaid'     =>$rmb,
-            //订单总积分
-            'ir_point'      =>$point,
-            'ir_unpoint'    =>$point,
-            'ir_dt'         =>$irdt,
-            //订单备注
-            'ir_desc'       =>$con,
-            //订单类型
-            'ir_ordertype'  => $product['ip_type'],
-            //产品id
-            'ipid'          => $product['ipid']
-        );
-        $receipt = M('Receipt')->add($order);
-        if($receipt){
-            $map = array(
-                'ir_receiptnum'     =>  $order_num,
-                'ipid'              =>  $product['ipid'],
-                'product_num'       =>  1,
-                'product_point'     =>  $product['ip_point'],
-                'product_price'     =>  $product['ip_price_rmb'],
-                'product_name'      =>  $product['ip_name_zh'],
-                'product_picture'   =>  $product['ip_picture_zh']
-            );
-            $addReceiptlist = M('Receiptlist')->add($map);
-        }
-         //生成日志记录
-        $content = '您的'.$con.'订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
-        // echo 2;
-        $log = array(
-            'iuid'      =>$iuid,
-            'content'   =>$content,
-            'action'    =>1,
-            'type'      =>2,
-            'create_time' => time(),
-            'create_month' => date('Y-m'), 
-        );
-        $addlog = M('Log')->add($log);
-        // 设置session时间
-        if($addlog){
-            switch ($product['ip_type']) {
-                case '1':
-                    $this->redirect('Home/Pay/choosePay1',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
-                    break;
-                case '3':
-                    $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
-                    break;
-                case '4':
-                    $this->redirect('Home/Pay/choosePay1',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
-                    break;
-                case '5':
-                    if($isdt){
-                        $usa    = new \Common\UsaApi\Usa;
-                        $result = $usa->dtPoint($userinfo['customerid']);
-                        if(!$result['errors']){
-                            foreach($result['softCashCategories'] as $key=>$value){
-                                if($value['categoryType'] == 'DreamTripPoints'){
-                                    $userinfo['iu_dt'] = $value['balance'];
-                                }
-                            }
-                        }else{
-                            $userinfo['iu_dt'] = 0;
-                        }
-                        $bcsub = bcsub($userinfo['iu_dt'],$product['ip_dt'],2);
-                        if($bcsub>=0){
-                            $usa    = new \Common\UsaApi\Usa;
-                            $result = $usa->redeemVirtual($userinfo['customerid'],$product['ip_dt'],'DreamTripPoints','AY Product');
-                            $jsonStr = json_decode($result['result'],true);
-                            if($jsonStr['message']){
-                                $dtNo = 'DT'.date('YmdHis').rand(10000, 99999);
-                                $mape            = array(
-                                    'ir_receiptnum'   =>$order_num,
-                                    'ir_paytype'      =>7,
-                                    'ir_price'        =>0,
-                                    'pay_receiptnum'  =>$dtNo,
-                                    'riuid'           =>$iuid,
-                                    'cretime'         =>time(),
-                                    'paytime'         =>time(),
-                                    'ir_point'        =>0,
-                                    'ir_dt'           =>$irdt,
-                                    'status'          =>2,
-                                );
-                                $add     = D('receiptson')->add($mape);
-                                //写入DT记录表
-                                $tmp     = array(
-                                    'iuid'           =>$userinfo['iuid'],
-                                    'pointNo'        =>$dtNo,
-                                    'hu_username'    =>$userinfo['lastname'].$userinfo['firstname'],
-                                    'hu_nickname'    =>$userinfo['customerid'],
-                                    'getdt'          =>$product['ip_dt'],
-                                    'leftdt'         =>$bcsub,
-                                    'date'           =>date('Y-m-d H:i:s'),
-                                    'status'         =>2,
-                                    'dttype'         =>4,
-                                    'content'        =>'您在'.date('Y-m-d H:i:s').'时消费出'.$product['ip_dt'].'DT到'.'系统'.',剩DT余额'.$bcsub.',流水号为:'.$dtNo,
-                                    'opename'        =>$userinfo['customerid'],
-                                    'send'           =>$userinfo['customerid'],
-                                    'received'       =>'系统'
-                                );
-                                $addtmp = M('Getdt')->add($tmp);
-                                $where= array('ir_status'=>202,'ir_dt'=>0);
-                                $save = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->save($where);
-
-                                // 发送短信提示
-                                $templateId ='244305';
-                                $params     = array($userinfo['customerid'],$order_num,$product['ip_dt'],$bcsub);
-                                $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                                $content = '尊敬的'.$userinfo['customerid'].'会员，您的订单'.$order_num.'消费了'.$product['ip_dt'].'DT积分，现在DT余额为'.$bcsub;
-                                if($sms['result'] == 0){
-                                    $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$tmp['hu_username'],'DT消费通知',$content,$userinfo['customerid']);
-                                }else{
-                                    $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$tmp['hu_username'],$sms['errmsg'],$content,$userinfo['customerid']);
-                                }
-
-                                $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
-                            }else{
-                                $save  = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->setfield('ir_status',202);
-                                $this->error('订单生成失败');
-                            }
-                        }else{
-                            $save  = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->setfield('ir_status',7);
-                            $this->error('订单生成失败');
-                        }
-                    }else{
-                        $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
+                //用户信息
+                $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
+                // 查询是否存在未支付的订单
+                $ir_receiptnum = M('Receipt')->where(array('riuid'=>$iuid,'ir_ordertype'=>$product['ip_type'],'ir_status'=>0))->getfield('ir_receiptnum');
+                //查看地址
+                $address   = M('Address')->where(array('iuid'=>$iuid,'is_address_show'=>1))->find(); 
+                if(!empty($ir_receiptnum)){
+                    $result = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->delete();
+                    if($result){
+                        $res = M('Receiptlist')->where(array('ir_receiptnum'=>$ir_receiptnum))->delete();
                     }
-                    break;
-            }
-        }else{
-            $this->error('订单生成失败');
+                }
+                //生成唯一订单号
+                $order_num = date('YmdHis').rand(10000, 99999);
+                switch ($product['ip_type']){
+                    case '1':
+                        $con = '首购单';
+                        break;
+                    case '2':
+                        $con = '升级单';
+                        break;
+                    case '3':
+                        $con = '月费单';
+                        break;
+                    case '4':
+                        $con = '通用券'.$product['ip_name_zh'];
+                        break;
+                    case '5':
+                        $con = 'DT商店'.$product['ip_name_zh'];
+                        break;
+                }
+                switch ($isdt){
+                    case '1':
+                        $rmb   = $product['ip_sprice'];
+                        $point = bcdiv($product['ip_sprice'],100,2);
+                        $irdt  = $product['ip_dt'];
+                        break;
+                    default:
+                        $rmb   = $product['ip_price_rmb'];
+                        $point = $product['ip_point'];
+                        $irdt  = 0;
+                        break;
+                }
+                // if(empty($userinfo['shopaddress1'])||empty($userinfo['shopaddress1'])){
+                //     $this->error('请先填写个人信息的地区和详细地址');
+                // }
+                if($address){
+                    $ia_name     = $address['ia_name'];    
+                    $phone       = $address['ia_phone'];
+                    $ia_province = $address['ia_province'];
+                    $ia_town     = $address['ia_town'];
+                    $ia_region   = $address['ia_region'];
+                    $shopaddress = $address['ia_road'];    
+                }else{
+                    $ia_name     = $userinfo['lastname'].$userinfo['firstname'];
+                    $phone       = $userinfo['phone'];
+                    $ia_province = $userinfo['shopprovince'];
+                    $ia_town     = $userinfo['shopcity'];
+                    $ia_region   = $userinfo['shoparea'];
+                    $shopaddress = $userinfo['shopaddress1'];    
+                }
+                if(empty($ia_province) || empty($ia_town) || empty($ia_region) || empty($shopaddress)){
+                    $this->error('请填写默认收货地址',U('Home/Purchase/addressList'));
+                }
+                $order = array(
+                    //订单编号
+                    'ir_receiptnum' =>$order_num,
+                    //订单创建日期
+                    'ir_date'       =>time(),
+                    //订单的状态(0待生成订单，1待支付订单，202未全额,2已付款订单)
+                    'ir_status'     =>0,
+                    //下单用户id==
+                    'riuid'          =>$iuid,
+                    //下单用户
+                    'rCustomerID'    =>$userinfo['customerid'],
+                    //收货人
+                    'ia_name'       =>$ia_name,
+                    //收货人电话
+                    'ia_phone'      =>$phone,
+                    // 省，州
+                    'ia_province' => $ia_province,
+                    // 市
+                    'ia_city' => $ia_town,
+                    // 区
+                    'ia_area' => $ia_region,
+                    //收货地址
+                    'ia_address'    =>$shopaddress,
+                    //订单总商品数量
+                    'ir_productnum' =>1,
+                    //订单总金额
+                    'ir_price'      =>$rmb,
+                    'ir_unpaid'     =>$rmb,
+                    //订单总积分
+                    'ir_point'      =>$point,
+                    'ir_unpoint'    =>$point,
+                    'ir_dt'         =>$irdt,
+                    //订单备注
+                    'ir_desc'       =>$con,
+                    //订单类型
+                    'ir_ordertype'  => $product['ip_type'],
+                    //产品id
+                    'ipid'          => $product['ipid']
+                );
+                $receipt = M('Receipt')->add($order);
+                if($receipt){
+                    $map = array(
+                        'ir_receiptnum'     =>  $order_num,
+                        'ipid'              =>  $product['ipid'],
+                        'product_num'       =>  1,
+                        'product_point'     =>  $product['ip_point'],
+                        'product_price'     =>  $product['ip_price_rmb'],
+                        'product_name'      =>  $product['ip_name_zh'],
+                        'product_picture'   =>  $product['ip_picture_zh']
+                    );
+                    $addReceiptlist = M('Receiptlist')->add($map);
+                }
+                 //生成日志记录
+                $content = '您的'.$con.'订单已生成,编号:'.$order_num.',包含:'.$product['ip_name_zh'].',总价:'.$product['ip_price_rmb'].'Rmb,所需积分:'.$product['ip_point'];
+                // echo 2;
+                $log = array(
+                    'iuid'      =>$iuid,
+                    'content'   =>$content,
+                    'action'    =>1,
+                    'type'      =>2,
+                    'create_time' => time(),
+                    'create_month' => date('Y-m'), 
+                );
+                $addlog = M('Log')->add($log);
+                // 设置session时间
+                if($addlog){
+                    switch ($product['ip_type']) {
+                        case '1':
+                            $this->redirect('Home/Pay/choosePay1',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
+                            break;
+                        case '3':
+                            $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
+                            break;
+                        case '4':
+                            $this->redirect('Home/Pay/choosePay1',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
+                            break;
+                        case '5':
+                            if($isdt){
+                                $usa    = new \Common\UsaApi\Usa;
+                                $result = $usa->dtPoint($userinfo['customerid']);
+                                if(!$result['errors']){
+                                    foreach($result['softCashCategories'] as $key=>$value){
+                                        if($value['categoryType'] == 'DreamTripPoints'){
+                                            $userinfo['iu_dt'] = $value['balance'];
+                                        }
+                                    }
+                                }else{
+                                    $userinfo['iu_dt'] = 0;
+                                }
+                                $bcsub = bcsub($userinfo['iu_dt'],$product['ip_dt'],2);
+                                if($bcsub>=0){
+                                    $usa    = new \Common\UsaApi\Usa;
+                                    $result = $usa->redeemVirtual($userinfo['customerid'],$product['ip_dt'],'DreamTripPoints','AY Product');
+                                    $jsonStr = json_decode($result['result'],true);
+                                    if($jsonStr['message']){
+                                        $dtNo = 'DT'.date('YmdHis').rand(10000, 99999);
+                                        $mape            = array(
+                                            'ir_receiptnum'   =>$order_num,
+                                            'ir_paytype'      =>7,
+                                            'ir_price'        =>0,
+                                            'pay_receiptnum'  =>$dtNo,
+                                            'riuid'           =>$iuid,
+                                            'cretime'         =>time(),
+                                            'paytime'         =>time(),
+                                            'ir_point'        =>0,
+                                            'ir_dt'           =>$irdt,
+                                            'status'          =>2,
+                                        );
+                                        $add     = D('receiptson')->add($mape);
+                                        //写入DT记录表
+                                        $tmp     = array(
+                                            'iuid'           =>$userinfo['iuid'],
+                                            'pointNo'        =>$dtNo,
+                                            'hu_username'    =>$userinfo['lastname'].$userinfo['firstname'],
+                                            'hu_nickname'    =>$userinfo['customerid'],
+                                            'getdt'          =>$product['ip_dt'],
+                                            'leftdt'         =>$bcsub,
+                                            'date'           =>date('Y-m-d H:i:s'),
+                                            'status'         =>2,
+                                            'dttype'         =>4,
+                                            'content'        =>'您在'.date('Y-m-d H:i:s').'时消费出'.$product['ip_dt'].'DT到'.'系统'.',剩DT余额'.$bcsub.',流水号为:'.$dtNo,
+                                            'opename'        =>$userinfo['customerid'],
+                                            'send'           =>$userinfo['customerid'],
+                                            'received'       =>'系统'
+                                        );
+                                        $addtmp = M('Getdt')->add($tmp);
+                                        $where= array('ir_status'=>202,'ir_dt'=>0);
+                                        $save = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->save($where);
+
+                                        // 发送短信提示
+                                        $templateId ='244305';
+                                        $params     = array($userinfo['customerid'],$order_num,$product['ip_dt'],$bcsub);
+                                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                                        $content = '尊敬的'.$userinfo['customerid'].'会员，您的订单'.$order_num.'消费了'.$product['ip_dt'].'DT积分，现在DT余额为'.$bcsub;
+                                        if($sms['result'] == 0){
+                                            $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$tmp['hu_username'],'DT消费通知',$content,$userinfo['customerid']);
+                                        }else{
+                                            $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$tmp['hu_username'],$sms['errmsg'],$content,$userinfo['customerid']);
+                                        }
+
+                                        $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
+                                    }else{
+                                        $save  = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->setfield('ir_status',202);
+                                        $this->error('订单生成失败');
+                                    }
+                                }else{
+                                    $save  = M('Receipt')->where(array('ir_receiptnum'=>$order_num))->setfield('ir_status',7);
+                                    $this->error('订单生成失败');
+                                }
+                            }else{
+                                $this->redirect('Home/Pay/choosePay',array('ir_unpoint'=>$point,'ir_price'=>$rmb,'ir_point'=>$point,'ir_unpaid'=>$rmb,'ir_receiptnum'=>$order_num));
+                            }
+                            break;
+                    }
+                }else{
+                    $this->error('订单生成失败');
+                }
+                break;
         }
     }
 

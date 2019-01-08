@@ -14,23 +14,35 @@ class SmsLogModel extends BaseModel{
      * @param  integer  $field  $field
      * @return array            分页数据
      */
-    public function getSendPage($model,$word,$starttime,$endtime,$order='',$limit=50,$field=''){
+    public function getSendPage($model,$customerid,$phone,$addressee,$starttime,$endtime,$order='',$limit=50,$field=''){
+        if($customerid){
+            $where['customerid'] = array('like','%'.$customerid.'%');
+        }
+        if($phone){
+            $where['phone'] = array('like','%'.$phone.'%');
+        }
+        if($addressee){
+            $where['addressee'] = array('like','%'.$phone.'%');
+        }
         $count=$model
-            ->where(array('phone|operator|content'=>array('like','%'.$word.'%'),'date'=>array(array('egt',$starttime),array('elt',$endtime))))
+            ->where($where)
+            ->where(array('date'=>array(array('egt',$starttime),array('elt',$endtime))))
             ->count();
-        // p($count);die;
+        // p($count);
         $page=new_page($count,$limit);
         // 获取分页数据
         if (empty($field)) {
             $list=$model
-                ->where(array('phone|operator|content'=>array('like','%'.$word.'%'),'date'=>array(array('egt',$starttime),array('elt',$endtime))))
+                ->where($where)
+                ->where(array('date'=>array(array('egt',$starttime),array('elt',$endtime))))
                 ->order($order)
                 ->limit($page->firstRow.','.$page->listRows)
                 ->select();
         }else{
             $list=$model
                 ->field($field)
-                ->where(array('phone|operator|content'=>array('like','%'.$word.'%'),'date'=>array(array('egt',$starttime),array('elt',$endtime))))
+                ->where($where)
+                ->where(array('date'=>array(array('egt',$starttime),array('elt',$endtime))))
                 ->order($order)
                 ->limit($page->firstRow.','.$page->listRows)
                 ->select();         

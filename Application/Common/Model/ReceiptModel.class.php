@@ -14,26 +14,33 @@ class ReceiptModel extends BaseModel{
      * @param  integer  $field  $field
      * @return array            分页数据
      */
-    public function getPage($model,$word,$starttime,$endtime,$status,$order='',$timeType,$limit=20){
-
+    public function getPage($model,$ir_receiptnum,$customerid,$lastname,$firstname,$ir_price,$ir_unpaid,$starttime,$endtime,$status,$order='',$timeType,$limit=20){
+        
         if(!empty($starttime) && empty($endtime)){
-            if(!empty($word)){
-                $where = array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array('egt',$starttime));
-            }else{
-                $where = array($timeType=>array('egt',$starttime));
-            }
+            $where = array($timeType=>array('egt',$starttime));
         }else if(!empty($starttime) && !empty($endtime)){
-            if(!empty($word)){
-                $where = array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'),$timeType=>array(array('egt',$starttime),array('elt',$endtime)));
-            }else{
-                $where = array($timeType=>array(array('egt',$starttime),array('elt',$endtime)));
-            }
+            $where = array($timeType=>array(array('egt',$starttime),array('elt',$endtime)));
         }else if(empty($starttime) && empty($endtime)){
-            if(!empty($word)){
-                $where = array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'));
-            }else{
-                $where = array();
-            }
+            $where = array();
+        }
+        
+        if($ir_receiptnum){
+            $where['ir_receiptnum'] = array('like','%'.$ir_receiptnum.'%');
+        }
+        if($customerid){
+            $where['r.rCustomerID'] = array('like','%'.$customerid.'%');
+        }
+        if($lastname){
+            $where['u.LastName'] = array('like','%'.$lastname.'%');
+        }
+        if($firstname){
+            $where['u.FirstName'] = array('like','%'.$firstname.'%');
+        }
+        if($ir_price){
+            $where['ir_price'] = array('like','%'.$ir_price.'%');
+        }
+        if($ir_unpaid){
+            $where['ir_unpaid'] = array('like','%'.$ir_unpaid.'%');
         }
 
         if($where){
@@ -70,7 +77,7 @@ class ReceiptModel extends BaseModel{
             $data=array(
                 'data'=>$list,
                 'page'=>$page->show()
-                );
+            );
             return $data;
         }
 
@@ -538,26 +545,34 @@ class ReceiptModel extends BaseModel{
     /**
     * 订单管理导出数据查询
     **/
-    public function getAllSendData($model,$word,$starttime,$endtime,$ir_status,$timeType,$order='',$field=''){
+    public function getAllSendData($model,$ir_receiptnum,$customerid,$lastname,$firstname,$ir_price,$ir_unpaid,$starttime,$endtime,$ir_status,$timeType,$order='',$field=''){
         if(!empty($starttime) && empty($endtime)){
-            if(empty($word)){
-                $where = array($timeType=>array('egt',$starttime));
-            }else{
-                $where = array($timeType=>array('egt',$starttime),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'));
-            }
+            $where = array($timeType=>array('egt',$starttime));
         }else if(!empty($starttime) && !empty($endtime)){
-            if(empty($word)){
-                $where = array($timeType=>array(array('egt',$starttime),array('elt',$endtime)));
-            }else{
-                $where = array($timeType=>array(array('egt',$starttime),array('elt',$endtime)),'r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'));
-            }
+            $where = array($timeType=>array(array('egt',$starttime),array('elt',$endtime)));
         }else if(empty($starttime) && empty($endtime)){
-            if(empty(!$word)){
-                $where = array('r.rCustomerID|ir_receiptnum|ir_price|u.LastName|u.FirstName|ir_desc'=>array('like','%'.$word.'%'));
-            }else{
-                $where = array();
-            }
+            $where = array();
         }
+
+        if($ir_receiptnum){
+            $where['ir_receiptnum'] = array('like','%'.$ir_receiptnum.'%');
+        }
+        if($customerid){
+            $where['r.rCustomerID'] = array('like','%'.$customerid.'%');
+        }
+        if($lastname){
+            $where['u.LastName'] = array('like','%'.$lastname.'%');
+        }
+        if($firstname){
+            $where['u.FirstName'] = array('like','%'.$firstname.'%');
+        }
+        if($ir_price){
+            $where['ir_price'] = array('like','%'.$ir_price.'%');
+        }
+        if($ir_unpaid){
+            $where['ir_unpaid'] = array('like','%'.$ir_unpaid.'%');
+        }
+        // p($where);die;
         if($where){
             // 获取分页数据
             if(empty($field)){

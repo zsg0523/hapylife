@@ -563,7 +563,12 @@ class HapylifeController extends AdminBaseController{
 	**/
 	public function receipt(){
 		$excel     = I('get.excel');
-		$word      = trim(I('get.word',''));
+		$ir_receiptnum      = trim(I('get.ir_receiptnum',''));
+		$customerid      = trim(I('get.customerid',''));
+		$lastname      = trim(I('get.lastname',''));
+		$firstname      = trim(I('get.firstname',''));
+		$ir_price      = trim(I('get.ir_price',''));
+		$ir_unpaid      = trim(I('get.ir_unpaid',''));
 		$order_status    = I('get.status')-1;
 		if($order_status== -1){
 			//所有订单
@@ -574,15 +579,20 @@ class HapylifeController extends AdminBaseController{
 		$timeType  = I('get.timeType')?I('get.timeType'):'ir_paytime';
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:0;
-		$assign    = D('Receipt')->getPage(D('Receipt'),$word,$starttime,$endtime,$status,$order='ir_date desc',$timeType);
+		$assign    = D('Receipt')->getPage(D('Receipt'),$ir_receiptnum,$customerid,$lastname,$firstname,$ir_price,$ir_unpaid,$starttime,$endtime,$status,$order='ir_date desc',$timeType);
 		//导出excel
 		if($excel == 'excel'){
-			$data = D('Receipt')->getAllSendData(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$order='ir_paytime desc');
+			$data = D('Receipt')->getAllSendData(D('Receipt'),$ir_receiptnum,$customerid,$lastname,$firstname,$ir_price,$ir_unpaid,$starttime,$endtime,$status,$timeType,$order='ir_paytime desc');
 			$export_excel = D('Receiptson')->export_excel($data['data']);
 		}else{
 			$this->assign($assign);
 			$this->assign('status',I('get.status'));
-			$this->assign('word',$word);
+			$this->assign('ir_receiptnum',$ir_receiptnum);
+			$this->assign('customerid',$customerid);
+			$this->assign('lastname',$lastname);
+			$this->assign('firstname',$firstname);
+			$this->assign('ir_price',$ir_price);
+			$this->assign('ir_unpaid',$ir_unpaid);
 			$this->assign('timeType',$timeType);
 			$this->assign('starttime',I('get.starttime'));
 			$this->assign('endtime',I('get.endtime'));
@@ -952,29 +962,32 @@ class HapylifeController extends AdminBaseController{
 		//有密码账户搜索
 		$count = M('user')->count();
 		//账户昵称搜索
-		$word = trim(I('get.word'));
-		if(empty($word)){
-			$map = array();
-		}else{
-			$map = array(
-				'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>$word
-			);
-		}
+		$customerid = trim(I('get.customerid'));
+		$wvcustomerid = trim(I('get.wvcustomerid'));
+		$lastname = trim(I('get.lastname'));
+		$firstname = trim(I('get.firstname'));
+		$phone = trim(I('get.phone'));
+		$enrollerid = trim(I('get.enrollerid'));
 		
 		$excel     = I('get.excel');
 		$status    = I('get.status')-1;
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:0;
-		$assign    = D('User')->getPage(D('User'),$map,$order='joinedon desc',$status,$starttime,$endtime);
+		$assign    = D('User')->getPage(D('User'),$customerid,$wvcustomerid,$lastname,$firstname,$phone,$enrollerid,$order='joinedon desc',$status,$starttime,$endtime);
 		//导出excel
 		if($excel == 'excel'){
-			$data = D('User')->getPageAllmemBer(D('User'),$map,$order='joinedon desc',$status,$starttime,$endtime);
+			$data = D('User')->getPageAllmemBer(D('User'),$customerid,$wvcustomerid,$lastname,$firstname,$phone,$enrollerid,$order='joinedon desc',$status,$starttime,$endtime);
 			$export_excel = D('User')->export_excel($data['data']);
 		}else{
 			$this->assign($assign);
 			$this->assign('count',$count);
 			$this->assign('status',I('get.status'));
-			$this->assign('word',$word);
+			$this->assign('customerid',$customerid);
+			$this->assign('wvcustomerid',$wvcustomerid);
+			$this->assign('lastname',$lastname);
+			$this->assign('firstname',$firstname);
+			$this->assign('phone',$phone);
+			$this->assign('enrollerid',$enrollerid);
 			$this->assign('starttime',I('get.starttime'));
 			$this->assign('endtime',I('get.endtime'));
 			$this->display();
@@ -1118,28 +1131,31 @@ class HapylifeController extends AdminBaseController{
 		//有密码账户搜索
 		$count = M('user')->count();
 		//账户昵称搜索
-		$word = trim(I('get.word'));
-		if(empty($word)){
-			$map = array();
-		}else{
-			$map = array(
-				'iuid|CustomerID|SponsorID|EnrollerID|Placement|CustomerStatus|LastName|FirstName|wvCustomerID|wvOrderID'=>$word
-			);
-		}
+		$customerid = trim(I('get.customerid'));
+		$wvcustomerid = trim(I('get.wvcustomerid'));
+		$lastname = trim(I('get.lastname'));
+		$firstname = trim(I('get.firstname'));
+		$phone = trim(I('get.phone'));
+		$enrollerid = trim(I('get.enrollerid'));
 		
 		$excel     = I('get.excel');
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:0;
-		$assign    = D('User')->getPageS(D('User'),$map,$order='joinedon desc',$starttime,$endtime);
+		$assign    = D('User')->getPageS(D('User'),$customerid,$wvcustomerid,$lastname,$firstname,$phone,$enrollerid,$order='joinedon desc',$starttime,$endtime);
 
 		//导出excel
 		if($excel == 'excel'){
-			$data = D('User')->getAllmemBer(D('User'),$map,$order='joinedon desc',$starttime,$endtime);
+			$data = D('User')->getAllmemBer(D('User'),$customerid,$wvcustomerid,$lastname,$firstname,$phone,$enrollerid,$order='joinedon desc',$starttime,$endtime);
 			$export_excel = D('User')->export_excel($data['data']);
 		}else{
 			$this->assign($assign);
 			$this->assign('count',$count);
-			$this->assign('word',$word);
+			$this->assign('customerid',$customerid);
+			$this->assign('wvcustomerid',$wvcustomerid);
+			$this->assign('lastname',$lastname);
+			$this->assign('firstname',$firstname);
+			$this->assign('phone',$phone);
+			$this->assign('enrollerid',$enrollerid);
 			$this->assign('starttime',I('get.starttime'));
 			$this->assign('endtime',I('get.endtime'));
 			$this->assign('session',$session);
@@ -1524,16 +1540,20 @@ class HapylifeController extends AdminBaseController{
             	$code[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
             }
         }
-       
-		$word      = trim(I('get.word',''));
+       	
+		$customerid = trim(I('get.customerid',''));
+		$phone      = trim(I('get.phone',''));
+		$addressee  = trim(I('get.addressee',''));
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:time();
 
-		$assign    = D('SmsLog')->getSendPage(D('SmsLog'),$word,$starttime,$endtime,$order='date desc');
+		$assign    = D('SmsLog')->getSendPage(D('SmsLog'),$customerid,$phone,$addressee,$starttime,$endtime,$order='date desc');
 		// p($assign);
 		// die;		
 		$this->assign($assign);
-		$this->assign('word',$word);
+		$this->assign('customerid',$customerid);
+		$this->assign('phone',$phone);
+		$this->assign('addressee',$addressee);
 		$this->assign('starttime',I('get.starttime'));
 		$this->assign('endtime',I('get.endtime'));
 		$this->assign('code',$code);
@@ -1726,7 +1746,7 @@ class HapylifeController extends AdminBaseController{
 		}
 
 		$data = M('WvBonusParities')->select();
-		$assign    = D('WvBonus')->getSendPage(D('WvBonus'),$customerid,$hplid,$starttime,$endtime,$status,$order='id');
+		$assign    = D('WvBonus')->getSendPage(D('WvBonus'),$customerid,$hplid,$starttime,$endtime,$status,$order='id desc');
 
 		foreach($assign['data'] as $key=>$value){
 			$assign['data'][$key]['bonuses'] = json_decode($value['bonuses'],true);
@@ -2220,4 +2240,82 @@ class HapylifeController extends AdminBaseController{
 		}
 	}
 
+/***************通告管理***********************/ 
+	/**
+	* 通告列表
+	**/ 
+	public function notice(){
+		$assign = D('Notice')->getAll(D('Notice'),'nid DESC');
+		$this->assign($assign);
+		$this->display();
+	}
+
+	/**
+	* 添加通告
+	**/ 
+	public function add_notice(){
+		$upload=post_upload();
+		$data['img']=C('WEB_URL').$upload['name'];
+		$result=D('Notice')->addData($data);
+		if($result){
+			redirect($_SERVER['HTTP_REFERER']);
+		}else{
+			$this->error('添加失败');
+		}
+	}
+
+	/**
+	* 编辑通告
+	**/ 
+	public function edit_notice(){
+		$nid = I('post.id');
+		$map=array(
+			'nid'=>$nid
+		);
+		$upload=post_upload();
+		if(isset($upload['name'])){
+			$data['img']=C('WEB_URL').$upload['name'];
+		}
+		$result=D('Notice')->editData($map,$data);
+		if($result){
+			redirect($_SERVER['HTTP_REFERER']);
+		}else{
+			$this->error('编辑失败');
+		}
+	}
+
+	/**
+	* 删除通告
+	**/ 
+	public function delect_notice(){
+		$nid=I('get.nid');
+		$map=array(
+			'nid'=>$nid
+		);
+		$result=D('Notice')->deleteData($map);
+		if($result){
+			redirect($_SERVER['HTTP_REFERER']);
+		}else{
+			$this->error('删除失败');
+		}
+	}
+
+	/**
+	* 是否显示
+	**/ 
+	public function show_notice(){
+		$data=I('get.');
+		$map =array(
+			'nid'=>$data['nid']
+		);
+		$result=D('Notice')->editData($map,$data);
+		if($result){
+			$res = D('Notice')->where(array('nid'=>array('NOT IN',$data['nid'])))->setfield('isshow',0);
+		}
+		if($result){
+			redirect($_SERVER['HTTP_REFERER']);
+		}else{
+			$this->error('编辑失败');
+		}
+	}
 }

@@ -177,13 +177,13 @@ class RegisterController extends HomeBaseController{
                         'customerid' => $customerid,
                     );
                 $data    = json_encode($data);
-                // $sendUrl = "http://10.16.0.153/hapylife/index.php/Api/HapylifeApi/userList";
-                $sendUrl = "http://localhost/hapylife/index.php/Api/HapylifeApi/userList";
+                $sendUrl = "http://10.16.0.153/hapylife/index.php/Api/HapylifeApi/userList";
+                // $sendUrl = "http://localhost/hapylife/index.php/Api/HapylifeApi/userList";
                 $result  = post_json_data($sendUrl,$data);
                 $back_msg = json_decode($result['result'],true);
                 $hu_nickname = $back_msg['data']['lastname'].$back_msg['data']['firstname'];
             }
-
+            // p($_SESSION);
             $data = I('post.');
             $upload = several_upload();
             $User = D("User"); // 实例化User对象
@@ -215,6 +215,7 @@ class RegisterController extends HomeBaseController{
                     $data['BackIdcard']=C('WEB_URL').$upload['name'][1];
                 }
                 $data['EnrollerID'] = strtoupper(I('post.EnrollerID'));
+                $data['SponsorID'] = strtoupper($_SESSION['user']['username']);
                 $data['LastName'] = trimall(I('post.LastName'));
                 $data['FirstName'] = trimall(I('post.FirstName'));
                 $data['EnLastName'] = trimall(I('post.EnLastName'));
@@ -266,7 +267,7 @@ class RegisterController extends HomeBaseController{
         $ipid = I('get.ipid');
         //用户信息
         $userinfo= M('User')->where(array('iuid'=>$iuid))->find();
-        $htid = D('Tempuser')->where(array('EnrollerID'=>$userinfo['customerid']))->order('htid desc')->getfield('htid');
+        $htid = D('Tempuser')->where(array('SponsorID'=>$userinfo['customerid']))->order('htid desc')->getfield('htid');
         //商品信息
         $product = M('Product')->where(array('ipid'=>$ipid))->find();
         //生成唯一订单号

@@ -133,10 +133,9 @@ class PayController extends HomeBaseController{
         if($residue>=0){
             //修改用户积分
             $message = array(
-                'iuid'      =>$iuid,
                 'iu_point'  =>$residue
             );
-            $insertpoint = M('User')->save($message);
+            $insertpoint = M('User')->where(array('iuid'=>$iuid))->save($message);
             if($insertpoint){
                 //修改子订单状态
                 $map = array(
@@ -154,7 +153,7 @@ class PayController extends HomeBaseController{
                         'content' => $content,
                         'create_time'   =>time(),
                         'create_month'   =>date('Y-m'),
-                        'type' => 2,
+                        'type' => 1,
                         'action' => 3,
                     );
                     $addlog  = M('Log')->add($log);
@@ -356,7 +355,7 @@ class PayController extends HomeBaseController{
                                         //更新订单信息
                                         $upreceipt = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->save($status);
                                         // 获取产品
-                                        $product = D('Product')->where(array('ipid'=>$order['ipid']))->find();
+                                        $product = D('Product')->where(array('ipid'=>$receipt['ipid']))->find();
                                         // 检测订单状态
                                         $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receipt['ir_receiptnum']))->getfield('ir_status');
                                         if($ir_status == 2){
@@ -482,10 +481,10 @@ class PayController extends HomeBaseController{
                                                 if(!in_array(0,$allIrstatus) && !in_array(7,$allIrstatus)){
                                                     $statusResult = M('User')->where(array('customerid'=>$userinfo['customerid']))->setfield('showProduct','0');
                                                 }
-                                                // 支付完成
-                                                // $this->success('完成支付',U('Home/Purchase/center'));
-                                                $this->success('完成支付',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
                                             }
+                                            // 支付完成
+                                            // $this->success('完成支付',U('Home/Purchase/center'));
+                                            $this->success('完成支付',U('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$receipt['ir_receiptnum'])));
                                         }
                                     }
                                 }

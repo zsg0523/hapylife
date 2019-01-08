@@ -15,103 +15,132 @@
     <div class="col-xs-12">
         <div class="tabbable">
             <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
-			    <li>
-			    	<form action="{:U('Admin/Hapylife/receipt')}" method="get">
-			    		<select name="status">
-			    			<option <?php if($status == 0)echo "selected";?>  value="0">所有</option>
-			    			<option <?php if($status == 1)echo "selected";?>  value="1">待付款</option>
-			    			<option <?php if($status == 203)echo "selected";?>  value="203">未全额支付</option>
-			    			<option <?php if($status == 3)echo "selected";?>  value="3">已支付</option>
-			    			<option <?php if($status == 4)echo "selected";?>  value="4">已发货</option>
-			    		</select>
-			    		<select name="timeType">
-			    			<option <?php if($timeType == 'ir_paytime')echo "selected";?> value="ir_paytime">支付时间</option>
-			    			<option <?php if($timeType == 'ir_date')echo "selected";?> value="ir_date" >创建时间</option>
-			    		</select>
-			    		<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
-				    	<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
-                        <input name="word" type="text" placeholder="关键词" value="{$word}" size="20" />
-                        <input class='btn btn-sm' type="submit" value="筛选" />
-                        <input class='btn btn-sm' type="submit" name='excel' value="excel" />
-                	</form>
+            	<li class="active">
+					<a href="#home" data-toggle="tab">订单列表</a>
 			    </li>
-			    <li style="margin-left: 5px;">
+			    
+			    <li>
 					<a href="javascript:;" pId="{$cid}" lId="{$lid}" fieldTitle="" optionA="" optionB="" optionC="" optionD="" onclick="adds(this)">批量添加</a>
 				</li>
             </ul>
 		</div>
             <div class="tab-content">
 				<table class="table table-striped table-bordered table-hover table-condensed">
-					<if condition="$_SESSION['user']['username'] eq mary || $_SESSION['user']['username'] eq admin2">
-						<tr>
-							<th >订单编号</th>
-							<th >会员</th>
-							<th >姓</th>
-							<th >名</th>
-	                        <th >订单总金额</th>
-	                        <th >订单未支付金额</th>
-	                        <th >订单备注</th>
-	                        <th >订单状态</th>
-	                        <th >送货地址</th>
-	                        <th >创建日期</th>
-	                        <th >支付日期</th>
-						</tr>
-					<else />
-						<tr>
-							<th >订单编号</th>
-							<th >会员</th>
-							<th >姓</th>
-							<th >名</th>
-	                        <th >订单总金额</th>
-	                        <th >订单未支付金额</th>
-	                        <th >订单备注</th>
-	                        <th >订单状态</th>
-	                        <th >收货人</th>
-	                        <th >收货电话</th>
-	                        <th >收货地址</th>
-	                        <th >创建日期</th>
-	                        <th >支付日期</th>
-	                        <th >查看明细</th>
-							<th>操作</th>
-						</tr>
-					</if>
-					<foreach name="data" item="v">
-						<tr>
-							<td>{$v['ir_receiptnum']}</td>
-							<td>{$v['customerid']}</td>
-							<td>{$v['lastname']}</td>
-							<td>{$v['firstname']}</td>
-							<td>{$v['ir_price']}</td>
-							<td>{$v['ir_unpaid']}</td>
-							<td>{$v['ir_desc']}</td>
-							<td>
-								<if condition="$v['ir_status'] eq 2">已支付
-                                <elseif condition="$v['ir_status'] eq 3"/>已发货
-                                <elseif condition="$v['ir_status'] eq 4"/>已送达
-                                <elseif condition="$v['ir_status'] eq 5"/>申请退货
-                                <elseif condition="$v['ir_status'] eq 7 || $v['ir_status'] eq 0"/>待付款
-                                <elseif condition="$v['ir_status'] eq 8"/>已退货
-                                <elseif condition="$v['ir_status'] eq 202"/>未全额支付
-                                </if>
-							</td>
-							<td>{$v['ia_name']}</td>
-							<td>{$v['ia_phone']}</td>
-							<td>{$v['ia_province']}{$v['ia_city']}{$v['ia_area']}{$v['ia_address']}</td>
-							<td>{:date('Y-m-d H:i:s',$v['ir_date'])}</td>
-							<td>
-								<if condition="$v['ir_paytime'] eq 0">
-								<else/>{:date('Y-m-d H:i:s',$v['ir_paytime'])}
-								</if>
-							</td>
-							<td><a href="{:U('Admin/Hapylife/receiptSon',array('ir_receiptnum'=>$v['ir_receiptnum']))}">查看明细</td>
-							<if condition="$_SESSION['user']['username'] eq mary || $_SESSION['user']['username'] eq admin2">
-							<else />
+					<form action="{:U('Admin/Hapylife/receipt')}" method="get">
+						<if condition="$_SESSION['user']['username'] eq mary || $_SESSION['user']['username'] eq admin2">
+							<tr>
+								<th><input type="text" name="ir_receiptnum" placeholder="订单编号" value="{$ir_receiptnum}"></th>
+								<th><input type="text" name="customerid" placeholder="会员账号" value="{$customerid}"></th>
+								<th><input type="text" name="lastname" placeholder="姓" value="{$lastname}"></th>
+								<th><input type="text" name="firstname" placeholder="名" value="{$firstname}"></th>
+								<th><input type="text" name="ir_price" placeholder="订单总金额" value="{$ir_price}"></th>
+								<th><input type="text" name="ir_unpaid" placeholder="订单未支付金额" value="{$ir_unpaid}"></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>
+							</tr>
+							<tr>
+								<th >订单编号</th>
+								<th >会员账号</th>
+								<th >姓</th>
+								<th >名</th>
+		                        <th >订单总金额</th>
+		                        <th >订单未支付金额</th>
+		                        <th >订单备注</th>
+		                        <th >订单状态</th>
+		                        <th >送货地址</th>
+		                        <th >创建日期</th>
+		                        <th >支付日期</th>
+							</tr>
+						<else />
+							<tr>
+								<th><input type="text" name="ir_receiptnum" placeholder="订单编号" value="{$ir_receiptnum}"></th>
+								<th><input type="text" name="customerid" placeholder="会员账号" value="{$customerid}"></th>
+								<th><input type="text" name="lastname" placeholder="姓" value="{$lastname}"></th>
+								<th><input type="text" name="firstname" placeholder="名" value="{$firstname}"></th>
+								<th><input type="text" name="ir_price" placeholder="订单总金额" value="{$ir_price}"></th>
+								<th><input type="text" name="ir_unpaid" placeholder="订单未支付金额" value="{$ir_unpaid}"></th>
+								<th></th>
+								<th>
+									<select name="status">
+						    			<option <?php if($status == 0)echo "selected";?>  value="0">所有</option>
+						    			<option <?php if($status == 1)echo "selected";?>  value="1">待付款</option>
+						    			<option <?php if($status == 203)echo "selected";?>  value="203">未全额支付</option>
+						    			<option <?php if($status == 3)echo "selected";?>  value="3">已支付</option>
+						    			<option <?php if($status == 4)echo "selected";?>  value="4">已发货</option>
+						    		</select>
+								</th>
+								<th>
+									<select name="timeType">
+						    			<option <?php if($timeType == 'ir_paytime')echo "selected";?> value="ir_paytime">支付时间</option>
+						    			<option <?php if($timeType == 'ir_date')echo "selected";?> value="ir_date" >创建时间</option>
+						    		</select>
+								</th>
+								<th colspan="4">
+									<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px;float: left;width: 50%;" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off" />
+				    				<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px;width: 50%;" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
+								</th>
+								<th><input class='btn btn-sm' type="submit" name='excel' value="excel" /></th>
+								<th><input class='btn btn-sm' type="submit" value="筛选" /></th>
+							</tr>
+							<tr>
+								<th >订单编号</th>
+								<th >会员账号</th>
+								<th >姓</th>
+								<th >名</th>
+		                        <th >订单总金额</th>
+		                        <th >订单未支付金额</th>
+		                        <th >订单备注</th>
+		                        <th >订单状态</th>
+		                        <th >收货人</th>
+		                        <th >收货电话</th>
+		                        <th >收货地址</th>
+		                        <th >创建日期</th>
+		                        <th >支付日期</th>
+		                        <th >查看明细</th>
+								<th>操作</th>
+							</tr>
+						</if>
+						<foreach name="data" item="v">
+							<tr>
+								<td>{$v['ir_receiptnum']}</td>
+								<td>{$v['customerid']}</td>
+								<td>{$v['lastname']}</td>
+								<td>{$v['firstname']}</td>
+								<td>{$v['ir_price']}</td>
+								<td>{$v['ir_unpaid']}</td>
+								<td>{$v['ir_desc']}</td>
 								<td>
-									<a href="javascript:if(confirm('确定删除{$v['customerid']}的订单？'))location='{:U('Admin/Hapylife/delete_receipt',array('id'=>$v['irid']))}'">删除</a> 
+									<if condition="$v['ir_status'] eq 2">已支付
+	                                <elseif condition="$v['ir_status'] eq 3"/>已发货
+	                                <elseif condition="$v['ir_status'] eq 4"/>已送达
+	                                <elseif condition="$v['ir_status'] eq 5"/>申请退货
+	                                <elseif condition="$v['ir_status'] eq 7 || $v['ir_status'] eq 0"/>待付款
+	                                <elseif condition="$v['ir_status'] eq 8"/>已退货
+	                                <elseif condition="$v['ir_status'] eq 202"/>未全额支付
+	                                </if>
 								</td>
-							</if>
-						</tr>
-					</foreach>
+								<td>{$v['ia_name']}</td>
+								<td>{$v['ia_phone']}</td>
+								<td>{$v['ia_province']}{$v['ia_city']}{$v['ia_area']}{$v['ia_address']}</td>
+								<td>{:date('Y-m-d H:i:s',$v['ir_date'])}</td>
+								<td>
+									<if condition="$v['ir_paytime'] eq 0">
+									<else/>{:date('Y-m-d H:i:s',$v['ir_paytime'])}
+									</if>
+								</td>
+								<td><a href="{:U('Admin/Hapylife/receiptSon',array('ir_receiptnum'=>$v['ir_receiptnum']))}">查看明细</td>
+								<if condition="$_SESSION['user']['username'] eq mary || $_SESSION['user']['username'] eq admin2">
+								<else />
+									<td>
+										<a href="javascript:if(confirm('确定删除{$v['customerid']}的订单？'))location='{:U('Admin/Hapylife/delete_receipt',array('id'=>$v['irid']))}'">删除</a> 
+									</td>
+								</if>
+							</tr>
+						</foreach>
+					</form>
 				</table>
 				<div class='page'>
 					{$page}
