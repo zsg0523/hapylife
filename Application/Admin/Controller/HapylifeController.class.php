@@ -1223,7 +1223,7 @@ class HapylifeController extends AdminBaseController{
 		$mape = M('areacode')->where(array('is_show'=>1))->order('order_number desc')->select();
         foreach ($mape as $key => $value) {
             $code[$key]         = $value;
-            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==852 || $value['acnumber']==886){
+            if($value['acnumber']==86 || $value['acnumber']==852 || $value['acnumber']==886){
             	$code[$key]['name'] = $value['acname_cn'].'+'.$value['acnumber'];
             }else{
             	$code[$key]['name'] = $value['acname_en'].'+'.$value['acnumber'];
@@ -2317,5 +2317,34 @@ class HapylifeController extends AdminBaseController{
 		}else{
 			$this->error('编辑失败');
 		}
+	}
+
+	/**
+	* 推荐人数统计
+	**/ 
+	public function enroller(){
+		$p = I('get.p',1);
+		$data = M('User')->where(array('isexit'=>1))->select();
+		foreach ($data as $key => $value) {
+			$customeridArr[$key]['customerid'] = $value['customerid'];
+			$customeridArr[$key]['name'] = $value['lastname'].$value['firstname'];
+		}
+		foreach ($customeridArr as $key => $value) {
+			foreach($data as $k=>$v){
+				if($v['enrollerid']==$value['customerid']){
+					$newData[$key]['count'][$k]['customerid'] = $v['customerid'];
+					$newData[$key]['count'][$k]['name'] = $v['lastname'].$v['firstname'];
+					$newData[$key]['customerid'] = $value['customerid'];
+					$newData[$key]['name'] = $value['name'];
+				}
+			}
+		}
+		foreach($newData as $key=>$value){
+			$newData[$key]['num'] = count($value['count']);
+		}
+		$newData = array_sort($newData,'num','DESC');
+		$assign = pages($newData,$p,25);
+		$this->assign($assign);
+		$this->display();
 	}
 }

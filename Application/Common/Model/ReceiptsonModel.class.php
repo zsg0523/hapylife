@@ -228,26 +228,7 @@ class ReceiptsonModel extends BaseModel{
             //收货人电话
             $content[$k]['ia_phone']       = $v['ia_phone'];
             //产品数量
-            switch ($v['ipid']) {
-                case '31':
-                    $content[$k]['productname'] = $v['productnams'].'*8瓶';
-                    break;
-                case '39':
-                    $content[$k]['productname'] = $v['productnams'].'*2瓶';
-                    break;
-                case '61':
-                    $content[$k]['productname'] = $v['productnams'].'*4瓶';
-                    break;
-                case '62':
-                    $content[$k]['productname'] = $v['productnams'].'*2瓶';
-                    break;
-                case '64':
-                    $content[$k]['productname'] = $v['productnams'].'*2瓶';
-                    break;
-                default:
-                    $content[$k]['productname'] = $v['productnams'].'*1瓶';
-                    break;
-            }
+            $content[$k]['productname'] = $v['productnum'];
             // 产品信息
             $content[$k]['ir_desc']       = $v['ir_desc'];
         }
@@ -306,26 +287,7 @@ class ReceiptsonModel extends BaseModel{
                 $content[$k]['ib_name']        = $v['ia_name'];
             }
             //产品数量
-            switch ($v['ipid']) {
-                case '31':
-                    $content[$k]['productname'] = $v['productnams'].'*8瓶';
-                    break;
-                case '39':
-                    $content[$k]['productname'] = $v['productnams'].'*2瓶';
-                    break;
-                case '61':
-                    $content[$k]['productname'] = $v['productnams'].'*4瓶';
-                    break;
-                case '62':
-                    $content[$k]['productname'] = $v['productnams'].'*2瓶';
-                    break;
-                case '64':
-                    $content[$k]['productname'] = $v['productnams'].'*2瓶';
-                    break;
-                default:
-                    $content[$k]['productname'] = $v['productnams'].'*1瓶';
-                    break;
-            }
+            $content[$k]['productname'] = $v['productnum'];
             // 产品信息
             $content[$k]['ir_desc']       = $v['ir_desc'];
             // 通用券的由来

@@ -713,10 +713,20 @@ class RegisterController extends HomeBaseController{
                 );
                 $addlog = M('Log')->add($log);
                 if($addlog){
-                    if($back_result['is_dt'] == 1){
-                        $products = 2;
-                    }else{
-                        $products = 3;
+                    switch ($product['productid']) {
+                        case '31':
+                            if($back_result['is_dt'] == 1){
+                                $products = 2;
+                            }else{
+                                $products = 3;
+                            }
+                            break;
+                        case '66':
+                            $products = 7;
+                            break;
+                        case '67':
+                            $products = 6;
+                            break;
                     }
                     $usa    = new \Common\UsaApi\Usa;
                     $result = $usa->createCustomer($user['customerid'],$userinfo['password'],$userinfo['enrollerid'],$userinfo['enfirstname'],$userinfo['enlastname'],$userinfo['email'],$userinfo['phone'],$products,$userinfo['birthday']);

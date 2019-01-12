@@ -292,6 +292,7 @@ class ReceiptModel extends BaseModel{
                     $mape[$key]['productno']   = $v['ip_bh'];
                     $mape[$key]['productnams'] = $v['product_name'];
                     $mape[$key]['ip_type'] = $v['ip_type'];
+                    $mape[$key]['productnum'] = $v['product_name'].'*'.$v['productnum'].'瓶';
                 }
                 $mape[$key]['productname'] = substr($productname,0,-1);
 
@@ -397,6 +398,7 @@ class ReceiptModel extends BaseModel{
                     $mape[$key]['productno']   = $v['ip_bh'];
                     $mape[$key]['productnams'] = $v['product_name'];
                     $mape[$key]['ip_type'] = $v['ip_type'];
+                    $mape[$key]['productnum'] = $v['product_name'].'*'.$v['productnum'].'瓶';
                 }
                 $mape[$key]['productname'] = substr($productname,0,-1);
 
@@ -501,6 +503,7 @@ class ReceiptModel extends BaseModel{
                     $mape[$key]['productno']   = $v['ip_bh'];
                     $mape[$key]['productnams'] = $v['product_name'];
                     $mape[$key]['ip_type'] = $v['ip_type'];
+                    $mape[$key]['productnum'] = $v['product_name'].'*'.$v['productnum'].'瓶';
                 }
                 $mape[$key]['productname'] = substr($productname,0,-1);
 
@@ -612,6 +615,7 @@ class ReceiptModel extends BaseModel{
                     $mape[$key]['productno']   = $v['ip_bh'];
                     $mape[$key]['productnams'] = $v['product_name'];
                     $mape[$key]['ip_type'] = $v['ip_type'];
+                    $mape[$key]['productnum'] = $v['product_name'].'*'.$v['productnum'].'瓶';
                 }
                 $mape[$key]['productname'] = substr($productname,0,-1);
                 $son = D('Receiptson')
@@ -748,6 +752,7 @@ class ReceiptModel extends BaseModel{
                     $mape[$key]['productno']   = $v['ip_bh'];
                     $mape[$key]['productnams'] = $v['product_name'];
                     $mape[$key]['ip_type'] = $v['ip_type'];
+                    $mape[$key]['productnum'] = $v['product_name'].'*'.$v['productnum'].'瓶';
                 }
                 $mape[$key]['productname'] = substr($productname,0,-1);
                 $son = D('Receiptson')
@@ -900,6 +905,7 @@ class ReceiptModel extends BaseModel{
                     $mape[$key]['productno']   = $v['ip_bh'];
                     $mape[$key]['productnams'] = $v['product_name'];
                     $mape[$key]['ip_type'] = $v['ip_type'];
+                    $mape[$key]['productnum'] = $v['product_name'].'*'.$v['productnum'].'瓶';
                 }
                 $mape[$key]['productname'] = substr($productname,0,-1);
                 $son = D('Receiptson')
@@ -1025,6 +1031,7 @@ class ReceiptModel extends BaseModel{
                     $mape[$key]['productno']   = $v['ip_bh'];
                     $mape[$key]['productnams'] = $v['product_name'];
                     $mape[$key]['ip_type'] = $v['ip_type'];
+                    $mape[$key]['productnum'] = $v['product_name'].'*'.$v['productnum'].'瓶';
                 }
                 
                 $mape[$key]['productname'] = substr($productname,0,-1);
@@ -1151,6 +1158,7 @@ class ReceiptModel extends BaseModel{
                     $mape[$key]['productno']   = $v['ip_bh'];
                     $mape[$key]['productnams'] = $v['product_name'];
                     $mape[$key]['ip_type'] = $v['ip_type'];
+                    $mape[$key]['productnum'] = $v['product_name'].'*'.$v['productnum'].'瓶';
                 }
                 $mape[$key]['productname'] = substr($productname,0,-1);
                 $son = D('Receiptson')
@@ -1237,27 +1245,7 @@ class ReceiptModel extends BaseModel{
             // 商品编号
             $content[$k]['productno'] = $v['productno'];
             // 商品数量
-            // $content[$k]['productname'] = $v['productname'];
-            switch ($v['ipid']) {
-                case '31':
-                    $content[$k]['productname'] = $v['productnams'].'*8瓶';
-                    break;
-                case '39':
-                    $content[$k]['productname'] = $v['productnams'].'*2瓶';
-                    break;
-                case '61':
-                    $content[$k]['productname'] = $v['productnams'].'*4瓶';
-                    break;
-                case '62':
-                    $content[$k]['productname'] = $v['productnams'].'*2瓶';
-                    break;
-                case '64':
-                    $content[$k]['productname'] = $v['productnams'].'*2瓶';
-                    break;
-                default:
-                    $content[$k]['productname'] = $v['productnams'].'*1瓶';
-                    break;
-            }
+            $content[$k]['productname'] = $v['productnum'];
             // 支付日期
             $content[$k]['ir_paytime'] = date('Y-m-d',$v['ir_paytime']).'/'.date('H:i:s',$v['ir_paytime']);
             // 收货人姓名
