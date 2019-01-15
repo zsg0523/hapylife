@@ -1284,7 +1284,7 @@ class HapylifeController extends AdminBaseController{
 		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
 		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:0;
 		$array  = '测,测试,test,试,试点,testtest';
-		$ipid = '47,48';
+		$ipid = '46,47,48';
 		$assign    = D('Receipt')->getSendPages(D('Receipt'),$word,$starttime,$endtime,$status,$timeType,$array,$ipid,$order='ir_paytime asc');
 		// 导出excel
 		if($excel == 'excel'){

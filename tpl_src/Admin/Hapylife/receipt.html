@@ -34,11 +34,27 @@
 								<th><input type="text" name="firstname" placeholder="名" value="{$firstname}"></th>
 								<th><input type="text" name="ir_price" placeholder="订单总金额" value="{$ir_price}"></th>
 								<th><input type="text" name="ir_unpaid" placeholder="订单未支付金额" value="{$ir_unpaid}"></th>
-								<th></th>
-								<th></th>
-								<th></th>
-								<th></th>
-								<th></th>
+								<th>
+									<select name="status">
+						    			<option <?php if($status == 0)echo "selected";?>  value="0">所有</option>
+						    			<option <?php if($status == 1)echo "selected";?>  value="1">待付款</option>
+						    			<option <?php if($status == 203)echo "selected";?>  value="203">未全额支付</option>
+						    			<option <?php if($status == 3)echo "selected";?>  value="3">已支付</option>
+						    			<option <?php if($status == 4)echo "selected";?>  value="4">已发货</option>
+						    		</select>
+								</th>
+								<th>
+									<select name="timeType">
+						    			<option <?php if($timeType == 'ir_paytime')echo "selected";?> value="ir_paytime">支付时间</option>
+						    			<option <?php if($timeType == 'ir_date')echo "selected";?> value="ir_date" >创建时间</option>
+						    		</select>
+								</th>
+								<th colspan="4">
+									<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px;float: left;width: 50%;" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off" />
+				    				<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px;width: 50%;" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
+								</th>
+								<th><input class='btn btn-sm' type="submit" name='excel' value="excel" /></th>
+								<th><input class='btn btn-sm' type="submit" value="筛选" /></th>
 							</tr>
 							<tr>
 								<th >订单编号</th>
@@ -49,9 +65,12 @@
 		                        <th >订单未支付金额</th>
 		                        <th >订单备注</th>
 		                        <th >订单状态</th>
-		                        <th >送货地址</th>
+		                        <th >收货人</th>
+		                        <th >收货电话</th>
+		                        <th >收货地址</th>
 		                        <th >创建日期</th>
 		                        <th >支付日期</th>
+		                        <th >操作</th>
 							</tr>
 						<else />
 							<tr>
