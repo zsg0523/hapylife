@@ -476,13 +476,13 @@ class ReceiptsonModel extends BaseModel{
         return $data;
     }
 
-    public function getAllFullMonthPay($model,$starttime,$endtime,$paytype){
+    public function getAllFullMonthPay($model,$starttime,$endtime,$paytype,$unArr){
         $type = implode(',',$paytype);
         $list = $model
                     ->alias('rs')
                     ->join('hapylife_receipt AS r ON rs.ir_receiptnum = r.ir_receiptnum')
                     ->where(array('status'=>2,'ir_paytype'=>array('in',$type),'paytime'=>array(array('egt',$starttime),array('elt',$endtime))))
-                    ->field('paytime,ir_ordertype,rs.ir_price')
+                    ->field('paytime,ir_ordertype,rs.ir_price,r.ia_name')
                     ->select();
         $date1 = explode('-',date('Y-m',$starttime)); 
         $date2 = explode('-',date("Y-m",strtotime("-1 month",$endtime))); 
@@ -492,20 +492,42 @@ class ReceiptsonModel extends BaseModel{
         for($i=0;$i<=$month_number;$i++){
             $month[$i] = date("Y-m",strtotime($i."month",$starttime));
         }
-
         foreach($month as $key => $value){
             foreach($list as $k => $v){
                 if(date('Y-m',$v['paytime'])==$value){
                     switch($v['ir_ordertype']){
                         case '1':
-                            $signup[] = $v;
-                            // 当月累计注册人数
-                            $data[$key]['fullsignup'] = count($signup);
+                            if(in_array($v['ia_name'],$unArr)){
+                                $signupTest[] = $v;
+                                // 当月累计测试注册人数
+                                $data[$key]['signupTest'] = count($signupTest);
+                            }else{
+                                $signup[] = $v;
+                                // 当月累计实际注册人数
+                                $data[$key]['signup'] = count($signup);
+                            }
                             break;
                         case '3':
-                            $monthly[] = $v;
-                            // 当月累计月费人数
-                            $data[$key]['fullmonthly'] = count($monthly);
+                            if(in_array($v['ia_name'],$unArr)){
+                                $monthlyTest[] = $v;
+                                // 当月累计测试月费人数
+                                $data[$key]['monthlyTest'] = count($monthlyTest);
+                            }else{
+                                $monthly[] = $v;
+                                // 当月累计实际月费人数
+                                $data[$key]['monthly'] = count($monthly);
+                            }
+                            break;
+                        case '5':
+                            if(in_array($v['ia_name'],$unArr)){
+                                $dtTest[] = $v;
+                                // 当月累计测试DT订单数
+                                $data[$key]['dtTest'] = count($dtTest);
+                            }else{
+                                $dt[] = $v;
+                                // 当月累计实际DT订单数
+                                $data[$key]['dt'] = count($dt);
+                            }
                             break;
                     }
                     $data[$key]['count'] = bcadd($data[$key]['count'],$v['ir_price'],2);
@@ -513,43 +535,81 @@ class ReceiptsonModel extends BaseModel{
                 }
             }
         }
+        // p($data);die;
         foreach($data as $key=>$value){
             $newData[] = $value;
         }
         foreach($newData as $key=>$value){
-            if(empty($value['fullsignup']) && $key == 0){
-                $newData[$key]['fullsignup'] = 0;
+            if(empty($value['signup']) && $key == 0){
+                $newData[$key]['signup'] = 0;
             }else{
-                if(empty($value['fullsignup'])){
-                    $newData[$key]['fullsignup'] = $newData[$key-1]['fullsignup'];
+                if(empty($value['signup'])){
+                    $newData[$key]['signup'] = $newData[$key-1]['signup'];
                 }
             }
 
-            if(empty($value['fullmonthly']) && $key == 0){
-                $newData[$key]['fullmonthly'] = 0;
+            if(empty($value['signupTest']) && $key == 0){
+                $newData[$key]['signupTest'] = 0;
             }else{
-                if(empty($value['fullmonthly'])){
-                    $newData[$key]['fullmonthly'] = $newData[$key-1]['fullmonthly'];
+                if(empty($value['signupTest'])){
+                    $newData[$key]['signupTest'] = $newData[$key-1]['signupTest'];
+                }
+            }
+
+            if(empty($value['monthly']) && $key == 0){
+                $newData[$key]['monthly'] = 0;
+            }else{
+                if(empty($value['monthly'])){
+                    $newData[$key]['monthly'] = $newData[$key-1]['monthly'];
+                }
+            }
+
+            if(empty($value['monthlyTest']) && $key == 0){
+                $newData[$key]['monthlyTest'] = 0;
+            }else{
+                if(empty($value['monthlyTest'])){
+                    $newData[$key]['monthlyTest'] = $newData[$key-1]['monthlyTest'];
+                }
+            }
+
+            if(empty($value['dt']) && $key == 0){
+                $newData[$key]['dt'] = 0;
+            }else{
+                if(empty($value['dt'])){
+                    $newData[$key]['dt'] = $newData[$key-1]['dt'];
+                }
+            }
+
+            if(empty($value['dtTest']) && $key == 0){
+                $newData[$key]['dtTest'] = 0;
+            }else{
+                if(empty($value['dtTest'])){
+                    $newData[$key]['dtTest'] = $newData[$key-1]['dtTest'];
                 }
             }
         }
+        // p($newData);die;
         for($i=0;$i<count($newData);$i++){
-            // 当月注册人数
-            $newData[$i]['signup'] = bcsub($newData[$i]['fullsignup'],$newData[$i-1]['fullsignup'],0);
-            if($newData[$i]['signup']>=0){
-                $newData[$i]['signup'] = $newData[$i]['signup'];
-            }else{
-                $newData[$i]['signup'] = 0;
-            }
-            // 当月月费人数
-            $newData[$i]['monthly'] = bcsub($newData[$i]['fullmonthly'],$newData[$i-1]['fullmonthly'],0);
-            if($newData[$i]['monthly']>=0){
-                $newData[$i]['monthly'] = $newData[$i]['monthly'];
-            }else{
-                $newData[$i]['monthly'] = 0;
-            }
+            // 当月实际注册人数
+            $newData[$i]['signs'] = abs(bcsub($newData[$i]['signup'],$newData[$i-1]['signup'],0));
+            // 当月测试注册人数
+            $newData[$i]['signTests'] = abs(bcsub($newData[$i]['signupTest'],$newData[$i-1]['signupTest'],0));
+            // 当月总注册人数
+            $newData[$i]['fullsignup'] = bcadd($newData[$i]['signup'],$newData[$i]['signupTest'],0);
+
+            // 当月实际月费人数
+            $newData[$i]['monthlys'] = abs(bcsub($newData[$i]['monthly'],$newData[$i-1]['monthly'],0));
+            // 当月测试月费人数
+            $newData[$i]['monthlyTests'] = abs(bcsub($newData[$i]['monthlyTest'],$newData[$i-1]['monthlyTest'],0));
+            // 当月总月费人数
+            $newData[$i]['fullmonthly'] = bcadd($newData[$i]['monthly'],$newData[$i]['monthlyTest'],0);
+
+            // 当月实际DT人数
+            $newData[$i]['dts'] = abs(bcsub($newData[$i]['dt'],$newData[$i-1]['dt'],0));
+            // 当月测试DT人数
+            $newData[$i]['dtTests'] = abs(bcsub($newData[$i]['dtTest'],$newData[$i-1]['dtTest'],0));
         }
-        // p($newData);
+        // p($newData);die;
         //排序
         $die = array_sort($newData,'date','desc');
         $data=array(
@@ -561,7 +621,7 @@ class ReceiptsonModel extends BaseModel{
     /**
     *第三方支付某月的综合报表 $model $app $paytype支付方式
     **/
-    public function getAllFullDayPay($model,$date,$paytype){
+    public function getAllFullDayPay($model,$date,$paytype,$unArr){
         $type = implode(',',$paytype);
         $j    = date("t",strtotime($date)); //获取当前月份天数
         $start_time  = strtotime($date.'-'.'01');  //获取本月第一天时间戳
@@ -575,22 +635,44 @@ class ReceiptsonModel extends BaseModel{
                     ->alias('rs')
                     ->join('hapylife_receipt AS r ON rs.ir_receiptnum = r.ir_receiptnum')
                     ->where(array('status'=>2,'ir_paytype'=>array('in',$type),'paytime'=>array(array('egt',$starttime),array('elt',$endtime))))
-                    ->field('paytime,ir_ordertype,rs.ir_price')
+                    ->field('paytime,ir_ordertype,rs.ir_price,r.ia_name')
                     ->select();
-
         foreach($day as $key => $value){
             foreach ($list as $k => $v){
                 if(date('Y-m-d',$v['paytime'])==$value){
                     switch($v['ir_ordertype']){
                         case '1':
-                            $signup[] = $v;
-                            // 当月累计注册人数
-                            $data[$key]['fullsignup'] = count($signup);
+                            if(in_array($v['ia_name'],$unArr)){
+                                $signupTest[] = $v;
+                                // 当月累计测试注册人数
+                                $data[$key]['signupTest'] = count($signupTest);
+                            }else{
+                                $signup[] = $v;
+                                // 当月累计实际注册人数
+                                $data[$key]['signup'] = count($signup);
+                            }
                             break;
                         case '3':
-                            $monthly[] = $v;
-                            // 当月累计月费人数
-                            $data[$key]['fullmonthly'] = count($monthly);
+                            if(in_array($v['ia_name'],$unArr)){
+                                $monthlyTest[] = $v;
+                                // 当月累计测试月费人数
+                                $data[$key]['monthlyTest'] = count($monthlyTest);
+                            }else{
+                                $monthly[] = $v;
+                                // 当月累计实际月费人数
+                                $data[$key]['monthly'] = count($monthly);
+                            }
+                            break;
+                        case '5':
+                            if(in_array($v['ia_name'],$unArr)){
+                                $dtTest[] = $v;
+                                // 当月累计测试DT订单数
+                                $data[$key]['dtTest'] = count($dtTest);
+                            }else{
+                                $dt[] = $v;
+                                // 当月累计实际DT订单数
+                                $data[$key]['dt'] = count($dt);
+                            }
                             break;
                     }
                     $data[$key]['count'] = bcadd($data[$key]['count'],$v['ir_price'],2);
@@ -603,37 +685,76 @@ class ReceiptsonModel extends BaseModel{
             $newData[] = $value;
         }
         foreach($newData as $key=>$value){
-            if(empty($value['fullsignup']) && $key == 0){
-                $newData[$key]['fullsignup'] = 0;
+            if(empty($value['signup']) && $key == 0){
+                $newData[$key]['signup'] = 0;
             }else{
-                if(empty($value['fullsignup'])){
-                    $newData[$key]['fullsignup'] = $newData[$key-1]['fullsignup'];
+                if(empty($value['signup'])){
+                    $newData[$key]['signup'] = $newData[$key-1]['signup'];
                 }
             }
 
-            if(empty($value['fullmonthly']) && $key == 0){
-                $newData[$key]['fullmonthly'] = 0;
+            if(empty($value['signupTest']) && $key == 0){
+                $newData[$key]['signupTest'] = 0;
             }else{
-                if(empty($value['fullmonthly'])){
-                    $newData[$key]['fullmonthly'] = $newData[$key-1]['fullmonthly'];
+                if(empty($value['signupTest'])){
+                    $newData[$key]['signupTest'] = $newData[$key-1]['signupTest'];
+                }
+            }
+
+            if(empty($value['monthly']) && $key == 0){
+                $newData[$key]['monthly'] = 0;
+            }else{
+                if(empty($value['monthly'])){
+                    $newData[$key]['monthly'] = $newData[$key-1]['monthly'];
+                }
+            }
+
+            if(empty($value['monthlyTest']) && $key == 0){
+                $newData[$key]['monthlyTest'] = 0;
+            }else{
+                if(empty($value['monthlyTest'])){
+                    $newData[$key]['monthlyTest'] = $newData[$key-1]['monthlyTest'];
+                }
+            }
+
+            if(empty($value['dt']) && $key == 0){
+                $newData[$key]['dt'] = 0;
+            }else{
+                if(empty($value['dt'])){
+                    $newData[$key]['dt'] = $newData[$key-1]['dt'];
+                }
+            }
+
+            if(empty($value['dtTest']) && $key == 0){
+                $newData[$key]['dtTest'] = 0;
+            }else{
+                if(empty($value['dtTest'])){
+                    $newData[$key]['dtTest'] = $newData[$key-1]['dtTest'];
                 }
             }
         }
+        // p($newData);die;
         for($i=0;$i<count($newData);$i++){
-            // 当月注册人数
-            $newData[$i]['signup'] = bcsub($newData[$i]['fullsignup'],$newData[$i-1]['fullsignup'],0);
-            if($newData[$i]['signup']>=0){
-                $newData[$i]['signup'] = $newData[$i]['signup'];
-            }else{
-                $newData[$i]['signup'] = 0;
-            }
-            // 当月月费人数
-            $newData[$i]['monthly'] = bcsub($newData[$i]['fullmonthly'],$newData[$i-1]['fullmonthly'],0);
-            if($newData[$i]['monthly']>=0){
-                $newData[$i]['monthly'] = $newData[$i]['monthly'];
-            }else{
-                $newData[$i]['monthly'] = 0;
-            }
+            // 当月实际注册人数
+            $newData[$i]['signs'] = abs(bcsub($newData[$i]['signup'],$newData[$i-1]['signup'],0));
+            // 当月测试注册人数
+            $newData[$i]['signTests'] = abs(bcsub($newData[$i]['signupTest'],$newData[$i-1]['signupTest'],0));
+            // 当月总注册人数
+            $newData[$i]['fullsignup'] = bcadd($newData[$i]['signup'],$newData[$i]['signupTest'],0);
+            
+
+            // 当月实际月费人数
+            $newData[$i]['monthlys'] = abs(bcsub($newData[$i]['monthly'],$newData[$i-1]['monthly'],0));
+            // 当月测试月费人数
+            $newData[$i]['monthlyTests'] = abs(bcsub($newData[$i]['monthlyTest'],$newData[$i-1]['monthlyTest'],0));
+            // 当月总月费人数
+            $newData[$i]['fullmonthly'] = bcadd($newData[$i]['monthly'],$newData[$i]['monthlyTest'],0);
+
+            // 当月实际DT人数
+            $newData[$i]['dts'] = abs(bcsub($newData[$i]['dt'],$newData[$i-1]['dt'],0));
+            // 当月测试DT人数
+            $newData[$i]['dtTests'] = abs(bcsub($newData[$i]['dtTest'],$newData[$i-1]['dtTest'],0));
+            
         }
         // p($newData);
         // //排序
@@ -646,7 +767,7 @@ class ReceiptsonModel extends BaseModel{
     /**
     *第三方支付某天流水 $model $app $paytype支付方式
     **/
-    public function getAllFullDayPayInfo($model,$date,$paytype,$word,$limit='50'){
+    public function getAllFullDayPayInfo($model,$date,$paytype,$word,$unArr,$limit='50'){
         $type = implode(',',$paytype);
         $starttime   = strtotime($date);
         $endtime     = strtotime("+1 day",strtotime($date));

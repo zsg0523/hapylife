@@ -92,7 +92,7 @@
 		</div>
 		<div class="main">
 			<div class="rg-div">
-				<form class="form-horizontal" method="post" action="{:U('Home/SelfRegister/new_registerInfo',array('iuid'=>$iuid,'hu_nickname'=>$customerid))}" enctype="multipart/form-data" onsubmit="return checkform();">
+				<form class="form-horizontal" method="post" action="{:U('Home/SelfRegister/new_registerInfo')}" enctype="multipart/form-data" onsubmit="return checkform();">
 					<div class="form-group" onclick="hiden(this);" style="margin-top: 10px;">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>中文姓:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
@@ -431,7 +431,6 @@
 	$("#distpicker").distpicker({
 	  	placeholder: false,
 	});
-	$("input[name='EnrollerNameCn']").val($("input[name='EnrollerNameCn']").val().replace($("input[name='EnrollerNameCn']").val().substring(1,2),'*'));
 	function back(){			
 		window.location.href ="{:U('Home/Index/login')}";
 	}
