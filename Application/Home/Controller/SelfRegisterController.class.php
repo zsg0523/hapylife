@@ -38,27 +38,6 @@ class SelfRegisterController extends HomeBaseController{
     }
     /********************************************************************新代理注册--需要购买产品********************************************************************************/
     /**
-    * 返回推荐人姓名
-    **/ 
-    public function checkName(){
-        $customerid = strtoupper(trim(I('post.EnrollerID')));
-        if($customerid){
-            $usa = new \Common\UsaApi\Usa;
-            $map = $usa->validateHpl($customerid);
-            if(empty($map['errors'])){
-                $data['lastname'] = $map['lastName'];
-                $data['firstname'] = $map['firstName'];
-                $this->ajaxreturn($data);     
-            }else{
-                $data['status'] = 0;
-                $this->ajaxreturn($data);           
-            }
-        }else{
-            $data['status'] = 0;
-            $this->ajaxreturn($data);           
-        }
-    }
-    /**
     * 保存用户资料
     **/ 
     public function new_registerInfo(){
