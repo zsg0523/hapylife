@@ -197,6 +197,8 @@ class HapylifeChangeController extends HomeBaseController{
         $CustomerID = strtoupper(I('post.CustomerID'));
         if(substr($CustomerID,0,3) == 'HPL'){
             $data = M('User')->where(array('customerid'=>$CustomerID))->find();
+            $data['acid'] = 217;
+            $data['acnumber'] = 86;
             if($data){
                 $data['status'] = 1;
                 $this->ajaxreturn($data);
@@ -299,6 +301,12 @@ class HapylifeChangeController extends HomeBaseController{
     public function checkByPhone(){
         $phoneNumber = I('post.number');
         $data = M('User')->where(array('Phone'=>$phoneNumber))->select();
+        foreach($data as $key => $value){
+            if(empty($value['acid']) || empty($value['acnumber'])){
+                $data[$key]['acid'] = 217;
+                $data[$key]['acnumber'] = 86;
+            }
+        }
         if($data){
             $data['status'] = 1;
             $this->ajaxreturn($data);
