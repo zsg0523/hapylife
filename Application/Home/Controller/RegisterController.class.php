@@ -149,16 +149,21 @@ class RegisterController extends HomeBaseController{
             $usa = new \Common\UsaApi\Usa;
             $map = $usa->validateHpl($customerid);
             if(empty($map['errors'])){
-                $data['lastname'] = $map['lastName'];
-                $data['firstname'] = $map['firstName'];
-                $this->ajaxreturn($data);     
+                if($map['isActive']){
+                    $data['lastname'] = $map['lastName'];
+                    $data['firstname'] = $map['firstName'];
+                    $this->ajaxreturn($data);
+                }else{
+                    $data['status'] = 2;
+                    $this->ajaxreturn($data);
+                }
             }else{
                 $data['status'] = 0;
-                $this->ajaxreturn($data);           
+                $this->ajaxreturn($data);
             }
         }else{
             $data['status'] = 0;
-            $this->ajaxreturn($data);           
+            $this->ajaxreturn($data);
         }
     }
     /**

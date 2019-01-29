@@ -138,8 +138,11 @@ class HapylifeAddController extends HomeBaseController{
                         )
                 );
             $Add = new \Api\Controller\HapylifeAddController;
-            $add = $Add->wvAddReceipt();
-            if($add){
+            $addReceipt = $Add->wvAddReceipt();
+            $addStatus = $Add->wvAddStatus();
+            // p($addStatus);
+            // p($addReceipt);
+            if($addReceipt || $addStatus){
                 $this->ajaxreturn($sample);
             }
         }
@@ -257,7 +260,9 @@ class HapylifeAddController extends HomeBaseController{
 
 
 
-
+    /**
+    * 手动创建已经完成支付订单
+    **/ 
     public function addReceipt(){
         $hu_nickname = I('post.hu_nickname');
         $lastname    = I('post.lastname');
@@ -354,6 +359,10 @@ class HapylifeAddController extends HomeBaseController{
             }
         }
     }
+
+    /**
+    * 给每个HPL账号添加180 DT 积分
+    **/ 
     public function addDt(){
         $user = M('User')->select();
         foreach ($user as $key => $value) {
@@ -386,10 +395,9 @@ class HapylifeAddController extends HomeBaseController{
         p($num);die;
     }
 
-
-
-
-
+    /**
+    * 生成订单
+    **/ 
     public function wvAddReceipt(){
         $data = M('wvNotification')->where(array('NotificationType'=>array('IN','1'),'status'=>0))->select();
         foreach($data as $key=>$value){
@@ -637,35 +645,43 @@ class HapylifeAddController extends HomeBaseController{
         return $addlog;
     }
 
+    /**
+    * 账号状态改变，发送通知
+    **/ 
+    public function wvAddStatus(){
+        $data = M('wvNotification')->where(array('NotificationType'=>array('IN','3'),'status'=>0))->select();
+        foreach($data as $key=>$value){
+            $message[$value['id']] = json_decode($value['messages'],true);
+            $message[$value['id']]['Date'] = $value['date'];
+        }
+        // 发送短信通知
+        foreach($message as $key=>$value){
+            $userinfo = M('User')->where(array('CustomerID'=>$value['HapyLifeId']))->find();
+            // 短信模板ID
+            $templateId ='274355';
+            // 短信模板参数
+            $params     = array($value['HapyLifeId'],$value['CurrentStatus']);
+            // 短信模板内容
+            $content = '尊敬的'.$value['HapyLifeId'].'会员，您的账号状态已更改为：'.$value['CurrentStatus'].'。';
+            // 收件人姓名
+            $addressee = $userinfo['lastname'].$userinfo['firstname'];
+            $sms        = D('Smscode')->sms('86',$userinfo['phone'],$params,$templateId);
+            if($sms['result'] == 0){
+                $result = D('Smscode')->addLog('86',$userinfo['phone'],'系统',$addressee,'账号状态变更',$content,$userinfo['customerid']);
+            }else{
+                $result = D('Smscode')->addLog('86',$userinfo['phone'],'系统',$addressee,$sms['errmsg'],$content,$userinfo['customerid']);
+            }
 
+            if($result){
+                $status = M('wvNotification')->where(array('id'=>$key))->setfield('status','1');
+            }
+        }
+        return $result;
+    }
 
-
-
-
-
-
-            // switch ($data['NotificationType']) {
-            //     case '1':
-                    
-                // case '2':
-                //     // 发送短信提示
-                //     $templateId ='208997';
-                //     $time = date('Y-m-d H:i:s',strtotime($data['Date']));
-                //     $params     = array($time);
-                //     $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                //     if($sms['errmsg'] == 'OK'){
-                //         $content = '恭喜您，当月成功推荐4名新会员，可享有月费优惠，请在'.$time.'前完成缴费';
-                //         $result = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'免月费通知',$content,$userinfo['customerid']);
-                //         if($result){
-                //             $status = M('wvNotification')->where(array('id'=>$res))->setfield('status','1');
-                //             if($status){
-                //                 // 设置显示优惠月费包
-                //                 $showProduct = M('User')->where(array('customerid'=>$value['HplId']))->setfield('showProduct',2);
-                //             }
-                //         }
-                //     }
-                //     break;
-            // }
+    /**
+    * 四天后还未支付订单，重新发送通知
+    **/ 
     public function reCall(){
         $data = M('wvNotification')->where(array('secStatus'=>0))->select();
         foreach($data as $key=>$value){
@@ -712,6 +728,9 @@ class HapylifeAddController extends HomeBaseController{
         }
     }
 
+    /**
+    * 10月份未支付订单重新通知
+    **/ 
     public function reSend(){
         $starttime = strtotime('2018-10-01');
         $endtime = strtotime('2018-10-30')+24*3600;
@@ -736,11 +755,5 @@ class HapylifeAddController extends HomeBaseController{
             }
         }
         p($sms);
-    }
-
-    public function test(){
-        $htid = I('post.htid');
-        $data = M('Tempuser')->where(array('htid'=>$htid))->find();
-        p($data);
     }
 }

@@ -8081,3 +8081,121 @@
 2019-01-11 15:16:07**********{"hu_nickname":"HPL00000181"}**********
 2019-01-11 15:28:54********************
 2019-01-12 16:15:13********************
+2019-01-29 11:21:42**********{
+	"Messages": [{
+		"HapyLifeId": "HPL0012345",
+		"CurrentStatus": "Resigned",
+		"PreviousStatus": "Active",
+		"ModifiedDate": "2019-01-2809: 09: 36.913",
+		"ModifiedBy": "Test"
+	},
+	{
+		"HapyLifeId": "HPL0012346",
+		"CurrentStatus": "Resigned",
+		"PreviousStatus": "Active",
+		"ModifiedDate": "2019-01-2809: 09: 36.913",
+		"ModifiedBy": "Test"
+	},
+	{
+		"HapyLifeId": "HPL0012347",
+		"CurrentStatus": "Resigned",
+		"PreviousStatus": "Active",
+		"ModifiedDate": "2019-01-2809: 09: 36.913",
+		"ModifiedBy": "Test"
+	},
+		{
+		"HapyLifeId": "HPL0012348",
+		"CurrentStatus": "Resigned",
+		"PreviousStatus": "Active",
+		"ModifiedDate": "2019-01-2809: 09: 36.913",
+		"ModifiedBy": "Test"
+	}],
+	"Date": "2019-01-29T01:00:05.162807Z",
+	"NotificationType": 3,
+	"NotificationDescription": "customer change status"
+}**********
+2019-01-29 11:23:33**********{
+	"Messages": [{
+		"OrderId": 299222917,
+		"CustomerId": 71875899,
+		"CustomerName": "JINDUO WANG",
+		"HplId": "HPL00123688",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-10-10T03:30:23Z",
+		"Amount": 114.9800
+	},
+	{
+		"OrderId": 299222918,
+		"CustomerId": 71876502,
+		"CustomerName": "Yawen Liu",
+		"HplId": "HPL00123700",
+		"OrderTypeId": 4,
+		"OrderType": "Recurring Order",
+		"OrderStatus": "CC Pending",
+		"OrderDate": "2018-10-10T03:30:23Z",
+		"Amount": 114.9800
+	},
+	{
+		"OrderId": 298101024,
+		"CustomerId": 71875899,
+		"CustomerName": "JINDUO WANG",
+		"HplId": "HPL00123689",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-10-10T08:12:59Z",
+		"Amount": 0.0000
+	},
+	{
+		"OrderId": 298101024,
+		"CustomerId": 71876502,
+		"CustomerName": "Yawen Liu",
+		"HplId": "HPL00123610",
+		"OrderTypeId": 5,
+		"OrderType": "Import",
+		"OrderStatus": "Pending",
+		"OrderDate": "2018-10-10T15:15:16Z",
+		"Amount": 0.0000
+	}],
+	"Date": "2018-10-12T01:00:05.162807Z",
+	"NotificationType": 1,
+	"NotificationDescription": "Payment reminder"
+}**********
+2019-01-29 11:58:37**********{
+	"Messages": [{"HapyLifeId":"HPL00000181","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"}{"HapyLifeId":"HPL00123681","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"}{"HapyLifeId":"HPL00123680","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"}],
+	"Date": "2018-01-29T01:00:05.162807Z",
+	"NotificationType": 3,
+	"NotificationDescription": "customer change status"
+}**********
+2019-01-29 11:59:31**********{
+	"Messages": [{"HapyLifeId":"HPL00000181","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"}{"HapyLifeId":"HPL00123681","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"}{"HapyLifeId":"HPL00123680","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"}],
+	"Date": "2018-01-29T01:00:05.162807Z",
+	"NotificationType": 3,
+	"NotificationDescription": "customer change status"
+}**********
+2019-01-29 12:00:18**********{
+	"Messages": [{"HapyLifeId":"HPL00000181","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"}{"HapyLifeId":"HPL00123681","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"}{"HapyLifeId":"HPL00123680","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"}],
+	"Date": "2018-01-29T01:00:05.162807Z",
+	"NotificationType": 3,
+	"NotificationDescription": "customer change status"
+}**********
+2019-01-29 12:00:31**********{
+	"Messages": [{"HapyLifeId":"HPL00000181","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"}{"HapyLifeId":"HPL00123681","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"}{"HapyLifeId":"HPL00123680","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"}],
+	"Date": "2018-01-29T01:00:05.162807Z",
+	"NotificationType": 3,
+	"NotificationDescription": "customer change status"
+}**********
+2019-01-29 12:01:45**********{
+	"Messages": [{"HapyLifeId":"HPL00000181","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"},{"HapyLifeId":"HPL00123680","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"},{"HapyLifeId":"HPL00123681","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"}],
+	"Date": "2018-01-29T12:00:05.162807Z",
+	"NotificationType": 3,
+	"NotificationDescription": "CUSTOMER CHANGE STATUS"
+}**********
+2019-01-29 12:01:58**********{
+	"Messages": [{"HapyLifeId":"HPL00000181","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"},{"HapyLifeId":"HPL00123680","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"},{"HapyLifeId":"HPL00123681","CurrentStatus":"Resigned","PreviousStatus":"Active","ModifiedDate":"2019-01-2809: 09: 36.913","ModifiedBy":"Test"}],
+	"Date": "2018-01-29T12:00:05.162807Z",
+	"NotificationType": 3,
+	"NotificationDescription": "CUSTOMER CHANGE STATUS"
+}**********
