@@ -11,7 +11,7 @@ class SuperController extends AdminBaseController{
 	public function index(){
 		$customerid = strtoupper(I('get.customerid'));
 		$assign = D('User')->getIndexPage(D('User'),$customerid);
-		// p($assign);
+		// p($assign);die;
 		$this->assign($assign);
 		$this->assign('customerid',$customerid);
 		$this->display();

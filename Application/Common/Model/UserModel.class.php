@@ -1387,6 +1387,8 @@ class UserModel extends BaseModel{
 				// 获取USA编码
 				$usa = new \Common\UsaApi\Usa();
 		    	$activities = $usa->activities($value['customerid']);
+		    	$validate = $usa->validateHpl($value['customerid']);
+		    	$data[$key]['activities'] = $validate['isActive'];
 		    	if(!$activities['errors']){
 		            $weekly = $activities['weekly'];
 		            $monthly = $activities['monthly'];
@@ -1481,6 +1483,11 @@ class UserModel extends BaseModel{
 
 				// 上线信息
 				$enroller = M('User')->where(array('CustomerID'=>$value['enrollerid']))->select();
+				// 查询账号状态
+				foreach($enroller as $keys => $values){
+					$validateHpl = $usa->validateHpl($values['customerid']);
+					$enroller[$keys]['activities'] = $validateHpl['isActive'];
+				}
 
 				// 下线信息
 				$lower = M('User')->where(array('EnrollerID'=>$customerid,'DistributorType'=>array('NOT IN','Pc')))->select();

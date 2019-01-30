@@ -34,7 +34,8 @@
 						<th>wvCustomerID</th>
                         <th>姓</th>
                         <th>名</th>
-                        <th colspan="2">注册时间</th>
+                        <th>注册时间</th>
+                        <th>状态</th>
 					</tr>
 					
 					<foreach name="data" item="v">
@@ -47,7 +48,15 @@
 							</if>
 							<td>{$v.lastname}</td>
 							<td>{$v.firstname}</td>
-							<td colspan="2">{:date('Y-m-d H:i:s',$v['joinedon'])}</td>
+							<td>{:date('Y-m-d H:i:s',$v['joinedon'])}</td>
+							<switch name="v['activities']">
+								<case value="1">
+									<td colspan="2">活跃</td>
+								</case>
+								<case value="0">
+									<td colspan="2">不活跃</td>
+								</case>
+							</switch>
 						</tr>
 					</foreach>
 					<tr>
@@ -167,7 +176,14 @@
 							<td colspan="2">{$v['customerid']}</td>
 							<td>{$v['lastname']}</td>
 							<td>{$v['firstname']}</td>
-							<td colspan="2"></td>
+							<switch name="v['activities']">
+								<case value="1">
+									<td colspan="2">活跃</td>
+								</case>
+								<case value="0">
+									<td colspan="2">不活跃</td>
+								</case>
+							</switch>
 						</tr>
 					</foreach>
 			
