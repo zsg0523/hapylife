@@ -180,7 +180,7 @@ class ChangeController extends HomeBaseController{
             $this->error('该手机号码已被注册，请重新填写！',U('Home/Purchase/editPhone'));
         }else{
             // 修改系统数据
-            $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->save($data);
+            $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->setfield('Phone',$data['Phone']);
         }
         //更新usa数据
         $usa    = new \Common\UsaApi\Usa;
@@ -208,7 +208,7 @@ class ChangeController extends HomeBaseController{
         $userinfo = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->find();
         if($userinfo['placement'] != $data['Placement']){
             // 修改系统数据
-            $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->save($data);
+            $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->setfield('Placement',$data['Placement']);
         }
         switch($data['Placement']){
             case 'BuildLeft':
@@ -226,14 +226,14 @@ class ChangeController extends HomeBaseController{
         }
         //更新usa数据
         $usa    = new \Common\UsaApi\Usa;
-        $result = $usa->ChangePlacement($data['happyLifeID'],$note);
+        $result = $usa->ChangePlacement($data['happyLifeID'],$data['Placement']);
         if($result['code'] == 200){
             $templateId ='244304';
-            $params     = array($data['happyLifeID'],$data['Placement']);
+            $params     = array($data['happyLifeID'],$note);
             $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
             if($sms['errmsg'] == 'OK'){
                 $addressee = $userinfo['lastname'].$userinfo['firstname'];
-                $contents = '尊敬的'.$data['happyLifeID'].'会员，您已成功将推荐设置修改为：'.$data['Placement'];
+                $contents = '尊敬的'.$data['happyLifeID'].'会员，您已成功将推荐设置修改为：'.$note;
                 $addlog = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'修改推荐设置',$contents,$data['happyLifeID']);
             }
             $this->success('修改成功',U('Home/Purchase/myProfile'));

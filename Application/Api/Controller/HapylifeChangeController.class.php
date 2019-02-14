@@ -396,7 +396,7 @@ class HapylifeChangeController extends HomeBaseController{
             $this->ajaxreturn($sample);
         }else{
             // 修改系统数据
-            $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->save($data);
+            $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->setfield('Phone',$data['Phone']);
         }
         if($saveData){
             //更新usa数据
@@ -426,7 +426,7 @@ class HapylifeChangeController extends HomeBaseController{
         $userinfo = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->find();
         if($userinfo['placement'] != $data['Placement']){
             // 修改系统数据
-            $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->save($data);
+            $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->setfield('Placement',$data['Placement']);
         }
         switch($data['Placement']){
             case 'BuildLeft':
@@ -444,7 +444,7 @@ class HapylifeChangeController extends HomeBaseController{
         }
         //更新usa数据
         $usa    = new \Common\UsaApi\Usa;
-        $result = $usa->ChangePlacement($data['happyLifeID'],$note);
+        $result = $usa->ChangePlacement($data['happyLifeID'],$data['Placement']);
         if($result['code'] == 200){
             $sample = array(
                 'status' => 1,
