@@ -1388,7 +1388,9 @@ class UserModel extends BaseModel{
 				$usa = new \Common\UsaApi\Usa();
 		    	$activities = $usa->activities($value['customerid']);
 		    	$validate = $usa->validateHpl($value['customerid']);
+		    	$getCustomer = $usa->getCustomer($value['customerid']);
 		    	$data[$key]['activities'] = $validate['isActive'];
+		    	$data[$key]['binaryplacementpreference'] = $getCustomer['binaryPlacementPreference'];
 		    	if(!$activities['errors']){
 		            $weekly = $activities['weekly'];
 		            $monthly = $activities['monthly'];
@@ -1487,6 +1489,8 @@ class UserModel extends BaseModel{
 				foreach($enroller as $keys => $values){
 					$validateHpl = $usa->validateHpl($values['customerid']);
 					$enroller[$keys]['activities'] = $validateHpl['isActive'];
+					$getCustomer = $usa->getCustomer($values['customerid']);
+					$enroller[$keys]['binaryplacementpreference'] = $getCustomer['binaryPlacementPreference'];
 				}
 
 				// 下线信息
@@ -1494,6 +1498,8 @@ class UserModel extends BaseModel{
 				foreach($lower as $key => $value){
 					$lower[$key]['receiptlist'] = M('Receipt')->where(array('rCustomerID'=>$value['customerid']))->select();
 				}
+
+
 			}
 
 	        // p($code);
@@ -1504,8 +1510,9 @@ class UserModel extends BaseModel{
 	            'bonus'=>$bonus,
 	            'coupon'=>$back_result,
 	            'enroller'=>$enroller,
-	            'lower'=>$lower
+	            'lower'=>$lower,
 	        );
+	        
 	        return $map;
     	}
     }

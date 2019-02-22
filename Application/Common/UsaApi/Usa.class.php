@@ -219,6 +219,18 @@ class usa
         return $userinfo;
 	}
 
+	/**
+	* get Customer
+	**/ 
+	public function getCustomer($HapyLifeId){
+		$key  = $this->key;
+		$url  = $this->url;
+		$data = $url."/api/Hpl/Customer/".$HapyLifeId.'?key='.$key;
+		$result  = file_get_contents($data);
+		$jsonStr = json_decode($result,true);
+		return $jsonStr;
+	}
+
 
 
 

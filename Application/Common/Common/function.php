@@ -100,6 +100,12 @@ function addUsaLog($data){
     return;
 }
 
+function addUsaLogUpdate($data){
+    $log  = date('Y-m-d H:i:s').'**********'.$data.'**********'.PHP_EOL;
+    $add  = file_put_contents('./update.txt', $log,FILE_APPEND);
+    return;
+}
+
 /**
  * 上传文件到oss并删除本地文件
  * @param  string $path 文件路径
