@@ -358,8 +358,9 @@ class PurchaseController extends HomeBaseController{
         $usa = new \Common\UsaApi\Usa;
         $getCustomer = $usa->getCustomer($data['customerid']);
         if(!$getCustomer['errors']){
-            $data['binaryPlacementPreference'] = $getCustomer['binaryPlacementPreference'];
+            $data['binaryplacementpreference'] = $getCustomer['binaryPlacementPreference'];
         }
+
         /****获取usa系统编码{0.0.0.0}***/ 
         // $map = $usa->activities($data['customerid']);
         // if(!$map['errors']){
@@ -1991,9 +1992,11 @@ class PurchaseController extends HomeBaseController{
     **/ 
     public function editPlacement(){
         $iuid = $_SESSION['user']['id'];
+        $placement = I('get.placement');
         $data = M('User')->where(array('iuid'=>$iuid))->find();
         $assign = array(
-            'data' => $data
+            'data' => $data,
+            'placement' => $placement,
         );
 
         $usa    = new \Common\UsaApi\Usa;
