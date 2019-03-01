@@ -274,6 +274,23 @@ class HapylifeUsaController extends HomeBaseController{
 		p($jsonStr);
 	}
 
+	//
+	public function test(){
+		$num = I('post.num');
+		$data = M('User')->where(array('wvCustomerID'=>array(neq,'') ,'DistributorType'=>array(neq,'Pc'), 'LastName'=>array('NOT IN',array('测试','测','test')),'isexit'=>1))->limit($num,25)->select();
+		$num = 0;
+		foreach($data as $key=>$value){
+			$usa = new \Api\Controller\HapylifeUsaController;
+			$result = $usa->getCustomer($value['customerid']);
+			if($result){
+				if($result['customerStatus'] == 'Active'){
+					$num++;
+				}
+			}
+		}
+		p($num);
+	} 
+
 	
 	
 

@@ -29,11 +29,11 @@
 			    		<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
 				    	<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
                         <input name="word" type="text" placeholder="关键词" value="{$word}" size="20" />
-                        <input class='btn btn-sm' type="submit" value="筛选" />
                         <if condition="$session['user']['username'] eq mary || $session['user']['username'] eq admin2">
                         <else />
                         	<input class='btn btn-sm' type="submit" name='excel' value="excel" />
 					    </if>
+                        <input class='btn btn-sm' type="submit" value="筛选" />
                 	</form>
 			    </li>
             </ul>

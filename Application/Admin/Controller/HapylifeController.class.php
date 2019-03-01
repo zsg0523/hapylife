@@ -642,7 +642,7 @@ class HapylifeController extends AdminBaseController{
 	//查看订单明细
 	public function receiptSon(){
 		$ir_receiptnum = I('get.ir_receiptnum');
-		$field = '*,rs.ir_price as r_price,rs.ir_point as r_point';
+		$field = '*,rs.ir_price as r_price,rs.ir_point as r_point,rs.ir_dt as r_dt';
 		$assign = D('Receiptson')->getSendPageSon(D('Receiptson'),$ir_receiptnum,$field);
 		$this->assign($assign);
 		$this->display();
@@ -2345,6 +2345,50 @@ class HapylifeController extends AdminBaseController{
 		$newData = array_sort($newData,'num','DESC');
 		$assign = pages($newData,$p,25);
 		$this->assign($assign);
+		$this->display();
+	}
+
+/***********************wv推送*******************************/ 
+	/**
+	* 通过wv推送
+	* 账号状态变更
+	**/ 
+	public function changeStatus(){
+		$p = I('get.p',1);
+		$HapyLifeId = I('get.HapyLifeId');
+		$starttime = strtotime(I('get.starttime'))?strtotime(I('get.starttime')):0;
+		$endtime   = strtotime(I('get.endtime'))?strtotime(I('get.endtime'))+24*3600:0;
+		$data = M('wvNotification')->where(array('NotificationType'=>3))->order('id DESC')->select();
+		foreach($data as $key=>$value){
+			$data[$key]['messages'] = json_decode($value['messages'],true);
+			if($starttime){
+				if(strtotime($data[$key]['date']) >= $starttime){
+					if($HapyLifeId){
+						if($data[$key]['messages']['HapyLifeId'] == $HapyLifeId){
+		                    $list[] = $data[$key];
+		                }
+					}else{
+						$list[] = $data[$key];
+					}
+				}
+			}
+			if($endtime){
+				if(strtotime($data[$key]['date']) >= $starttime && strtotime($data[$key]['date']) <= $endtime){
+					if($HapyLifeId){
+						if($data[$key]['messages']['HapyLifeId'] == $HapyLifeId){
+		                    $list[] = $data[$key];
+		                }
+					}else{
+						$list[] = $data[$key];
+					}
+				}
+			}
+		}
+		$assign = pages($list,$p,20);
+		$this->assign($assign);
+		$this->assign('HapyLifeId',$HapyLifeId);
+		$this->assign('starttime',I('get.starttime'));
+		$this->assign('endtime',I('get.endtime'));
 		$this->display();
 	}
 }

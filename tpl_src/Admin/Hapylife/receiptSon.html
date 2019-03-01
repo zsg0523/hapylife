@@ -65,7 +65,11 @@
 							<td>{$v['ir_price']}</td>
 							<td>{$v['ir_point']}</td>
 							<td>{$v['r_price']}</td>
-							<td>{$v['r_point']}</td>
+							<if condition="$v['ir_paytype'] eq 7">
+								<td>{$v['r_dt']}</td>
+							<else />
+								<td>{$v['r_point']}</td>
+							</if>
 							<td>
 								<if 	condition="$v['ir_paytype'] eq 0">未支付
                                 <elseif condition="$v['ir_paytype'] eq 1"/>IPS微信支付
@@ -74,6 +78,7 @@
                                 <elseif condition="$v['ir_paytype'] eq 4"/>畅捷支付
                                 <elseif condition="$v['ir_paytype'] eq 5"/>现金支付
                                 <elseif condition="$v['ir_paytype'] eq 6"/>接龙易支付
+                                <elseif condition="$v['ir_paytype'] eq 7"/>DT支付
                                 </if>
 							</td>
 							<td>{$v['productname']}</td>

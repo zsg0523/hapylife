@@ -1,0 +1,70 @@
+<extend name="Public:base" />
+
+<block name="title">账号状态变更</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            用户管理
+            &gt;
+			账号状态变更
+        </h1>
+    </div>
+    <div class="col-xs-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+            	<li class="active">
+					<a href="#home" data-toggle="tab">账号状态变更列表</a>
+			    </li>
+            </ul>
+		</div>
+            <div class="tab-content">
+            	<form action="{:U('Admin/Hapylife/changeStatus')}" method="get">
+					<table class="table table-striped table-bordered table-hover table-condensed">
+						<tr class="wvbonus-tr">
+							<th><input type="text" name='HapyLifeId' placeholder="HapyLifeId" value="{$HapyLifeId}" /></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th>
+								<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px; width: 49%;" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off" placeholder="starttime" />
+				    			<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px; width: 49%; float: right;" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off" placeholder="endtime" />
+							</th>
+							<th><input class='btn btn-sm' type="submit" value="筛选" /></th>
+						</tr>
+						<tr>
+							<th >HapyLifeId</th>
+							<th >CurrentStatus</th>
+							<th >ModifiedDate</th>
+	                        <th >ModifiedBy</th>
+	                        <th >Date</th>
+	                        <th >NotificationDescription</th>
+	                        <th >AddTime</th>
+						</tr>
+						<foreach name="data" item="v">
+							<tr>
+								<td>{$v.messages.HapyLifeId}</td>
+								<td>{$v.messages.CurrentStatus}</td>
+								<td>{$v.messages.ModifiedDate}</td>
+								<td>{$v.messages.ModifiedDate}</td>
+								<td>{$v.date}</td>
+								<td>{$v.notificationdescription}</td>
+								<td>{$v.addtime}</td>
+							</tr>
+						</foreach>
+					</table>
+            	</form>
+				<div class='page'>
+					{$page}
+				</div>
+            </div>
+        </div>
+    </div>
+
+    
+
+</block>
+<block name="js">
+	
+</block>
