@@ -377,8 +377,8 @@ class HapylifeController extends AdminBaseController{
 			'appkey' => 'ALL',
 		);
 		$data    = json_encode($data);
-		// $sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
-		$sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/getCouponList";
+		$sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getCouponList";
+		// $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/getCouponList";
 		$result  = post_json_data($sendUrl,$data);
 		$back_message = json_decode($result['result'],true);
 		$CouponGroups = $back_message;
@@ -1485,47 +1485,49 @@ class HapylifeController extends AdminBaseController{
 
 	}
 
-
 	// 发送物流短信
 	public function send_sms(){
 		$data = I('post.');
-		$issend = I('post.is_send');
 		$remove = explode('-',$data['username']);
-		
-		if(!empty($issend)){
-			// 发送续费短信
-			$spotemplate = 209017;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
-			$sposmsSign  = "安永中国"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
-			$spoparams = array($remove[0],$data['productnams']);
-		}
 
+		switch ($data['spotemplate']) {
+			case '146228':
+				$spotemplate = 146228;
+				$spoparams   = array($remove[0],$data['productnams']);
+				$content  	 = '亲爱的会员'.$remove[0].'，您购买的'.$data['productnams'].'物流信息出现问题，我们会有电话通知您，请留意接听。';
+				$result = M('Receipt')->where(array('irid'=>$data['irid']))->setfield('is_send',2);
+				$product_name = $data['productnams'];
+				break;
+			case '197006':
+				$spotemplate = 197006;
+				$spoparams   = array($data['ir_receiptnum']);
+				$content  	 = '您的订单已发货，编号为'.$data['ir_receiptnum'].'，请保持手机通讯畅通！';
+				$result = M('Receipt')->where(array('irid'=>$data['irid']))->setfield('is_send_out',2);
+				$product_name = '发货通知';
+				break;
+		}
+		
         $sponsorSms    = D('Smscode')->sms($data['acnumber'],$data['phone'],$spoparams,$spotemplate);
         
         if($sponsorSms['errmsg']=='OK'){
-        	if(!empty($issend)){
-        		$is_send['is_send'] = 2;
-				$result = M('Receipt')->where(array('irid'=>$data['irid']))->save($is_send);
-				if($result){
-	        		$mape  = array(
-	                    'phone'   =>$data['phone'],
-	                    'content'    =>'亲爱的会员'.$remove[0].'，您购买的'.$data['productnams'].'物流信息出现问题，我们会有电话通知您，请留意接听。',
-	                    'acnumber'=>$data['acnumber'],
-	                    'date'    =>date('Y-m-d H:i:s'),
-	                    'operator' => $_SESSION['user']['username'],
-	                    'product_name' => $data['productnams'],
-	                    'addressee' => $remove[0],
-	                    'customerid' => $remove[1]
-	                );
-	                $add = D('SmsLog')->add($mape);
-	                if($add){
-						$this->success('发送成功',U('Admin/Hapylife/sendReceipt'));
-	                }else{
-	                	$this->error('发送失败',U('Admin/Hapylife/sendReceipt'));
-	                }
-	        	}
-        	}
+        	$mape  = array(
+                'phone'   =>$data['phone'],
+                'content'    =>$content,
+                'acnumber'=>$data['acnumber'],
+                'date'    =>time(),
+                'operator' => $_SESSION['user']['username'],
+                'product_name' => $product_name,
+                'addressee' => $remove[0],
+                'customerid' => $remove[1]
+            );
+            $add = D('SmsLog')->add($mape);
+            if($add){
+				$this->success('发送成功',$_SERVER['HTTP_REFERER']);
+            }else{
+            	$this->error('发送失败',$_SERVER['HTTP_REFERER']);
+            }
         }else{
-            $this->error('发送失败',U('Admin/Hapylife/sendReceipt'));
+            $this->error('发送失败',$_SERVER['HTTP_REFERER']);
         }
 	}
 
@@ -1564,86 +1566,50 @@ class HapylifeController extends AdminBaseController{
 	public function add_sends(){
 		$data = I('post.');
 		$remove = explode('-',$data['username']);
-
-		if($data['psd'] == 209017){
-			// 物流信息通知
-			$spotemplate = 209017;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
-			$sposmsSign  = "安永中国"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
-			$spoparams = array($remove[0],$data['productnams']);
-		}
-
-		if($data['psd'] == 209019){
+		switch ($data['psd']) {
 			// 续费信息通知
-			$spotemplate = 209019;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
-			$sposmsSign  = "安永中国"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
-			$spoparams = array($remove[0],$data['endtime']);
-		}
-
-		if($data['psd'] == 209098){
+			case '146227':
+				$spotemplate  = 146227;
+				$spoparams    = array($remove[0],$data['endtime']);
+				$content      = '亲爱的会员'.$remove[0].'，这是系统提醒消息，请在'.$data['endtime'].'之前购买月费包。';
+				$product_name = '月费购买通知消息';
+				break;
+			// 物流信息通知
+			case '146228':
+				$spotemplate  = 146228;
+				$spoparams    = array($remove[0],$data['productnams']);
+				$content      = '亲爱的会员'.$remove[0].'，您购买的'.$data['productnams'].'物流信息出现问题，我们会有电话通知您，请留意接听。';
+				$product_name = $data['productnams'];
+				break;
 			// 优惠月费到期通知
-			$spotemplate = 209098;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
-			$sposmsSign  = "安永中国"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
-			$spoparams = array($remove[0],$data['endtime']);
-		}
-
-		if($data['psd'] == 208996){
+			case '196995':
+				$spotemplate  = 196995;
+				$spoparams    = array($remove[0],$data['endtime']);
+				$content      = '尊敬的'.$remove[0].'会员，您的免月费优惠期为'.$data['endtime'].'，请在优惠期结束前购买月费包。';
+				$product_name = '优惠月费通知消息';
+				break;
 			// 套餐收费短信
-			$spotemplate = 208996;	// NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
-			$sposmsSign  = "安永中国"; // NOTE: 这里的签名只是示例，请使用真实的已申请的签名，签名参数使用的是`签名内容`，而不是`签名ID`
-			$spoparams = array($remove[0],$data['productnams']);
+			case '244290':
+				$spotemplate  = 244290;
+				$spoparams 	  = array($remove[0],$data['productnams']);
+				$content      = '尊敬的'.$remove[0].'会员，今天是优惠'.$data['productnams'].'套餐的最后支付时间，请务必在今天晚上11:59前成功支付尾款，谢谢！';
+				$product_name = $data['productnams'];
+				break;
 		}
-
+		
         $sponsorSms    = D('Smscode')->sms($data['acnumber'],$data['phone'],$spoparams,$spotemplate);
         
         if($sponsorSms['errmsg']=='OK'){
-        	if($data['psd'] == 209019){
-				$mape  = array(
-                    'phone'   =>$data['phone'],
-                    'content'    =>'亲爱的会员'.$remove[0].'，这是系统提醒消息，请在'.$data['endtime'].'之前购买月费包。',
-                    'acnumber'=>$data['acnumber'],
-                    'date'    =>time(),
-                    'operator' => $_SESSION['user']['username'],
-                    'addressee' => $remove[0],
-                    'customerid' => $remove[1],
-                    'product_name' => '月费购买通知消息'
-                );
-        	}
-    		if($data['psd'] == 209017){
-        		$mape  = array(
-                    'phone'   =>$data['phone'],
-                    'content'    =>'亲爱的会员'.$remove[0].'，您购买的'.$data['productnams'].'物流信息出现问题，我们会有电话通知您，请留意接听。',
-                    'acnumber'=>$data['acnumber'],
-                    'date'    =>time(),
-                    'operator' => $_SESSION['user']['username'],
-                    'product_name' => $data['productnams'],
-                    'addressee' => $remove[0],
-                    'customerid' => $remove[1]
-                );
-        	}
-        	if($data['psd'] == 209098){
-        		$mape  = array(
-                    'phone'   =>$data['phone'],
-                    'content'    =>'尊敬的'.$remove[0].'会员，您的免月费优惠期为'.$data['endtime'].'，请在优惠期结束前购买月费包。',
-                    'acnumber'=>$data['acnumber'],
-                    'date'    =>time(),
-                    'operator' => $_SESSION['user']['username'],
-                    'addressee' => $remove[0],
-                    'customerid' => $remove[1],
-                    'product_name' => '优惠月费通知消息'
-                );
-        	}
-        	if($data['psd'] == 208996){
-        		$mape  = array(
-                    'phone'   =>$data['phone'],
-                    'content'    =>'尊敬的'.$remove[0].'会员，今天是优惠'.$data['productnams'].'套餐的最后支付时间，请务必在今天晚上11:59前成功支付尾款，谢谢！',
-                    'acnumber'=>$data['acnumber'],
-                    'date'    =>time(),
-                    'operator' => $_SESSION['user']['username'],
-                    'addressee' => $remove[0],
-                    'customerid' => $remove[1],
-                    'product_name' => $data['productnams']
-                );
-        	}
+        	$mape  = array(
+                'phone'   =>$data['phone'],
+                'content' =>$content,
+                'acnumber'=>$data['acnumber'],
+                'date'    =>time(),
+                'operator' => $_SESSION['user']['username'],
+                'addressee' => $remove[0],
+                'customerid' => $remove[1],
+                'product_name' => $product_name
+            );
         	$add = D('SmsLog')->add($mape);
             if($add){
 				$this->success('发送成功',U('Admin/Hapylife/sends'));
@@ -2128,8 +2094,8 @@ class HapylifeController extends AdminBaseController{
 	public function massNote(){
 		$data = I('post.');
 		switch($data['psd']){
-			case '209017':
-				$spotemplate = 209017;
+			case '146228':
+				$spotemplate = 146228;
 				$spoparams = array($data['content']);
 				$content = '亲爱的会员，很高兴通知你最新的优惠'.$data['content'].'，详情请参阅官方资料。';
 				break;
