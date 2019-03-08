@@ -171,8 +171,9 @@ class ReceiptsonModel extends BaseModel{
     }
 
     public function export_excel($data){
-        $title   = array('创建日期','创建时间','支付日期','支付时间','用户ID','订单号','流水号','流水方式','订单状态','订单总价','订货人','收货人','收货地址','收货人电话','产品数量','产品信息');
+        $title   = array('标签','创建日期','创建时间','支付日期','支付时间','用户ID','订单号','流水号','流水方式','订单状态','订单总价','订货人','收货人','收货地址','收货人电话','产品数量','产品信息');
         foreach ($data as $k => $v) {
+            $content[$k]['code']           = 'HPL';
             $content[$k]['ir_date']        = date('Y-m-d',$v['ir_date']);
             $content[$k]['ir_time']        = date('H:i:s',$v['ir_date']);
             $content[$k]['ir_pay']         = date('Y-m-d',$v['ir_paytime']);
@@ -239,8 +240,9 @@ class ReceiptsonModel extends BaseModel{
     }
 
     public function export_excels($data){
-        $title   = array('创建日期','创建时间','支付日期','支付时间','用户ID','订单号','流水号','流水方式','订单状态','订单总价','订货人','收货人','产品数量','产品信息','通用券的由来');
+        $title   = array('标签','创建日期','创建时间','支付日期','支付时间','用户ID','订单号','流水号','流水方式','订单状态','订单总价','订货人','收货人','产品数量','产品信息','通用券的由来');
         foreach ($data as $k => $v) {
+            $content[$k]['code']           = 'HPL';
             $content[$k]['ir_date']        = date('Y-m-d',$v['ir_date']);
             $content[$k]['ir_time']        = date('H:i:s',$v['ir_date']);
             $content[$k]['ir_paytime']     = date('Y-m-d',$v['ir_paytime']);
