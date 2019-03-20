@@ -290,7 +290,7 @@ class RegisterController extends HomeBaseController{
             //下单用户
             'rCustomerID'=>$userinfo['customerid'],
             //收货人
-            'ia_name'=>$userinfo['firstname'].$userinfo['lastname'],
+            'ia_name'=>$userinfo['lastname'].$userinfo['firstname'],
             //收货人电话
             'ia_phone'=>$userinfo['phone'],
             // 省，州

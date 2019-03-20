@@ -32,6 +32,10 @@
 	                        <input class='btn btn-sm' type="submit" name='excel' value="excel" />
 	                	</form>
 				    </li>
+				    <li>&nbsp;</li>
+	                <li>
+	                	<a href="javascript:;" onclick="update()">批量修改订单发货状态</a>
+	                </li>
 	            </ul>
 		</div>
             <div class="tab-content">
@@ -267,9 +271,44 @@
 	</div>
 	<!-- 添加菜单模态框结束 -->
 
+	<!-- 添加菜单模态框开始 -->
+	<div class="modal fade" id="bjy-update" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			 <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						修改订单发货状态
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="bjy-form-update" class="form-inline" action="{:U('Admin/BatchReceipt/UpdateReceipt')}" method="post" enctype="multipart/form-data">
+						<table class="table table-striped table-bordered table-hover table-condensed">
+							<tr>
+								<th width="15%">文件</th>
+								<td>
+									<input class="input-medium" type="file" name="file">
+								</td>
+							</tr>
+							<tr>
+								<th></th>
+								<td>
+									<input class="btn btn-success" type="button" onclick="formSubmit('#bjy-form-update');" value="添加">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
 </block>
 <block name="js">
 	<script>
+	var canclick=true;
 	// 发送物流短信
 	function send(obj){
 		var irId =$(obj).attr('irId');
@@ -303,6 +342,11 @@
 		$("input[name='ir_receiptnum']").val(irReceiptnum);
 		$("input[name='spotemplate']").val(spotemplate);
 		$('#bjy-send-out').modal('show');
+	}
+
+	// 批量修改订单发货状态
+	function update(){
+		$('#bjy-update').modal('show');
 	}
 	</script>
 </block>
