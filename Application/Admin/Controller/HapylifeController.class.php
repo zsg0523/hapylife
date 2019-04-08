@@ -1522,12 +1522,12 @@ class HapylifeController extends AdminBaseController{
             );
             $add = D('SmsLog')->add($mape);
             if($add){
-				$this->success('发送成功',$_SERVER['HTTP_REFERER']);
+				redirect($_SERVER['HTTP_REFERER']);
             }else{
-            	$this->error('发送失败',$_SERVER['HTTP_REFERER']);
+            	redirect($_SERVER['HTTP_REFERER']);
             }
         }else{
-            $this->error('发送失败',$_SERVER['HTTP_REFERER']);
+            redirect($_SERVER['HTTP_REFERER']);
         }
 	}
 
