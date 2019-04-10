@@ -356,72 +356,79 @@ class PurchaseController extends HomeBaseController{
         $iuid = $_SESSION['user']['id'];
         $data = D('User')->where(array('iuid'=>$iuid))->find();
         $usa = new \Common\UsaApi\Usa;
-        $map = $usa->activities($data['customerid']);
-        if(!$map['errors']){
-            $weekly = $map['weekly'];
-            $monthly = $map['monthly'];
-            if($weekly){
-                // 拆分数据
-                $explode1 = explode(' ',$weekly['paidRank']);
-                $explode2 = explode(' ',$weekly['titleRank']);
-                $paidRank = substr($explode1[0],0,1).substr($explode1[1],0,1);
-                $titleRank = substr($explode2[0],0,1).substr($explode2[1],0,1);
-                // // 组合数据
-                // switch ($weekly['personalActive']) {
-                //     case '0':
-                //         $weekly['personalActive'] = '未启动';
-                //         break;
-                //     case '1':
-                //         $weekly['personalActive'] = '启动';
-                //         break;
-                // }
-                $Serial_W = array(
-                    'date' => $weekly['description'],
-                    'result' => $weekly['personalActive'].'-'.$paidRank.'-'.$titleRank,
-                    'number' => $weekly['newBinaryUnlimitedLevelsLeft'].'.'.$weekly['activeLeftLegWithAutoPlacement'].'.'.$weekly['leftLegTotal'].'.'.$weekly['volumeLeft'].'-'.$weekly['newBinaryUnlimitedLevelsRight'].'.'.$weekly['activeRightLegWithAutoPlacement'].'.'.$weekly['rightLegTotal'].'.'.$weekly['volumeRight']
-                );
-            }
-            if($monthly){
-                // 拆分数据
-                $explode1 = explode(' ',$monthly['paidRank']);
-                $explode2 = explode(' ',$monthly['titleRank']);
-                $paidRank = substr($explode1[0],0,1).substr($explode1[1],0,1);
-                $titleRank = substr($explode2[0],0,1).substr($explode2[1],0,1);
-                // // 组合数据
-                // switch ($monthly['personalActive']) {
-                //     case '0':
-                //         $monthly['personalActive'] = '未启动';
-                //         break;
-                //     case '1':
-                //         $monthly['personalActive'] = '启动';
-                //         break;
-                // }
-                $Serial_M = array(
-                    'date' => $monthly['description'],
-                    'result' => $monthly['personalActive'].'-'.$paidRank.'-'.$titleRank,
-                    'number' => $monthly['newBinaryUnlimitedLevelsLeft'].'.'.$monthly['activeLeftLegWithAutoPlacement'].'.'.$monthly['leftLegTotal'].'.'.$monthly['volumeLeft'].'-'.$monthly['newBinaryUnlimitedLevelsRight'].'.'.$monthly['activeRightLegWithAutoPlacement'].'.'.$monthly['rightLegTotal'].'.'.$monthly['volumeRight'],
-                );
-            }
-            $Serial = array(
-                'weekly' => $Serial_W,
-                'monthly' => $Serial_M
-            );
-        }else{
-           $Serial = array(
-                'weekly' => array(
-                    'date' => '无',
-                    'result' => '无',
-                    'number' => '无'
-                ),
-                'monthly' => array(
-                    'date' => '无',
-                    'result' => '无',
-                    'number' => '无'
-                )
-            ); 
+        $getCustomer = $usa->getCustomer($data['customerid']);
+        if(!$getCustomer['errors']){
+            $data['binaryplacementpreference'] = $getCustomer['binaryPlacementPreference'];
         }
+
+        /****获取usa系统编码{0.0.0.0}***/ 
+        // $map = $usa->activities($data['customerid']);
+        // if(!$map['errors']){
+        //     $weekly = $map['weekly'];
+        //     $monthly = $map['monthly'];
+        //     if($weekly){
+        //         // 拆分数据
+        //         $explode1 = explode(' ',$weekly['paidRank']);
+        //         $explode2 = explode(' ',$weekly['titleRank']);
+        //         $paidRank = substr($explode1[0],0,1).substr($explode1[1],0,1);
+        //         $titleRank = substr($explode2[0],0,1).substr($explode2[1],0,1);
+        //         // // 组合数据
+        //         // switch ($weekly['personalActive']) {
+        //         //     case '0':
+        //         //         $weekly['personalActive'] = '未启动';
+        //         //         break;
+        //         //     case '1':
+        //         //         $weekly['personalActive'] = '启动';
+        //         //         break;
+        //         // }
+        //         $Serial_W = array(
+        //             'date' => $weekly['description'],
+        //             'result' => $weekly['personalActive'].'-'.$paidRank.'-'.$titleRank,
+        //             'number' => $weekly['newBinaryUnlimitedLevelsLeft'].'.'.$weekly['activeLeftLegWithAutoPlacement'].'.'.$weekly['leftLegTotal'].'.'.$weekly['volumeLeft'].'-'.$weekly['newBinaryUnlimitedLevelsRight'].'.'.$weekly['activeRightLegWithAutoPlacement'].'.'.$weekly['rightLegTotal'].'.'.$weekly['volumeRight']
+        //         );
+        //     }
+        //     if($monthly){
+        //         // 拆分数据
+        //         $explode1 = explode(' ',$monthly['paidRank']);
+        //         $explode2 = explode(' ',$monthly['titleRank']);
+        //         $paidRank = substr($explode1[0],0,1).substr($explode1[1],0,1);
+        //         $titleRank = substr($explode2[0],0,1).substr($explode2[1],0,1);
+        //         // // 组合数据
+        //         // switch ($monthly['personalActive']) {
+        //         //     case '0':
+        //         //         $monthly['personalActive'] = '未启动';
+        //         //         break;
+        //         //     case '1':
+        //         //         $monthly['personalActive'] = '启动';
+        //         //         break;
+        //         // }
+        //         $Serial_M = array(
+        //             'date' => $monthly['description'],
+        //             'result' => $monthly['personalActive'].'-'.$paidRank.'-'.$titleRank,
+        //             'number' => $monthly['newBinaryUnlimitedLevelsLeft'].'.'.$monthly['activeLeftLegWithAutoPlacement'].'.'.$monthly['leftLegTotal'].'.'.$monthly['volumeLeft'].'-'.$monthly['newBinaryUnlimitedLevelsRight'].'.'.$monthly['activeRightLegWithAutoPlacement'].'.'.$monthly['rightLegTotal'].'.'.$monthly['volumeRight'],
+        //         );
+        //     }
+        //     $Serial = array(
+        //         'weekly' => $Serial_W,
+        //         'monthly' => $Serial_M
+        //     );
+        // }else{
+        //    $Serial = array(
+        //         'weekly' => array(
+        //             'date' => '无',
+        //             'result' => '无',
+        //             'number' => '无'
+        //         ),
+        //         'monthly' => array(
+        //             'date' => '无',
+        //             'result' => '无',
+        //             'number' => '无'
+        //         )
+        //     ); 
+        // }
+
         $this->assign('userinfo',$data);
-        $this->assign('Serial',$Serial);
+        // $this->assign('Serial',$Serial);
         $this->display();
     }
 
@@ -1985,9 +1992,11 @@ class PurchaseController extends HomeBaseController{
     **/ 
     public function editPlacement(){
         $iuid = $_SESSION['user']['id'];
+        $placement = I('get.placement');
         $data = M('User')->where(array('iuid'=>$iuid))->find();
         $assign = array(
-            'data' => $data
+            'data' => $data,
+            'placement' => $placement,
         );
 
         $usa    = new \Common\UsaApi\Usa;

@@ -251,11 +251,45 @@ class HapylifeUsaController extends HomeBaseController{
 		);
 		$data    = json_encode($data);
 		$sendUrl = $url."/api/Hpl/Customer/".$map['hapyLifeID'].'/VirtualCurrency?key='.$key;
-		$result  = post_json_data($sendUrl,$data);
+		$result  = file_get_contents($sendUrl,$data);
 		$jsonStr = json_decode($result['result'],true);
 		print_r($result);
 		p($jsonStr);
 	}
+
+	/**
+	* get Customer
+	**/ 
+	public function getCustomer(){
+		$map  = I('post.');
+		$key  = $this->key;
+		$url  = $this->url;
+		$data = array(
+			'HapyLifeId'  	=>$map['HapyLifeId'],
+		);
+		$data    = json_encode($data);
+		$sendUrl = $url."/api/Hpl/Customer/".$map['HapyLifeId'].'?key='.$key;
+		$result  = file_get_contents($sendUrl,$data);
+		$jsonStr = json_decode($result,true);
+		p($jsonStr);
+	}
+
+	//
+	public function test(){
+		$num = I('post.num');
+		$data = M('User')->where(array('wvCustomerID'=>array(neq,'') ,'DistributorType'=>array(neq,'Pc'), 'LastName'=>array('NOT IN',array('测试','测','test')),'isexit'=>1))->limit($num,25)->select();
+		$num = 0;
+		foreach($data as $key=>$value){
+			$usa = new \Api\Controller\HapylifeUsaController;
+			$result = $usa->getCustomer($value['customerid']);
+			if($result){
+				if($result['customerStatus'] == 'Active'){
+					$num++;
+				}
+			}
+		}
+		p($num);
+	} 
 
 	
 	

@@ -1369,4 +1369,151 @@ class UserModel extends BaseModel{
             );
         return $map;
     }
+
+    /**
+	* 多功能查询工具
+    **/ 
+    public function getIndexPage($model,$customerid,$order='',$limit=20){
+    	if($customerid){
+    		$where['CustomerID'] = array('LIKE','%'.$customerid.'%');
+    	}
+    	if($where){
+			$count = $model->where($where)->count();
+			$page=new_page($count,$limit);
+
+			$data = $model->where($where)->select();
+			
+			foreach ($data as $key => $value) {
+				// 获取USA编码
+				$usa = new \Common\UsaApi\Usa();
+		    	$activities = $usa->activities($value['customerid']);
+		    	$validate = $usa->validateHpl($value['customerid']);
+		    	$getCustomer = $usa->getCustomer($value['customerid']);
+		    	$data[$key]['activities'] = $validate['isActive'];
+		    	$data[$key]['binaryplacementpreference'] = $getCustomer['binaryPlacementPreference'];
+		    	if(!$activities['errors']){
+		            $weekly = $activities['weekly'];
+		            $monthly = $activities['monthly'];
+		            $code['weekly'] = array(
+		                'description' => $weekly['description'],
+		                'personalActive' => $weekly['personalActive'],
+		            	'l' => array(
+			                'newTotal' => $weekly['newBinaryUnlimitedLevelsLeft'],
+			                'activeTotal' => $weekly['activeLeftLegWithAutoPlacement'],
+			                'Total' => $weekly['leftLegTotal'],
+			                'volumeTotal' => $weekly['volumeLeft'],
+		            	),
+		            	'r' => array(
+		            		'newTotal' => $weekly['newBinaryUnlimitedLevelsRight'],
+			                'activeTotal' => $weekly['activeRightLegWithAutoPlacement'],
+			                'Total' => $weekly['rightLegTotal'],
+			                'volumeTotal' => $weekly['volumeRight'],
+		            	),
+		            );
+		            $code['monthly'] = array(
+		                'description' => $monthly['description'],
+		                'personalActive' => $monthly['personalActive'],
+		                'l' => array(
+			                'newTotal' => $monthly['newBinaryUnlimitedLevelsLeft'],
+			                'activeTotal' => $monthly['activeLeftLegWithAutoPlacement'],
+			                'Total' => $monthly['leftLegTotal'],
+			                'volumeTotal' => $monthly['volumeLeft'],
+		                ),
+		                'r' => array(
+		            		'newTotal' => $monthly['newBinaryUnlimitedLevelsRight'],
+			                'activeTotal' => $monthly['activeRightLegWithAutoPlacement'],
+			                'Total' => $monthly['rightLegTotal'],
+			                'volumeTotal' => $monthly['volumeRight'],
+		            	),
+		            );
+		        }else{
+		            // 无数据
+		            $code['weekly'] = array(
+		                'description' => '无',
+		                'personalActive' => '无',
+		                'l' => array(
+			                'newTotal' => '无',
+			                'activeTotal' => '无',
+			                'Total' => '无',
+			                'volumeTotal' => '无',
+		                ),
+		                'r' => array(
+		                	'newTotal' => '无',
+			                'activeTotal' => '无',
+			                'Total' => '无',
+			                'volumeTotal' => '无',
+		                ),
+		            );
+		            $code['monthly'] = array(
+		                'description' => '无',
+		                'personalActive' => '无',
+		                'l' => array(
+			                'newTotal' => '无',
+			                'activeTotal' => '无',
+			                'Total' => '无',
+			                'volumeTotal' => '无',
+		                ),
+		                'r' => array(
+		                	'newTotal' => '无',
+			                'activeTotal' => '无',
+			                'Total' => '无',
+			                'volumeTotal' => '无',
+		                ),
+		            );
+		        }
+				
+		        // 用户订单
+		        $receipt = M('Receipt')->where(array('rCustomerID'=>$value['customerid'],'ir_status'=>array('NOT IN','404,')))->select();
+
+		        // 用户奖金
+		        $bonus = M('WvBonus')->where(array('HplId'=>$value['customerid']))->select();
+		        $parities = M('WvBonusParities')->where(array('pid'=>1))->getfield('parities');
+		        foreach($bonus as $key => $v){
+		        	$bonus[$key]['json'] = json_decode($v['bonuses'],true);
+		        	$bonus[$key]['bonus'] = bcdiv(bcmul($bonus[$key]['json'][0]['Amount'],$parities,2),100,2);
+		        }
+
+		        // 用户通用券
+		        $map = array(
+					'customerid' => $customerid,
+				);
+				$map    = json_encode($map);
+				$sendUrl = "http://10.16.0.151/nulife/index.php/Api/Couponapi/getUserCoupon";
+				// $sendUrl = "http://localhost/testnulife/index.php/Api/Couponapi/getUserCoupon";
+				$result  = post_json_data($sendUrl,$map);
+				$back_result = json_decode($result['result'],true);
+
+				// 上线信息
+				$enroller = M('User')->where(array('CustomerID'=>$value['enrollerid']))->select();
+				// 查询账号状态
+				foreach($enroller as $keys => $values){
+					$validateHpl = $usa->validateHpl($values['customerid']);
+					$enroller[$keys]['activities'] = $validateHpl['isActive'];
+					$getCustomer = $usa->getCustomer($values['customerid']);
+					$enroller[$keys]['binaryplacementpreference'] = $getCustomer['binaryPlacementPreference'];
+				}
+
+				// 下线信息
+				$lower = M('User')->where(array('EnrollerID'=>$customerid,'DistributorType'=>array('NOT IN','Pc')))->select();
+				foreach($lower as $key => $value){
+					$lower[$key]['receiptlist'] = M('Receipt')->where(array('rCustomerID'=>$value['customerid']))->select();
+				}
+
+
+			}
+
+	        // p($code);
+	    	$map=array(
+	            'data'=>$data,
+	            'code'=>$code,
+	            'receipt'=>$receipt,
+	            'bonus'=>$bonus,
+	            'coupon'=>$back_result,
+	            'enroller'=>$enroller,
+	            'lower'=>$lower,
+	        );
+	        
+	        return $map;
+    	}
+    }
 }

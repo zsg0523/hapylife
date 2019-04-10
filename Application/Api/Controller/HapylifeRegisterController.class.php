@@ -296,29 +296,28 @@ class HapylifeRegisterController extends HomeBaseController{
     public function checkName(){
         $customerid = strtoupper(trim(I('post.EnrollerID')));
         if($customerid){
-            if(strlen($customerid)==8){
-                $usa = new \Common\UsaApi\Usa;
-                $map = $usa->validateHpl($customerid);
-                if(empty($map['errors'])){
+            $usa = new \Common\UsaApi\Usa;
+            $map = $usa->validateHpl($customerid);
+            if(empty($map['errors'])){
+                if($map['isActive']){
                     $data['lastname'] = $map['lastName'];
                     $data['firstname'] = $map['firstName'];
-                    $this->ajaxreturn($data);     
-                }else{
-                    $data['status'] = 0;
-                    $this->ajaxreturn($data);           
-                }
-            }else{
-                $data = M('User')->where(array('CustomerID'=>$customerid))->find();
-                if($data){
+                    $data['status'] = 1;
                     $this->ajaxreturn($data);
                 }else{
                     $data['status'] = 0;
-                    $this->ajaxreturn($data); 
+                    $data['msg'] = '账号ID不活跃';
+                    $this->ajaxreturn($data);
                 }
+            }else{
+                $data['status'] = 0;
+                $data['msg'] = '账号ID不存在';
+                $this->ajaxreturn($data);
             }
         }else{
             $data['status'] = 0;
-            $this->ajaxreturn($data);           
+            $data['msg'] = '请输入账号ID';
+            $this->ajaxreturn($data);
         }
     }
     /*********************************************************************普通注册********************************************************************************************/  

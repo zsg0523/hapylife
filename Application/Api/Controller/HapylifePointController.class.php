@@ -60,7 +60,7 @@ class HapylifePointController extends HomeBaseController{
                         break;
                 }
             }
-            $data['endTime'] = date('l,F d,Y',$data['joinedon']+24*3600*365);
+            $data['endTime'] = date('l,F d,Y',strtotime($result['softCashCategories'][0]['details'][0]['expiryDate']));
         }else{
             $data['iu_dt'] = 0;
             $data['iu_ac'] = 0;

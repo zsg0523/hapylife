@@ -115,7 +115,7 @@
 					<i class="">售价：￥{$data.ip_price_rmb}</i>
 				</div>
 				<div class="link">
-					<a href="{:U('Home/Register/registerOrder',array('ipid'=>$data['ipid'],'iuid'=>$iuid))}" target="_blank">去支付</a>
+					<a href="{:U('Home/SelfRegister/registerOrder',array('ipid'=>$data['ipid'],'iuid'=>$iuid,'htid'=>I('get.htid')))}" target="_blank">去支付</a>
 				</div>
 			</div>		
 	</div>

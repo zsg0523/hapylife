@@ -5,9 +5,7 @@
     <!-- 导航栏开始 -->
     <div class="page-header">
         <h1>
-            首页
-            &gt;
-            Hapylife
+            物流管理
             &gt;
 			订单管理
         </h1>
@@ -30,8 +28,8 @@
 							<tr>
 								<th><input type="text" name="ir_receiptnum" placeholder="订单编号" value="{$ir_receiptnum}"></th>
 								<th><input type="text" name="customerid" placeholder="会员账号" value="{$customerid}"></th>
-								<th><input type="text" name="lastname" placeholder="姓" value="{$lastname}"></th>
-								<th><input type="text" name="firstname" placeholder="名" value="{$firstname}"></th>
+								<th style="width: 88px;"><input type="text" name="lastname" placeholder="姓" value="{$lastname}"></th>
+								<th style="width: 88px;"><input type="text" name="firstname" placeholder="名" value="{$firstname}"></th>
 								<th><input type="text" name="ir_price" placeholder="订单总金额" value="{$ir_price}"></th>
 								<th><input type="text" name="ir_unpaid" placeholder="订单未支付金额" value="{$ir_unpaid}"></th>
 								<th>
@@ -76,10 +74,10 @@
 							<tr>
 								<th><input type="text" name="ir_receiptnum" placeholder="订单编号" value="{$ir_receiptnum}"></th>
 								<th><input type="text" name="customerid" placeholder="会员账号" value="{$customerid}"></th>
-								<th><input type="text" name="lastname" placeholder="姓" value="{$lastname}"></th>
-								<th><input type="text" name="firstname" placeholder="名" value="{$firstname}"></th>
-								<th><input type="text" name="ir_price" placeholder="订单总金额" value="{$ir_price}"></th>
-								<th><input type="text" name="ir_unpaid" placeholder="订单未支付金额" value="{$ir_unpaid}"></th>
+								<th><input style="width: 88px;" type="text" name="lastname" placeholder="姓" value="{$lastname}"></th>
+								<th><input style="width: 88px;" type="text" name="firstname" placeholder="名" value="{$firstname}"></th>
+								<th><input style="width: 88px;" type="text" name="ir_price" placeholder="订单总金额" value="{$ir_price}"></th>
+								<th><input style="width: 120px;" type="text" name="ir_unpaid" placeholder="订单未支付金额" value="{$ir_unpaid}"></th>
 								<th></th>
 								<th>
 									<select name="status">
@@ -96,7 +94,7 @@
 						    			<option <?php if($timeType == 'ir_date')echo "selected";?> value="ir_date" >创建时间</option>
 						    		</select>
 								</th>
-								<th colspan="4">
+								<th style="width: 50%;" colspan="4">
 									<input id="start_time" type="text" class="Wdate WdateSearch" style="height:28px;float: left;width: 50%;" value="{$starttime}" name="starttime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off" />
 				    				<input id="end_time" type="text" class="Wdate WdateSearch" style="height:28px;width: 50%;" value="{$endtime}" name="endtime" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" autocomplete="off"/>
 								</th>
@@ -118,7 +116,7 @@
 		                        <th >创建日期</th>
 		                        <th >支付日期</th>
 		                        <th >查看明细</th>
-								<th>操作</th>
+								<th >操作</th>
 							</tr>
 						</if>
 						<foreach name="data" item="v">
@@ -142,7 +140,7 @@
 								</td>
 								<td>{$v['ia_name']}</td>
 								<td>{$v['ia_phone']}</td>
-								<td>{$v['ia_province']}{$v['ia_city']}{$v['ia_area']}{$v['ia_address']}</td>
+								<td style="">{$v['ia_province']}{$v['ia_city']}{$v['ia_area']}{$v['ia_address']}</td>
 								<td>{:date('Y-m-d H:i:s',$v['ir_date'])}</td>
 								<td>
 									<if condition="$v['ir_paytime'] eq 0">

@@ -24,10 +24,10 @@ class HapylifeCodeController extends HomeBaseController{
                 $resolve_p = explode(' ',$monthly['paidRank']);
                 $resolve_t = explode(' ',$monthly['titleRank']);
                 $paidRank = substr($resolve_p[0],0,1).substr($resolve_p[1],0,1);
-                $titleRank = substr($resolve_t[0],0,1).substr($resolve_t[1],0,1);;
+                $titleRank = substr($resolve_t[0],0,1).substr($resolve_t[1],0,1);
                 switch($business){
                     case '0':
-                        $newTotal = bcadd($monthly['newBinaryUnlimitedLevelsLeft'],$monthly['newBinaryUnlimitedLevelsLeft'],0);
+                        $newTotal = bcadd($monthly['newBinaryUnlimitedLevelsLeft'],$monthly['newBinaryUnlimitedLevelsRight'],0);
                         $activeTotal = bcadd($monthly['activeLeftLegWithAutoPlacement'],$monthly['activeRightLegWithAutoPlacement'],0);
                         $Total = bcadd($monthly['leftLegTotal'],$monthly['rightLegTotal'],0);
                         $volumeTotal = bcadd($monthly['volumeLeft'],$monthly['volumeRight'],0);
@@ -39,7 +39,7 @@ class HapylifeCodeController extends HomeBaseController{
                         $volumeTotal = $monthly['volumeLeft'];
                         break;
                     case '2':
-                        $newTotal = $monthly['newBinaryUnlimitedLevelsLeft'];
+                        $newTotal = $monthly['newBinaryUnlimitedLevelsRight'];
                         $activeTotal = $monthly['activeRightLegWithAutoPlacement'];
                         $Total = $monthly['rightLegTotal'];
                         $volumeTotal = $monthly['volumeRight'];
@@ -51,10 +51,10 @@ class HapylifeCodeController extends HomeBaseController{
                 $resolve_p = explode(' ',$weekly['paidRank']);
                 $resolve_t = explode(' ',$weekly['titleRank']);
                 $paidRank = substr($resolve_p[0],0,1).substr($resolve_p[1],0,1);
-                $titleRank = substr($resolve_t[0],0,1).substr($resolve_t[1],0,1);;
+                $titleRank = substr($resolve_t[0],0,1).substr($resolve_t[1],0,1);
                 switch($business){
                     case '0':
-                        $newTotal = bcadd($weekly['newBinaryUnlimitedLevelsLeft'],$weekly['newBinaryUnlimitedLevelsLeft'],0);
+                        $newTotal = bcadd($weekly['newBinaryUnlimitedLevelsLeft'],$weekly['newBinaryUnlimitedLevelsRight'],0);
                         $activeTotal = bcadd($weekly['activeLeftLegWithAutoPlacement'],$weekly['activeRightLegWithAutoPlacement'],0);
                         $Total = bcadd($weekly['leftLegTotal'],$weekly['rightLegTotal'],0);
                         $volumeTotal = bcadd($weekly['volumeLeft'],$weekly['volumeRight'],0);
@@ -66,7 +66,7 @@ class HapylifeCodeController extends HomeBaseController{
                         $volumeTotal = $weekly['volumeLeft'];
                         break;
                     case '2':
-                        $newTotal = $weekly['newBinaryUnlimitedLevelsLeft'];
+                        $newTotal = $weekly['newBinaryUnlimitedLevelsRight'];
                         $activeTotal = $weekly['activeRightLegWithAutoPlacement'];
                         $Total = $weekly['rightLegTotal'];
                         $volumeTotal = $weekly['volumeRight'];

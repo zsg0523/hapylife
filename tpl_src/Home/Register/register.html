@@ -377,7 +377,7 @@
 					</div>-->
 					<div class="form-group">
 						<div class="col-md-offset-2 col-md-10 col-xs-12">
-							<button type="submit" class="btn  btn-block  btn-info" id="regBtn">注册</button>
+							<button id="submit" type="submit" class="btn  btn-block  btn-info" id="regBtn">注册</button>
 						</div>
 						<!--<div class="col-md-5 col-xs-4">
 							<a href="{:U('Home/Index/index')}" class="btn  btn-block  btn-info">去登陆</a>
@@ -414,6 +414,10 @@
 	//				console.log(data);
 					if(data.status == 0){
 						$("input[name='EnrollerNameCn']").val("请输入正确的推荐人ID！");
+						$("#submit").attr("disabled","true");
+					}else if(data.status == 2){
+						$("input[name='EnrollerNameCn']").val("账号状态异常！");
+						$("#submit").attr("disabled","true");
 					}else{
 						var hideName=data.lastname+data.firstname;
 						hideName=hideName.replace(hideName.substring(1,2),'*');

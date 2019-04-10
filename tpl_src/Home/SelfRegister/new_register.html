@@ -92,7 +92,7 @@
 		</div>
 		<div class="main">
 			<div class="rg-div">
-				<form class="form-horizontal" method="post" action="{:U('Home/SelfRegister/new_registerInfo',array('iuid'=>$iuid,'hu_nickname'=>$customerid))}" enctype="multipart/form-data" onsubmit="return checkform();">
+				<form class="form-horizontal" method="post" action="{:U('Home/SelfRegister/new_registerInfo')}" enctype="multipart/form-data" onsubmit="return checkform();">
 					<div class="form-group" onclick="hiden(this);" style="margin-top: 10px;">
 						<label for="" class="col-lg-2 col-md-2 col-xs-4 control-label"><span style="color: red;">*</span>中文姓:</label>
 						<div class="col-lg-10 col-md-10 col-xs-8">
@@ -413,7 +413,7 @@
 
 					<div class="form-group">
 						<div class=" col-md-12 col-xs-12">
-							<button type="submit" class="btn  btn-block  btn-info">注册</button>
+							<button id="submit" type="submit" class="btn  btn-block  btn-info">注册</button>
 						</div>
 					</div>
 				</form>
@@ -456,11 +456,13 @@
 						console.log(data);
 						if(data.status == 0){
 							$("input[name='EnrollerNameCn']").val("请输入正确的推荐ID！");
+							$("#submit").attr("disabled","true");
 						}else{
 							var hideName=data.lastname+data.firstname;
 							hideName=hideName.replace(hideName.substring(1,2),'*');
 							$("input[name='EnrollerNameCn']").val(hideName);
 							$("input[name='teamCode']").val(data.teamcode);
+							$("#submit").removeAttr("disabled");
 						}
 						
 					},

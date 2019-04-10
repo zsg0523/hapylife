@@ -31,45 +31,14 @@ class HapylifeChangeController extends HomeBaseController{
             );
             $this->ajaxreturn($sample);
         }else{
-            if($new_array['PassWord'] != $userinfo['password'] || $new_array['WvPass'] != $userinfo['wvpass']){
-                if($data && $data['code']==$code){
+            if($data && $data['code']==$code){
+                if($new_array['PassWord'] != $userinfo['password'] || $new_array['WvPass'] != $userinfo['wvpass']){
                     // 修改用户信息
                     $result = M('User')->where(array('iuid'=>$iuid))->save($new_array);
-                    if($result){
-                        // 发送给usa,更新usa数据
-                        $res = $usa->changePassWord($userinfo['customerid'],I('post.passwords'));
-                        if($res['code'] == 200){
-                            $sample = array(
-                                'status' => 1,
-                                'msg' => '修改成功'
-                            );
-                            $this->ajaxreturn($sample);
-                        }else{
-                            $sample = array(
-                                'status' => 0,
-                                'msg' => '修改失败'
-                            );
-                            $this->ajaxreturn($sample);
-                        }
-                    }else{
-                        // 修改失败
-                        $sample = array(
-                            'status' => 0,
-                            'msg' => '修改失败'
-                        );
-                        $this->ajaxreturn($sample);
-                    }
-                }else{
-                    // 验证码错误
-                     $sample = array(
-                        'status' => 2,
-                        'msg' => '验证码错误'
-                    );
-                    $this->ajaxreturn($sample);
                 }
-            }else{
                 // 发送给usa,更新usa数据
                 $res = $usa->changePassWord($userinfo['customerid'],I('post.passwords'));
+                $log = addUsaLogUpdate($res['result']);
                 if($res['code'] == 200){
                     $sample = array(
                         'status' => 1,
@@ -77,13 +46,19 @@ class HapylifeChangeController extends HomeBaseController{
                     );
                     $this->ajaxreturn($sample);
                 }else{
-                    // 修改失败
                     $sample = array(
                         'status' => 0,
                         'msg' => '修改失败'
                     );
                     $this->ajaxreturn($sample);
                 }
+            }else{
+                // 验证码错误
+                $sample = array(
+                    'status' => 2,
+                    'msg' => '验证码错误'
+                );
+                $this->ajaxreturn($sample);
             }
         }
     }
@@ -197,6 +172,8 @@ class HapylifeChangeController extends HomeBaseController{
         $CustomerID = strtoupper(I('post.CustomerID'));
         if(substr($CustomerID,0,3) == 'HPL'){
             $data = M('User')->where(array('customerid'=>$CustomerID))->find();
+            $data['acid'] = 217;
+            $data['acnumber'] = 86;
             if($data){
                 $data['status'] = 1;
                 $this->ajaxreturn($data);
@@ -237,45 +214,14 @@ class HapylifeChangeController extends HomeBaseController{
             );
             $this->ajaxreturn($sample);
         }else{
-            if($new_array['PassWord'] != $userinfo['password'] || $new_array['WvPass'] != $userinfo['wvpass']){
-                if($data && $data['code']==$code){
+            if($data && $data['code']==$code){
+                if($new_array['PassWord'] != $userinfo['password'] || $new_array['WvPass'] != $userinfo['wvpass']){
                     // 修改用户信息
                     $result = M('User')->where(array('customerid'=>$customerid))->save($new_array);
-                    if($result){
-                        // 发送给usa,更新usa数据
-                        $res = $usa->changePassWord($userinfo['customerid'],I('post.passwords'));
-                        if($res['code'] == 200){
-                            $sample = array(
-                                'status' => 1,
-                                'msg' => '修改成功'
-                            );
-                            $this->ajaxreturn($sample);
-                        }else{
-                            $sample = array(
-                                'status' => 0,
-                                'msg' => '修改失败'
-                            );
-                            $this->ajaxreturn($sample);
-                        }
-                    }else{
-                        // 修改失败
-                        $sample = array(
-                            'status' => 0,
-                            'msg' => '修改失败'
-                        );
-                        $this->ajaxreturn($sample);
-                    }
-                }else{
-                    // 验证码错误
-                    $sample = array(
-                        'status' => 2,
-                        'msg' => '验证码错误'
-                    );
-                    $this->ajaxreturn($sample);
                 }
-            }else{
                 // 发送给usa,更新usa数据
                 $res = $usa->changePassWord($userinfo['customerid'],I('post.passwords'));
+                $log = addUsaLogUpdate($res['result']);
                 if($res['code'] == 200){
                     $sample = array(
                         'status' => 1,
@@ -289,6 +235,13 @@ class HapylifeChangeController extends HomeBaseController{
                     );
                     $this->ajaxreturn($sample);
                 }
+            }else{
+                // 验证码错误
+                $sample = array(
+                    'status' => 2,
+                    'msg' => '验证码错误'
+                );
+                $this->ajaxreturn($sample);
             }
         }
     }
@@ -299,6 +252,12 @@ class HapylifeChangeController extends HomeBaseController{
     public function checkByPhone(){
         $phoneNumber = I('post.number');
         $data = M('User')->where(array('Phone'=>$phoneNumber))->select();
+        foreach($data as $key => $value){
+            if(empty($value['acid']) || empty($value['acnumber'])){
+                $data[$key]['acid'] = 217;
+                $data[$key]['acnumber'] = 86;
+            }
+        }
         if($data){
             $data['status'] = 1;
             $this->ajaxreturn($data);
@@ -388,12 +347,13 @@ class HapylifeChangeController extends HomeBaseController{
             $this->ajaxreturn($sample);
         }else{
             // 修改系统数据
-            $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->save($data);
+            $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->setfield('Phone',$data['Phone']);
         }
         if($saveData){
             //更新usa数据
             $usa    = new \Common\UsaApi\Usa;
             $result = $usa->changePhone($data['happyLifeID'],$data['Phone']);
+            $log = addUsaLogUpdate($result['result']);
             if($result['code'] == 200){
                 $sample = array(
                     'status' => 1,
@@ -418,7 +378,7 @@ class HapylifeChangeController extends HomeBaseController{
         $userinfo = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->find();
         if($userinfo['placement'] != $data['Placement']){
             // 修改系统数据
-            $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->save($data);
+            $saveData = M('User')->where(array('CustomerID'=>$data['happyLifeID']))->setfield('Placement',$data['Placement']);
         }
         switch($data['Placement']){
             case 'BuildLeft':
@@ -436,8 +396,19 @@ class HapylifeChangeController extends HomeBaseController{
         }
         //更新usa数据
         $usa    = new \Common\UsaApi\Usa;
-        $result = $usa->ChangePlacement($data['happyLifeID'],$note);
+        $result = $usa->ChangePlacement($data['happyLifeID'],$data['Placement']);
+        $log = addUsaLogUpdate($result['result']);
         if($result['code'] == 200){
+            $templateId ='244304';
+            $params     = array($data['happyLifeID'],$note);
+            $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+            $addressee = $userinfo['lastname'].$userinfo['firstname'];
+            $contents = '尊敬的'.$data['happyLifeID'].'会员，您已成功将推荐设置修改为：'.$note;
+            if($sms['result'] == 0){
+                $addlog = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'修改推荐设置',$contents,$data['happyLifeID']);
+            }else{
+                $addlog = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,$sms['errmsg'],$contents,$data['happyLifeID']);
+            }
             $sample = array(
                 'status' => 1,
                 'msg' => '修改成功'
@@ -466,7 +437,18 @@ class HapylifeChangeController extends HomeBaseController{
             //更新usa数据
             $usa    = new \Common\UsaApi\Usa;
             $result = $usa->ChangeEmail($happyLifeID,$email);
+            $log = addUsaLogUpdate($result['result']);
             if($result['code'] == 200){
+                $templateId ='244302';
+                $params     = array($happyLifeID,$email);
+                $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                $addressee = $userinfo['lastname'].$userinfo['firstname'];
+                $contents = '尊敬的'.$happyLifeID.'会员，您已成功将邮箱地址修改为：'.$email;
+                if($sms['result'] == 0){
+                    $addlog = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,'修改邮箱地址',$contents,$happyLifeID);
+                }else{
+                    $addlog = D('Smscode')->addLog($userinfo['acnumber'],$userinfo['phone'],'系统',$addressee,$sms['errmsg'],$contents,$happyLifeID);
+                }
                 $data = array(
                     'status' => 1,
                     'msg' => '修改成功'

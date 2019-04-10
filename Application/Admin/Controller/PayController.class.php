@@ -12,11 +12,12 @@ class PayController extends AdminBaseController{
         $map = I('get.');
         $map['starttime'] = $map['starttime']?$map['starttime']:date('Y-m',strtotime("-6 month",time()));
         $map['endtime']   = $map['endtime']?$map['endtime']:date('Y-m');
+        $unArr = array('测','试','测试','测试点','测试地','测试测试','test','testtest','Testing','Tesgin','岗厦','测试账号');
         // p($map);
         if($map['starttime'] && $map['endtime'] && $map['type']){
             $starttime = strtotime($map['starttime']);
             $endtime   = strtotime(date("Y-m",strtotime("+1 month",strtotime($map['endtime']))));
-            $assign   = D('Receiptson')->getAllFullMonthPay(D('Receiptson'),$starttime,$endtime,$map['type']);
+            $assign   = D('Receiptson')->getAllFullMonthPay(D('Receiptson'),$starttime,$endtime,$map['type'],$unArr);
         }else{
             $assign   = array();
         }
@@ -35,7 +36,8 @@ class PayController extends AdminBaseController{
     public function payDayList(){
         $map      = I('get.');
         $type     = explode(',',$map['type']);
-        $assign   = D('Receiptson')->getAllFullDayPay(D('Receiptson'),$map['date'],$type);
+        $unArr = array('测','试','测试','测试点','测试地','测试测试','test','testtest','Testing','Tesgin','岗厦','测试账号');
+        $assign   = D('Receiptson')->getAllFullDayPay(D('Receiptson'),$map['date'],$type,$unArr);
         $this->assign('date',$map['date']);
         $this->assign('type',$map['type']);
         $this->assign($assign);
@@ -51,7 +53,8 @@ class PayController extends AdminBaseController{
             'ir_receiptnum'=>$map['ir_receiptnum'],
             'customerid'   =>$map['customerid'],
         );
-        $assign   = D('Receiptson')->getAllFullDayPayInfo(D('Receiptson'),$map['date'],$type,$word,$limit='50');
+        $unArr = array('测','试','测试','测试点','测试地','测试测试','test','testtest','Testing','Tesgin','岗厦','测试账号');
+        $assign   = D('Receiptson')->getAllFullDayPayInfo(D('Receiptson'),$map['date'],$type,$word,$unArr,$limit='50');
         $this->assign('date',$map['date']);
         $this->assign('app',$map['app']);
         $this->assign('type',$map['type']);

@@ -1218,40 +1218,42 @@ class ReceiptModel extends BaseModel{
     * 送货单导出excel
     **/
     public function export_send_excel($data){
-        $title   = array('创建日期','订单编号','会员账号','会员姓名','会员电话','团队标签','订单金额','订单备注','商品信息','商品编号','商品数量','支付日期','收货人姓名','收货电话','收货地址');
+        $title   = array('标签','创建日期','订单编号','会员账号','会员姓名','会员电话','团队标签','订单金额','订单备注','商品信息','商品编号','商品数量','支付日期','收货人姓名','收货电话','收货地址');
         foreach ($data as $k => $v) {
+            // 团队标签
+            $content[$k]['code']         = 'HPL';
             // 创建日期
             $content[$k]['ir_date']      = date('Y-m-d',$v['ir_date']).'/'.date('H:i:s',$v['ir_date']);
             // 订单编号
-            $content[$k]['ir_receiptnum']    = $v['ir_receiptnum'];
+            $content[$k]['ir_receiptnum']= $v['ir_receiptnum'];
             // 会员账号
-            $content[$k]['rcustomerid']      = $v['rcustomerid'];
+            $content[$k]['rcustomerid']  = $v['rcustomerid'];
             // 会员姓名
-            $content[$k]['username']      = $v['lastname'].$v['firstname'];
+            $content[$k]['username']     = $v['lastname'].$v['firstname'];
             // 会员电话
             if(empty($v['phone'])){
-                $content[$k]['phone']  = $v['ia_phone'];
+                $content[$k]['phone']    = $v['ia_phone'];
             }else{
-                $content[$k]['phone']  = $v['phone'];
+                $content[$k]['phone']    = $v['phone'];
             }
             // 团队标签
-            $content[$k]['teamcode']  = 'ABC';
+            $content[$k]['teamcode']     = 'ABC';
             // 订单金额
-            $content[$k]['ir_price'] = $v['ir_price'];
+            $content[$k]['ir_price']     = $v['ir_price'];
             // 订单备注
-            $content[$k]['ir_desc'] = $v['ir_desc']; 
+            $content[$k]['ir_desc']      = $v['ir_desc']; 
             // 商品信息
-            $content[$k]['productnams'] = $v['productnams'];
+            $content[$k]['productnams']  = $v['productnams'];
             // 商品编号
-            $content[$k]['productno'] = $v['productno'];
+            $content[$k]['productno']    = $v['productno'];
             // 商品数量
-            $content[$k]['productname'] = $v['productnum'];
-            // 支付日期
-            $content[$k]['ir_paytime'] = date('Y-m-d',$v['ir_paytime']).'/'.date('H:i:s',$v['ir_paytime']);
+            $content[$k]['productname']  = $v['productnum'];
+            // 支付日期 
+            $content[$k]['ir_paytime']   = date('Y-m-d',$v['ir_paytime']).'/'.date('H:i:s',$v['ir_paytime']);
             // 收货人姓名
-            $content[$k]['ia_name'] = $v['ia_name'];
+            $content[$k]['ia_name']      = $v['ia_name'];
             // 收货电话
-            $content[$k]['ia_phone'] = $v['ia_phone'];
+            $content[$k]['ia_phone']     = $v['ia_phone'];
             // 收货地址
             if($v['ia_province'] && $v['ia_city'] && $v['ia_area'] && $v['ia_address']){
                 $content[$k]['ia_address'] = $v['ia_province'].$v['ia_city'].$v['ia_area'].$v['ia_address'];

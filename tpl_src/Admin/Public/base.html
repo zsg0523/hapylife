@@ -265,6 +265,15 @@
 
 <script type="text/javascript" src="__PUBLIC_JS__/js/My97DatePicker/WdatePicker.js"></script>
 <block name="js"></block>
+<script type="text/javascript">
+    // 限制表单提交
+    function formSubmit(id){
+        if(canclick){
+            canclick=false;
+            $(id).submit();
+        }
+    }
+</script>
 </body>
 </html>
 

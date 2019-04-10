@@ -1,0 +1,373 @@
+<extend name="Public:base" />
+
+<block name="title">查询工具</block>
+<block name="content">
+    <!-- 导航栏开始 -->
+    <div class="page-header">
+        <h1>
+            用户管理
+            &gt;
+			查询工具
+        </h1>
+    </div>
+    <div class="col-xs-12">
+		<div class="tabbable">
+            <ul class="nav nav-tabs padding-12 tab-color-blue background-blue" id="myTab">
+            	<li class="active">
+					<a href="#home" data-toggle="tab">查询工具</a>
+			    </li>
+			    <li>
+			    	<form action="{:U('Admin/Super/index')}" method="get">
+					    <input type="text" name="customerid" placeholder="会员账号" value="{$customerid}">
+				    	<input class='btn btn-sm' type="submit" value="搜索" />
+					</form>
+			    </li>
+			</ul>
+		</div>
+            <div class="tab-content">
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<div style="width: 100%;height: 30px;line-height: 30px; background-color: #7db4d8; text-align: center; font-weight: bold;">个人信息</div>
+					<tr>
+						<th>会员账号</th>
+						<th>wvCustomerID</th>
+                        <th>姓</th>
+                        <th>名</th>
+                        <th>注册时间</th>
+                        <th>下线放置位置</th>
+                        <th>状态</th>
+					</tr>
+					<foreach name="data" item="v">
+						<tr>
+							<td>{$v.customerid}</td>
+							<if condition="empty($v['wvcustomerid']) eq true">
+								<td></td>
+							<else />
+								<td>{$v.wvcustomerid}</td>
+							</if>
+							<td>{$v.lastname}</td>
+							<td>{$v.firstname}</td>
+							<td>{:date('Y-m-d H:i:s',$v['joinedon'])}</td>
+							<switch name="v['binaryplacementpreference']">
+								<case value="BuildLeft">
+									<td>区域一</td>
+								</case>
+								<case value="BuildRight">
+									<td>区域二</td>
+								</case>
+								<case value="GreaterVolumeLegEvenFill">
+									<td>大区域</td>
+								</case>
+								<case value="WeakLeg">
+									<td>小区域</td>
+								</case>
+								<default /><td></td>
+							</switch>
+							<switch name="v['activities']">
+								<case value="1">
+									<td>活跃</td>
+								</case>
+								<case value="0">
+									<td>不活跃</td>
+								</case>
+							</switch>
+						</tr>
+					</foreach>
+				</table>
+
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<div style="width: 100%;height: 30px;line-height: 30px; background-color: #7db4d8; text-align: center; font-weight: bold;">个人业绩</div>
+						<tr>
+							<th>weekly</th>
+	                        <th>monthly</th>
+						</tr>
+						<tr>
+							<td>
+								<table class="table table-striped table-bordered table-hover table-condensed">
+									<tr>
+										<th>周期</th>
+										<th>个人推荐总人数</th>
+										<th>左区</th>
+										<th>右区</th>
+									</tr>
+									
+									<tr>
+										<td>{$code['weekly']['description']}</td>
+										<td>{$code['weekly']['personalActive']}</td>
+										<td>
+											<table class="table table-striped table-bordered table-hover table-condensed">
+												<tr>
+													<th>新增人数</th>
+													<th>活跃人数</th>
+													<th>总人数</th>
+													<th>总积分</th>
+												</tr>
+												<tr>
+													<td>{$code['weekly']['l']['newTotal']}</td>
+													<td>{$code['weekly']['l']['activeTotal']}</td>
+													<td>{$code['weekly']['l']['Total']}</td>
+													<td>{$code['weekly']['l']['volumeTotal']}</td>
+												</tr>
+											</table>
+										</td>
+										<td>
+											<table class="table table-striped table-bordered table-hover table-condensed">
+												<tr>
+													<th>新增人数</th>
+													<th>活跃人数</th>
+													<th>总人数</th>
+													<th>总积分</th>
+												</tr>
+												<tr>
+													<td>{$code['weekly']['r']['newTotal']}</td>
+													<td>{$code['weekly']['r']['activeTotal']}</td>
+													<td>{$code['weekly']['r']['Total']}</td>
+													<td>{$code['weekly']['r']['volumeTotal']}</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<table class="table table-striped table-bordered table-hover table-condensed">
+									<tr>
+										<th>周期</th>
+										<th>个人推荐总人数</th>
+										<th>左区</th>
+										<th>右区</th>
+									</tr>
+									<tr>
+										<td>{$code['monthly']['description']}</td>
+										<td>{$code['monthly']['personalActive']}</td>
+										<td>
+											<table class="table table-striped table-bordered table-hover table-condensed">
+												<tr>
+													<th>新增人数</th>
+													<th>活跃人数</th>
+													<th>总人数</th>
+													<th>总积分</th>
+												</tr>
+												<tr>
+													<td>{$code['monthly']['l']['newTotal']}</td>
+													<td>{$code['monthly']['l']['activeTotal']}</td>
+													<td>{$code['monthly']['l']['Total']}</td>
+													<td>{$code['monthly']['l']['volumeTotal']}</td>
+												</tr>
+											</table>
+										</td>
+										<td>
+											<table class="table table-striped table-bordered table-hover table-condensed">
+												<tr>
+													<th>新增人数</th>
+													<th>活跃人数</th>
+													<th>总人数</th>
+													<th>总积分</th>
+												</tr>
+												<tr>
+													<td>{$code['monthly']['r']['newTotal']}</td>
+													<td>{$code['monthly']['r']['activeTotal']}</td>
+													<td>{$code['monthly']['r']['Total']}</td>
+													<td>{$code['monthly']['r']['volumeTotal']}</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+				</table>
+
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<div style="width: 100%;height: 30px;line-height: 30px; background-color: #B214FF; text-align: center; font-weight: bold;">上线信息</div>
+					<tr>
+						<th>会员账号</th>
+						<th>姓</th>
+						<th>名</th>
+						<th>下线放置位置</th>
+						<th>状态</th>
+					</tr>
+					<foreach name="enroller" item="v">
+						<tr>
+							<td>{$v['customerid']}</td>
+							<td>{$v['lastname']}</td>
+							<td>{$v['firstname']}</td>
+							<switch name="v['binaryplacementpreference']">
+								<case value="BuildLeft">
+									<td>区域一</td>
+								</case>
+								<case value="BuildRight">
+									<td>区域二</td>
+								</case>
+								<case value="GreaterVolumeLegEvenFill">
+									<td>大区域</td>
+								</case>
+								<case value="WeakLeg">
+									<td>小区域</td>
+								</case>
+								<default /><td></td>
+							</switch>
+							<switch name="v['activities']">
+								<case value="1">
+									<td>活跃</td>
+								</case>
+								<case value="0">
+									<td>不活跃</td>
+								</case>
+							</switch>
+						</tr>
+					</foreach>
+				</table>
+
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<div style="width: 100%;height: 30px;line-height: 30px; background-color: #7DB513; text-align: center; font-weight: bold;">下线信息</div>
+					<tr>
+						<th>会员账号</th>
+						<th>姓</th>
+						<th>名</th>
+						<th>订单信息</th>
+					</tr>
+					<foreach name="lower" item="value">
+						<tr>
+							<td>{$value['customerid']}</td>
+							<td>{$value['lastname']}</td>
+							<td>{$value['firstname']}</td>
+							<td>
+								<table class="table table-striped table-bordered table-hover table-condensed">
+									<tr>
+										<th>订单编号</th>
+										<th>订单总金额</th>
+										<th>订单备注</th>
+										<th>订单状态</th>
+										<th>订单创建日期</th>
+										<th>订单支付时间</th>
+									</tr>
+									<foreach name="value['receiptlist']" item="v">
+										<tr>
+											<td>{$v['ir_receiptnum']}</td>
+											<td>{$v['ir_price']}</td>
+											<td>{$v['ir_desc']}</td>
+											<td>
+												<switch name="v['ir_status']">
+													<case value="0">未支付</case>
+													<case value="2">已支付</case>
+													<case value="3">已发货</case>
+													<case value="4">已送达</case>
+													<case value="7">未支付</case>
+													<case value="202">为全额支付</case>
+												</switch>
+											</td>
+											<td>{:date('Y-m-d H:i:s',$v['ir_date'])}</td>
+											<if condition="empty($v['ir_paytime'])">
+												<td></td>
+											<else />
+												<td>{:date('Y-m-d H:i:s',$v['ir_paytime'])}</td>
+											</if>
+										</tr>
+									</foreach>
+								</table>
+							</td>
+						</tr>
+					</foreach>	
+				</table>
+
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<div style="width: 100%;height: 30px;line-height: 30px; background-color: #7db4d8; text-align: center; font-weight: bold;">个人订单信息</div>
+					<tr>
+						<th>订单编号</th>
+						<th>订单总金额</th>
+						<th>订单备注</th>
+						<th>订单状态</th>
+						<th>订单创建日期</th>
+						<th>订单支付时间</th>
+					</tr>
+					<foreach name="receipt" item="v">
+						<tr>
+							<td>{$v['ir_receiptnum']}</td>
+							<td>{$v['ir_price']}</td>
+							<td>{$v['ir_desc']}</td>
+							<td>
+								<switch name="v['ir_status']">
+									<case value="0">未支付</case>
+									<case value="2">已支付</case>
+									<case value="3">已发货</case>
+									<case value="4">已送达</case>
+									<case value="7">未支付</case>
+									<case value="202">为全额支付</case>
+								</switch>
+							</td>
+							<td>{:date('Y-m-d H:i:s',$v['ir_date'])}</td>
+							<if condition="empty($v['ir_paytime'])">
+								<td></td>
+							<else />
+								<td>{:date('Y-m-d H:i:s',$v['ir_paytime'])}</td>
+							</if>
+						</tr>
+					</foreach>
+				</table>
+
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<div style="width: 100%;height: 30px;line-height: 30px; background-color: #7db4d8; text-align: center; font-weight: bold;">个人EP</div>
+					<tr>
+						<th>奖金EP</th>
+						<th>奖金发放时间</th>
+						<th>是否发放</th>
+					</tr>
+					<foreach name="bonus" item="v">
+						<tr>
+							<td>{$v['bonus']}</td>
+							<if condition="empty($v['bonuspaymenttime'])">
+								<td></td>
+							<else />
+								<td>{:date('Y-m-d H:i:s',$v['bonuspaymenttime'])}</td>
+							</if>
+							<td>
+								<switch name="v['bonusstatus']">
+									<case value="0">未发放</case>
+									<case value="1">已发放</case>
+								</switch>
+							</td>
+						</tr>
+					</foreach>
+				</table>
+
+				<table class="table table-striped table-bordered table-hover table-condensed">
+					<div style="width: 100%;height: 30px;line-height: 30px; background-color: #7db4d8; text-align: center; font-weight: bold;">个人通用券</div>
+					<tr>
+						<th>通用券类型</th>
+						<th>通用券名称</th>
+						<th>通用券金额</th>
+						<th>通用券编码</th>
+						<th>通用券使用情况</th>
+						<th>通用券使用时间</th>
+					</tr>
+					<foreach name="coupon" item="v">
+						<tr>
+							<td>{$v['coupon_name']}</td>
+							<td>{$v['c_name']}</td>
+							<td>{$v['discount_money']}</td>
+							<td>{$v['coupon_code']}</td>
+							<td>
+								<switch name="v['is_used']">
+									<case value="0">未使用</case>
+									<case value="1">已使用</case>
+									<case value="2">已转账</case>
+								</switch>
+							</td>
+							<if condition="empty($v['use_time'])">
+								<td></td>
+							<else />
+								<td>{:date('Y-m-d H:i:s',$v['use_time'])}</td>
+							</if>
+						</tr>
+					</foreach>
+				</table>
+				
+            </div>
+        </div>
+    </div>
+</block>
+<block name="js">
+	<script>
+	
+	</script>
+</block>
