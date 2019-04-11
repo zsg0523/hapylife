@@ -1,0 +1,132 @@
+<!DOCTYPE html>  
+<html lang="zh-cn">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">  
+    <title>选择支付方式</title>  
+    <link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="__PUBLIC_CSS__/common.css" />-->
+    <style type="text/css">
+    	html{background-color: #F0F0F0;}
+    	#body{background-color: #F0F0F0;}
+    	.main{
+    		width:100%;
+    		min-height:150px;
+			margin:50px auto;
+			background-color: #fff;
+		}	
+    	.commonHead{
+    		width:100%;
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 20;
+		}
+		.formGroup{
+			width: 94%;
+			height: 40px;
+			line-height: 40px;
+			margin-left: 3%;
+		}
+		.formGroup_l{
+			width: 35%;
+			height: 40px;
+			line-height: 40px;
+			float: left;
+		}
+		.formGroup_r{
+			width: 65%;
+			height: 40px;
+			line-height: 40px;
+			float: left;
+		}
+		.formGroup_r>select{
+			width: 96%;
+			outline: none;
+			height: 40px;
+			line-height: 40px;
+			margin-left:4%;
+			border-radius: 4px;
+		}
+		.btnGo{
+			width: 100%;
+			height: 90px;
+		}
+		.btnGo>button{
+			width: 90%;
+			background:#2490ed;
+			color:#fff;
+			height: 45px;
+			line-height: 45px;
+	 		font-size: 16px;
+			border-radius: 8px;
+			margin-top: 20px;
+			margin-left: 5%;
+			border:none;
+			outline: none;
+		}
+    </style>
+</head>  
+<body id="body">  
+    <div class="commonHead">
+  		<include file="Common/commonHead1" />
+  	</div>
+    <div class="main">  
+    	<div style="height: 30px;"></div>
+		<input type="hidden" id="ir_receiptnum" value="{:I('get.ir_receiptnum')}" />
+		<div class="formGroup">
+			<div class="formGroup_l">
+				<label>选择支付银行：</label>
+			</div>
+			<div class="formGroup_r">
+				<select id="bankId">
+					<option value="0">请选择</option>
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+				</select>
+			</div>
+		</div>
+		<div class="btnGo">
+			<button onclick="goHuiFu();">确定</button>
+		</div>
+    </div>  
+    
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>  
+	<script type="text/javascript">
+		$(document).ready(function(){
+	   		changeCommonHead('选择支付银行');
+		});
+		function back(){
+        	window.location.href ="{:U('Home/Purchase/center')}";
+   		}
+   		function goHuiFu(){
+   			var bankId=$('#bankId').val();
+   			console.log(bankId);
+   			if(bankId){
+	   			$.ajax({
+					type:"post",
+					url:"http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/htxpayment",
+					async:false,
+					dataType:'json',
+					data:{
+						ir_receiptnum:$('#ir_receiptnum').val(),
+						bankId:bankId,
+						ir_paytype:10,
+					},
+					success:function(ret){
+						if(ret!=null){
+							window.location.href =ret.url;
+						}
+						
+					}
+				});
+   			}else{
+   				alert('请选择银行');
+   			}
+   		}
+
+	</script>  
+</body>  
+</html>  

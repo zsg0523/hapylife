@@ -1,0 +1,105 @@
+<!DOCTYPE html>  
+<html lang="zh-cn">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">  
+    <title>选择支付方式</title>  
+    <link rel="stylesheet" href="__PUBLIC_BOOTSTRAP__/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="__PUBLIC_CSS__/common.css" />-->
+    <style type="text/css">
+    	html{background-color: #F0F0F0;}
+    	#body{background-color: #F0F0F0;}
+    	.main{width:100%;min-height:150px;margin:50px auto;background-color: #fff;}	
+    	.commonHead{width:100%;position: fixed;top: 0;left: 0;z-index: 20;}
+    	
+		.pageDetial{width: 100%;height:auto;position: relative;}
+		.icon{width: 240;height: 240px;}
+		.icon>img{height: 240px;position: absolute;left: 50%;margin-left: -120px;}
+		.title{height: 80px;font-size:16px;display: block;width: 100%;}
+		.title>span{width:100%;height: 40px;display:block;text-align: center;float: left;line-height: 40px;}
+		.title>i{width:100%;color: red;font-weight: bold; height: 40px;display:block;font-style:normal;text-align: center;float: left;line-height: 40px;font-size: 18px;}
+		.link{width: 100%;height: 40px;position: relative;margin-top: 40px;}
+		.link>a{height: 40px;font-size: 15px;text-align:center;display: block;line-height:40px;background-color: #439DFE;color:#fff;}
+		
+		
+      	/*手机*/
+      	@media screen and (max-width: 768px){
+	        .icon>img{width: 240px;position: absolute;left: 50%;margin-left: -120px;}
+	        .title{width: 100%;}
+	        .link>a{width: 100%;}
+      	}
+      	/*平板*/
+      	@media screen and (min-width: 768px){
+	       	.icon>img{width: 240px;position: absolute;left: 50%;margin-left: -120px;}
+        	.link>a{width: 360px;position: absolute;left: 50%;margin-left: -180px;}
+      	}
+        /*中等屏幕*/
+      	@media screen and (min-width: 992px){
+        	.icon>img{width: 240px;position: absolute;left: 50%;margin-left: -120px;} 
+        	.link>a{width: 360px;position: absolute;left: 50%;margin-left: -180px;}
+      	}
+      	/*大屏幕*/
+      	@media screen and (min-width: 1200px){ 
+        	.icon>img{width:240px;}
+  	        .link>a{width: 360px;}
+        }
+    </style>
+</head>  
+<body id="body">  
+    <div class="commonHead">
+  		<include file="Common/commonHead1" />
+  	</div>
+    <div class="main container-fluid ">  
+		<h5 style="color: #000;text-align: center;margin-top: 30px;color: #01d10c;">请使用支付宝扫码支付</h5>
+		<input type="hidden" id="userid" value="{$Think.session.user.id}" />
+		<input type="hidden" id="ir_receiptnum" value="{:I('get.ir_receiptnum')}" />
+		<div class="pageDetial">
+			<div class="icon">
+				<img id="qrcode"  src="">
+			</div>
+			<div class="title">
+				<span id="orderId">订单号：{$data.ip_name_zh}</span>
+				<i id="money">订单金额：￥{$data.ip_price_rmb}</i>
+			</div>
+		</div>
+		<div style="width: 300px;margin: auto;height: 130px;border: 1px solid #ccc;">
+			<h4 style="text-align: center;color:red">不支持截图扫码支付</h4>	
+			<h4 style="text-align: center;color:red">需另外一台手机扫码</h4>	
+			<h4 style="text-align: center;color:red">扫码后，处理需时，请耐心等待！</h4>	
+			<h4 style="text-align: center;color:red">如因网络延时，可能需等待一分钟！</h4>
+		</div>
+    </div>  
+    
+	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>  
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$.ajax({
+				type:"post",
+				url:"http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/htxpayment",
+				async:false,
+				dataType:'json',
+				data:{
+					ir_receiptnum:$('#ir_receiptnum').val(),
+					ir_paytype:9,
+				},
+				success:function(ret){
+					if(ret!=null){
+						var url = ret.qrcode;   //二维码地址  
+						$("#qrcode").attr('src',url); 
+						$('#orderId').text("订单号:"+ret.orderId);
+						$('#money').text("金额:￥"+ret.amount);
+						setTimeout(function() { judgeOK() },1000);
+					}
+					
+				}
+			});
+	   		changeCommonHead('支付宝扫码支付');
+		});
+		function back(){
+        	window.location.href ="{:U('Home/Purchase/center')}";
+   		}
+
+	</script>  
+</body>  
+</html>  
