@@ -2909,3 +2909,124 @@ function QrLogo($logo,$QR){
         return false;
     }
 }
+/**
+* 去除空值
+**/
+function param_ck_null($kq_va,$kq_na){
+    if($kq_va == ""){
+        $kq_va="";
+    }else{
+        return $kq_va=$kq_na.'='.$kq_va.'&';
+    }
+}
+/*
+ * 加密
+ */
+function htxRsaSign($post_data) {
+    // $kq_all_para=param_ck_null($post_data['inputCharset'],'inputCharset');
+    $kq_all_para=param_ck_null($post_data['pageUrl'],"pageUrl");
+    $kq_all_para.=param_ck_null($post_data['bgUrl'],'bgUrl');
+    // $kq_all_para.=param_ck_null($post_data['version'],'version');
+    // $kq_all_para.=param_ck_null($post_data['language'],'language');
+    // $kq_all_para.=param_ck_null($post_data['signType'],'signType');
+    $kq_all_para.=param_ck_null($post_data['merchantAcctId'],'merchantAcctId');
+    $kq_all_para.=param_ck_null($post_data['terminalId'],'terminalId');
+    // $kq_all_para.=param_ck_null($post_data['payerName'],'payerName');
+    // $kq_all_para.=param_ck_null($post_data['payerContactType'],'payerContactType');
+    // $kq_all_para.=param_ck_null($post_data['payerContact'],'payerContact');
+    // $kq_all_para.=param_ck_null($post_data['payerIdentityCard'],'payerIdentityCard');
+    // $kq_all_para.=param_ck_null($post_data['mobileNumber'],'mobileNumber');
+    // $kq_all_para.=param_ck_null($post_data['cardNumber'],'cardNumber');
+    $kq_all_para.=param_ck_null($post_data['customerId'],'customerId');
+    $kq_all_para.=param_ck_null($post_data['orderId'],'orderId');
+    // $kq_all_para.=param_ck_null($post_data['orderCurrency'],'orderCurrency');
+    $kq_all_para.=param_ck_null($post_data['orderAmount'],'orderAmount');
+    $kq_all_para.=param_ck_null($post_data['orderTime'],'orderTime');
+    // $kq_all_para.=param_ck_null($post_data['inquireTrxNo'],'inquireTrxNo');
+    // $kq_all_para.=param_ck_null($post_data['productName'],'productName');
+    // $kq_all_para.=param_ck_null($post_data['productNum'],'productNum');
+    // $kq_all_para.=param_ck_null($post_data['productId'],'productId');
+    $kq_all_para.=param_ck_null($post_data['productDesc'],'productDesc');
+    $kq_all_para.=param_ck_null($post_data['ext1'],'ext1');
+    $kq_all_para.=param_ck_null($post_data['ext2'],'ext2');
+    $kq_all_para.=param_ck_null($post_data['deviceType'],'deviceType');
+    $kq_all_para.=param_ck_null($post_data['payType'],'payType');
+    // $kq_all_para.=param_ck_null($post_data['bankId'],'bankId');
+    // $kq_all_para.=param_ck_null($post_data['refererUrl'],'refererUrl');
+    // $kq_all_para.=param_ck_null($post_data['customerIp'],'customerIp');
+    // $kq_all_para.=param_ck_null($post_data['redoFlag'],'redoFlag');
+    
+
+    // echo $kq_all_para;die;
+    $kq_all_para=substr($kq_all_para,0,strlen($kq_all_para)-1);
+    // p($kq_all_para);die;
+    /////////////  RSA 签名计算 ///////// 开始 //
+    $fp = fopen("./10012159860.pem", "r");
+    $priv_key = fread($fp, filesize('./10012159860.pem'));
+    fclose($fp);
+    $pkeyid = openssl_get_privatekey($priv_key);
+
+    // compute signature
+    openssl_sign($kq_all_para, $signMsg, $pkeyid,OPENSSL_ALGO_SHA1);
+
+    // free the key from memory
+    openssl_free_key($pkeyid);
+    $signMsg        = base64_encode($signMsg);
+    return $signMsg;
+}
+/**
+ * RSA验签
+ * $postData 请传入完整$_POST数据
+ * 调用方法 rsaVerify($_POST);即可完成验签 
+ */
+function htxRsaVerify($map){
+    //银行交易号 ，ChinaPnr交易在银行支付时对应的交易号，如果不是通过银行卡支付，则为空
+    $kq_check_all_para=param_ck_null($map['bankDealId'],'bankDealId');
+    //银行代码，如果payType为00，该值为空；如果payType为10,该值与提交时相同。
+    $kq_check_all_para.=param_ck_null($map['bankId'],'bankId');
+    // ChinaPnr交易号，商户每一笔交易都会在ChinaPnr生成一个交易号。
+    $kq_check_all_para.=param_ck_null($map['dealId'],'dealId');
+    //ChinaPnr交易时间，ChinaPnr对交易进行处理的时间,格式：yyyyMMddHHmmss，如：20071117020101
+    $kq_check_all_para.=param_ck_null($map['dealTime'],'dealTime');
+    //错误代码 ，请参照《人民币网关接口文档》最后部分的详细解释。
+    $kq_check_all_para.=param_ck_null($map['errCode'],'errCode');
+    //扩展字段1，该值与提交时相同
+    $kq_check_all_para.=param_ck_null($map['ext1'],'ext1');
+    //扩展字段2，该值与提交时相同。
+    $kq_check_all_para.=param_ck_null($map['ext2'],'ext2');
+    //人民币网关账号，该账号为11位人民币网关商户编号+01,该值与提交时相同。
+    $kq_check_all_para.=param_ck_null($map['merchantAcctId'],'merchantAcctId');
+    //订单金额，金额以“分”为单位，商户测试以1分测试即可，切勿以大金额测试,该值与支付时相同。
+    $kq_check_all_para.=param_ck_null($map['orderAmount'],'orderAmount');
+    $kq_check_all_para.=param_ck_null($map['orderCurrency'],'orderCurrency');
+    //商户订单号，,该值与提交时相同。
+    $kq_check_all_para.=param_ck_null($map['orderId'],'orderId');
+    //订单提交时间，格式：yyyyMMddHHmmss，如：20071117020101,该值与提交时相同。
+    $kq_check_all_para.=param_ck_null($map['orderTime'],'orderTime');
+    //处理结果， 10支付成功，11 支付失败，00订单申请成功，01 订单申请失败
+    $kq_check_all_para.=param_ck_null($map['payResult'],'payResult');
+    //支付方式，一般为00，代表所有的支付方式。如果是银行直连商户，该值为10,该值与提交时相同。
+    $kq_check_all_para.=param_ck_null($map['payType'],'payType');
+    //商户终端号，该值与提交时相同。
+    $kq_check_all_para.=param_ck_null($map['terminalId'],'terminalId');
+    //网关版本，该值与提交时相同。
+    $kq_check_all_para.=param_ck_null($map['version'],'version');
+
+    $trans_body=substr($kq_check_all_para,0,strlen($kq_check_all_para)-1);
+    $signMsgDe= urldecode($map['signMsg']);
+    $MAC=base64_decode($signMsgDe);
+    $trans_body_de=urldecode($trans_body);
+    $public_key_path = "./ChinaPnR.rsa.cer";  
+    $cert = file_get_contents($public_key_path);
+    $pubkeyid = openssl_get_publickey($cert);
+    // var_dump($pubkeyid);die;
+    $result = openssl_verify($trans_body_de, $MAC, $pubkeyid); 
+    if (!$result)
+    {
+        return "false";
+        exit;
+    } else
+    {
+        return "true";
+    }
+}

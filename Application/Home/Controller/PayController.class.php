@@ -65,11 +65,6 @@ class PayController extends HomeBaseController{
             if($ir_price>0){
                 $add = D('receiptson')->add($mape);
                 if($add){
-                 	// if($ip_paytype==1){
-                 	// 	$this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
-                 	// }else if($ip_paytype==4){
-                 	// 	$this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
-                 	// }
                     switch ($ip_paytype) {
                         case '1':
                             $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
@@ -79,6 +74,15 @@ class PayController extends HomeBaseController{
                             break;
                         case '4':
                             $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
+                            break;
+                        case '8':
+                            $this->redirect('Home/Pay/huiFuW',array('ir_receiptnum'=>$pay_receiptnum));
+                            break;
+                        case '9':
+                            $this->redirect('Home/Pay/huiFuZ',array('ir_receiptnum'=>$pay_receiptnum));
+                            break;
+                        case '10':
+                            $this->redirect('Home/Pay/huiFuB',array('ir_receiptnum'=>$pay_receiptnum));
                             break;
                     }
                 }else{
