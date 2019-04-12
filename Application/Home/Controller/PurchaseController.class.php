@@ -164,7 +164,7 @@ class PurchaseController extends HomeBaseController{
         $this->assign('data',$data);
         $this->display();
     }
-	/**
+    /**
     *检查用户DT
     **/
     public function dtpay(){
@@ -190,10 +190,10 @@ class PurchaseController extends HomeBaseController{
         $data['ip_dt'] =$ip_dt;
         // p($data);die;
         if($data){
-        	$this->assign('data',$data);
-        	$this->display();
+            $this->assign('data',$data);
+            $this->display();
         }else{
-        	$this->error('登录过期!请重新登录');
+            $this->error('登录过期!请重新登录');
         }
     }
     /**
@@ -1330,13 +1330,13 @@ class PurchaseController extends HomeBaseController{
                 $payType = 4;
                 break;
         }
-        $ir_price = M('Receiptson')->where(array('pay_receiptnum'=>$ir_receiptnum))->getfield('ir_price');
-        // $orderAmount = bcmul($ir_price,100,0);
+        $receiptson = M('Receiptson')->where(array('pay_receiptnum'=>$ir_receiptnum))->find();
+        $orderAmount = bcmul($receiptson['ir_price'],100,0);
         $ext = json_encode(array('deviceInfo'=>4,'payType'=>$payType,"deviceType"=>2));
         //商户会员号，订单金额*100
         $post_data = array (
             "inputCharset" => "1",//编码方式，1代表 UTF-8; 2 代表 GBK; 3代表 GB2312 默认为1,该参数必填。
-            "pageUrl" => "https://www.merchant.com/pay/notifyReceiverPg.do",//接收支付结果的页面地址，该参数一般置为空即可。
+            "pageUrl" => "http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/showResult",//接收支付结果的页面地址，该参数一般置为空即可。
             "bgUrl" => "http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/notifyReceiver",//服务器接收支付结果的后台地址，该参数务必填写，不能为空。
             "version" => "3.0",//网关版本，固定值：3.0,该参数必填。
             "language" => "1",//语言种类，1代表中文显示，2代表英文显示。默认为1,该参数必填。
@@ -1393,14 +1393,14 @@ class PurchaseController extends HomeBaseController{
             if(!strpos($respUrl,'&respMsg')){
                 //获取二维码地址
                 $ary=explode("&url=",$qrUrl);
-                if ($ip_paytype == 8 || $ip_paytype == 9){
+                if ($ir_paytype == 8 || $ir_paytype == 9){
                     //生成二维码，并存储
                     $url             = createCode(urldecode(explode('&',$ary[1])[0]),'Upload/avatar/'.$ir_receiptnum.'.png');
                     $para['qrcode']  = C('WEB_URL').'/Upload/avatar/'.$ir_receiptnum.'.png';
                     $para['amount'] = $ir_price;
                     $para['orderId'] = $ir_receiptnum;
                     $this->ajaxReturn($para);
-                }elseif ($ip_paytype == 10){
+                }elseif ($ir_paytype == 10){
                     $para['payUrl'] = $ary[1];
                     $this->ajaxReturn($para);
                 }
@@ -1421,8 +1421,8 @@ class PurchaseController extends HomeBaseController{
         // I('post')，$_POST 无法获取API post过来的字符串数据
         $jsonStr = file_get_contents("php://input");
         //写入服务器日志文件
-        // $jsonStr = 'payResult=10&merchantAcctId=3000308000101&orderId=20190321160120123474&orderCurrency=CNY&dealId=2001674687&terminalId=0010001&version=3.0&bankDealId=4200000300201903227836310055&bankId=wxpay&payType=1&orderTime=20190322103017&orderAmount=1&dealTime=20190322103017&errCode=000000&signMsg=YQgf8vvuDpAtn0chQedRagOnkCZUvZivtxcbg9mr5MzzWBYMGmHU9z9nhwklo5IG8RpDDkmeWA%252FAPeUPI3NSNHCNskQn007RdZRkMZqZstyqx5X%252BpSXcVhnab0GGecqq6RPxsztIw0tXnpW3JVRRhQONJf8l5FZfdGk%252B%252BCbi2%252Bk%253D&ext2=%257B%2522deviceInfo%2522%253A4%252C%2522payType%2522%253A1%252C%2522deviceType%2522%253A2%257D&ext1=%257B%2522deviceInfo%2522%253A4%252C%2522payType%2522%253A1%252C%2522deviceType%2522%253A2%257D';
         //$jsonStr ='payResult=10&merchantAcctId=1021903029201&orderId=2019040812434552990&orderCurrency=CNY&dealId=2002037671&terminalId=AYGJ001&version=3.0&bankDealId=2019040812461200000000PNRI20000001649631&bankId=ccb&payType=4&orderTime=20190408124610&orderAmount=1&dealTime=20190408124611&errCode=000000&signMsg=WHe0onwlfXTHZAvxFkUgOLw4%252F5ETu8cDM44M277SrZVFTbxhw%252B6G%252FEgOG%252FBWOtT2nJn%252BGsQmfxs45i7VwNvOKN32TRgQfK35Om9FEXQiJ1IyjW%252BsyLmFVIen1HvkDuCWzMQJc7iWt%252FqsPQlZE09IsXFd5%252FC65pqgLMLvC4WZOLU%253D';
+        // $jsonStr ='payResult=10&merchantAcctId=1021903029201&orderId=20190411171846199752&orderCurrency=CNY&dealId=2002250961&terminalId=AYGJ001&version=3.0&bankDealId=132019041122001422781026487322&bankId=alipay&payType=2&orderTime=20190411171855&orderAmount=1&dealTime=20190411171602&errCode=000000&signMsg=ai5EGy0R%252B73s4s7AIE1IpheQ1%252BX6l9%252F9gIno%252BEcrtVANs1k%252FhBToJqfYVF4aIHGwPmEFYl%252FYfVmQW61QHO9bZo1yfLLLNrwo4zmyp885l9eLJKBgY8HsC8bOeEuh7Uib07PFX7A%252FqkE985%252FZYyukAksclKxS4uk8SR8LNUSEd3o%253D';
         $log     = logTest($jsonStr);
         $data    = explode('&', $jsonStr);
         //签名数据会被转码，需解码urldecode
@@ -1430,61 +1430,123 @@ class PurchaseController extends HomeBaseController{
             $temp = explode('=', $value);
             $map[$temp[0]]=urldecode(trim($temp[1]));
         }
-        //p($map);
         //验签
         $return = htxRsaVerify($map);
         if($return=="true" && $map['payResult']==10){
+            switch ($map['payType']) {
+                case '1':
+                    $payType = 8;
+                    break;
+                case '2':
+                    $payType = 9;
+                    break;
+                case '4':
+                    $payType = 10;
+                    break;
+            }
             //订单处理
-            $map = array(
-                'ir_paytype'       => $map['payType'],
+            $save = array(
+                'ir_paytype'       => $payType,
                 'status'           => 2,
                 'htx_trade_no'     => $map['dealId'],
                 'htx_trade_status' => $map['payResult'],
             );
             //限制多次回调，$map里的参数值必须是只成功修改一次
-            $result = M('Receiptson')->where(array('pay_receiptnum'=>$map['orderId']))->save($map);
+            $result = M('Receiptson')->where(array('pay_receiptnum'=>$map['orderId']))->save($save);
             // 获取子订单信息
             $receiptson = M('Receiptson')->where(array('pay_receiptnum'=>$map['orderId']))->find();
             // 用户信息
             $userinfo = M('User')->where(array('iuid'=>$receiptson['riuid']))->find();
             // 获取产品名称
             $product_name = M('Receiptlist')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->getfield('product_name');
+            // 获取父订单信息
+            $order = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->find();
             if($result){
-                // 修改父订单状态
-                $editIrStatus = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->setField('ir_status',2);
-                if($editIrStatus){
-                    // 修改父订单支付时间
-                    $editPaytime = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->setField('ir_paytime',time());
+                // 修改子订单支付时间
+                M('Receiptson')->where(array('pay_receiptnum'=>$map['orderId']))->setfield('paytime',time());
+                $subnum= bcsub($order['ir_unpaid'],$receiptson['ir_price'],2);
+                if($subnum==0){
+                    $sub      = 0;
+                    $unp      = 0;
+                    $ir_status= 2;
+                    $ir_paytime = time();
+                }else{  
+                    $sub      = $subnum;
+                    $unp      = bcdiv($sub,100,2);
+                    $ir_status= 202;
+                    $ir_paytime = 0;
                 }
-                $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->getfield('ir_status');
-                if($ir_status == 2){
-                    // 发送短信提示
-                    $templateId ='178959';
-                    $params     = array($receiptson['ir_receiptnum'],$product_name);
-                    $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                    if($sms['errmsg'] == 'OK'){
-                        $contents = array(
-                            'acnumber' => $userinfo['acnumber'],
-                            'phone' => $userinfo['phone'],
-                            'operator' => '系统',
-                            'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                            'product_name' => $product_name,
-                            'date' => time(),
-                            'content' => '订单编号：'.$receiptson['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
-                            'customerid' => $userinfo['customerid']
-                        );
-                        $logs = M('SmsLog')->add($contents);
+                if($subnum==0){
+                    // 更新订单信息
+                    $status  = array(
+                        'ir_status'  =>$ir_status,
+                        'ir_unpaid'  =>$sub,
+                        'ir_unpoint' =>$unp,
+                        'ir_paytime' =>$ir_paytime,
+                    );
+                    $updateReceipt = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($status);
+                    // 修改父订单状态
+                    $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->getfield('ir_status');
+                    if($ir_status == 2){
+                        // 发送短信提示
+                        $templateId ='178959';
+                        $params     = array($receiptson['ir_receiptnum'],$product_name);
+                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                        if($sms['errmsg'] == 'OK'){
+                            $contents = array(
+                                'acnumber' => $userinfo['acnumber'],
+                                'phone' => $userinfo['phone'],
+                                'operator' => '系统',
+                                'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                'product_name' => $product_name,
+                                'date' => time(),
+                                'content' => '订单编号：'.$receiptson['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
+                                'customerid' => $userinfo['customerid']
+                            );
+                            $logs = M('SmsLog')->add($contents);
+                        }
+                        $usa = new \Common\UsaApi\Usa;
+                        // $createPayment = $usa->createPayment($userinfo['customerid'],$receiptson['ir_receiptnum'],date('Y-m-d H:i',time()));
+                        $log = addUsaLog($createPayment['result']);
+                        $jsonStr = json_decode($createPayment['result'],true);
+                        // p($jsonStr);die;
+                        if($jsonStr['paymentId']){
+                            // 检测所有月费单是否存在未支付
+                            $allIrstatus = M('Receipt')->where(array('ir_ordertype'=>3,'rCustomerID'=>$userinfo['customerid']))->getField('ir_status',true);
+                            if(!in_array(0,$allIrstatus) && !in_array(7,$allIrstatus)){
+                                $statusResult = M('User')->where(array('customerid'=>$userinfo['customerid']))->setfield('showProduct','0');
+                            }
+                        }
                     }
-                    $usa = new \Common\UsaApi\Usa;
-                    // $createPayment = $usa->createPayment($userinfo['customerid'],$receiptson['ir_receiptnum'],date('Y-m-d H:i',time()));
-                    $log = addUsaLog($createPayment['result']);
-                    $jsonStr = json_decode($createPayment['result'],true);
-                    // p($jsonStr);die;
-                    if($jsonStr['paymentId']){
-                        // 检测所有月费单是否存在未支付
-                        $allIrstatus = M('Receipt')->where(array('ir_ordertype'=>3,'rCustomerID'=>$userinfo['customerid']))->getField('ir_status',true);
-                        if(!in_array(0,$allIrstatus) && !in_array(7,$allIrstatus)){
-                            $statusResult = M('User')->where(array('customerid'=>$userinfo['customerid']))->setfield('showProduct','0');
+                }else{
+                    // 未全额支付
+                    $status  = array(
+                        'ir_status'  =>$ir_status,
+                        'ir_unpaid'  =>$sub,
+                        'ir_unpoint' =>$unp,
+                        'ir_paytime' =>$ir_paytime,
+                    );
+                    //更新订单信息
+                    $updateReceipt = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($status);
+                    if($updateReceipt){
+                        // 总共已经支付金额
+                        $total = bcsub($receiptson['ir_price'],$sub,2);
+                        // 发送短信提示
+                        $templateId ='178957';
+                        $params     = array($receiptson['ir_receiptnum'],$receiptson['ir_price'],$total,$sub);
+                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                        if($sms['errmsg'] == 'OK'){
+                            $contents = array(
+                                        'acnumber' => $userinfo['acnumber'],
+                                        'phone' => $userinfo['phone'],
+                                        'operator' => '系统',
+                                        'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                        'product_name' => $receiptlist['product_name'],
+                                        'date' => time(),
+                                        'content' => '订单编号：'.$receiptson['ir_receiptnum'].'，收到付款'.$receiptson['ir_price'].'，总共已支付'.$total.'剩余需支付'.$sub,
+                                        'customerid' => $userinfo['customerid']
+                            );
+                            $logs = M('SmsLog')->add($contents);
                         }
                     }
                 }
@@ -2287,5 +2349,31 @@ class PurchaseController extends HomeBaseController{
         // p($tmp);die;
         $this->assign($tmp);         
         $this->display();
+    }
+
+    // 银行支付还回
+    public function showResult(){
+        // $jsonStr = file_get_contents("php://input");
+        $jsonStr = json_encode($_GET);
+        //写入服务器日志文件
+        //$jsonStr ='payResult=10&merchantAcctId=1021903029201&orderId=2019040812434552990&orderCurrency=CNY&dealId=2002037671&terminalId=AYGJ001&version=3.0&bankDealId=2019040812461200000000PNRI20000001649631&bankId=ccb&payType=4&orderTime=20190408124610&orderAmount=1&dealTime=20190408124611&errCode=000000&signMsg=WHe0onwlfXTHZAvxFkUgOLw4%252F5ETu8cDM44M277SrZVFTbxhw%252B6G%252FEgOG%252FBWOtT2nJn%252BGsQmfxs45i7VwNvOKN32TRgQfK35Om9FEXQiJ1IyjW%252BsyLmFVIen1HvkDuCWzMQJc7iWt%252FqsPQlZE09IsXFd5%252FC65pqgLMLvC4WZOLU%253D';
+        // $jsonStr ='payResult=10&merchantAcctId=1021903029201&orderId=20190411171846199752&orderCurrency=CNY&dealId=2002250961&terminalId=AYGJ001&version=3.0&bankDealId=132019041122001422781026487322&bankId=alipay&payType=2&orderTime=20190411171855&orderAmount=1&dealTime=20190411171602&errCode=000000&signMsg=ai5EGy0R%252B73s4s7AIE1IpheQ1%252BX6l9%252F9gIno%252BEcrtVANs1k%252FhBToJqfYVF4aIHGwPmEFYl%252FYfVmQW61QHO9bZo1yfLLLNrwo4zmyp885l9eLJKBgY8HsC8bOeEuh7Uib07PFX7A%252FqkE985%252FZYyukAksclKxS4uk8SR8LNUSEd3o%253D';
+        $log  = logTest($jsonStr);
+        // 查询原订单号
+        $order = M('Receiptson')->where(array('pay_receiptnum'=>$_GET['orderId']))->find();
+        // 判断回调
+        if($_GET['payResult'] == 10){
+            $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$order['ir_receiptnum']))->getfield('ir_status');
+            if($ir_status == 2){
+                $this->redirect('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$order['ir_receiptnum']));
+            }else{
+                $assign['data'] = array(
+                    'msg' => '订单正在支付中，请等待！',
+                    'ir_receiptnum' => $_GET['orderId']
+                );
+                $this->assign($assign);
+                $this->display('Pay/waiting');
+            }
+        }
     }
 }

@@ -81,6 +81,8 @@ class HapylifePayController extends HomeBaseController{
         $order         = M('Receiptson')->where(array('pay_receiptnum'=>$pay_receiptnum))->find();
         // 获取父订单信息
         $receipt = M('Receipt')->where(array('ir_receiptnum'=>$order['ir_receiptnum']))->find();
+        // 订单金额
+        $orderAmount = bcmul($receiptson['ir_price'],100,0);
         // p($order);
         // p($receipt);die;
         switch($ip_paytype){
@@ -592,7 +594,7 @@ class HapylifePayController extends HomeBaseController{
 		        //商户会员号，订单金额*100
 		        $post_data = array (
 		            "inputCharset" => "1",//编码方式，1代表 UTF-8; 2 代表 GBK; 3代表 GB2312 默认为1,该参数必填。
-		            "pageUrl" => "https://www.merchant.com/pay/notifyReceiverPg.do",//接收支付结果的页面地址，该参数一般置为空即可。
+		            "pageUrl" => "http://apps.hapy-life.com/hapylife/index.php/Home/Pay/waitings",//接收支付结果的页面地址，该参数一般置为空即可。
 		            "bgUrl" => "http://apps.hapy-life.com/hapylife/index.php/Api/HapylifePay/notifyReceiver",//服务器接收支付结果的后台地址，该参数务必填写，不能为空。
 		            // "bgUrl" => "http://localhost/hapylife/index.php/Home/Purchase/notifyReceiver",//服务器接收支付结果的后台地址，该参数务必填写，不能为空。
 		            "version" => "3.0",//网关版本，固定值：3.0,该参数必填。
@@ -611,7 +613,7 @@ class HapylifePayController extends HomeBaseController{
 		            "settlementCurrency" => "CNY",//结算币种，3位币别码，详情请参照币别代码附录。该字段值不能为CNY。
 		            "inquireTrxNo" => "",//询盘流水号
 		            "orderCurrency" => "CNY",
-		            "orderAmount" => 1,//订单金额，金额以“分”为单位，商户测试以1分测试即可，切勿以大金额测试。该参数必填。
+		            "orderAmount" => $orderAmount,//订单金额，金额以“分”为单位，商户测试以1分测试即可，切勿以大金额测试。该参数必填。
 		            "orderTime" => date("YmdHis"),//订单提交时间，格式：yyyyMMddHHmmss，如：20071117020101，不能为空。
 		            "productName" => "test",//商品名称，可以为空。
 		            "productNum" => "1",//商品数量，可以为空

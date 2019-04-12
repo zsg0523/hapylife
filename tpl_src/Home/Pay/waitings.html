@@ -29,11 +29,9 @@
     </style>
 </head>  
 <body id="body">  
-    <div class="commonHead">
-  		<include file="Common/commonHead1" />
-  	</div>
+   
     <div class="main"> 
-    	<input type="hidden" id="ir_receiptnum" value="{:I('get.orderId')}" />
+
     	<div style="height: 30px;"></div>
 		<h4>请勿关闭当前页面,请耐心等待</h4>
 		<h4>支付成功后将会自动跳转回订单页面...</h4>
@@ -42,38 +40,6 @@
     
 	<script src="__PUBLIC_BOOTSTRAP__/js/jquery-1.11.0.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="__PUBLIC_BOOTSTRAP__/js/bootstrap.min.js"></script>  
-	<script type="text/javascript">
-		$(document).ready(function(){
-	   		changeCommonHead('选择支付银行');
-	   		judgeOK();
-		});
-		function back(){
-        	window.location.href ="{:U('Home/Purchase/center')}";
-   		}
-   		function judgeOK(){
-		 	var  ir_receiptnum=$('#ir_receiptnum').val();
-			$.ajax({
-				type:"post",
-				url:"http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/checkreceipt",
-				async:false,
-				dataType:'json',
-				data:{
-					ir_receiptnum:$('#ir_receiptnum').val()
-				},
-				success:function(ret){
-					
-					if(ret.status==1){
-						console.log(ret.msg);
-						window.location.href="{:U('Home/Purchase/getPayUrl/ir_receiptnum/"+ir_receiptnum+"')}";
-					}else{
-						console.log(ret.msg);
-						setTimeout(function() { judgeOK(); },1000);
-					}
-					
-				}
-			});
-		}
 
-	</script>  
 </body>  
 </html>  
