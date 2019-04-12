@@ -1309,7 +1309,192 @@ class PurchaseController extends HomeBaseController{
         }else{
             $this->redirect('Home/Purchase/myOrderInfo',array('ir_receiptnum'=>$order['ir_receiptnum']));
         }
-     }
+    }
+
+    /**
+    * 汇付天下
+    * 微信支付，支付宝支付-----二维码获取
+    **/
+    public function htxpayment(){
+        $ir_receiptnum = I('post.ir_receiptnum');
+        $ir_paytype    = I('post.ir_paytype');
+        $bankId        = I('post.bankId');
+        switch ($ir_paytype) {
+            case '8':
+                $payType = 1;
+                break;
+            case '9':
+                $payType = 2;
+                break;
+            case '10':
+                $payType = 4;
+                break;
+        }
+        $ir_price = M('Receiptson')->where(array('pay_receiptnum'=>$ir_receiptnum))->getfield('ir_price');
+        // $orderAmount = bcmul($ir_price,100,0);
+        $ext = json_encode(array('deviceInfo'=>4,'payType'=>$payType,"deviceType"=>2));
+        //商户会员号，订单金额*100
+        $post_data = array (
+            "inputCharset" => "1",//编码方式，1代表 UTF-8; 2 代表 GBK; 3代表 GB2312 默认为1,该参数必填。
+            "pageUrl" => "https://www.merchant.com/pay/notifyReceiverPg.do",//接收支付结果的页面地址，该参数一般置为空即可。
+            "bgUrl" => "http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/notifyReceiver",//服务器接收支付结果的后台地址，该参数务必填写，不能为空。
+            "version" => "3.0",//网关版本，固定值：3.0,该参数必填。
+            "language" => "1",//语言种类，1代表中文显示，2代表英文显示。默认为1,该参数必填。
+            "signType" => "4",//签名类型,固定值：4。RSA加签
+            "merchantAcctId" => "1021903029201",//商户会员号，该账号为11位商户号+01,该参数必填。
+            "terminalId" => "AYGJ001",//终端号，由我司提供。
+            "payerName" => "",//支付人姓名,根据产品开通时的配置确定是否必填。
+            "payerContactType" => "2",//支付人联系类型，1 代表电子邮件方式；2 代表手机联系方式。可以为空
+            "payerContact" => "",//支付人联系方式，与payerContactType设置对应，payerContactType为1，则填写邮箱地址；payerContactType为2，则填写手机号码。可以为空。
+            "payerIdentityCard" => "",//支付人身份证号码，根据产品开通时的配置确定是否必填。
+            "mobileNumber" => "",//支付人手机号，可为空。
+            "cardNumber" => "",//支持人所持卡号，可为空
+            "customerId" => "",//支付人在商户系统的客户编号，可为空。
+            "orderId" =>$ir_receiptnum,//商户订单号，以下采用时间来定义订单号，商户可以根据自己订单号的定义规则来定义该值，不能为空。
+            "settlementCurrency" => "CNY",//结算币种，3位币别码，详情请参照币别代码附录。该字段值不能为CNY。
+            "inquireTrxNo" => "",//询盘流水号
+            "orderCurrency" => "CNY",
+            "orderAmount" => 1,//订单金额，金额以“分”为单位，商户测试以1分测试即可，切勿以大金额测试。该参数必填。
+            "orderTime" => date("YmdHis"),//订单提交时间，格式：yyyyMMddHHmmss，如：20071117020101，不能为空。
+            "productName" => "test",//商品名称，可以为空。
+            "productNum" => "1",//商品数量，可以为空
+            "productId" => "100003",//商品代码，可以为空。
+            "productDesc" => "",//商品描述，可以为空。
+            "ext1" => '',//扩展字段1，商户可以传递自己需要的参数，支付完后会原值返回，可以为空。
+            "ext2" => '',//扩展自段2，商户可以传递自己需要的参数，支付完后会原值返回，可以为空。
+            "deviceType" => "1",//1：pc端支付2：移动端支付
+            "payType" => $payType,//1：微信扫码（返回二维码）2：支付宝扫码
+            "bankId" => $bankId,//银行代码，如果payType为00，该值可以为空；如果payType为10，该值必须填写，具体请参考银行列表。
+            "customerIp" => "",//支付人Ip，可为空。
+            "redoFlag" => "0",//同一订单禁止重复提交标志，实物购物车填1，虚拟产品用0。1代表只能提交一次，0代表在支付不成功情况下可以再提交。可为空。
+        );
+        $post_data['signMsg'] = htxRsaSign($post_data);
+        // p($post_data);die;
+
+        /////////////  后台置单 ///////// 开始 //
+        $url = 'https://global.chinapnr.com/pay/unifiedorder.htm';
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_HEADER, 0);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $post_data);// 设置 POST 参数
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);//这个是重点。
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);//不验证证书
+        $respData = curl_exec($curl);
+        $respUrl = "";
+        curl_close($curl);
+        /////////////  后台置单 ///////// 结束//
+        if (strpos($respData,"errCode")) {
+            echo $respData;
+        }else{
+            $respUrl = $respData;
+            $qrUrl=urldecode($respUrl);
+            //获取二维码地址
+            if(!strpos($respUrl,'&respMsg')){
+                //获取二维码地址
+                $ary=explode("&url=",$qrUrl);
+                if ($ip_paytype == 8 || $ip_paytype == 9){
+                    //生成二维码，并存储
+                    $url             = createCode(urldecode(explode('&',$ary[1])[0]),'Upload/avatar/'.$ir_receiptnum.'.png');
+                    $para['qrcode']  = C('WEB_URL').'/Upload/avatar/'.$ir_receiptnum.'.png';
+                    $para['amount'] = $ir_price;
+                    $para['orderId'] = $ir_receiptnum;
+                    $this->ajaxReturn($para);
+                }elseif ($ip_paytype == 10){
+                    $para['payUrl'] = $ary[1];
+                    $this->ajaxReturn($para);
+                }
+            }else{
+                $para = array(
+                    'status' => 202,
+                    'msg' => $respData
+                );
+                $this->ajaxreturn($para);
+            }
+        }
+    }
+
+    /**
+    * 汇付天下异步回调
+    **/
+    public function notifyReceiver(){
+        // I('post')，$_POST 无法获取API post过来的字符串数据
+        $jsonStr = file_get_contents("php://input");
+        //写入服务器日志文件
+        // $jsonStr = 'payResult=10&merchantAcctId=3000308000101&orderId=20190321160120123474&orderCurrency=CNY&dealId=2001674687&terminalId=0010001&version=3.0&bankDealId=4200000300201903227836310055&bankId=wxpay&payType=1&orderTime=20190322103017&orderAmount=1&dealTime=20190322103017&errCode=000000&signMsg=YQgf8vvuDpAtn0chQedRagOnkCZUvZivtxcbg9mr5MzzWBYMGmHU9z9nhwklo5IG8RpDDkmeWA%252FAPeUPI3NSNHCNskQn007RdZRkMZqZstyqx5X%252BpSXcVhnab0GGecqq6RPxsztIw0tXnpW3JVRRhQONJf8l5FZfdGk%252B%252BCbi2%252Bk%253D&ext2=%257B%2522deviceInfo%2522%253A4%252C%2522payType%2522%253A1%252C%2522deviceType%2522%253A2%257D&ext1=%257B%2522deviceInfo%2522%253A4%252C%2522payType%2522%253A1%252C%2522deviceType%2522%253A2%257D';
+        //$jsonStr ='payResult=10&merchantAcctId=1021903029201&orderId=2019040812434552990&orderCurrency=CNY&dealId=2002037671&terminalId=AYGJ001&version=3.0&bankDealId=2019040812461200000000PNRI20000001649631&bankId=ccb&payType=4&orderTime=20190408124610&orderAmount=1&dealTime=20190408124611&errCode=000000&signMsg=WHe0onwlfXTHZAvxFkUgOLw4%252F5ETu8cDM44M277SrZVFTbxhw%252B6G%252FEgOG%252FBWOtT2nJn%252BGsQmfxs45i7VwNvOKN32TRgQfK35Om9FEXQiJ1IyjW%252BsyLmFVIen1HvkDuCWzMQJc7iWt%252FqsPQlZE09IsXFd5%252FC65pqgLMLvC4WZOLU%253D';
+        $log     = logTest($jsonStr);
+        $data    = explode('&', $jsonStr);
+        //签名数据会被转码，需解码urldecode
+        foreach ($data as $key => $value) {
+            $temp = explode('=', $value);
+            $map[$temp[0]]=urldecode(trim($temp[1]));
+        }
+        //p($map);
+        //验签
+        $return = htxRsaVerify($map);
+        if($return=="true" && $map['payResult']==10){
+            //订单处理
+            $map = array(
+                'ir_paytype'       => $map['payType'],
+                'status'           => 2,
+                'htx_trade_no'     => $map['dealId'],
+                'htx_trade_status' => $map['payResult'],
+            );
+            //限制多次回调，$map里的参数值必须是只成功修改一次
+            $result = M('Receiptson')->where(array('pay_receiptnum'=>$map['orderId']))->save($map);
+            // 获取子订单信息
+            $receiptson = M('Receiptson')->where(array('pay_receiptnum'=>$map['orderId']))->find();
+            // 用户信息
+            $userinfo = M('User')->where(array('iuid'=>$receiptson['riuid']))->find();
+            // 获取产品名称
+            $product_name = M('Receiptlist')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->getfield('product_name');
+            if($result){
+                // 修改父订单状态
+                $editIrStatus = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->setField('ir_status',2);
+                if($editIrStatus){
+                    // 修改父订单支付时间
+                    $editPaytime = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->setField('ir_paytime',time());
+                }
+                $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->getfield('ir_status');
+                if($ir_status == 2){
+                    // 发送短信提示
+                    $templateId ='178959';
+                    $params     = array($receiptson['ir_receiptnum'],$product_name);
+                    $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                    if($sms['errmsg'] == 'OK'){
+                        $contents = array(
+                            'acnumber' => $userinfo['acnumber'],
+                            'phone' => $userinfo['phone'],
+                            'operator' => '系统',
+                            'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                            'product_name' => $product_name,
+                            'date' => time(),
+                            'content' => '订单编号：'.$receiptson['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
+                            'customerid' => $userinfo['customerid']
+                        );
+                        $logs = M('SmsLog')->add($contents);
+                    }
+                    $usa = new \Common\UsaApi\Usa;
+                    // $createPayment = $usa->createPayment($userinfo['customerid'],$receiptson['ir_receiptnum'],date('Y-m-d H:i',time()));
+                    $log = addUsaLog($createPayment['result']);
+                    $jsonStr = json_decode($createPayment['result'],true);
+                    // p($jsonStr);die;
+                    if($jsonStr['paymentId']){
+                        // 检测所有月费单是否存在未支付
+                        $allIrstatus = M('Receipt')->where(array('ir_ordertype'=>3,'rCustomerID'=>$userinfo['customerid']))->getField('ir_status',true);
+                        if(!in_array(0,$allIrstatus) && !in_array(7,$allIrstatus)){
+                            $statusResult = M('User')->where(array('customerid'=>$userinfo['customerid']))->setfield('showProduct','0');
+                        }
+                    }
+                }
+            }else{
+                $data['message']='订单状态修改失败';
+                $data['status'] = 0;
+                $this->ajaxreturn($data);
+            }
+        }
+    }
 
     /**
     * 购买产品订单状态查询

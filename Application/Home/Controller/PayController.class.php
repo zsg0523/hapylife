@@ -65,11 +65,6 @@ class PayController extends HomeBaseController{
             if($ir_price>0){
                 $add = D('receiptson')->add($mape);
                 if($add){
-                 	// if($ip_paytype==1){
-                 	// 	$this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
-                 	// }else if($ip_paytype==4){
-                 	// 	$this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
-                 	// }
                     switch ($ip_paytype) {
                         case '1':
                             $this->redirect('Home/Purchase/Qrcode',array('ir_receiptnum'=>$pay_receiptnum));
@@ -79,6 +74,15 @@ class PayController extends HomeBaseController{
                             break;
                         case '4':
                             $this->redirect('Home/Purchase/cjPayment',array('ir_receiptnum'=>$pay_receiptnum));
+                            break;
+                        case '8':
+                            $this->redirect('Home/Pay/huiFuW',array('ir_receiptnum'=>$pay_receiptnum));
+                            break;
+                        case '9':
+                            $this->redirect('Home/Pay/huiFuZ',array('ir_receiptnum'=>$pay_receiptnum));
+                            break;
+                        case '10':
+                            $this->redirect('Home/Pay/huiFuB',array('ir_receiptnum'=>$pay_receiptnum));
                             break;
                     }
                 }else{
@@ -576,6 +580,40 @@ class PayController extends HomeBaseController{
             're_ep' => bcsub($userinfo['iu_point'],$receipt['ir_point'],2),
         );
         $this->assign('data',$data);
+        $this->display();
+    }
+
+    /**
+     * 获取银行代码
+     */
+    public function huiFuB(){
+        $Bankid = array(
+            array('name' => '招商银行','id' => 'CMB'),
+            array('name' => '中国工商银行','id' => 'ICBC'),
+            array('name' => '中国农业银行','id' => 'ABC'),
+            array('name' => '中国建设银行','id' => 'CCB'),
+            array('name' => '中国银行','id' => 'BOC'),
+            array('name' => '浦发银行','id' => 'SPDB'),
+            array('name' => '中国交通银行','id' => 'BCOM'),
+            array('name' => '中国民生银行','id' => 'CMBC'),
+            array('name' => '广东发展银行','id' => 'GDB'),
+            array('name' => '中信银行','id' => 'CITIC'),
+            array('name' => '华夏银行','id' => 'HXB'),
+            array('name' => '上海农村商业银行','id' => 'SRCB'),
+            array('name' => '中国邮政储蓄银行','id' => 'PSBC'),
+            array('name' => '北京银行','id' => 'BOB'),
+            array('name' => '渤海银行','id' => 'CBHB'),
+            array('name' => '北京农商银行','id' => 'BJRCB'),
+            array('name' => '南京银行','id' => 'NJCB'),
+            array('name' => '中国光大银行','id' => 'CEB'),
+            array('name' => '浙商银行','id' => 'CZB'),
+            array('name' => '兴业银行','id' => 'CIB'),
+            array('name' => '杭州银行','id' => 'HZB'),
+            array('name' => '平安银行','id' => 'PAB'),
+            array('name' => '上海银行','id' => 'SHB'),
+        );
+        // $this->ajaxReturn($Bankid);
+        $this->assign('data',$Bankid);         
         $this->display();
     }
 
