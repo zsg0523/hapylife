@@ -583,6 +583,40 @@ class PayController extends HomeBaseController{
         $this->display();
     }
 
+    /**
+     * 获取银行代码
+     */
+    public function huiFuB(){
+        $Bankid = array(
+            array('name' => '招商银行','id' => 'CMB'),
+            array('name' => '中国工商银行','id' => 'ICBC'),
+            array('name' => '中国农业银行','id' => 'ABC'),
+            array('name' => '中国建设银行','id' => 'CCB'),
+            array('name' => '中国银行','id' => 'BOC'),
+            array('name' => '浦发银行','id' => 'SPDB'),
+            array('name' => '中国交通银行','id' => 'BCOM'),
+            array('name' => '中国民生银行','id' => 'CMBC'),
+            array('name' => '广东发展银行','id' => 'GDB'),
+            array('name' => '中信银行','id' => 'CITIC'),
+            array('name' => '华夏银行','id' => 'HXB'),
+            array('name' => '上海农村商业银行','id' => 'SRCB'),
+            array('name' => '中国邮政储蓄银行','id' => 'PSBC'),
+            array('name' => '北京银行','id' => 'BOB'),
+            array('name' => '渤海银行','id' => 'CBHB'),
+            array('name' => '北京农商银行','id' => 'BJRCB'),
+            array('name' => '南京银行','id' => 'NJCB'),
+            array('name' => '中国光大银行','id' => 'CEB'),
+            array('name' => '浙商银行','id' => 'CZB'),
+            array('name' => '兴业银行','id' => 'CIB'),
+            array('name' => '杭州银行','id' => 'HZB'),
+            array('name' => '平安银行','id' => 'PAB'),
+            array('name' => '上海银行','id' => 'SHB'),
+        );
+        // $this->ajaxReturn($Bankid);
+        $this->assign('data',$Bankid);         
+        $this->display();
+    }
+
 
 
 

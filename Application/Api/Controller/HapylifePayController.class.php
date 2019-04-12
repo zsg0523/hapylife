@@ -646,23 +646,25 @@ class HapylifePayController extends HomeBaseController{
 		            $respUrl = $respData;
 	            	$qrUrl=urldecode($respUrl);
 		            if(!strpos($respUrl,'&respMsg')){
-			            //获取二维码地址
-			            $ary=explode("&url=",$qrUrl);
-			            if ($ip_paytype == 8 || $ip_paytype == 9){
-			                //生成二维码，并存储
-			                $url             = createCode(urldecode(explode('&',$ary[1])[0]),'Upload/avatar/'.$ir_receiptnum.'.png');
-			                $para['qrcode']  = C('WEB_URL').'/Upload/avatar/'.$ir_receiptnum.'.png';
-			                $this->ajaxReturn($para);
-			            }elseif ($ip_paytype == 10){
-			                $para['payUrl'] = $ary[1];
-			                $this->ajaxReturn($para);
-			            }
+		                //获取二维码地址
+		                $ary=explode("&url=",$qrUrl);
+		                if ($ip_paytype == 8 || $ip_paytype == 9){
+		                    //生成二维码，并存储
+		                    $url             = createCode(urldecode(explode('&',$ary[1])[0]),'Upload/avatar/'.$ir_receiptnum.'.png');
+		                    $para['qrcode']  = C('WEB_URL').'/Upload/avatar/'.$ir_receiptnum.'.png';
+		                    $para['amount'] = $ir_price;
+		                    $para['orderId'] = $ir_receiptnum;
+		                    $this->ajaxReturn($para);
+		                }elseif ($ip_paytype == 10){
+		                    $para['payUrl'] = $ary[1];
+		                    $this->ajaxReturn($para);
+		                }
 		            }else{
-		            	$para = array(
-			            	'status' => 202,
-			            	'msg' => $respData
-			            );
-			            $this->ajaxreturn($para);
+		                $para = array(
+		                    'status' => 202,
+		                    'msg' => $respData
+		                );
+		                $this->ajaxreturn($para);
 		            }
 		        }
         		break;
@@ -1158,57 +1160,120 @@ class HapylifePayController extends HomeBaseController{
         //验签
         $return = htxRsaVerify($map);
         if($return=="true" && $map['payResult']==10){
+        	switch ($map['payType']) {
+                case '1':
+                    $payType = 8;
+                    break;
+                case '2':
+                    $payType = 9;
+                    break;
+                case '4':
+                    $payType = 10;
+                    break;
+            }
             //订单处理
-            $map = array(
-                'ir_paytype'       => $map['payType'],
+            $save = array(
+                'ir_paytype'       => $payType,
                 'status'           => 2,
                 'htx_trade_no'     => $map['dealId'],
                 'htx_trade_status' => $map['payResult'],
             );
             //限制多次回调，$map里的参数值必须是只成功修改一次
-            $result = M('Receiptson')->where(array('pay_receiptnum'=>$map['orderId']))->save($map);
+            $result = M('Receiptson')->where(array('pay_receiptnum'=>$map['orderId']))->save($save);
             // 获取子订单信息
             $receiptson = M('Receiptson')->where(array('pay_receiptnum'=>$map['orderId']))->find();
             // 用户信息
             $userinfo = M('User')->where(array('iuid'=>$receiptson['riuid']))->find();
             // 获取产品名称
             $product_name = M('Receiptlist')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->getfield('product_name');
+            // 获取父订单信息
+            $order = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->find();
             if($result){
-                // 修改父订单状态
-                $editIrStatus = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->setField('ir_status',2);
-                if($editIrStatus){
-                    // 修改父订单支付时间
-                    $editPaytime = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->setField('ir_paytime',time());
+                // 修改子订单支付时间
+                M('Receiptson')->where(array('pay_receiptnum'=>$map['orderId']))->setfield('paytime',time());
+                $subnum= bcsub($order['ir_unpaid'],$receiptson['ir_price'],2);
+                if($subnum==0){
+                    $sub      = 0;
+                    $unp      = 0;
+                    $ir_status= 2;
+                    $ir_paytime = time();
+                }else{  
+                    $sub      = $subnum;
+                    $unp      = bcdiv($sub,100,2);
+                    $ir_status= 202;
+                    $ir_paytime = 0;
                 }
-                $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->getfield('ir_status');
-                if($ir_status == 2){
-                    // 发送短信提示
-                    $templateId ='178959';
-                    $params     = array($receiptson['ir_receiptnum'],$product_name);
-                    $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
-                    if($sms['errmsg'] == 'OK'){
-                        $contents = array(
-                            'acnumber' => $userinfo['acnumber'],
-                            'phone' => $userinfo['phone'],
-                            'operator' => '系统',
-                            'addressee' => $userinfo['lastname'].$userinfo['firstname'],
-                            'product_name' => $product_name,
-                            'date' => time(),
-                            'content' => '订单编号：'.$receiptson['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
-                            'customerid' => $userinfo['customerid']
-                        );
-                        $logs = M('SmsLog')->add($contents);
+                if($subnum==0){
+                    // 更新订单信息
+                    $status  = array(
+                        'ir_status'  =>$ir_status,
+                        'ir_unpaid'  =>$sub,
+                        'ir_unpoint' =>$unp,
+                        'ir_paytime' =>$ir_paytime,
+                    );
+                    $updateReceipt = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($status);
+                    // 修改父订单状态
+                    $ir_status = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->getfield('ir_status');
+                    if($ir_status == 2){
+                        // 发送短信提示
+                        $templateId ='178959';
+                        $params     = array($receiptson['ir_receiptnum'],$product_name);
+                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                        if($sms['errmsg'] == 'OK'){
+                            $contents = array(
+                                'acnumber' => $userinfo['acnumber'],
+                                'phone' => $userinfo['phone'],
+                                'operator' => '系统',
+                                'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                'product_name' => $product_name,
+                                'date' => time(),
+                                'content' => '订单编号：'.$receiptson['ir_receiptnum'].'，产品：'.$product_name.'，支付成功。',
+                                'customerid' => $userinfo['customerid']
+                            );
+                            $logs = M('SmsLog')->add($contents);
+                        }
+                        $usa = new \Common\UsaApi\Usa;
+                        // $createPayment = $usa->createPayment($userinfo['customerid'],$receiptson['ir_receiptnum'],date('Y-m-d H:i',time()));
+                        $log = addUsaLog($createPayment['result']);
+                        $jsonStr = json_decode($createPayment['result'],true);
+                        // p($jsonStr);die;
+                        if($jsonStr['paymentId']){
+                            // 检测所有月费单是否存在未支付
+                            $allIrstatus = M('Receipt')->where(array('ir_ordertype'=>3,'rCustomerID'=>$userinfo['customerid']))->getField('ir_status',true);
+                            if(!in_array(0,$allIrstatus) && !in_array(7,$allIrstatus)){
+                                $statusResult = M('User')->where(array('customerid'=>$userinfo['customerid']))->setfield('showProduct','0');
+                            }
+                        }
                     }
-                    $usa = new \Common\UsaApi\Usa;
-                    $createPayment = $usa->createPayment($userinfo['customerid'],$receiptson['ir_receiptnum'],date('Y-m-d H:i',time()));
-                    $log = addUsaLog($createPayment['result']);
-                    $jsonStr = json_decode($createPayment['result'],true);
-                    // p($jsonStr);die;
-                    if($jsonStr['paymentId']){
-                        // 检测所有月费单是否存在未支付
-                        $allIrstatus = M('Receipt')->where(array('ir_ordertype'=>3,'rCustomerID'=>$userinfo['customerid']))->getField('ir_status',true);
-                        if(!in_array(0,$allIrstatus) && !in_array(7,$allIrstatus)){
-                            $statusResult = M('User')->where(array('customerid'=>$userinfo['customerid']))->setfield('showProduct','0');
+                }else{
+                    // 未全额支付
+                    $status  = array(
+                        'ir_status'  =>$ir_status,
+                        'ir_unpaid'  =>$sub,
+                        'ir_unpoint' =>$unp,
+                        'ir_paytime' =>$ir_paytime,
+                    );
+                    //更新订单信息
+                    $updateReceipt = M('Receipt')->where(array('ir_receiptnum'=>$receiptson['ir_receiptnum']))->save($status);
+                    if($updateReceipt){
+                        // 总共已经支付金额
+                        $total = bcsub($receiptson['ir_price'],$sub,2);
+                        // 发送短信提示
+                        $templateId ='178957';
+                        $params     = array($receiptson['ir_receiptnum'],$receiptson['ir_price'],$total,$sub);
+                        $sms        = D('Smscode')->sms($userinfo['acnumber'],$userinfo['phone'],$params,$templateId);
+                        if($sms['errmsg'] == 'OK'){
+                            $contents = array(
+                                'acnumber' => $userinfo['acnumber'],
+                                'phone' => $userinfo['phone'],
+                                'operator' => '系统',
+                                'addressee' => $userinfo['lastname'].$userinfo['firstname'],
+                                'product_name' => $receiptlist['product_name'],
+                                'date' => time(),
+                                'content' => '订单编号：'.$receiptson['ir_receiptnum'].'，收到付款'.$receiptson['ir_price'].'，总共已支付'.$total.'剩余需支付'.$sub,
+                                'customerid' => $userinfo['customerid']
+                            );
+                            $logs = M('SmsLog')->add($contents);
                         }
                     }
                 }

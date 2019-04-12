@@ -81,9 +81,11 @@
 			<div class="formGroup_r">
 				<select id="bankId">
 					<option value="0">请选择</option>
-					<option value="1">1</option>
-					<option value="2">2</option>
-					<option value="3">3</option>
+					<foreach name="data" item="v">
+						<option value="{$v['id']}">{$v['name']}</option>
+					</foreach>
+					<!-- <option value="2">2</option>
+					<option value="3">3</option> -->
 				</select>
 			</div>
 		</div>
@@ -108,6 +110,7 @@
 	   			$.ajax({
 					type:"post",
 					url:"http://apps.hapy-life.com/hapylife/index.php/Home/Purchase/htxpayment",
+					// url:"http://localhost/hapylife/index.php/Home/Purchase/htxpayment",
 					async:false,
 					dataType:'json',
 					data:{
@@ -116,8 +119,9 @@
 						ir_paytype:10,
 					},
 					success:function(ret){
+						console.log(ret);
 						if(ret!=null){
-							window.location.href =ret.url;
+							// window.location.href =ret.url;
 						}
 						
 					}
