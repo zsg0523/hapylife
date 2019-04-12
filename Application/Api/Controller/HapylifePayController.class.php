@@ -76,7 +76,7 @@ class HapylifePayController extends HomeBaseController{
     	$iuid          = I('post.iuid');
         $pay_receiptnum= I('post.pay_receiptnum');
         $ip_paytype    = I('post.ir_paytype');
-        $bankId        = I('post.bankId');
+        $bankId 	   = I('post.bankId');
         // 获取子订单信息
         $order         = M('Receiptson')->where(array('pay_receiptnum'=>$pay_receiptnum))->find();
         // 获取父订单信息
@@ -594,6 +594,7 @@ class HapylifePayController extends HomeBaseController{
 		            "inputCharset" => "1",//编码方式，1代表 UTF-8; 2 代表 GBK; 3代表 GB2312 默认为1,该参数必填。
 		            "pageUrl" => "https://www.merchant.com/pay/notifyReceiverPg.do",//接收支付结果的页面地址，该参数一般置为空即可。
 		            "bgUrl" => "http://apps.hapy-life.com/hapylife/index.php/Api/HapylifePay/notifyReceiver",//服务器接收支付结果的后台地址，该参数务必填写，不能为空。
+		            // "bgUrl" => "http://localhost/hapylife/index.php/Home/Purchase/notifyReceiver",//服务器接收支付结果的后台地址，该参数务必填写，不能为空。
 		            "version" => "3.0",//网关版本，固定值：3.0,该参数必填。
 		            "language" => "1",//语言种类，1代表中文显示，2代表英文显示。默认为1,该参数必填。
 		            "signType" => "4",//签名类型,固定值：4。RSA加签
@@ -642,6 +643,11 @@ class HapylifePayController extends HomeBaseController{
 		        /////////////  后台置单 ///////// 结束//
 		        if (strpos($respData,"errCode")) {
 		            echo $respData;
+		            // $para = array(
+		            // 	'status' => 202,
+		            // 	'msg' => $respData
+		            // );
+		            // $this->ajaxreturn($para);
 		        }else{
 		            $respUrl = $respData;
 	            	$qrUrl=urldecode($respUrl);
@@ -650,10 +656,10 @@ class HapylifePayController extends HomeBaseController{
 		                $ary=explode("&url=",$qrUrl);
 		                if ($ip_paytype == 8 || $ip_paytype == 9){
 		                    //生成二维码，并存储
-		                    $url             = createCode(urldecode(explode('&',$ary[1])[0]),'Upload/avatar/'.$ir_receiptnum.'.png');
-		                    $para['qrcode']  = C('WEB_URL').'/Upload/avatar/'.$ir_receiptnum.'.png';
-		                    $para['amount'] = $ir_price;
-		                    $para['orderId'] = $ir_receiptnum;
+		                    $url             = createCode(urldecode(explode('&',$ary[1])[0]),'Upload/avatar/'.$pay_receiptnum.'.png');
+		                    $para['qrcode']  = C('WEB_URL').'/Upload/avatar/'.$pay_receiptnum.'.png';
+		                    $para['amount'] = $order['ir_price'];
+		                    $para['orderId'] = $pay_receiptnum;
 		                    $this->ajaxReturn($para);
 		                }elseif ($ip_paytype == 10){
 		                    $para['payUrl'] = $ary[1];
@@ -1144,19 +1150,17 @@ class HapylifePayController extends HomeBaseController{
     * 汇付天下异步回调
     **/
     public function notifyReceiver(){
-        // I('post')，$_POST 无法获取API post过来的字符串数据
         $jsonStr = file_get_contents("php://input");
         //写入服务器日志文件
-        // $jsonStr = 'payResult=10&merchantAcctId=3000308000101&orderId=20190321160120123474&orderCurrency=CNY&dealId=2001674687&terminalId=0010001&version=3.0&bankDealId=4200000300201903227836310055&bankId=wxpay&payType=1&orderTime=20190322103017&orderAmount=1&dealTime=20190322103017&errCode=000000&signMsg=YQgf8vvuDpAtn0chQedRagOnkCZUvZivtxcbg9mr5MzzWBYMGmHU9z9nhwklo5IG8RpDDkmeWA%252FAPeUPI3NSNHCNskQn007RdZRkMZqZstyqx5X%252BpSXcVhnab0GGecqq6RPxsztIw0tXnpW3JVRRhQONJf8l5FZfdGk%252B%252BCbi2%252Bk%253D&ext2=%257B%2522deviceInfo%2522%253A4%252C%2522payType%2522%253A1%252C%2522deviceType%2522%253A2%257D&ext1=%257B%2522deviceInfo%2522%253A4%252C%2522payType%2522%253A1%252C%2522deviceType%2522%253A2%257D';
-        //$jsonStr ='payResult=10&merchantAcctId=1021903029201&orderId=2019040812434552990&orderCurrency=CNY&dealId=2002037671&terminalId=AYGJ001&version=3.0&bankDealId=2019040812461200000000PNRI20000001649631&bankId=ccb&payType=4&orderTime=20190408124610&orderAmount=1&dealTime=20190408124611&errCode=000000&signMsg=WHe0onwlfXTHZAvxFkUgOLw4%252F5ETu8cDM44M277SrZVFTbxhw%252B6G%252FEgOG%252FBWOtT2nJn%252BGsQmfxs45i7VwNvOKN32TRgQfK35Om9FEXQiJ1IyjW%252BsyLmFVIen1HvkDuCWzMQJc7iWt%252FqsPQlZE09IsXFd5%252FC65pqgLMLvC4WZOLU%253D';
-        $log     = logTest($jsonStr);
+        // $jsonStr ='payResult=10&merchantAcctId=1021903029201&orderId=20190412155443665881&orderCurrency=CNY&dealId=2002302361&terminalId=AYGJ001&version=3.0&bankDealId=2019041215515800000000PNRI20000001680468&bankId=ccb&payType=4&orderTime=20190412155451&orderAmount=1&dealTime=20190412155157&errCode=000000&signMsg=lsuAWmSUS0QozwxEa5DW2SrXF8Ddp%252Bu9ILvAbyVnbBQswAR8BlyqgeytLvmkPvNKN%252Bm3wyM7tM8dziiq%252BxFFcpLuX9iVLWl%252B8lNpC8XRgJr3BW9xQYRUHh3aHijTCbq9QTVGeVND2Pn45JxyDKXM8etQNv4RdBNAffLV5qI2tOc%253D';
+        // $log     = logTest($jsonStr);
         $data    = explode('&', $jsonStr);
         //签名数据会被转码，需解码urldecode
         foreach ($data as $key => $value) {
             $temp = explode('=', $value);
             $map[$temp[0]]=urldecode(trim($temp[1]));
         }
-        //p($map);
+        // p($map);
         //验签
         $return = htxRsaVerify($map);
         if($return=="true" && $map['payResult']==10){
@@ -1369,8 +1373,37 @@ class HapylifePayController extends HomeBaseController{
         }
     }
 
-
-
+    /**
+     * 获取银行代码
+     */
+    public function getBankId(){
+        $Bankid = array(
+            array('name' => '招商银行','id' => 'CMB'),
+            array('name' => '中国工商银行','id' => 'ICBC'),
+            array('name' => '中国农业银行','id' => 'ABC'),
+            array('name' => '中国建设银行','id' => 'CCB'),
+            array('name' => '中国银行','id' => 'BOC'),
+            array('name' => '浦发银行','id' => 'SPDB'),
+            array('name' => '中国交通银行','id' => 'BCOM'),
+            array('name' => '中国民生银行','id' => 'CMBC'),
+            array('name' => '广东发展银行','id' => 'GDB'),
+            array('name' => '中信银行','id' => 'CITIC'),
+            array('name' => '华夏银行','id' => 'HXB'),
+            array('name' => '上海农村商业银行','id' => 'SRCB'),
+            array('name' => '中国邮政储蓄银行','id' => 'PSBC'),
+            array('name' => '北京银行','id' => 'BOB'),
+            array('name' => '渤海银行','id' => 'CBHB'),
+            array('name' => '北京农商银行','id' => 'BJRCB'),
+            array('name' => '南京银行','id' => 'NJCB'),
+            array('name' => '中国光大银行','id' => 'CEB'),
+            array('name' => '浙商银行','id' => 'CZB'),
+            array('name' => '兴业银行','id' => 'CIB'),
+            array('name' => '杭州银行','id' => 'HZB'),
+            array('name' => '平安银行','id' => 'PAB'),
+            array('name' => '上海银行','id' => 'SHB'),
+        );
+        $this->ajaxReturn($Bankid);
+    }
 
 
 
