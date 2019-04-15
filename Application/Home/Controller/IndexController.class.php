@@ -117,41 +117,37 @@ class IndexController extends HomeBaseController{
                         $this->error('账号或密码错误');
                     }
                 }else{
-                    if(strlen($tmpe['CustomerID']) == 8){
-                        //检查WV api用户信息
-                        $usa      = new \Common\UsaApi\Usa;
-                        $userinfo = $usa->validateHpl($tmpe['CustomerID']);
-                        //检查wv是否存在该账号 Y创建该账号  N登录失败
-                        switch ($userinfo['isActive']) {
-                            case true:
-                                //创建该新账号在本系统
-                                $map = array(
-                                    'CustomerID'  =>$tmpe['CustomerID'],
-                                    'PassWord'    =>md5($tmpe['PassWord']),
-                                    'WvPass'      =>$tmpe['PassWord'],
-                                    'LastName'    =>$userinfo['lastName'],
-                                    'FirstName'   =>$userinfo['firstName'],
-                                    'isActive'    =>$userinfo['isActive'],
+                    //检查WV api用户信息
+                    $usa      = new \Common\UsaApi\Usa;
+                    $userinfo = $usa->validateHpl($tmpe['CustomerID']);
+                    //检查wv是否存在该账号 Y创建该账号  N登录失败
+                    switch ($userinfo['isActive']) {
+                        case true:
+                            //创建该新账号在本系统
+                            $map = array(
+                                'CustomerID'  =>$tmpe['CustomerID'],
+                                'PassWord'    =>md5($tmpe['PassWord']),
+                                'WvPass'      =>$tmpe['PassWord'],
+                                'LastName'    =>$userinfo['lastName'],
+                                'FirstName'   =>$userinfo['firstName'],
+                                'isActive'    =>$userinfo['isActive'],
+                            );
+                            $createUser = D('User')->add($map);
+                            if($createUser){
+                                $_SESSION['user']=array(
+                                    'id'       =>$createUser,
+                                    'username' =>$tmpe['CustomerID'],
+                                    'name_cn'  =>$userinfo['lastName'].$userinfo['firstName'],
+                                    'status'   =>1,
                                 );
-                                $createUser = D('User')->add($map);
-                                if($createUser){
-                                    $_SESSION['user']=array(
-                                        'id'       =>$createUser,
-                                        'username' =>$tmpe['CustomerID'],
-                                        'name_cn'  =>$userinfo['lastName'].$userinfo['firstName'],
-                                        'status'   =>1,
-                                    );
-                                    $this->redirect('Home/Purchase/center');
-                                }else{
-                                    $this->error('账号或密码错误');
-                                }
-                                break;
-                            default:
+                                $this->redirect('Home/Purchase/center');
+                            }else{
                                 $this->error('账号或密码错误');
-                                break;
-                        }
-                    }else{
-                        $this->error('账号或密码错误');
+                            }
+                            break;
+                        default:
+                            $this->error('账号或密码错误');
+                            break;
                     }
                 }
             }else{
