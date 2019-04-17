@@ -139,6 +139,7 @@ class HapylifeAddController extends HomeBaseController{
                 );
             $Add = new \Api\Controller\HapylifeAddController;
             $addReceipt = $Add->wvAddReceipt();
+            p($addReceipt);die;
             $addStatus = $Add->wvAddStatus();
             // p($addStatus);
             // p($addReceipt);
@@ -517,6 +518,21 @@ class HapylifeAddController extends HomeBaseController{
                         }
                         // 检测是否有默认地址
                         $address = M('Address')->where(array('iuid'=>$userinfo['iuid'],'is_address_show'=>1))->find();
+                        if($address){
+                            $ia_name = $address['ia_name'];
+                            $ia_phone = $address['ia_phone'];
+                            $ia_province = $address['ia_province'];
+                            $ia_city = $address['ia_town'];
+                            $ia_area = $address['ia_region'];
+                            $ia_address = $address['ia_road'];
+                        }else{
+                            $ia_name = $userinfo['lastname'].$userinfo['firstname'];
+                            $ia_phone = $userinfo['phone'];
+                            $ia_province = $userinfo['shopprovince'];
+                            $ia_city = $userinfo['shopcity'];
+                            $ia_area = $userinfo['shoparea'];
+                            $ia_address = $userinfo['shopaddress1'];
+                        }
                         // 创建订单
                         $order = array(
                             //订单编号
@@ -530,17 +546,17 @@ class HapylifeAddController extends HomeBaseController{
                             //下单用户
                             'rCustomerID'   =>$userinfo['customerid'],
                             //收货人
-                            'ia_name'       =>$address['ia_name']?$address['ia_name']:$userinfo['lastname'].$userinfo['firstname'],
+                            'ia_name'       =>$ia_name,
                             //收货人电话
-                            'ia_phone'      =>$address['ia_phone']?$address['ia_phone']:$userinfo['phone'],
+                            'ia_phone'      =>$ia_phone,
                             // 省，州
-                            'ia_province'   =>$address['ia_province']?$address['ia_province']:$userinfo['shopprovince'],
+                            'ia_province'   =>$ia_province,
                             // 市
-                            'ia_city'       =>$address['ia_town']?$address['ia_town']:$userinfo['shopcity'],
+                            'ia_city'       =>$ia_city,
                             // 区
-                            'ia_area'       =>$address['ia_region']?$address['ia_region']:$userinfo['shoparea'],
+                            'ia_area'       =>$ia_area,
                             //收货地址
-                            'ia_address'    =>$address['ia_road']?$address['ia_road']:$userinfo['shopaddress1'],
+                            'ia_address'    =>$ia_address,
                             //订单总商品数量
                             'ir_productnum' =>1,
                             //订单总金额
