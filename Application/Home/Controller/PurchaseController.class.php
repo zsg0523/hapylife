@@ -1188,7 +1188,7 @@ class PurchaseController extends HomeBaseController{
                                                             'phone' => $userinfo['phone'],
                                                             'operator' => '系统',
                                                             'addressee' => $addressee,
-                                                            'product_name' => $receiptlist['product_name'],
+                                                            'product_name' => $product['ip_name_zh'],
                                                             'date' => time(),
                                                             'content' => '欢迎来到DT!，亲爱的DT会员您好，欢迎您加入DT成为DT大家庭的一员！在开始使用您的新会员资格前，请确认下列账户信息是否正确:姓名：'.$addressee.'会员号码：'.$maps['wvCustomerID'].'产品：'.$product['ip_name_zh'].'使用上面的会员ID号码以及您在HapyLife帐号注册的时候所创建的密码登录DT官网，开始享受您的会籍。我们很开心您的加入。我们迫不及待地与您分享无数令人兴奋和难忘的体验！',
                                                             'customerid' => $userinfo['customerid']

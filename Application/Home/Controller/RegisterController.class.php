@@ -220,7 +220,7 @@ class RegisterController extends HomeBaseController{
                     $data['BackIdcard']=C('WEB_URL').$upload['name'][1];
                 }
                 $data['EnrollerID'] = strtoupper(I('post.EnrollerID'));
-                $data['SponsorID'] = strtoupper($_SESSION['user']['username']);
+                $data['SponsorID'] = strtoupper($_SESSION['user']['username'])?strtoupper($_SESSION['user']['username']):$customerid;
                 $data['LastName'] = trimall(I('post.LastName'));
                 $data['FirstName'] = trimall(I('post.FirstName'));
                 $data['EnLastName'] = trimall(I('post.EnLastName'));
