@@ -599,6 +599,21 @@ class HapylifeController extends AdminBaseController{
 			$this->display();
 		}
 	}
+
+	/**
+	* 修改订单收货地址
+	**/ 
+	public function editReceiptAddress(){
+		$data = I('post.');
+		$map  = array('irid'=>$data['id']);
+        $save = M('Receipt')->where($map)->save($data);
+        if($save){
+        	redirect($_SERVER['HTTP_REFERER']);
+        }else{
+        	$this->error('修改失败');
+        }
+	}
+
 	/**
 	* 订单列表(剔除测试账号和使用通用券的单)
 	*@param ir_status -1所有订单 0待付款 1待审核 2已支付 3已完成
