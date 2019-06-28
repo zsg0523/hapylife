@@ -180,4 +180,39 @@ class HapylifeDTPointController extends HomeBaseController{
             $this->ajaxreturn($data);
         }
     }
+
+    // 369
+    public function test(){
+        $limit1 = I('post.limit1');
+        $limit2 = I('post.limit2');
+        $test = '测试,测,试,测试点,test,testtest,测试测试,新建测试,测试地,测试点,测试账号';
+        $data = M('User')->where(array('DistributorType'=>array('NOT IN','Pc'),'isexit'=>1,'LastName'=>array('NOT IN',$test),'FirstName'=>array('NOT IN',$test),'wvCustomerID'=>array('NEQ','')))->limit($limit1,$limit2)->field('customerid,iu_point,iu_dt,lastname,firstname')->select();
+        $usa    = new \Common\UsaApi\Usa;
+        foreach ($data as $key => $value) {
+            $result = $usa->dtPoint($value['customerid']);
+            $activities = $usa->validateHpl($value['customerid']);
+            if(!$result['errors']){
+                foreach($result['softCashCategories'] as $k=>$v){
+                    switch ($v['categoryType']) {
+                        case 'DreamTripPoints':
+                            $data[$key]['iu_dt'] = $v['balance'];
+                            break;
+                    }
+                }
+            }else{
+               $data[$key]['iu_dt'] = 0;
+            }
+            $data[$key]['status'] = $activities['isActive'];
+        }
+        $this->ajaxreturn($data);
+    }
+
+    public function jsonp(){
+
+        $json = '[
+
+        ]';
+        $data = json_decode($json,true);
+        $count  = count($data);
+    }
 }

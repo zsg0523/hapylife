@@ -1264,4 +1264,20 @@ class ReceiptModel extends BaseModel{
         create_csv($content,$title,date('YmdHis',time()));
         return;
     }
+
+    public function special_excel($data){
+        $title   = array('日期','账号','姓名','EP','DT','status');
+        foreach ($data as $k => $v) {
+            // 团队标签
+            $content[$k]['day']   = date('Y-m-d/H:i:s');
+            $content[$k]['customerid']  = $v['customerid'];
+            $content[$k]['name']  = $v['lastname'].$v['firstname'];
+            $content[$k]['ep']  = $v['iu_point'];
+            $content[$k]['dt']  = $v['iu_dt'];
+            $content[$k]['status']  = $v['status']?'1':'0';
+            
+        }
+        create_csv($content,$title,date('YmdHis',time()));
+        return;
+    }
 }
