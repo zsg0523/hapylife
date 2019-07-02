@@ -107,7 +107,8 @@ class HapylifePayController extends HomeBaseController{
 
 		        try{
 		            // $merAccNo       = 'E0001904';
-		            $merAccNo       = "E0004004";
+		            // $merAccNo       = "E0004004";
+		            $merAccNo       = "E0004014";//E0004004的升级
 		            $orderId        = $pay_receiptnum;
 		            $fee_type       = "CNY";
 		            $amount         = $order['ir_price'];
