@@ -31,8 +31,8 @@ class RegisterController extends HomeBaseController{
                     'customerid' => $customerid,
                 );
             $data    = json_encode($data);
-            // $sendUrl = "http://10.16.0.153/hapylife/index.php/Api/HapylifeApi/userList";
-            $sendUrl = "http://localhost/hapylife/index.php/Api/HapylifeApi/userList";
+            $sendUrl = "http://10.16.0.153/hapylife/index.php/Api/HapylifeApi/userList";
+            // $sendUrl = "http://localhost/hapylife/index.php/Api/HapylifeApi/userList";
             $result  = post_json_data($sendUrl,$data);
             $back_msg = json_decode($result['result'],true);
             $hu_nickname = $back_msg['data']['lastname'].$back_msg['data']['firstname'];
