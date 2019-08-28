@@ -5,6 +5,11 @@ use Common\Controller\HomeBaseController;
 * 二次发送付费通知短信
 **/
 class HapylifeReCallController extends HomeBaseController{
+    public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
+    }
     public function ReCall(){
         $data = M('wvNotification')->where(array('secStatus'=>0))->select();
         foreach($data as $key=>$value){

@@ -1269,7 +1269,7 @@ class ReceiptModel extends BaseModel{
         $title   = array('日期','账号','姓名','EP','DT','status');
         foreach ($data as $k => $v) {
             // 团队标签
-            $content[$k]['day']   = date('Y-m-d/H:i:s');
+            $content[$k]['day']   = date('Y-m-d/H:i:s', $v['joinedon']);
             $content[$k]['customerid']  = $v['customerid'];
             $content[$k]['name']  = $v['lastname'].$v['firstname'];
             $content[$k]['ep']  = $v['iu_point'];

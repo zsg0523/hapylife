@@ -5,7 +5,11 @@ use Common\Controller\HomeBaseController;
 * 产品订单 首单 升级 月费
 **/
 class HapylifeReceiptController extends HomeBaseController{
-
+	public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
+    }
 	/**
 	*订单列表
 	**/

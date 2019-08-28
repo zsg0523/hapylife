@@ -5,12 +5,14 @@ use Common\Controller\HomeBaseController;
 * hapylife控制器
 **/
 class HapylifeApiController extends HomeBaseController{
-
     /**
      * [receivePhoto description]
      * @return [type] [description]
      */
     public function receivePhoto(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $photo        = I('post.photo');
         $img_body     = substr(strstr($photo,','),1);
         $photo_name   = time().'_'.mt_rand().'.jpg';
@@ -30,6 +32,9 @@ class HapylifeApiController extends HomeBaseController{
      * @return [type] [description]
      */
     public function push(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $customerId   = trim(I('post.customerId'));
         $content      = trim(I('post.content'));
         $notification = new \Common\PushEvent\Notification;
@@ -37,6 +42,9 @@ class HapylifeApiController extends HomeBaseController{
     }
 
     public function index(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         //检查WV api用户信息
         $HappyLifeID  = trim(I('post.happyLifeID'));
         $Password     = trim(I('post.password'));
@@ -72,6 +80,9 @@ class HapylifeApiController extends HomeBaseController{
     * IsNew/1新 0旧
     **/
     public function newregister(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         if(IS_POST){
             $data['status'] = 0;
             $data['message']= 'app暂不允许注册，请前往web端';
@@ -300,6 +311,9 @@ class HapylifeApiController extends HomeBaseController{
     * 获取用户信息
     **/
     public function userinfo(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $iuid = I('post.iuid');
         $data = D('User')->where(array('iuid'=>$iuid))->find();
         $right= D('User')->where(array('SponsorID'=>$data['customerid'],'Placement'=>'Right'))->select();
@@ -328,6 +342,9 @@ class HapylifeApiController extends HomeBaseController{
     * 编辑用户信息
     **/
     public function edituserinfo(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $iuid         = I('post.iuid');
         $para         = I('post.para');
         $paravalue    = I('post.paravalue');
@@ -405,6 +422,9 @@ class HapylifeApiController extends HomeBaseController{
     *会籍记录激活
     **/
     public function activation(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $iuid     = I('post.iuid');
         $orderTime= D('User')->where(array('iuid'=>$iuid))->getfield('OrderDate');
         if($orderTime){
@@ -528,6 +548,9 @@ class HapylifeApiController extends HomeBaseController{
     * 商品列表
     **/
     public function productlist(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $map = array(
             'ip_type'    =>2,
             'ip_name_zh '=>array('NEQ','Rbs'),
@@ -548,6 +571,9 @@ class HapylifeApiController extends HomeBaseController{
     * 商品详情
     **/
     public function product(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $ipid = I('post.ipid');
         $data = M('Product')->where(array('ipid'=>$ipid))->find();
         if($data){
@@ -564,6 +590,9 @@ class HapylifeApiController extends HomeBaseController{
     * 产品订单
     **/
     public function order(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $iuid = trim(I('post.iuid'));
         $ipid = trim(I('post.ipid'));
         $isdt = trim(I('post.isdt'));
@@ -812,6 +841,9 @@ class HapylifeApiController extends HomeBaseController{
     * @param ir_receiptnum 订单编号
     **/
     public function checkreceipt(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $ir_receiptnum = I('post.ir_receiptnum');
         //订单状态查询
         $receipt       = M('Receipt')->where(array('ir_receiptnum'=>$ir_receiptnum))->find();
@@ -832,6 +864,9 @@ class HapylifeApiController extends HomeBaseController{
     * 旅游列表
     **/ 
     public function travellist(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $map    = array(
             'is_show' =>1
         );
@@ -858,6 +893,9 @@ class HapylifeApiController extends HomeBaseController{
     * 旅游详情
     **/
     public function travelcontent(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $tid  = I('post.tid');
         $iuid = I('post.iuid');
         $data = M('Travel')->where(array('tid'=>$tid))->find();
@@ -921,6 +959,9 @@ class HapylifeApiController extends HomeBaseController{
     * 点赞
     **/
     public function like(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $tid  = I('post.tid');
         $iuid = I('post.iuid');
         //类型：1、旅游 2、动态 3、...
@@ -960,6 +1001,9 @@ class HapylifeApiController extends HomeBaseController{
     *添加评论
     **/
     public function comment(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $tid  = I('post.tid');
         $iuid = I('post.iuid');
         $iuid2= I('post.iuid2')?I('post.iuid2'):0;
@@ -993,6 +1037,9 @@ class HapylifeApiController extends HomeBaseController{
     * 产品 1首购 2升级 3月费
     **/
     public function upgrade(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $iuid  = I('post.iuid');
         $find  = M('User')->where(array('iuid'=>$iuid))->find();
         $showProduct = $find['showproduct'];
@@ -1060,6 +1107,9 @@ class HapylifeApiController extends HomeBaseController{
     * 获取房间
     **/
     public function roomtype(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $tid = I('post.tid');
         $data= D('Room')->where(array('tid'=>$tid))->select();
         if($data){
@@ -1074,6 +1124,9 @@ class HapylifeApiController extends HomeBaseController{
     * 获取房间详情
     **/
     public function roominfo(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $tid = I('post.tid');
         $rid = I('post.rid');
         $find          = D('Travel')->where(array('tid'=>$tid))->find();
@@ -1107,6 +1160,9 @@ class HapylifeApiController extends HomeBaseController{
     * 选择房间数获取people层数
     **/
     public function people(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $tid   = I('post.tid');
         $rid   = I('post.rid');
         $lpnum = I('post.lpnum');//房间数
@@ -1158,6 +1214,9 @@ class HapylifeApiController extends HomeBaseController{
     * 获取child层数
     **/
     public function child(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $tid    = I('post.tid');
         //child数量
         $lpnum  = I('post.lpnum');
@@ -1180,6 +1239,9 @@ class HapylifeApiController extends HomeBaseController{
     * 获取adult/child/年龄/房间列表
     **/
     public function quantity(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $tid    = I('post.tid');
         //lptype--1、adult 2、child 3、年龄 4、房间列表
         $lptype = I('post.lptype');
@@ -1217,6 +1279,9 @@ class HapylifeApiController extends HomeBaseController{
     * 计算金额
     **/
     public function total(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $iuid  = I('post.iuid');  
         $rid   = I('post.rid');  
         $tid   = I('post.tid');  
@@ -1326,6 +1391,9 @@ class HapylifeApiController extends HomeBaseController{
     **填写游客信息
     */
     public function fillinfo(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $rid   = I('post.rid');  
         $tid   = I('post.tid');
         $iuid  = I('post.iuid');
@@ -1428,6 +1496,9 @@ class HapylifeApiController extends HomeBaseController{
     **获取前后缀和联系方式
     */
     public function around(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $atype = I('post.atype');
         switch ($atype) {
             case '1':
@@ -1451,6 +1522,9 @@ class HapylifeApiController extends HomeBaseController{
     **生成booking订单
     */
     public function bookingOrder(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $mape   = I('post.');
         $prefix = explode(',',$mape['prefix']);
         $suffix = explode(',',$mape['suffix']);
@@ -1569,6 +1643,9 @@ class HapylifeApiController extends HomeBaseController{
     * booking快钱支付
     **/
     public function bookingPay(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         //$order_num = trim(I('post.ir_receiptnum'))?trim(I('post.ir_receiptnum')):date(YmdHis);
         $order_num = trim(I('post.breceiptnum'));
         //订单信息
@@ -1674,6 +1751,9 @@ class HapylifeApiController extends HomeBaseController{
     **旅游快钱返回结果
     */
     public function bookingReturn(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $kq_check_all_para=kq_ck_null($_GET['merchantAcctId'],'merchantAcctId').kq_ck_null($_GET['version'],'version').kq_ck_null($_GET['language'],'language').kq_ck_null($_GET['signType'],'signType').kq_ck_null($_GET['payType'],'payType').kq_ck_null($_GET['bankId'],'bankId').kq_ck_null($_GET['orderId'],'orderId').kq_ck_null($_GET['orderTime'],'orderTime').kq_ck_null($_GET['orderAmount'],'orderAmount').kq_ck_null($_GET['bindCard'],'bindCard').kq_ck_null($_GET['bindMobile'],'bindMobile').kq_ck_null($_GET['dealId'],'dealId').kq_ck_null($_GET['bankDealId'],'bankDealId').kq_ck_null($_GET['dealTime'],'dealTime').kq_ck_null($_GET['payAmount'],'payAmount').kq_ck_null($_GET['fee'],'fee').kq_ck_null($_GET['ext1'],'ext1').kq_ck_null($_GET['ext2'],'ext2').kq_ck_null($_GET['payResult'],'payResult').kq_ck_null($_GET['errCode'],'errCode');
 
         $trans_body= substr($kq_check_all_para,0,strlen($kq_check_all_para)-1);
@@ -1719,6 +1799,9 @@ class HapylifeApiController extends HomeBaseController{
     * @param breceiptnum 订单编号
     **/
     public function bookingCheck(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $ir_receiptnum = I('post.breceiptnum');
         //订单状态查询
         $data = M('Booking')->where(array('breceiptnum'=>$ir_receiptnum))->find();
@@ -1739,6 +1822,9 @@ class HapylifeApiController extends HomeBaseController{
     * 订单信息查询
     **/
     public function getOrderInfo(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         //订单信息查询
         $ir_receiptnum = I('post.breceiptnum');
         $data          = M('Booking')->where(array('breceiptnum'=>$ir_receiptnum))->find();
@@ -1756,6 +1842,9 @@ class HapylifeApiController extends HomeBaseController{
     * 检测会员是否符合资格
     **/ 
     public function qualification(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $customerid = I('post.customerid');
         $usa    = new \Common\UsaApi\Usa;
         $result = $usa->placement($customerid);
@@ -1778,6 +1867,9 @@ class HapylifeApiController extends HomeBaseController{
     * 查询会员获取系统编码
     **/ 
     public function getNumber(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $data = I('post.');
         $usa = new \Common\UsaApi\Usa;
         $map = $usa->activities($data['customerid']);
@@ -1884,6 +1976,9 @@ class HapylifeApiController extends HomeBaseController{
     *生成个人二维码
     **/
     public function usercode(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         if(!IS_POST){
             $tmp['status'] = 0;
             $this->ajaxreturn($tmp);
@@ -1922,6 +2017,9 @@ class HapylifeApiController extends HomeBaseController{
     *FAQ列表
     **/
     public function faq(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $data = M('Faq')->where(array('pid'=>0))->order('order_number DESC')->select();
         foreach($data as $key=>$value){
             $data[$key]['answer'] = M('Faq')->where(array('pid'=>$value['fid']))->select();
@@ -1945,6 +2043,9 @@ class HapylifeApiController extends HomeBaseController{
     *奖金列表
     **/
     public function BounsList(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         // $redis = new \Predis\Client(array(  
         //     'scheme' => 'tcp',  
         //     'host'   => '127.0.0.1',  
@@ -2001,6 +2102,9 @@ class HapylifeApiController extends HomeBaseController{
     * 群发通告短信
     **/ 
     public function massNote(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $data = I('post.');
 
         switch($data['psd']){
@@ -2060,6 +2164,9 @@ class HapylifeApiController extends HomeBaseController{
     * 外部链接地址获取
     **/ 
     public function OutsideLink(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $data = M('OutsideLink')->where(array('isshow'=>1))->find();
         if($data){
             $map = array(
@@ -2080,6 +2187,9 @@ class HapylifeApiController extends HomeBaseController{
     * 获取用户信息
     **/ 
     public function userList(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
         $jsonStr = file_get_contents("php://input");
         //写入服务器日志文件
         $log     = addUsaLog($jsonStr);
@@ -2094,6 +2204,25 @@ class HapylifeApiController extends HomeBaseController{
         }else{
             $map['status'] = 0;
             $this->ajaxreturn($map);
+        }
+    }
+
+    /**
+    * 锁死app
+    **/ 
+    public function lock(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            $data = array(
+                'status' => 1,
+                'msg' => '服務器正在維護。 請致電400-100-7325'
+            );
+            $this->ajaxreturn($data);
+        }else{
+            $data = array(
+                'status' => 0,
+                'msg' => '正常使用'
+            );
+            $this->ajaxreturn($data);
         }
     }
 }

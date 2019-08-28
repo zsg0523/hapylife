@@ -5,6 +5,11 @@ use Common\Controller\HomeBaseController;
 * hapylife美国编码控制器
 **/
 class HapylifeCodeController extends HomeBaseController{
+    public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
+    }
     /**
     * 获取美国编码
     **/ 

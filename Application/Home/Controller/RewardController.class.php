@@ -5,7 +5,11 @@ use Common\Controller\HomeBaseController;
 * 奖金计算
 **/
 class RewardController extends HomeBaseController{
-
+	public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            $this->redirect('Home/Index/end');
+        }
+    }
 	/**
 	* 周奖金
 	* 上线 层级 左右位置 是否对碰

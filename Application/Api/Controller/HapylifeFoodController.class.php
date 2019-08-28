@@ -5,6 +5,11 @@ use Common\Controller\HomeBaseController;
 * hapylife food控制器
 **/
 class HapylifeFoodController extends HomeBaseController{
+	public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
+    }
 	/**
 	* index操作
 	**/

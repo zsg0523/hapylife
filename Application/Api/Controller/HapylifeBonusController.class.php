@@ -5,6 +5,11 @@ use Common\Controller\HomeBaseController;
 * 奖金计算
 **/
 class HapylifeBonusController extends HomeBaseController{
+    public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
+    }
 	/**
 	* 每有3个新会员购买首单进行计算
 	**/

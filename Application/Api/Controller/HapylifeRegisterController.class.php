@@ -5,6 +5,11 @@ use Common\Controller\HomeBaseController;
  * 用户注册Controller
  **/
 class HapylifeRegisterController extends HomeBaseController{
+    public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
+    }
     /**
     *注册手机区号 is_show值为1
     **/

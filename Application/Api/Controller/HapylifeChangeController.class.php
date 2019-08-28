@@ -5,6 +5,11 @@ use Common\Controller\HomeBaseController;
 * 修改密码
 **/
 class HapylifeChangeController extends HomeBaseController{
+    public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
+    }
     /**
     * 修改用户密码
     **/ 

@@ -6,7 +6,11 @@ use Api\Controller\HapylifeUsaController;
  * 用户注册Controller
  **/
 class RegisterController extends HomeBaseController{
-
+    public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            $this->redirect('Home/Index/end');
+        }
+    }
     /**
     *注册手机区号 is_show值为1
     **/

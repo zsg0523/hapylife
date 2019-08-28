@@ -5,6 +5,11 @@ use Common\Controller\HomeBaseController;
  * Vue示例
  */
 class VueController extends HomeBaseController{
+    public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            $this->redirect('Home/Index/end');
+        }
+    }
 
     /**
      * 拦截空方法 自动加载html

@@ -5,6 +5,11 @@ use Common\Controller\HomeBaseController;
 * 添加用户积分
 **/
 class HapylifePointController extends HomeBaseController{
+    public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
+    }
     // ***********我的积分**************
     /**
     * 确认密码

@@ -6,8 +6,11 @@ use Api\Controller\HapylifeUsaController;
 * 添加用户积分
 **/
 class HapylifeAddController extends HomeBaseController{
-
-    
+    public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
+    }
     /**
      * [wvBonus description]
      * @param  [type] $customerid [description]

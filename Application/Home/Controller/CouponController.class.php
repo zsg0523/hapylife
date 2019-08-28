@@ -10,6 +10,11 @@ use Common\Controller\HomeBaseController;
 * CouponController->CouponapiController->HapylifeCouponController
 **/ 
 class CouponController extends HomeBaseController{
+	public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            $this->redirect('Home/Index/end');
+        }
+    }
 	/**
 	* 使用优惠券
 	**/ 

@@ -41,6 +41,9 @@ class IndexController extends HomeBaseController{
      * testAccount 71429994
      */
     public function checkAccount(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            $this->redirect('Home/Index/end');
+        }
         $CustomerID = trim(I('post.CustomerID'));
         $checkAccount = D('User')->where(array('CustomerID|wvCustomerID'=>$CustomerID))->find();
         if($checkAccount){
@@ -81,6 +84,9 @@ class IndexController extends HomeBaseController{
     * 前台登录
     **/
     public function login(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            $this->redirect('Home/Index/end');
+        }
         $iuid = I('get.iuid');
         if(!empty($iuid)){
             $data = D('User')->where(array('iuid'=>$iuid))->find();
@@ -177,9 +183,5 @@ class IndexController extends HomeBaseController{
         session('user',null);
         $this->redirect('Home/Index/login');
     }
-
-
-
-
 }
 

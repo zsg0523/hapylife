@@ -1516,4 +1516,78 @@ class UserModel extends BaseModel{
 	        return $map;
     	}
     }
+
+    /**
+	* 获取当前用户
+    **/ 
+    public function getAllFixData($model,$map,$order='',$limit=20,$field=''){
+		$count=$model
+				->where(array('DistributorType'=>array('NOT IN','Pc'),'isexit'=>1,'LastName'=>array('NOT IN',$map),'FirstName'=>array('NOT IN',$map),'wvCustomerID'=>array('NEQ','')))
+			  	->count();
+		$page=new_page($count,$limit);
+		
+
+		$data=$model
+			->where(array('DistributorType'=>array('NOT IN','Pc'),'isexit'=>1,'LastName'=>array('NOT IN',$map),'FirstName'=>array('NOT IN',$map),'wvCustomerID'=>array('NEQ','')))
+			->field('customerid,iu_point,iu_dt,lastname,firstname,joinedon')
+			->order($order)
+			->limit($page->firstRow.','.$page->listRows)
+			->select();
+
+		$usa    = new \Common\UsaApi\Usa;
+		foreach ($data as $key => $value) {
+			$result = $usa->dtPoint($value['customerid']);
+            $activities = $usa->validateHpl($value['customerid']);
+            if(!$result['errors']){
+                foreach($result['softCashCategories'] as $k=>$v){
+                    switch ($v['categoryType']) {
+                        case 'DreamTripPoints':
+                            $data[$key]['iu_dt'] = $v['balance'];
+                            break;
+                    }
+                }
+            }else{
+               $data[$key]['iu_dt'] = 0;
+            }
+            $data[$key]['status'] = $activities['isActive'];
+		}
+
+		$data=array(
+			'data'=>$data,
+			'page'=>$page->show()
+		);
+		return $data;
+	}
+
+	/**
+	* 获取当前用户
+    **/ 
+    public function getAllFixDatas($model,$map,$p,$order='',$limit=20,$field=''){
+		$data=$model
+			->where(array('DistributorType'=>array('NOT IN','Pc'),'isexit'=>1,'LastName'=>array('NOT IN',$map),'FirstName'=>array('NOT IN',$map),'wvCustomerID'=>array('NEQ','')))
+			->field('customerid,iu_point,iu_dt,lastname,firstname,joinedon')
+			->limit(($p-1)*$limit,$limit)
+			->order($order)
+			->select();
+
+		$usa    = new \Common\UsaApi\Usa;
+		foreach ($data as $key => $value) {
+			$result = $usa->dtPoint($value['customerid']);
+            $activities = $usa->validateHpl($value['customerid']);
+            if(!$result['errors']){
+                foreach($result['softCashCategories'] as $k=>$v){
+                    switch ($v['categoryType']) {
+                        case 'DreamTripPoints':
+                            $data[$key]['iu_dt'] = $v['balance'];
+                            break;
+                    }
+                }
+            }else{
+               $data[$key]['iu_dt'] = 0;
+            }
+            $data[$key]['status'] = $activities['isActive'];
+		}
+
+		return $data;
+	}
 }

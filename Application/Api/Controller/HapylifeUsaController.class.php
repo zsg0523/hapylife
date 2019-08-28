@@ -7,9 +7,10 @@ use Common\Controller\HomeBaseController;
 * 沙盒地址	https://signupapi-qa.wvhservices.com		
 **/
 class HapylifeUsaController extends HomeBaseController{
-
-
 	public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
 		// production 生产环境配置
 		// $this->key = "KDHE5011CVFO1KJEP1A0S";
 		// $this->url = "https://signupapi.wvhservices.com";

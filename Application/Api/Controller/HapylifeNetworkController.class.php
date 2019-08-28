@@ -5,7 +5,11 @@ use Common\Controller\HomeBaseController;
 * hapylife控制器
 **/
 class HapylifeNetworkController extends HomeBaseController{
-
+    public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
+    }
 	/**
     * 推荐网查询
     **/

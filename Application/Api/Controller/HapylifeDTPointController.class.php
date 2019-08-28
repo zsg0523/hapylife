@@ -5,6 +5,11 @@ use Common\Controller\HomeBaseController;
 * DT商店
 **/
 class HapylifeDTPointController extends HomeBaseController{
+    public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
+    }
     /**
     * 购买DT礼包
     **/
@@ -205,14 +210,5 @@ class HapylifeDTPointController extends HomeBaseController{
             $data[$key]['status'] = $activities['isActive'];
         }
         $this->ajaxreturn($data);
-    }
-
-    public function jsonp(){
-
-        $json = '[
-
-        ]';
-        $data = json_decode($json,true);
-        $count  = count($data);
     }
 }

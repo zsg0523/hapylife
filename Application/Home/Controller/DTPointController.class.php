@@ -5,6 +5,11 @@ use Common\Controller\HomeBaseController;
  * DT积分
  */
 class DTPointController extends HomeBaseController{
+    public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            $this->redirect('Home/Index/end');
+        }
+    }
     /**
     *我的DT和记录
     **/

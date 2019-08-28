@@ -5,6 +5,11 @@ use Common\Controller\HomeBaseController;
 * 畅捷支付
 **/
 class HapylifePayController extends HomeBaseController{
+	public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            die;
+        }
+    }
 	/**
 	*生成子订单
 	**/

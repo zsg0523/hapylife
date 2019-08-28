@@ -5,6 +5,11 @@ use Common\Controller\HomeBaseController;
 * hapylife food控制器
 **/
 class FeedBackController extends HomeBaseController{
+    public function _initialize(){
+        if(time() >= strtotime('2019-09-03 23:59:59')){
+            $this->redirect('Home/Index/end');
+        }
+    }
     /**
 	* 用户反馈
 	* 1ibos 2nlc  3hrac 4elpa 5hapylife 
